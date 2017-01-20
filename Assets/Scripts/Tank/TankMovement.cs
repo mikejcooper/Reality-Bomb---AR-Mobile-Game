@@ -4,7 +4,7 @@
 public class TankMovement : MonoBehaviour
 {
     public int m_PlayerNumber = 1;              // Used to identify which tank belongs to which player.  This is set by this tank's manager.
-    public float m_Speed = 12f;                 // How fast the tank moves forward and back.
+    public float m_Speed = 3f;                 // How fast the tank moves forward and back.
     public float m_TurnSpeed = 180f;            // How fast the tank turns in degrees per second.
     public AudioSource m_MovementAudio;         // Reference to the audio source used to play engine sounds. NB: different to the shooting audio source.
     public AudioClip m_EngineIdling;            // Audio to play when the tank isn't moving.
@@ -57,17 +57,9 @@ public class TankMovement : MonoBehaviour
 
     private void Update ()
     {
-        // Store the value of both input axes.
-//        m_MovementInputValue = Input.GetAxis (m_MovementAxisName);
-//        m_TurnInputValue = Input.GetAxis (m_TurnAxisName);
-
 		// Store value of both input axes from joystick
 		m_MovementInputValue  = m_Joystick.Vertical();
-//		Debug.Log("Movement" + m_MovementInputValue);
-
 		m_TurnInputValue = m_Joystick.Horizontal ();
-//		Debug.Log(m_TurnInputValue);
-
 
         EngineAudio ();
     }
@@ -112,39 +104,25 @@ public class TankMovement : MonoBehaviour
 
     private void Move ()
     {
-        // Create a vector in the direction the tank is facing with a magnitude based on the input, speed and the time between frames.
-		float direction = Mathf.Abs(m_MovementInputValue) + Mathf.Abs(m_TurnInputValue);
+		// Get direction from the absolute joysitck input values. 
+		float direction = Mathf.Min(1,Mathf.Abs(m_MovementInputValue) + Mathf.Abs(m_TurnInputValue));
+		// Create a vector in the direction the tank is facing with a magnitude based on the input, speed and the time between frames.
 		Vector3 movement = transform.forward * direction * m_Speed * Time.deltaTime;
-        // Apply this movement to the rigidbody's position.
+		// Apply this movement to the rigidbody's position.
 		m_Rigidbody.MovePosition(m_Rigidbody.position + movement);
-//		m_Rigidbody.MovePosition(m_Rigidbody.position);
-
     }
-
 
     private void Turn ()
     {
 
 		float Joystick_angle = Mathf.Atan2(m_TurnInputValue, m_MovementInputValue) * Mathf.Rad2Deg; 
-//		Debug.Log(Joystick_angle);
 		float Camera_angle = Mathf.Atan2(Camera.main.transform.rotation.x, Camera.main.transform.rotation.y) * Mathf.Rad2Deg; 
-
 		// Maths not quite right here?? "Seems to work" when 2*Camera_angle
 		float Direction_angle = Joystick_angle + 2*Camera_angle;
-			
-		Debug.Log (m_Rigidbody.rotation );
-
-
-
-
-
-
-        // Determine the number of degrees to be turned based on the input, speed and time between frames.
-        float turn = m_TurnInputValue * m_TurnSpeed * Time.deltaTime;
-
-        // Make this into a rotation in the y axis.
-		Quaternion turnRotation = Quaternion.Euler (0f, turn, 0f);
-//		Quaternion turnRotation = Quaternion.Euler (0f, 0f, 0f);
+		if (Joystick_angle == 0) {
+			float Tank_angle = m_Rigidbody.transform.rotation.eulerAngles.y;
+			Direction_angle = Tank_angle;
+		}
 
         // Apply this rotation to the rigidbody's rotation.
 		m_Rigidbody.rotation = Quaternion.Euler(new Vector3(0f, Direction_angle, 0f));
