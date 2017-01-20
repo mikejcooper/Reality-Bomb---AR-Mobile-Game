@@ -104,18 +104,21 @@ public class TankMovement : MonoBehaviour
     private void FixedUpdate ()
     {
         // Adjust the rigidbodies position and orientation in FixedUpdate.
-        Move ();
-        Turn ();
+		Turn ();
+	
+		Move ();
     }
 
 
     private void Move ()
     {
         // Create a vector in the direction the tank is facing with a magnitude based on the input, speed and the time between frames.
-        Vector3 movement = transform.forward * m_MovementInputValue * m_Speed * Time.deltaTime;
+		float direction = Mathf.Abs(m_MovementInputValue) + Mathf.Abs(m_TurnInputValue);
+		Vector3 movement = transform.forward * direction * m_Speed * Time.deltaTime;
         // Apply this movement to the rigidbody's position.
-//		m_Rigidbody.MovePosition(m_Rigidbody.position + movement);
-		m_Rigidbody.MovePosition(m_Rigidbody.position);
+		m_Rigidbody.MovePosition(m_Rigidbody.position + movement);
+//		m_Rigidbody.MovePosition(m_Rigidbody.position);
+
     }
 
 
@@ -124,8 +127,12 @@ public class TankMovement : MonoBehaviour
 
 		float Joystick_angle = Mathf.Atan2(m_TurnInputValue, m_MovementInputValue) * Mathf.Rad2Deg; 
 //		Debug.Log(Joystick_angle);
-		float direction = Camera.main.transform.rotation.y;
-		Debug.Log (direction);
+		float Camera_angle = Mathf.Atan2(Camera.main.transform.rotation.x, Camera.main.transform.rotation.y) * Mathf.Rad2Deg; 
+
+		// Maths not quite right here?? "Seems to work" when 2*Camera_angle
+		float Direction_angle = Joystick_angle + 2*Camera_angle;
+			
+		Debug.Log (m_Rigidbody.rotation );
 
 
 
@@ -140,7 +147,7 @@ public class TankMovement : MonoBehaviour
 //		Quaternion turnRotation = Quaternion.Euler (0f, 0f, 0f);
 
         // Apply this rotation to the rigidbody's rotation.
-		m_Rigidbody.rotation = Quaternion.Euler(new Vector3(0f, Joystick_angle, 0f));
-//		m_Rigidbody.MoveRotation (m_Rigidbody.rotation * turnRotation);
+		m_Rigidbody.rotation = Quaternion.Euler(new Vector3(0f, Direction_angle, 0f));
+		m_Rigidbody.MoveRotation (m_Rigidbody.rotation);
     }
 }
