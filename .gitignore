@@ -9,7 +9,7 @@
 *.apk
 sysinfo.txt
 *.stackdump
-*.meta
+
  
 # ============================================= #
 # Visual Studio / MonoDevelop / Rider generated #

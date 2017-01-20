@@ -153,8 +153,8 @@ public class TankShooting : MonoBehaviour
 		//		}
 		//
 		//
-		Update_fire (m_button_long,m_Fired);
-		Update_fire (m_button_short, m_Fired);
+//		Update_fire (m_button_long,m_Fired);
+//		Update_fire (m_button_short, m_Fired);
 
     }
 
