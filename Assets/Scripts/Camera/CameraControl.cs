@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 
 
-public class CameraControl : MonoBehaviour
+public class CameraControl : NetworkBehaviour
 {
 	public float m_CustomBUFFER = 5f;           	// Custom camera buffer 
 
@@ -26,10 +27,10 @@ public class CameraControl : MonoBehaviour
     private void FixedUpdate ()
     {
         // Move the camera towards a desired position.
-        Move ();
+        //Move ();
 
         // Change the size of the camera based.
-        Zoom ();
+        //Zoom ();
     }
 
 
