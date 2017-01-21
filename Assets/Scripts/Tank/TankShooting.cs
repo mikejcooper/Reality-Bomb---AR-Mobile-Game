@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 [Serializable]                             // Allows object to be shown in Inspector.
 public class ShootingSettings {
@@ -34,9 +35,6 @@ public class TankShooting : MonoBehaviour
 	public int m_LaunchType;                     // Determines the settings used when firing a shell
 	public ShootingSettings[] m_ShootingSettings;    // Array containing different configurations for the shooting behaviour of the tank
 	private int m_ShellType;                     // Determines what type of shell you will be firing
-	//public UIButton m_button_short;
-	//public UIButton m_button_long;
-
 
 	private float m_MinLaunchForce;             // The force given to the shell if the fire button is not held.
 	private float m_MaxLaunchForce;             // The force given to the shell if the fire button is held for the max charge time.
@@ -44,17 +42,13 @@ public class TankShooting : MonoBehaviour
 	private float m_LaunchForceDifference;      // Difference between the max launch force and the min launch force
 	private float m_SliderDifference;           // Difference between the max slider value and min slider value
 
-
-	private string m_FireButton;                // The input axis that is used for launching shells.
 	private float m_CurrentLaunchForce;         // The force that will be given to the shell when the fire button is released.
 	private float m_CurrentForceProportion;     // The proportion of the current launch force out of the max launch force
 	private float m_ChargeSpeed;                // How fast the launch force increases, based on the max charge time.
 	private bool m_Fired;                       // Whether or not the shell has been launched with this button press.
 
-	private bool m_Down;
-
-	private Button m_Button;
-
+	private Button m_FireButton;				// The button used to fire the shells
+	private bool m_FireButtonDown;				// Used to check if the the firing button is currently being pressed down
 
 	private void OnEnable()
 	{
@@ -63,16 +57,31 @@ public class TankShooting : MonoBehaviour
 		m_AimSlider.value = m_AimSlider.minValue;
 	}
 
-
 	private void Start ()
 	{
 
-		//getting the fire button and making it fire when clicked
-		m_Button = GameObject.Find ("FireButton").gameObject.GetComponent<Button> ();
-		m_Button.onClick.AddListener(delegate {Fire();});
+		//Getting reference to the fire button
+		m_FireButton = GameObject.Find ("FireButton").gameObject.GetComponent<Button> ();
 
-		// The fire axis is based on the player number.
-		m_FireButton = "Fire" + m_PlayerNumber;
+		//Adding trigger for when the fire button is pressed down
+		EventTrigger trigger = m_FireButton.gameObject.AddComponent<EventTrigger>();
+		EventTrigger.Entry pointerDown = new EventTrigger.Entry();
+		pointerDown.eventID = EventTriggerType.PointerDown;
+		pointerDown.callback.AddListener (delegate {
+			Down ();
+		});
+		trigger.triggers.Add (pointerDown);
+
+		//Adding trigger for when the fire button is released
+		EventTrigger.Entry pointerUp = new EventTrigger.Entry();
+		pointerUp.eventID = EventTriggerType.PointerUp;
+		pointerUp.callback.AddListener (delegate {
+			Up ();
+		});
+		trigger.triggers.Add (pointerUp);
+
+		//Set fired to true so the tank doesn't fire immediately as it spawns
+		m_Fired = true;
 
 		// Calculate the max slider difference
 		m_SliderDifference = m_AimSlider.maxValue - m_AimSlider.minValue;
@@ -86,15 +95,11 @@ public class TankShooting : MonoBehaviour
 
 	private void Update ()
 	{
-
-		// The slider should have a default value of the minimum launch force.
-		//m_AimSlider.value = m_MinLaunchForce;
-
-		//Update_Fire();
+		//Update all of the fire variables
+		Update_Fire();
 
 	}
-
-
+		
 	private void Update_Fire()
 	{
 		// The slider should have a default value of the minimum launch force.
@@ -108,7 +113,7 @@ public class TankShooting : MonoBehaviour
 			Fire ();
 		}
 		// Otherwise, if the fire button is being held and the shell hasn't been launched yet...
-		else if (m_Down == true && !m_Fired)
+		else if (m_FireButtonDown == true && !m_Fired)
 		{
 			// Increment the launch force and update the slider.
 			m_CurrentLaunchForce += m_ChargeSpeed * Time.deltaTime;
@@ -120,7 +125,7 @@ public class TankShooting : MonoBehaviour
 			m_AimSlider.value = m_AimSlider.minValue + m_CurrentForceProportion * m_SliderDifference;
 		}
 		// Otherwise, if the fire button has just started being pressed...
-		else if (m_Down == true)
+		else if (m_FireButtonDown == true)
 		{
 			// ... reset the fired flag and reset the launch force.
 			m_Fired = false;
@@ -131,26 +136,25 @@ public class TankShooting : MonoBehaviour
 			m_ShootingAudio.Play ();
 		}
 		// Otherwise, if the fire button is released and the shell hasn't been launched yet...
-		else if (m_Down == false && !m_Fired)
+		else if (m_FireButtonDown == false && !m_Fired)
 		{
 			// ... launch the shell.
 			Fire ();
 		}
 	}
 
-	public void Down() {
-		m_Down = true;
+	public void Down() 
+	{
+		m_FireButtonDown = true;
 	}
 
-	public void Up() {
-		m_Down = false;
+	public void Up() 
+	{
+		m_FireButtonDown = false;
 	}
-
-
+		
 	public void Fire ()
 	{
-
-		m_CurrentLaunchForce = m_MinLaunchForce;
 
 		// Set the fired flag so only Fire is only called once.
 		m_Fired = true;
