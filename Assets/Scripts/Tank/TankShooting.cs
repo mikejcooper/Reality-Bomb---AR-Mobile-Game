@@ -46,6 +46,8 @@ public class TankShooting : MonoBehaviour
 	private float m_CurrentForceProportion;     // The proportion of the current launch force out of the max launch force
 	private float m_ChargeSpeed;                // How fast the launch force increases, based on the max charge time.
 	private bool m_Fired;                       // Whether or not the shell has been launched with this button press.
+	public float m_TimeBetweenShots;			// The delay before another shot can be taken
+	private float m_TimeStamp;					
 
 	private Button m_FireButton;				// The button used to fire the shells
 	private bool m_FireButtonDown;				// Used to check if the the firing button is currently being pressed down
@@ -96,7 +98,10 @@ public class TankShooting : MonoBehaviour
 	private void Update ()
 	{
 		//Update all of the fire variables
-		Update_Fire();
+		if (Time.time >= m_TimeStamp) {
+			Update_Fire ();
+		}
+
 
 	}
 		
@@ -179,6 +184,8 @@ public class TankShooting : MonoBehaviour
 
 		// Reset the launch force.  This is a precaution in case of missing button events.
 		m_CurrentLaunchForce = m_MinLaunchForce;
+
+		m_TimeStamp = Time.time + m_TimeBetweenShots;
 	}
 
 	private void SetupShell()
