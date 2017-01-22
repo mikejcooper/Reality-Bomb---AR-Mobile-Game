@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 [Serializable]                             // Allows object to be shown in Inspector.
 public class ShootingSettings {
 
-	// This class is used to contain a configuration of the Tanks shooting settings
+	// This class is used to contain a configuration of the Tanks launch values
 
 	public float m_MinLaunchForce;      // Minimum launch force
 	public float m_MaxLaunchForce;      // Maximum launch force
@@ -32,7 +32,6 @@ public class TankShooting : MonoBehaviour
 	public AudioSource m_ShootingAudio;         // Reference to the audio source used to play the shooting audio. NB: different to the movement audio source.
 	public AudioClip m_ChargingClip;            // Audio that plays when each shot is charging up.
 	public AudioClip m_FireClip;                // Audio that plays when each shot is fired.
-	public int m_LaunchType;                     // Determines the settings used when firing a shell
 	public ShootingSettings[] m_ShootingSettings;    // Array containing different configurations for the shooting behaviour of the tank
 	private int m_ShellType;                     // Determines what type of shell you will be firing
 
@@ -49,8 +48,11 @@ public class TankShooting : MonoBehaviour
 	public float m_TimeBetweenShots;			// The delay before another shot can be taken
 	private float m_TimeStamp;					// The next time that the tank is able to fire
 
-	private Button m_FireButton;				// The button used to fire the shells
-	private bool m_FireButtonDown;				// Used to check if the the firing button is currently being pressed down
+	private Button m_FireButtonShort;			// Button used to fire short shots
+	private Button m_FireButtonLong;			// Button used to fire long shots
+	private bool m_FireButtonShortDown;			// Used to check if the short fire button is currently pressed down
+	private bool m_FireButtonLongDown;			// Used to check if the long fire button is currently pressed down
+	private bool m_Charging;					// Used to check if a shot is charging
 
 	private void OnEnable()
 	{
@@ -62,21 +64,8 @@ public class TankShooting : MonoBehaviour
 	private void Start ()
 	{
 
-		//Getting reference to the fire button
-		m_FireButton = GameObject.Find ("FireButton").gameObject.GetComponent<Button> ();
-
-		//Adding trigger for when the fire button is pressed down
-		EventTrigger trigger = m_FireButton.gameObject.AddComponent<EventTrigger>();
-		EventTrigger.Entry pointerDown = new EventTrigger.Entry();
-		pointerDown.eventID = EventTriggerType.PointerDown;
-		pointerDown.callback.AddListener (delegate {Down ();});
-		trigger.triggers.Add (pointerDown);
-
-		//Adding trigger for when the fire button is released
-		EventTrigger.Entry pointerUp = new EventTrigger.Entry();
-		pointerUp.eventID = EventTriggerType.PointerUp;
-		pointerUp.callback.AddListener (delegate {Up ();});
-		trigger.triggers.Add (pointerUp);
+		//get references to the firing buttons and add event triggers
+		SetupFireButtons ();
 
 		//Set fired to true so the tank doesn't fire immediately as it spawns
 		m_Fired = true;
@@ -85,7 +74,7 @@ public class TankShooting : MonoBehaviour
 		m_SliderDifference = m_AimSlider.maxValue - m_AimSlider.minValue;
 
 		// Set the min launch force, max launch force and max charge time
-		SetupShell();
+		SetupShell(0);
 
 		// The rate that the launch force charges up is the range of possible forces by the max charge time.
 		m_ChargeSpeed = (m_MaxLaunchForce - m_MinLaunchForce) / m_MaxChargeTime;
@@ -93,13 +82,39 @@ public class TankShooting : MonoBehaviour
 
 	private void Update ()
 	{
-		//Only update all of the fire variables if the firing delay is over
+		//Only update all of the fire values if the firing delay is over
 		if (Time.time >= m_TimeStamp)
 		{
 			Update_Fire ();
 		}
+	}
 
+	//Get the firing button reference and create event triggers
+	private void SetupFireButton(Button FireButton, int num) 
+	{
+		//Get a reference to the button
+		String buttonName = "FireButton" + Convert.ToString (num);
+		FireButton = GameObject.Find (buttonName).gameObject.GetComponent<Button> ();
 
+		//Adding trigger for when the fire button is pressed down
+		EventTrigger trigger = FireButton.gameObject.AddComponent<EventTrigger>();
+		EventTrigger.Entry pointerDown = new EventTrigger.Entry();
+		pointerDown.eventID = EventTriggerType.PointerDown;
+		pointerDown.callback.AddListener (delegate {FireButtonDown(num);});
+		trigger.triggers.Add (pointerDown);
+
+		//Adding trigger for when the fire button is released
+		EventTrigger.Entry pointerUp = new EventTrigger.Entry();
+		pointerUp.eventID = EventTriggerType.PointerUp;
+		pointerUp.callback.AddListener (delegate {FireButtonUp(num);});
+		trigger.triggers.Add (pointerUp);
+	}
+
+	//Setup all of the firing buttons
+	private void SetupFireButtons() 
+	{
+		SetupFireButton (m_FireButtonShort, 0);
+		SetupFireButton (m_FireButtonLong, 1);
 	}
 		
 	private void Update_Fire()
@@ -114,8 +129,8 @@ public class TankShooting : MonoBehaviour
 			m_CurrentLaunchForce = m_MaxLaunchForce;
 			Fire ();
 		}
-		// Otherwise, if the fire button is being held and the shell hasn't been launched yet...
-		else if (m_FireButtonDown == true && !m_Fired)
+		// Otherwise, if shot is still charging and the shell hasn't been launched yet...
+		else if (m_Charging == true && !m_Fired)
 		{
 			// Increment the launch force and update the slider.
 			m_CurrentLaunchForce += m_ChargeSpeed * Time.deltaTime;
@@ -126,8 +141,8 @@ public class TankShooting : MonoBehaviour
 			// Set the aimslider value to be proportional to the current force
 			m_AimSlider.value = m_AimSlider.minValue + m_CurrentForceProportion * m_SliderDifference;
 		}
-		// Otherwise, if the fire button has just started being pressed...
-		else if (m_FireButtonDown == true)
+		// Otherwise, if the shot has just started charging...
+		else if (m_Charging == true)
 		{
 			// ... reset the fired flag and reset the launch force.
 			m_Fired = false;
@@ -137,24 +152,67 @@ public class TankShooting : MonoBehaviour
 			m_ShootingAudio.clip = m_ChargingClip;
 			m_ShootingAudio.Play ();
 		}
-		// Otherwise, if the fire button is released and the shell hasn't been launched yet...
-		else if (m_FireButtonDown == false && !m_Fired)
+		// Otherwise, if the shot has finished charging and the shell hasn't been launched yet...
+		else if (m_Charging == false && !m_Fired)
 		{
 			// ... launch the shell.
 			Fire ();
 		}
 	}
 
-	//Called when the firing button in pressed down
-	public void Down() 
+	//Called when a firing button in pressed down
+	public void FireButtonDown(int fireButton) 
 	{
-		m_FireButtonDown = true;
+		m_Charging = false;
+		//FireButtonShort is pressed down
+		if (fireButton == 0) 
+		{
+			m_FireButtonShortDown = true;
+			//Only charge shot if FireButtonLong is not being pressed
+			if (m_FireButtonLongDown == false)
+			{
+				m_Charging = true;
+				SetupShell(0);
+			}
+		} 
+		//FireButtonLong is pressed down
+		else if (fireButton == 1) 
+		{
+			m_FireButtonLongDown = true;
+			//Only charge shot if FireButtonShort is not being pressed
+			if (m_FireButtonShortDown == false) 
+			{
+				m_Charging = true;
+				SetupShell (1);
+			}
+		}
 	}
 
-	//Called when the firing button is released
-	public void Up() 
+	//Called when a firing button is released
+	public void FireButtonUp(int fireButton) 
 	{
-		m_FireButtonDown = false;
+		m_Charging = false;
+		//FireButtonShort is released
+		if (fireButton == 0) 
+		{
+			m_FireButtonShortDown = false;
+			//If FireButtonLong is being pressed down then charge shot
+			if (m_FireButtonLongDown == true) {
+				m_Charging = true;
+				SetupShell (1);
+			}
+		}
+		//if FireButtonLong is released
+		else if (fireButton == 1)
+		{
+			m_FireButtonLongDown = false;
+			//If FireButtonShort is being pressed down then charge shot
+			if (m_FireButtonShortDown == true) 
+			{
+				m_Charging = true;
+				SetupShell (0);
+			}
+		}
 	}
 		
 	public void Fire ()
@@ -188,14 +246,15 @@ public class TankShooting : MonoBehaviour
 		m_TimeStamp = Time.time + m_TimeBetweenShots;
 	}
 
-	private void SetupShell()
+	//Set the tanks launch values to a configuration set in the editor
+	private void SetupShell(int launchType)
 	{
 
 		// Give the tank a shooting configuration based on its launch type
-		m_MinLaunchForce = m_ShootingSettings[m_LaunchType].m_MinLaunchForce;
-		m_MaxLaunchForce = m_ShootingSettings[m_LaunchType].m_MaxLaunchForce;
-		m_MaxChargeTime = m_ShootingSettings[m_LaunchType].m_MaxChargeTime;
-		m_ShellType = m_ShootingSettings[m_LaunchType].m_ShellType;
+		m_MinLaunchForce = m_ShootingSettings[launchType].m_MinLaunchForce;
+		m_MaxLaunchForce = m_ShootingSettings[launchType].m_MaxLaunchForce;
+		m_MaxChargeTime = m_ShootingSettings[launchType].m_MaxChargeTime;
+		m_ShellType = m_ShootingSettings[launchType].m_ShellType;
 
 		// Calculate the max difference in the launch force
 		m_LaunchForceDifference = m_MaxLaunchForce - m_MinLaunchForce;
