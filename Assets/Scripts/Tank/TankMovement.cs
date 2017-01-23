@@ -122,7 +122,7 @@ public class TankMovement : NetworkBehaviour
     {
 
 		float Joystick_angle = Mathf.Atan2(m_TurnInputValue, m_MovementInputValue) * Mathf.Rad2Deg; 
-		float Camera_angle = Mathf.Atan2(Camera.main.transform.rotation.x, Camera.main.transform.rotation.y) * Mathf.Rad2Deg; 
+		float Camera_angle = 0;//Mathf.Atan2(Camera.main.transform.rotation.x, Camera.main.transform.rotation.y) * Mathf.Rad2Deg; 
 		// Maths not quite right here?? "Seems to work" when 2*Camera_angle
 		float Direction_angle = Joystick_angle + 2*Camera_angle;
 		if (Joystick_angle == 0) {
