@@ -10,8 +10,8 @@ public class TankMovement : MonoBehaviour
     public AudioClip m_EngineIdling;            // Audio to play when the tank isn't moving.
     public AudioClip m_EngineDriving;           // Audio to play when the tank is moving.
 	public float m_PitchRange = 0.2f;           // The amount by which the pitch of the engine noises can vary.
-	public UIJoystick m_Joystick;
 
+    private UIJoystick m_Joystick;
     private string m_MovementAxisName;          // The name of the input axis for moving forward and back.
     private string m_TurnAxisName;              // The name of the input axis for turning.
     private Rigidbody m_Rigidbody;              // Reference used to move the tank.
@@ -46,6 +46,8 @@ public class TankMovement : MonoBehaviour
 
     private void Start ()
     {
+
+        m_Joystick = GameObject.Find("JoystickBack").gameObject.GetComponent<UIJoystick>();
         // The axes names are based on player number.
         m_MovementAxisName = "Vertical" + m_PlayerNumber;
         m_TurnAxisName = "Horizontal" + m_PlayerNumber;
@@ -116,9 +118,9 @@ public class TankMovement : MonoBehaviour
     {
 
 		float Joystick_angle = Mathf.Atan2(m_TurnInputValue, m_MovementInputValue) * Mathf.Rad2Deg; 
-		float Camera_angle = Mathf.Atan2(Camera.main.transform.rotation.x, Camera.main.transform.rotation.y) * Mathf.Rad2Deg; 
-		// Maths not quite right here?? "Seems to work" when 2*Camera_angle
-		float Direction_angle = Joystick_angle + 2*Camera_angle;
+		float Camera_angle = Mathf.Atan2(Camera.main.transform.rotation.x, Camera.main.transform.rotation.y) * Mathf.Rad2Deg;
+        // Maths not quite right here?? "Seems to work" when 2*Camera_angle
+        float Direction_angle = Joystick_angle;// + 2*Camera_angle;
 		if (Joystick_angle == 0) {
 			float Tank_angle = m_Rigidbody.transform.rotation.eulerAngles.y;
 			Direction_angle = Tank_angle;
