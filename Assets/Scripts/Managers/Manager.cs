@@ -9,10 +9,13 @@ public class Manager : MonoBehaviour
 	public Collision[] m_Cubes;		//Reference to the trigger zones (Target Cubes)
 	public int m_ActiveCubeIndex;	//Index of the Currently Active Trigger
 	private float m_TimeLeft;		//Remaining time to get to Trigger Zone
+	private Text m_TimeLeftText;
 
 	void Awake() {
 		m_ActiveCubeIndex = 0;		//Initialises Cube0 as first trigger zone
 		m_TimeLeft = 5.0f;			//Initialises time on clock to 5 secs
+		m_TimeLeftText = GameObject.Find("TimeLeftText").gameObject.GetComponent<Text>();
+		m_TimeLeftText.text = string.Format("{0:N2}", m_TimeLeft);
 	}
 
 	void Start() {
@@ -23,7 +26,7 @@ public class Manager : MonoBehaviour
 	// This is called from start and will run each phase of the game one after another.
 	void Update() {
 		m_TimeLeft -= Time.deltaTime;	//Subtracts the elapsed time from the remaining time
-
+		m_TimeLeftText.text = string.Format("{0:N2}", m_TimeLeft);
 
 		if (m_TimeLeft < 0) {			//If time has expired call game over condition
 			print ("Game Over!");
