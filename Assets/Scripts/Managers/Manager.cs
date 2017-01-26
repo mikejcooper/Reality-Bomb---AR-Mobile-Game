@@ -5,38 +5,39 @@ using UnityEngine.UI;
 
 public class Manager : MonoBehaviour
 {
-	public GameObject m_Tank;
-	public Collision[] m_Cubes;
-	public int m_ActiveCubeIndex;
-	private float m_TimeLeft;
+	public GameObject m_Tank;		//Reference the to tank object
+	public Collision[] m_Cubes;		//Reference to the trigger zones (Target Cubes)
+	public int m_ActiveCubeIndex;	//Index of the Currently Active Trigger
+	private float m_TimeLeft;		//Remaining time to get to Trigger Zone
 
 	void Awake() {
-		m_ActiveCubeIndex = 0;
-		m_TimeLeft = 5.0f;
+		m_ActiveCubeIndex = 0;		//Initialises Cube0 as first trigger zone
+		m_TimeLeft = 5.0f;			//Initialises time on clock to 5 secs
 	}
 
 	void Start() {
-		m_Cubes [m_ActiveCubeIndex].rend.enabled = true;
+		m_Cubes [m_ActiveCubeIndex].rend.enabled = true;	//Sets the visibility of the active cube to true
 	}
 
 
 	// This is called from start and will run each phase of the game one after another.
 	void Update() {
-		m_TimeLeft -= Time.deltaTime;
+		m_TimeLeft -= Time.deltaTime;	//Subtracts the elapsed time from the remaining time
 
-		if (m_TimeLeft < 0) {
+
+		if (m_TimeLeft < 0) {			//If time has expired call game over condition
 			print ("Game Over!");
 			Destroy (m_Tank);
-		} else {
+		} else {						//If time has not yet expired
 			print (m_TimeLeft);
 			//if active cube is entered
-			if (m_Cubes [m_ActiveCubeIndex].IsTriggered () == true) {
+			if (m_Cubes [m_ActiveCubeIndex].IsTriggered () == true) {	//If player has entered trigger zone
 				print ("cube " + m_ActiveCubeIndex + " entered\n");
-				m_Cubes [m_ActiveCubeIndex].rend.enabled = false;
+				m_Cubes [m_ActiveCubeIndex].rend.enabled = false;		//Disable visibility of current trigger
 				//update active cube
-				m_ActiveCubeIndex = (m_ActiveCubeIndex + 1) % m_Cubes.Length;
-				m_Cubes [m_ActiveCubeIndex].rend.enabled = true;
-				m_TimeLeft += 5.0f;
+				m_ActiveCubeIndex = (m_ActiveCubeIndex + 1) % m_Cubes.Length;	//Active the next trigger zone
+				m_Cubes [m_ActiveCubeIndex].rend.enabled = true;		//Enable visibility of newly active trigger
+				m_TimeLeft += 5.0f;		//Increment time left by 5 secs
 			}
 		}
 	}
