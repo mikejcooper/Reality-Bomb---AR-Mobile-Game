@@ -58,12 +58,9 @@ public class ObjImporter {
 
 		for (int j = 0; j < mesh.triangles.Length; j += 3)
 		{
-			Debug.Log ("triangle #:" + j/3);
 			Vector3 p1 = mesh.vertices[mesh.triangles[j + 0]];
 			Vector3 p2 = mesh.vertices[mesh.triangles[j + 1]];
 			Vector3 p3 = mesh.vertices[mesh.triangles[j + 2]];
-			Debug.Log ("x: " + p1 + "y:" + p2 + "z:" + p3);
-
 		}
 
 		mesh.RecalculateBounds();
