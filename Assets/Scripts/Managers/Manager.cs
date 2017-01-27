@@ -14,6 +14,8 @@ public class Manager : MonoBehaviour
 	private Text m_ScoreText;
 	private bool m_GameOver;
 
+	private float m_StartTime;
+
 	void Awake() {
 		m_ActiveCubeIndex = 0;		//Initialises Cube0 as first trigger zone
 		m_TimeLeft = 5.0f;			//Initialises time on clock to 5 secs
@@ -22,6 +24,8 @@ public class Manager : MonoBehaviour
 		m_Score = 0;				//Initialises user score to 0
 		m_ScoreText = GameObject.Find("ScoreText").gameObject.GetComponent<Text>(); //Reference to component displaying user score
 		m_ScoreText.text = "Score: " + m_Score;	// Sets the Text for the user score
+		m_StartTime = Time.time;
+		m_GameOver = false;
 	}
 
 	void Start() {
@@ -34,9 +38,21 @@ public class Manager : MonoBehaviour
 		m_TimeLeft -= Time.deltaTime;	//Subtracts the elapsed time from the remaining time
 
 
-		if (m_TimeLeft <= 0) {			//If time has expired call game over condition
-			StartCoroutine(ResetMiniGame()); // Calls routine to reset the level.
+		if (m_TimeLeft < 0) {			//If time has expired call game over condition
+			if (m_GameOver == false) {
+				m_GameOver = true;		
+				m_StartTime = Time.time + 3.0f;
+				m_TimeLeftText.text = "Time Left: " + string.Format ("{0:N2}", 5.0f);
+				m_Score = 0;
+				m_ScoreText.text = "Score: " + m_Score; //Updates the current user score
+			}
+			if (Time.time > m_StartTime) {
+				m_TimeLeft = 5.0f;
+				m_GameOver = false;
+			}
+			//ResetMiniGame(); 			// Calls routine to reset the level.
 		} else {						//If time has not yet expired
+
 			m_TimeLeftText.text = "Time Left: " + string.Format("{0:N2}", m_TimeLeft); //Updates the remaining time
 			m_ScoreText.text = "Score: " + m_Score; //Updates the current user score
 
@@ -51,16 +67,6 @@ public class Manager : MonoBehaviour
 				m_Score++;				//Increment user score
 			}
 		}
-	}
-
-	/************* CONSIDER CHANGING SO USER CLICKS TO DETERMINE WHEN TO RESET ******************/
-	private IEnumerator ResetMiniGame()
-	{
-		m_TimeLeftText.text = "Time Left: " + string.Format("{0:N2}", 0.0f); // Display remaining time as 0.00 as opposed to 0.01 etc
-		yield return new WaitForSeconds( 2.0f ); //Delays game play
-		m_Score = 0;							 //Resets user score to 0
-		m_TimeLeft = 5.0f;						 //Reset remaining time to 5 secs
-		m_TimeLeftText.text = "Time Left: " + string.Format("{0:N2}", m_TimeLeft); // display 5 secs on clock
 	}
 }
 
