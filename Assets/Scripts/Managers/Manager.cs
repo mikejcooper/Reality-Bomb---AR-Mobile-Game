@@ -12,12 +12,12 @@ public class Manager : MonoBehaviour
 	public Collision[] m_Cubes;		//Reference to the trigger zones (Target Cubes)
 	public int m_ActiveCubeIndex;	//Index of the Currently Active Trigger
 	private float m_TimeLeft;		//Remaining time to get to Trigger Zone
-	private Text m_TimeLeftText;
-	private int m_Score;
-	private Text m_ScoreText;
-	private bool m_GameOver;
+	private Text m_TimeLeftText;	//Text displaying the amount of time left
+	private int m_Score;			//Keeps count of the score
+	private Text m_ScoreText;		//Text displaying the current score
+	private bool m_GameOver;		//Used to check if the player has run out of time
 
-	private float m_StartTime;
+	private float m_StartTime;		//The time at which the game will be reset
 
 
 	void Awake() {
@@ -28,8 +28,8 @@ public class Manager : MonoBehaviour
 		m_Score = 0;				//Initialises user score to 0
 		m_ScoreText = GameObject.Find("ScoreText").gameObject.GetComponent<Text>(); //Reference to component displaying user score
 		m_ScoreText.text = "Score: " + m_Score;	// Sets the Text for the user score
-		m_StartTime = Time.time;
-		m_GameOver = false;
+		m_StartTime = Time.time;	//Get current time
+		m_GameOver = false;			//Initially game such that we haven't run out of time
 	}
 
 	void Start() {
@@ -47,6 +47,7 @@ public class Manager : MonoBehaviour
 
 
 		if (m_TimeLeft < 0) {			//If time has expired call game over condition
+			//If we have just lost then set the reset the score and timeleft
 			if (m_GameOver == false) {
 				m_GameOver = true;		
 				m_StartTime = Time.time + 3.0f;
@@ -54,6 +55,7 @@ public class Manager : MonoBehaviour
 				m_Score = 0;
 				m_ScoreText.text = "Score: " + m_Score; //Updates the current user score
 			}
+			//wait until the game restarts
 			if (Time.time > m_StartTime) {
 				m_TimeLeft = 5.0f;
 				m_GameOver = false;
@@ -77,6 +79,7 @@ public class Manager : MonoBehaviour
 		}
 	}
 
+	//Create the tank object and initialise its values
 	private void SpawnTank()
 	{
 		// For all the tanks...
@@ -87,6 +90,7 @@ public class Manager : MonoBehaviour
 			m_Tank.Setup();
 	}
 
+	//Give the camera controller a reference to the tanks position
 	private void SetCameraTarget()
 	{
 		// Create a collection of transforms the same size as the number of tanks.
