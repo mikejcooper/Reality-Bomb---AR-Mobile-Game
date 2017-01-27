@@ -32,7 +32,7 @@ public class Manager : MonoBehaviour
 			print ("Game Over!");
 			Destroy (m_Tank);
 		} else {						//If time has not yet expired
-			print (m_TimeLeft);
+			//print (m_TimeLeft);
 			//if active cube is entered
 			if (m_Cubes [m_ActiveCubeIndex].IsTriggered () == true) {	//If player has entered trigger zone
 				print ("cube " + m_ActiveCubeIndex + " entered\n");
