@@ -29,6 +29,7 @@ public class TankManager
         // Get references to the components.
         m_Movement = m_Instance.GetComponent<TankMovement> ();
 		m_Shooting_Short = m_Instance.GetComponent<TankShooting> ();
+		m_Shooting_Long = m_Instance.GetComponent<TankShooting> ();
 
         m_CanvasGameObject = m_Instance.GetComponentInChildren<Canvas> ().gameObject;
 

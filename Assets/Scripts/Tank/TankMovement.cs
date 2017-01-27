@@ -23,6 +23,7 @@ public class TankMovement : MonoBehaviour
     private void Awake ()
     {
         m_Rigidbody = GetComponent<Rigidbody> ();
+		m_Joystick = GameObject.Find("JoystickBack").gameObject.GetComponent<UIJoystick>();
     }
 
 

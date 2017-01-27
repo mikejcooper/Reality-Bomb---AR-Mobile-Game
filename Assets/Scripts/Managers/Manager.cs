@@ -5,7 +5,10 @@ using UnityEngine.UI;
 
 public class Manager : MonoBehaviour
 {
-	public GameObject m_Tank;		//Reference the to tank object
+	public GameObject m_TankPrefab;             // Reference to the prefab the players will control.
+	public TankManager m_Tank;		//Reference the to tank object
+	public CameraControl m_CameraControl;       // Reference to the CameraControl script for control during different phases.
+
 	public Collision[] m_Cubes;		//Reference to the trigger zones (Target Cubes)
 	public int m_ActiveCubeIndex;	//Index of the Currently Active Trigger
 	private float m_TimeLeft;		//Remaining time to get to Trigger Zone
@@ -15,6 +18,7 @@ public class Manager : MonoBehaviour
 	private bool m_GameOver;
 
 	private float m_StartTime;
+
 
 	void Awake() {
 		m_ActiveCubeIndex = 0;		//Initialises Cube0 as first trigger zone
@@ -30,6 +34,10 @@ public class Manager : MonoBehaviour
 
 	void Start() {
 		m_Cubes [m_ActiveCubeIndex].rend.enabled = true;	//Sets the visibility of the active cube to true
+		SpawnTank();
+		SetCameraTarget ();
+		// Snap the camera's zoom and position to something appropriate for the reset tanks.
+		m_CameraControl.SetStartPositionAndSize ();
 	}
 
 
@@ -67,6 +75,28 @@ public class Manager : MonoBehaviour
 				m_Score++;				//Increment user score
 			}
 		}
+	}
+
+	private void SpawnTank()
+	{
+		// For all the tanks...
+			// ... create them, set their player number and references needed for control.
+			m_Tank.m_Instance =
+				Instantiate(m_TankPrefab, m_Tank.m_SpawnPoint.position, m_Tank.m_SpawnPoint.rotation) as GameObject;
+			m_Tank.m_PlayerNumber = 0;
+			m_Tank.Setup();
+	}
+
+	private void SetCameraTarget()
+	{
+		// Create a collection of transforms the same size as the number of tanks.
+		Transform[] targets = new Transform[1];
+
+		// ... set it to the appropriate tank transform.
+		targets[0] = m_Tank.m_Instance.transform;
+
+		// These are the targets the camera should follow.
+		m_CameraControl.m_Targets = targets;
 	}
 }
 
