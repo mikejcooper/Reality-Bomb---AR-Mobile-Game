@@ -39,6 +39,7 @@ var openServer = function () {
     console.log("new connection")
     conn.sendText(`mesh${meshStr}`)
     conn.sendText(`markers${transformsStr}`)
+    conn.sendText(`triangles${triangleStr}`)
   }).listen(3110)
 
   console.log('server running')
