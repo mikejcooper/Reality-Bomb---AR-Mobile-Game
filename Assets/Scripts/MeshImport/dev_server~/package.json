@@ -1,0 +1,15 @@
+{
+  "name": "dev_server",
+  "version": "1.0.0",
+  "description": "Connects to a Unity game to send over data files.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rory Smith",
+  "license": "ISC",
+  "dependencies": {
+    "fs-promise": "^1.0.0",
+    "nodejs-websocket": "^1.7.1"
+  }
+}

@@ -106,6 +106,7 @@ public class ARMarker : MonoBehaviour
 	
     // If the marker is multi, it just has a config filename
     public string MultiConfigFile = "";
+	public string MultiConfigNonStreamingFile = "";
 	
 	// NFT markers have a dataset pathname (less the extension).
 	// Also, we need a list of the file extensions that make up an NFT dataset.
@@ -210,27 +211,31 @@ public class ARMarker : MonoBehaviour
 				cfg = "single_barcode;" + BarcodeID + ";" + PatternWidth*1000.0f;
 				break;
 			
-            case MarkerType.Multimarker:
-				#if !UNITY_METRO
-				if (dir.Contains("://")) {
+			case MarkerType.Multimarker:
+					#if !UNITY_METRO
+				if (dir.Contains ("://")) {
 					// On Android, we need to unpack the StreamingAssets from the .jar file in which
 					// they're archived into the native file system.
 					dir = Application.temporaryCachePath;
-					if (!unpackStreamingAssetToCacheDir(MultiConfigFile)) {
+					if (!unpackStreamingAssetToCacheDir (MultiConfigFile)) {
 						dir = "";
 					} else {
-					
+						
 						//string[] unpackFiles = getPatternFiles;
 						//foreach (string patternFile in patternFiles) {
 						//if (!unpackStreamingAssetToCacheDir(patternFile)) {
 						//    dir = "";
 						//    break;
 						//}
-				    }
+					}
 				}
-				#endif
-				
-				if (!string.IsNullOrEmpty(dir) && !string.IsNullOrEmpty(MultiConfigFile)) {
+					#endif
+					
+				if (MultiConfigNonStreamingFile.Length > 0) {
+					// ArToolKit doesn't expect files to be anywhere except for StreamingAssets
+					// we add the MultiConfigNonCacheFile field so we can specify its actual location
+					cfg = "multi;" + MultiConfigNonStreamingFile;
+				} else if (!string.IsNullOrEmpty(dir) && !string.IsNullOrEmpty(MultiConfigFile)) {
 					cfg = "multi;" + System.IO.Path.Combine(dir, MultiConfigFile);
 				}
                 break;
