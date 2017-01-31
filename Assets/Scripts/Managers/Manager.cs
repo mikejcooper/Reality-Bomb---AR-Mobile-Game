@@ -9,19 +9,18 @@ public class Manager : MonoBehaviour
 	public TankManager m_Tank;		//Reference the to tank object
 	public CameraControl m_CameraControl;       // Reference to the CameraControl script for control during different phases.
 
-	public Collision[] m_Cubes;		//Reference to the trigger zones (Target Cubes)
-	public int m_ActiveCubeIndex;	//Index of the Currently Active Trigger
+	public Collision m_Cube;		//Reference to the Cube in the scene
 	private float m_TimeLeft;		//Remaining time to get to Trigger Zone
 	private Text m_TimeLeftText;	//Text displaying the amount of time left
 	private int m_Score;			//Keeps count of the score
 	private Text m_ScoreText;		//Text displaying the current score
-	private bool m_GameOver;		//Used to check if the player has run out of time
+	private bool m_GameOver;		//Used to check if game is currently being played
 
 	private float m_StartTime;		//The time at which the game will be reset
 
 
-	void Awake() {
-		m_ActiveCubeIndex = 0;		//Initialises Cube0 as first trigger zone
+	void Awake() 
+	{
 		m_TimeLeft = 5.0f;			//Initialises time on clock to 5 secs
 		m_TimeLeftText = GameObject.Find("TimeLeftText").gameObject.GetComponent<Text>();  //Reference to Component which displays tiem remaining
 		m_TimeLeftText.text = "Time Left: " + string.Format("{0:N2}", m_TimeLeft); //Sets the time remaining text
@@ -32,8 +31,9 @@ public class Manager : MonoBehaviour
 		m_GameOver = false;			//Initially game such that we haven't run out of time
 	}
 
-	void Start() {
-		m_Cubes [m_ActiveCubeIndex].rend.enabled = true;	//Sets the visibility of the active cube to true
+	void Start() 
+	{
+		m_Cube.rend.enabled = true;	//Sets the visibility of the active cube to true
 		SpawnTank();
 		SetCameraTarget ();
 		// Snap the camera's zoom and position to something appropriate for the reset tanks.
@@ -42,13 +42,16 @@ public class Manager : MonoBehaviour
 
 
 	// This is called from start and will run each phase of the game one after another.
-	void Update() {
+	void Update() 
+	{
 		m_TimeLeft -= Time.deltaTime;	//Subtracts the elapsed time from the remaining time
 
-
-		if (m_TimeLeft < 0) {			//If time has expired call game over condition
-			//If we have just lost then set the reset the score and timeleft
-			if (m_GameOver == false) {
+		//If the player has run out of time
+		if (m_TimeLeft < 0) 
+		{	
+			//If we have just lost then set then reset the game and set GameOver to true
+			if (m_GameOver == false) 
+			{
 				m_GameOver = true;		
 				m_StartTime = Time.time + 3.0f;
 				m_TimeLeftText.text = "Time Left: " + string.Format ("{0:N2}", 5.0f);
@@ -57,29 +60,35 @@ public class Manager : MonoBehaviour
 				m_Tank.DisableControl();
 				m_Tank.Reset ();
 			}
-			//wait until the game restarts
-			if (Time.time > m_StartTime) {
+			//wait until the game restarts and then set Gameover to false begin playing again
+			if (Time.time > m_StartTime) 
+			{
 				m_TimeLeft = 5.0f;
 				m_GameOver = false;
 				m_Tank.EnableControl ();
 			}
-			//ResetMiniGame(); 			// Calls routine to reset the level.
-		} else {						//If time has not yet expired
-
+		} 
+		//If the player still has time left
+		else 
+		{			
 			m_TimeLeftText.text = "Time Left: " + string.Format("{0:N2}", m_TimeLeft); //Updates the remaining time
 			m_ScoreText.text = "Score: " + m_Score; //Updates the current user score
 
 			//if active cube is entered
-			if (m_Cubes [m_ActiveCubeIndex].IsTriggered () == true) {	//If player has entered trigger zone
-				print ("cube " + m_ActiveCubeIndex + " entered\n");
-				m_Cubes [m_ActiveCubeIndex].rend.enabled = false;		//Disable visibility of current trigger
+			if (m_Cube.IsTriggered () == true) 
+			{	//If player has entered trigger zone
 				//update active cube
-				m_ActiveCubeIndex = (m_ActiveCubeIndex + 1) % m_Cubes.Length;	//Active the next trigger zone
-				m_Cubes [m_ActiveCubeIndex].rend.enabled = true;		//Enable visibility of newly active trigger
+				UpdateCube();			//Move the cube to a new random position
 				m_TimeLeft += 5.0f;		//Increment time left by 5 secs
 				m_Score++;				//Increment user score
 			}
 		}
+	}
+
+	//Give the cube a new random position
+	private void UpdateCube() 
+	{
+		m_Cube.transform.position = new Vector3 (Random.Range (-20.0f,20.0f), 0, Random.Range(-20.0f,20.0f));
 	}
 
 	//Create the tank object and initialise its values
