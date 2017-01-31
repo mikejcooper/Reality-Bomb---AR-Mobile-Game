@@ -9,7 +9,7 @@ public class Manager : MonoBehaviour
 	public TankManager m_Tank;		//Reference the to tank object
 	public CameraControl m_CameraControl;       // Reference to the CameraControl script for control during different phases.
 
-	public Collision m_Cube;		//Reference to the Cube in the scene
+	public CubeManager m_Cube;		//Reference to the Cube in the scene
 	private float m_TimeLeft;		//Remaining time to get to Trigger Zone
 	private Text m_TimeLeftText;	//Text displaying the amount of time left
 	private int m_Score;			//Keeps count of the score
