@@ -18,6 +18,10 @@ if (process.argv.length != 2 && process.argv.length != 5) {
   meshFile = "example_data/debug_mesh.obj"
   triangleMeshFile = "example_data/debug_triangles_mesh.obj"
   transformsFile = "example_data/debug_transforms.dat"
+} else if (process.argv.length == 5) {
+  meshFile = process.argv[2];
+  triangleMeshFile = process.argv[3];
+  transformsFile = process.argv[4];
 }
 
 fsp.readFile(meshFile)
