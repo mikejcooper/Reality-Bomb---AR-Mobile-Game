@@ -54,11 +54,14 @@ public class Manager : MonoBehaviour
 				m_TimeLeftText.text = "Time Left: " + string.Format ("{0:N2}", 5.0f);
 				m_Score = 0;
 				m_ScoreText.text = "Score: " + m_Score; //Updates the current user score
+				m_Tank.DisableControl();
+				m_Tank.Reset ();
 			}
 			//wait until the game restarts
 			if (Time.time > m_StartTime) {
 				m_TimeLeft = 5.0f;
 				m_GameOver = false;
+				m_Tank.EnableControl ();
 			}
 			//ResetMiniGame(); 			// Calls routine to reset the level.
 		} else {						//If time has not yet expired
