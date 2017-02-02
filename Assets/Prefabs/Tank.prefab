@@ -724,7 +724,7 @@ MonoBehaviour:
   m_Script: {fileID: -1768714887, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TransformSyncMode: 3
+  m_TransformSyncMode: 1
   m_SendInterval: 0.1
   m_SyncRotationAxis: 2
   m_RotationSyncCompression: 0
@@ -825,7 +825,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1072149507112704}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 206d95621a8fd42e38b391c5f2045c49, type: 3}
+  m_Script: {fileID: 11500000, guid: f3231f371e461664b8ae8bcb4be0c4bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114690896492800344

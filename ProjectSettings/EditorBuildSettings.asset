@@ -13,9 +13,9 @@ EditorBuildSettings:
     path: Assets/Complete/Scenes/CompleteMainScene.unity
   - enabled: 0
     path: Assets/_Scenes/Main (Working).unity
-  - enabled: 1
+  - enabled: 0
     path: Assets/_Scenes/Main_AR_setup.unity
-  - enabled: 1
+  - enabled: 0
     path: Assets/_Scenes/Main_Warm_Up.unity
   - enabled: 1
     path: Assets/_Scenes/Mini_Game.unity
