@@ -4,6 +4,8 @@ using UnityEngine.Networking;
 
 public class TankMovement : NetworkBehaviour
 {
+	public bool isPlayingSolo = false; // temporary hack to allow tank prefab to be spawned and played without a network system
+
     public int m_PlayerNumber = 1;              // Used to identify which tank belongs to which player.  This is set by this tank's manager.
     public float m_Speed = 3f;                 // How fast the tank moves forward and back.
     public float m_TurnSpeed = 180f;            // How fast the tank turns in degrees per second.
@@ -61,8 +63,10 @@ public class TankMovement : NetworkBehaviour
 
     private void Update ()
     {
-        if (!isLocalPlayer)
-        {
+		// we should find a proper way to spawn tanks so we don't need to rely
+		// on isPlayingSolo
+        if (!isLocalPlayer && !isPlayingSolo)
+        { 
             return;
         }
 		// Store value of both input axes from joystick

@@ -6,10 +6,11 @@ public class ChangeParent : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        GameObject ms = GameObject.Find("Marker scene");
-
-        gameObject.transform.SetParent (ms.transform);
-		SetLayerRecursively (gameObject, ms.layer);
+		GameObject markerScene = GameObject.Find ("Marker scene");
+		if (markerScene != null) {
+			gameObject.transform.SetParent (markerScene.transform);
+			SetLayerRecursively (gameObject, 9);
+		}
 	}
 
 	void SetLayerRecursively(GameObject obj, int newLayer)
