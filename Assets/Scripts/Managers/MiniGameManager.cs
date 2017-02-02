@@ -37,50 +37,46 @@ public class MiniGameManager : MonoBehaviour
 		m_Tank.m_SpawnPoint = m_SpawnPoint.transform;
 		Debug.Log("starting");
 		SpawnTank();
-		SetCameraTarget ();
 	}
 
 
 	// This is called from start and will run each phase of the game one after another.
 	void Update() 
 	{
-		m_TimeLeft -= Time.deltaTime;	//Subtracts the elapsed time from the remaining time
+		if (m_Tank.m_Instance.activeSelf) {
+			m_TimeLeft -= Time.deltaTime;	//Subtracts the elapsed time from the remaining time
 
-		//If the player has run out of time
-		if (m_TimeLeft < 0) 
-		{	
-			//If we have just lost then set then reset the game and set GameOver to true
-			if (m_GameOver == false) 
-			{
-				m_GameOver = true;		
-				m_StartTime = Time.time + 3.0f;
-				m_TimeLeftText.text = "Time Left: " + string.Format ("{0:N2}", 5.0f);
-				m_Score = 0;
-				m_ScoreText.text = "Score: " + m_Score; //Updates the current user score
-				m_Tank.DisableControl();
-				m_Tank.Reset ();
-			}
-			//wait until the game restarts and then set Gameover to false begin playing again
-			if (Time.time > m_StartTime) 
-			{
-				m_TimeLeft = 5.0f;
-				m_GameOver = false;
-				m_Tank.EnableControl ();
-			}
-		} 
+			//If the player has run out of time
+			if (m_TimeLeft < 0) {	
+				//If we have just lost then set then reset the game and set GameOver to true
+				if (m_GameOver == false) {
+					m_GameOver = true;		
+					m_StartTime = Time.time + 3.0f;
+					m_TimeLeftText.text = "Time Left: " + string.Format ("{0:N2}", 5.0f);
+					m_Score = 0;
+					m_ScoreText.text = "Score: " + m_Score; //Updates the current user score
+					m_Tank.DisableControl ();
+					m_Tank.Reset ();
+				}
+				//wait until the game restarts and then set Gameover to false begin playing again
+				if (Time.time > m_StartTime) {
+					m_TimeLeft = 5.0f;
+					m_GameOver = false;
+					m_Tank.EnableControl ();
+				}
+			} 
 		//If the player still has time left
-		else 
-		{			
-			m_TimeLeftText.text = "Time Left: " + string.Format("{0:N2}", m_TimeLeft); //Updates the remaining time
-			m_ScoreText.text = "Score: " + m_Score; //Updates the current user score
+		else {			
+				m_TimeLeftText.text = "Time Left: " + string.Format ("{0:N2}", m_TimeLeft); //Updates the remaining time
+				m_ScoreText.text = "Score: " + m_Score; //Updates the current user score
 
-			//if active cube is entered
-			if (m_Cube.IsTriggered () == true) 
-			{	//If player has entered trigger zone
-				//update active cube
-				UpdateCube();			//Move the cube to a new random position
-				m_TimeLeft += 5.0f;		//Increment time left by 5 secs
-				m_Score++;				//Increment user score
+				//if active cube is entered
+				if (m_Cube.IsTriggered () == true) {	//If player has entered trigger zone
+					//update active cube
+					UpdateCube ();			//Move the cube to a new random position
+					m_TimeLeft += 5.0f;		//Increment time left by 5 secs
+					m_Score++;				//Increment user score
+				}
 			}
 		}
 	}
@@ -94,20 +90,14 @@ public class MiniGameManager : MonoBehaviour
 	//Create the tank object and initialise its values
 	private void SpawnTank()
 	{
-		// For all the tanks...
-			// ... create them, set their player number and references needed for control.
-
 	
 		m_Tank.m_Instance = Instantiate(m_TankPrefab, m_Tank.m_SpawnPoint.position, m_Tank.m_SpawnPoint.rotation) as GameObject;
 		m_Tank.m_PlayerNumber = 0;
 		m_Tank.m_Instance.GetComponent<TankMovement>().isPlayingSolo = true;
 		m_Tank.Setup();
 
-		Debug.Log ("spwaned");
-
-		// attach to Marker scene
-		GameObject root = GameObject.Find("Marker scene");
-		m_Tank.m_Instance.transform.parent = root.transform;
+		// attach to same object as spawn point
+		m_Tank.m_Instance.transform.parent = m_SpawnPoint.transform.parent.transform;
 
 		// set visibility based on whether or not the marker is currently visible
 		GameObject toolkit = GameObject.Find("ARToolKit");
@@ -116,15 +106,6 @@ public class MiniGameManager : MonoBehaviour
 
 	}
 
-	//Give the camera controller a reference to the tanks position
-	private void SetCameraTarget()
-	{
-		// Create a collection of transforms the same size as the number of tanks.
-		Transform[] targets = new Transform[1];
 
-		// ... set it to the appropriate tank transform.
-		targets[0] = m_Tank.m_Instance.transform;
-
-	}
 }
 
