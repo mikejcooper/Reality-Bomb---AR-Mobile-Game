@@ -3,11 +3,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Manager : MonoBehaviour
+public class MiniGameManager : MonoBehaviour
 {
+	public GameObject m_SpawnPoint;
 	public GameObject m_TankPrefab;             // Reference to the prefab the players will control.
 	public TankManager m_Tank;		//Reference the to tank object
-	public CameraControl m_CameraControl;       // Reference to the CameraControl script for control during different phases.
 
 	public CubeManager m_Cube;		//Reference to the Cube in the scene
 	private float m_TimeLeft;		//Remaining time to get to Trigger Zone
@@ -34,10 +34,10 @@ public class Manager : MonoBehaviour
 	void Start() 
 	{
 		m_Cube.rend.enabled = true;	//Sets the visibility of the active cube to true
+		m_Tank.m_SpawnPoint = m_SpawnPoint.transform;
+		Debug.Log("starting");
 		SpawnTank();
 		SetCameraTarget ();
-		// Snap the camera's zoom and position to something appropriate for the reset tanks.
-		m_CameraControl.SetStartPositionAndSize ();
 	}
 
 
@@ -96,10 +96,24 @@ public class Manager : MonoBehaviour
 	{
 		// For all the tanks...
 			// ... create them, set their player number and references needed for control.
-			m_Tank.m_Instance =
-				Instantiate(m_TankPrefab, m_Tank.m_SpawnPoint.position, m_Tank.m_SpawnPoint.rotation) as GameObject;
-			m_Tank.m_PlayerNumber = 0;
-			m_Tank.Setup();
+
+	
+		m_Tank.m_Instance = Instantiate(m_TankPrefab, m_Tank.m_SpawnPoint.position, m_Tank.m_SpawnPoint.rotation) as GameObject;
+		m_Tank.m_PlayerNumber = 0;
+		m_Tank.m_Instance.GetComponent<TankMovement>().isPlayingSolo = true;
+		m_Tank.Setup();
+
+		Debug.Log ("spwaned");
+
+		// attach to Marker scene
+		GameObject root = GameObject.Find("Marker scene");
+		m_Tank.m_Instance.transform.parent = root.transform;
+
+		// set visibility based on whether or not the marker is currently visible
+		GameObject toolkit = GameObject.Find("ARToolKit");
+		ARMarker marker = toolkit.GetComponent<ARMarker>();
+		m_Tank.m_Instance.SetActive(marker.Visible);
+
 	}
 
 	//Give the camera controller a reference to the tanks position
@@ -111,8 +125,6 @@ public class Manager : MonoBehaviour
 		// ... set it to the appropriate tank transform.
 		targets[0] = m_Tank.m_Instance.transform;
 
-		// These are the targets the camera should follow.
-		m_CameraControl.m_Targets = targets;
 	}
 }
 
