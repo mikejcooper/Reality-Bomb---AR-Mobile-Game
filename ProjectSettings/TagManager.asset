@@ -10,6 +10,7 @@ TagManager:
   - Floor
   - Glove
   - Target
+  - TankTag
   layers:
   - Default
   - TransparentFX

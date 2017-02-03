@@ -90,7 +90,7 @@ public class TankController : NetworkBehaviour
 
 	void OnCollisionEnter(Collision col)
 	{
-		if (col.gameObject.name == "Tank") {
+		if (col.gameObject.tag == "TankTag") {
 			print ("Hit Tank!");
 		}
 	}
