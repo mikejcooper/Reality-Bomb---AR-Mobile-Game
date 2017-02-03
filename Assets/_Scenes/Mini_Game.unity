@@ -358,7 +358,7 @@ GameObject:
   - component: {fileID: 614231946}
   - component: {fileID: 614231950}
   m_Layer: 9
-  m_Name: Camera
+  m_Name: ARCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1012,6 +1012,7 @@ GameObject:
   - component: {fileID: 1965431131}
   - component: {fileID: 1965431132}
   - component: {fileID: 1965431133}
+  - component: {fileID: 1965431134}
   m_Layer: 10
   m_Name: ARToolKit
   m_TagString: Untagged
@@ -1272,6 +1273,22 @@ MonoBehaviour:
   currentFilterSampleRate: 30
   currentFilterCutoffFreq: 19
   currentNFTScale: 1
+--- !u!114 &1965431134
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1965431130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73c899522f94a4893a4ac0aecc1e5c22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camera: {fileID: 614231944}
+  markerScene: {fileID: 188577963}
+  cameraYPosition: 400
+  cameraXRotation: 90
+  cameraYRotation: 0
 --- !u!1 &2044233668
 GameObject:
   m_ObjectHideFlags: 0

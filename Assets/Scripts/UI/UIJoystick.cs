@@ -8,6 +8,7 @@ public class UIJoystick : MonoBehaviour, IDragHandler, IPointerDownHandler, IPoi
 	private Image m_BackgroundImg;
 	private Image m_JoystickImg;
 	private Vector3 m_InputVector;
+	private bool m_IsPointerDown;
 
 	void Start () {
 		m_BackgroundImg = GetComponent<Image>();
@@ -37,13 +38,14 @@ public class UIJoystick : MonoBehaviour, IDragHandler, IPointerDownHandler, IPoi
 
 	public virtual void OnPointerDown(PointerEventData ped)
 	{
+		m_IsPointerDown = true;
 		OnDrag (ped);
 	}
 
 	// Set joystick to centre of background image on release
 	public virtual void OnPointerUp(PointerEventData ped)
 	{
-
+		m_IsPointerDown = false;
 		m_InputVector = Vector3.zero;
 		m_JoystickImg.rectTransform.anchoredPosition = Vector3.zero;
 	}
@@ -63,6 +65,11 @@ public class UIJoystick : MonoBehaviour, IDragHandler, IPointerDownHandler, IPoi
 			return m_InputVector.z;
 		else
 			return m_InputVector.z;
+	}
+
+	public bool IsDragging()
+	{
+		return m_IsPointerDown;
 	}
 }
 

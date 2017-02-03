@@ -3,6 +3,17 @@ using System.Collections;
 using WebSocketSharp;
 using System.IO;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using UnityThreading;
 
 public class DataTransferManager : MonoBehaviour {
 
@@ -25,7 +36,48 @@ public class DataTransferManager : MonoBehaviour {
 		var ugly = UnityThreadHelper.Dispatcher;
 
 
-		ws = new WebSocket ("ws://localhost:3110");
+		UnityThreading.ActionThread myThread = UnityThreadHelper.CreateThread (ListenForBroadcasts);
+
+	}
+
+	void ListenForBroadcasts()
+	{
+		int port = 3110;
+		var client = new UdpClient(port);
+
+
+		while (true) {
+			try
+			{
+				IPEndPoint anyIP = new IPEndPoint(IPAddress.Any, 0);
+				byte[] data = client.Receive(ref anyIP);
+
+				string text = Encoding.UTF8.GetString(data);
+
+				if (text == "RealityBomb") {
+					// we've found our server
+					connectWebsocket(anyIP.Address, port);
+				}
+
+			}
+			catch (Exception err)
+			{
+				print(err.ToString());
+			}
+				
+		}
+	}
+
+
+	void connectWebsocket (IPAddress address, int port) {
+
+		var url = "ws://" + address.ToString () + ":" + port.ToString ();
+
+		if (ws != null && ws.Url.Host == address.ToString()) {
+			Debug.Log ("existing ws: " + ws.Url.Host);
+			return;
+		}
+		ws = new WebSocket (url);
 
 		ws.OnMessage += (sender, e) => {
 			if (e.IsText) {
@@ -54,12 +106,9 @@ public class DataTransferManager : MonoBehaviour {
 			Invoke("connectWebsocket", 5);
 		};
 
-
-		connectWebsocket ();
-	}
-
-	void connectWebsocket () {
-		ws.Connect ();
+		UnityThreadHelper.Dispatcher.Dispatch (() => {
+			ws.Connect ();
+		});
 	}
 
 	void handleMesh (string data) {
@@ -88,9 +137,9 @@ public class DataTransferManager : MonoBehaviour {
 				meshRenderer.material = material;
 
 				// set visibility based on whether or not the marker is currently visible
-				GameObject toolkit = GameObject.Find("ARToolKit");
-				ARMarker marker = toolkit.GetComponent<ARMarker>();
-				worldMesh.SetActive(marker.Visible);
+//				GameObject toolkit = GameObject.Find("ARToolKit");
+//				ARMarker marker = toolkit.GetComponent<ARMarker>();
+//				worldMesh.SetActive(marker.Visible);
 
 				// assign to correct layer for ArToolKit
 				SetLayerRecursively(worldMesh, 9);
