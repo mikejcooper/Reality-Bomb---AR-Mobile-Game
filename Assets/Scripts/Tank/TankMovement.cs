@@ -11,7 +11,7 @@ public class TankMovement : NetworkBehaviour
     private UIJoystick m_Joystick;
     private Rigidbody m_Rigidbody;              // Reference used to move the tank.
 
-	private Quaternion lookAngle = Quaternion.identity;
+	private Quaternion lookAngle = Quaternion.Euler(Vector3.forward);
 
 
     private void Awake ()
@@ -66,14 +66,22 @@ public class TankMovement : NetworkBehaviour
 			lookAngle = Quaternion.FromToRotation (Vector3.forward, rotatedVector);
 			// think about combining z and y so that it moves away when close to 0 degrees
 			float combined = lookAngle.eulerAngles.y;
-			lookAngle = Quaternion.Euler(new Vector3(0, combined, 0));
+			Quaternion.Euler(new Vector3(0, lookAngle.eulerAngles.y, 0).normalized);
 		}
 
 		m_Rigidbody.rotation = lookAngle;
 
 		Vector3 movement = transform.forward * joystickVector.magnitude * m_Speed * Time.deltaTime;
 
-		m_Rigidbody.position += movement;
+
+		if (Mathf.Abs(movement.x) > 0.0f) {
+//			Debug.Log (string.Format("position: {0} movement: {1}", m_Rigidbody.position, movement));
+			m_Rigidbody.position += movement;
+
+		} else {
+//			m_Rigidbody.velocity = new Vector3(0,0,0);
+//			Debug.Log (string.Format("not updating position: {0} movement: {1}", m_Rigidbody.position, movement));
+		}
 
     }
 

@@ -37,6 +37,7 @@ public class DataTransferManager : MonoBehaviour {
 
 
 		UnityThreading.ActionThread myThread = UnityThreadHelper.CreateThread (ListenForBroadcasts);
+//		connectWebsocket("localhost", 3111);
 
 	}
 
@@ -56,7 +57,7 @@ public class DataTransferManager : MonoBehaviour {
 
 				if (text == "RealityBomb") {
 					// we've found our server
-					connectWebsocket(anyIP.Address, port);
+					connectWebsocket(anyIP.Address.ToString(), port+1);
 				}
 
 			}
@@ -69,11 +70,11 @@ public class DataTransferManager : MonoBehaviour {
 	}
 
 
-	void connectWebsocket (IPAddress address, int port) {
+	void connectWebsocket (string address, int port) {
 
-		var url = "ws://" + address.ToString () + ":" + port.ToString ();
+		var url = "ws://" + address + ":" + port.ToString ();
 
-		if (ws != null && ws.Url.Host == address.ToString()) {
+		if (ws != null && ws.Url.Host == address) {
 			Debug.Log ("existing ws: " + ws.Url.Host);
 			return;
 		}
@@ -90,7 +91,7 @@ public class DataTransferManager : MonoBehaviour {
 				} else if (e.Data.StartsWith("triangles")) {
 					handleTrianglesMesh(e.Data.Substring(9));
 				} else {
-					Debug.Log("unknwon websocket event");
+					Debug.Log("unknwon websocket event: "+e.Data);
 				}
 
 			}
@@ -126,7 +127,11 @@ public class DataTransferManager : MonoBehaviour {
 				GameObject worldMesh = new GameObject("world mesh");
 				MeshFilter filter = worldMesh.AddComponent<MeshFilter>();
 				filter.mesh = mesh;
+
 				worldMesh.AddComponent<MeshRenderer>();
+
+				MeshCollider collider = worldMesh.AddComponent<MeshCollider>();
+				collider.sharedMesh = mesh;
 
 				// attach to Marker scene
 				GameObject root = GameObject.Find("Marker scene");
@@ -149,7 +154,7 @@ public class DataTransferManager : MonoBehaviour {
 	}
 
 	void handleMarkers(string data) {
-		
+		Debug.Log ("received markers");
 		UnityThreadHelper.Dispatcher.Dispatch(() =>
 			{
 				// find the path we'll store the marker file under
@@ -197,6 +202,7 @@ public class DataTransferManager : MonoBehaviour {
 					cube.transform.position = transforms[i].transform.position;
 					cube.transform.rotation = transforms[i].transform.rotation;
 					cube.transform.localScale = new Vector3 (markerSizes[i],markerSizes[i],markerSizes[i]);
+					SetLayerRecursively(cube, 9);
 				}
 			});
 	}
