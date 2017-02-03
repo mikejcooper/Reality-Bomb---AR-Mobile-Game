@@ -18,6 +18,8 @@ public class TankController : NetworkBehaviour
 
 	private Quaternion lookAngle;
 
+	public bool hasBomb;
+
 
     private void Awake ()
     {
