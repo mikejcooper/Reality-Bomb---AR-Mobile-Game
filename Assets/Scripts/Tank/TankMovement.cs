@@ -149,4 +149,11 @@ public class TankMovement : NetworkBehaviour
         }
         
     }
+
+	void OnCollisionEnter(Collision col)
+	{
+		if (col.gameObject.name == "Tank") {
+			print ("Hit Tank!");
+		}
+	}
 }

@@ -9,6 +9,7 @@
 *.apk
 sysinfo.txt
 *.stackdump
+game_Data/
 
  
 # ============================================= #
