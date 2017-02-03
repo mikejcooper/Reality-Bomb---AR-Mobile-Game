@@ -110,7 +110,7 @@ public class TankMovement : NetworkBehaviour
     private void FixedUpdate ()
     {
         // Adjust the rigidbodies position and orientation in FixedUpdate.
-        if (!isLocalPlayer)
+		if (!isLocalPlayer && !isPlayingSolo)
             return;
         Move();
         Turn ();		
