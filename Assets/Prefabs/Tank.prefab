@@ -42,8 +42,6 @@ GameObject:
   - component: {fileID: 82263319766380962}
   - component: {fileID: 82275158157414244}
   - component: {fileID: 114690896492800344}
-  - component: {fileID: 114153794178100712}
-  - component: {fileID: 114337063170163676}
   - component: {fileID: 114115522974382278}
   - component: {fileID: 114300567772753998}
   - component: {fileID: 114679729912052536}
@@ -544,23 +542,6 @@ MonoBehaviour:
     i15: 139
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 1
---- !u!114 &114153794178100712
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1072149507112704}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8326b9dca06e5bc4885942c9371f51f1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_StartingHealth: 100
-  m_Slider: {fileID: 114877703992100538}
-  m_FillImage: {fileID: 114030497818867476}
-  m_FullHealthColor: {r: 0, g: 1, b: 0.006896496, a: 1}
-  m_ZeroHealthColor: {r: 1, g: 0, b: 0, a: 1}
-  m_ExplosionPrefab: {fileID: 151086, guid: ee49a9a8678ecf8468eb488e1ac8d42b, type: 2}
 --- !u!114 &114300567772753998
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -581,35 +562,6 @@ MonoBehaviour:
   m_SnapThreshold: 5
   m_InterpolateRotation: 10
   m_InterpolateMovement: 1
---- !u!114 &114337063170163676
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1072149507112704}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 06b38fa3f5188f6419ab17bc1669c18c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_PlayerNumber: 1
-  m_Shell: {fileID: 54000012877531902, guid: 4054defb4e22e96419d1e1e034d91c1b, type: 2}
-  m_Shell1: {fileID: 0}
-  m_FireTransform: {fileID: 0}
-  m_AimSlider: {fileID: 0}
-  m_ShootingAudio: {fileID: 82275158157414244}
-  m_ChargingClip: {fileID: 8300000, guid: c17f124fcdc0f5446a72f793898bd74b, type: 3}
-  m_FireClip: {fileID: 8300000, guid: 672a9941361ad494a99fba36759eca80, type: 3}
-  m_ShootingSettings:
-  - m_MinLaunchForce: 15
-    m_MaxLaunchForce: 30
-    m_MaxChargeTime: 0.75
-    m_ShellType: 0
-  - m_MinLaunchForce: 20
-    m_MaxLaunchForce: 50
-    m_MaxChargeTime: 2
-    m_ShellType: 0
-  m_TimeBetweenShots: 0.33
 --- !u!114 &114453086544645808
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -684,17 +636,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1072149507112704}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29af3199e11b72e47b41ff380db540fd, type: 3}
+  m_Script: {fileID: 11500000, guid: 4341a5b0539e54f34b69acf370c2f448, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isPlayingSolo: 0
   m_PlayerNumber: 1
   m_Speed: 30
   m_TurnSpeed: 180
-  m_MovementAudio: {fileID: 82263319766380962}
-  m_EngineIdling: {fileID: 8300000, guid: 4932ab25b84dd7649b80af68a9660ddc, type: 3}
-  m_EngineDriving: {fileID: 8300000, guid: d7ca9fb5aa30155449192b23d7fb3336, type: 3}
-  m_PitchRange: 0.2
 --- !u!114 &114703366247980272
 MonoBehaviour:
   m_ObjectHideFlags: 1
