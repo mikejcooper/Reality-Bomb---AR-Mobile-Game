@@ -18,9 +18,10 @@ public class TankMovement : NetworkBehaviour
     private string m_MovementAxisName;          // The name of the input axis for moving forward and back.
     private string m_TurnAxisName;              // The name of the input axis for turning.
     private Rigidbody m_Rigidbody;              // Reference used to move the tank.
-    private float m_MovementInputValue;         // The current value of the movement input.
-    private float m_TurnInputValue;             // The current value of the turn input.
+    private float m_MovementVert;         // The current value of the movement input.
+    private float m_MovementHoriz;             // The current value of the turn input.
     private float m_OriginalPitch;              // The pitch of the audio source at the start of the scene.
+    private Vector3 m_Direction;
 
 
     private void Awake ()
@@ -36,8 +37,8 @@ public class TankMovement : NetworkBehaviour
         m_Rigidbody.isKinematic = false;
 
         // Also reset the input values.
-        m_MovementInputValue = 0f;
-        m_TurnInputValue = 0f;
+        m_MovementVert = 0f;
+        m_MovementHoriz = 0f;
     }
 
 
@@ -68,10 +69,12 @@ public class TankMovement : NetworkBehaviour
         { 
             return;
         }
-        // Store value of both input axes from joystick
-        m_MovementInputValue  = m_Joystick.Vertical();
-		m_TurnInputValue = m_Joystick.Horizontal ();
+		// Store value of both input axes from joystick
+		m_MovementVert  = m_Joystick.Vertical();
+		m_MovementHoriz = m_Joystick.Horizontal();
 
+        m_Direction = new Vector3(m_MovementHoriz, 0, m_MovementVert);
+            
         EngineAudio ();
     }
 
@@ -79,7 +82,7 @@ public class TankMovement : NetworkBehaviour
     private void EngineAudio ()
     {
         // If there is no input (the tank is stationary)...
-        if (Mathf.Abs (m_MovementInputValue) < 0.1f && Mathf.Abs (m_TurnInputValue) < 0.1f)
+        if (Mathf.Abs (m_MovementVert) < 0.1f && Mathf.Abs (m_MovementHoriz) < 0.1f)
         {
             // ... and if the audio source is currently playing the driving clip...
             if (m_MovementAudio.clip == m_EngineDriving)
@@ -107,18 +110,19 @@ public class TankMovement : NetworkBehaviour
     private void FixedUpdate ()
     {
         // Adjust the rigidbodies position and orientation in FixedUpdate.
-		Turn ();
-	
-		Move ();
+		if (!isLocalPlayer && !isPlayingSolo)
+            return;
+        Move();
+        Turn ();		
     }
 
 
     private void Move ()
     {
-		// Get direction from the absolute joysitck input values. 
-		float direction = Mathf.Min(1,Mathf.Abs(m_MovementInputValue) + Mathf.Abs(m_TurnInputValue));
+        // Get direction from the absolute joysitck input values. 
+
 		// Create a vector in the direction the tank is facing with a magnitude based on the input, speed and the time between frames.
-		Vector3 movement = transform.forward * direction * m_Speed * Time.deltaTime;
+		Vector3 movement = m_Direction * m_Speed * Time.deltaTime;
 		// Apply this movement to the rigidbody's position.
 		m_Rigidbody.MovePosition(m_Rigidbody.position + movement);
     }
@@ -126,17 +130,23 @@ public class TankMovement : NetworkBehaviour
     private void Turn ()
     {
 
-		float Joystick_angle = Mathf.Atan2(m_TurnInputValue, m_MovementInputValue) * Mathf.Rad2Deg; 
-		float Camera_angle = 0;//Mathf.Atan2(Camera.main.transform.rotation.x, Camera.main.transform.rotation.y) * Mathf.Rad2Deg; 
-		// Maths not quite right here?? "Seems to work" when 2*Camera_angle
-		float Direction_angle = Joystick_angle + 2*Camera_angle;
+		//float Joystick_angle = Mathf.Atan2(m_MovementHoriz, m_MovementVert) * Mathf.Rad2Deg; 
+		//float Camera_angle = Mathf.Atan2(Camera.main.transform.rotation.x, Camera.main.transform.rotation.y) * Mathf.Rad2Deg;
+        // Maths not quite right here?? "Seems to work" when 2*Camera_angle
+        //float Direction_angle = Joystick_angle;// + 2*Camera_angle;
+        /*
 		if (Joystick_angle == 0) {
 			float Tank_angle = m_Rigidbody.transform.rotation.eulerAngles.y;
 			Direction_angle = Tank_angle;
 		}
+        */
 
         // Apply this rotation to the rigidbody's rotation.
-		m_Rigidbody.rotation = Quaternion.Euler(new Vector3(0f, Direction_angle, 0f));
-		m_Rigidbody.MoveRotation (m_Rigidbody.rotation);
+        if (m_Direction.sqrMagnitude > 0.1f)
+        {
+            m_Rigidbody.rotation = Quaternion.LookRotation(m_Direction);//Euler(new Vector3(0f, Direction_angle, 0f));
+            //m_Rigidbody.MoveRotation(m_Rigidbody.rotation);
+        }
+        
     }
 }

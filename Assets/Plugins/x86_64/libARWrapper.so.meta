@@ -14,7 +14,7 @@ PluginImporter:
       settings:
         CPU: ARMv7
     Any:
-      enabled: 1
+      enabled: 0
       settings:
         Exclude Android: 1
         Exclude Editor: 0
@@ -26,7 +26,6 @@ PluginImporter:
         Exclude OSXUniversal: 0
         Exclude Win: 0
         Exclude Win64: 0
-        Exclude iOS: 0
     Editor:
       enabled: 1
       settings:
@@ -66,7 +65,7 @@ PluginImporter:
       settings:
         CPU: AnyCPU
     iOS:
-      enabled: 1
+      enabled: 0
       settings:
         CompileFlags: 
         FrameworkDependencies: 
