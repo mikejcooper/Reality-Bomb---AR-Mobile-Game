@@ -357,8 +357,9 @@ GameObject:
   - component: {fileID: 614231947}
   - component: {fileID: 614231946}
   - component: {fileID: 614231950}
+  - component: {fileID: 614231951}
   m_Layer: 9
-  m_Name: Camera
+  m_Name: ARCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -451,6 +452,20 @@ MonoBehaviour:
   OpticalParamsFilename: 
   OpticalParamsFileContents: 
   OpticalEyeLateralOffsetRight: 0
+--- !u!114 &614231951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 614231944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73c899522f94a4893a4ac0aecc1e5c22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  yPosition: 400
+  xRotation: 90
+  yRotation: 0
 --- !u!4 &744587896 stripped
 Transform:
   m_PrefabParentObject: {fileID: 488946, guid: 1cd1bdb2203012a40ab12a0d2fd7aa88, type: 2}

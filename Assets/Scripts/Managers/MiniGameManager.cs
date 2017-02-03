@@ -43,7 +43,7 @@ public class MiniGameManager : MonoBehaviour
 	// This is called from start and will run each phase of the game one after another.
 	void Update() 
 	{
-		if (m_Tank.m_Instance.activeSelf) {
+		if (m_Tank.m_Instance.activeSelf && false) {
 			m_TimeLeft -= Time.deltaTime;	//Subtracts the elapsed time from the remaining time
 
 			//If the player has run out of time
@@ -100,9 +100,9 @@ public class MiniGameManager : MonoBehaviour
 		m_Tank.m_Instance.transform.parent = m_SpawnPoint.transform.parent.transform;
 
 		// set visibility based on whether or not the marker is currently visible
-		GameObject toolkit = GameObject.Find("ARToolKit");
-		ARMarker marker = toolkit.GetComponent<ARMarker>();
-		m_Tank.m_Instance.SetActive(marker.Visible);
+//		GameObject toolkit = GameObject.Find("ARToolKit");
+//		ARMarker marker = toolkit.GetComponent<ARMarker>();
+//		m_Tank.m_Instance.SetActive(marker.Visible);
 
 	}
 
