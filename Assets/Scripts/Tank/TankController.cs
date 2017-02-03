@@ -53,17 +53,19 @@ public class TankController : NetworkBehaviour
 
     private void Update ()
     {
-		// we should find a proper way to spawn tanks so we don't need to rely
-		// on isPlayingSolo
-        if (!isLocalPlayer && !isPlayingSolo)
-        { 
-            return;
-        }
+		
+        
 
     }
 
     private void FixedUpdate ()
     {
+		// we should find a proper way to spawn tanks so we don't need to rely
+		// on isPlayingSolo
+		if (!isLocalPlayer && !isPlayingSolo)
+		{ 
+			return;
+		}
 
 		Vector3 joystickVector = new Vector3 (m_Joystick.Horizontal (), m_Joystick.Vertical (), 0);
 		GameObject ARCamera = GameObject.Find ("ARCamera");

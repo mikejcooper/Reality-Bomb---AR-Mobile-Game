@@ -18,7 +18,7 @@ public class DevRunner : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Application.isEditor) {
+		if (Application.isEditor || !Application.isMobilePlatform) {
 			camera.transform.position = new Vector3 (camera.transform.position.x, cameraYPosition, camera.transform.position.z);
 			camera.transform.rotation = Quaternion.Euler (cameraXRotation, cameraYRotation, camera.transform.rotation.z);
 
