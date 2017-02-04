@@ -5,23 +5,13 @@ using UnityEngine.Networking;
 public class TankMovement : NetworkBehaviour
 {
 	public bool isPlayingSolo = false; // temporary hack to allow tank prefab to be spawned and played without a network system
-
     public int m_PlayerNumber = 1;              // Used to identify which tank belongs to which player.  This is set by this tank's manager.
     public float m_Speed = 3f;                 // How fast the tank moves forward and back.
-    public float m_TurnSpeed = 180f;            // How fast the tank turns in degrees per second.
-    public AudioSource m_MovementAudio;         // Reference to the audio source used to play engine sounds. NB: different to the shooting audio source.
-    public AudioClip m_EngineIdling;            // Audio to play when the tank isn't moving.
-    public AudioClip m_EngineDriving;           // Audio to play when the tank is moving.
-	public float m_PitchRange = 0.2f;           // The amount by which the pitch of the engine noises can vary.
 
     private UIJoystick m_Joystick;
-    private string m_MovementAxisName;          // The name of the input axis for moving forward and back.
-    private string m_TurnAxisName;              // The name of the input axis for turning.
     private Rigidbody m_Rigidbody;              // Reference used to move the tank.
-    private float m_OriginalPitch;              // The pitch of the audio source at the start of the scene.
-    private Vector3 m_Direction;
 
-	private Quaternion lookAngle;
+	private Quaternion lookAngle = Quaternion.identity;
 
 
     private void Awake ()
@@ -50,12 +40,6 @@ public class TankMovement : NetworkBehaviour
     private void Start ()
     {
         m_Joystick = GameObject.Find("JoystickBack").gameObject.GetComponent<UIJoystick>();
-        // The axes names are based on player number.
-        m_MovementAxisName = "Vertical" + m_PlayerNumber;
-        m_TurnAxisName = "Horizontal" + m_PlayerNumber;
-
-        // Store the original pitch of the audio source.
-        m_OriginalPitch = m_MovementAudio.pitch;
     }
 
 
@@ -82,7 +66,7 @@ public class TankMovement : NetworkBehaviour
 			lookAngle = Quaternion.FromToRotation (Vector3.forward, rotatedVector);
 			// think about combining z and y so that it moves away when close to 0 degrees
 			float combined = lookAngle.eulerAngles.y;
-			lookAngle.eulerAngles = new Vector3(0, combined, 0);
+			lookAngle = Quaternion.Euler(new Vector3(0, combined, 0));
 		}
 
 		m_Rigidbody.rotation = lookAngle;

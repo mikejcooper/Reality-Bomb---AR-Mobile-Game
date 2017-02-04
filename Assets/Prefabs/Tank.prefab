@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33496556911021244}
   - component: {fileID: 65060608183420864}
   - component: {fileID: 23494203027312048}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64,7 +64,7 @@ GameObject:
   - component: {fileID: 224873354427517872}
   - component: {fileID: 222479760812147260}
   - component: {fileID: 114030497818867476}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -82,7 +82,7 @@ GameObject:
   - component: {fileID: 33006607033442118}
   - component: {fileID: 65291061650427978}
   - component: {fileID: 23857201991495976}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224354140031545740}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -115,7 +115,7 @@ GameObject:
   - component: {fileID: 223219658983877858}
   - component: {fileID: 114703366247980272}
   - component: {fileID: 114525320214286566}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 224918883296746420}
   - component: {fileID: 222890825683847658}
   - component: {fileID: 114453086544645808}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 224833223206883276}
   - component: {fileID: 114877703992100538}
   - component: {fileID: 114466330272793330}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: HealthSlider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -690,11 +690,6 @@ MonoBehaviour:
   isPlayingSolo: 0
   m_PlayerNumber: 1
   m_Speed: 30
-  m_TurnSpeed: 180
-  m_MovementAudio: {fileID: 82263319766380962}
-  m_EngineIdling: {fileID: 8300000, guid: 4932ab25b84dd7649b80af68a9660ddc, type: 3}
-  m_EngineDriving: {fileID: 8300000, guid: d7ca9fb5aa30155449192b23d7fb3336, type: 3}
-  m_PitchRange: 0.2
 --- !u!114 &114703366247980272
 MonoBehaviour:
   m_ObjectHideFlags: 1

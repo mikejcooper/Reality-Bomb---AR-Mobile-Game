@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DevRunner : MonoBehaviour {
+public class MarkerlessRunner : MonoBehaviour {
 
 	public GameObject camera;
 	public GameObject markerScene;
