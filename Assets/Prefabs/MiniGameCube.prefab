@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 23697410715889042}
   - component: {fileID: 114392236858493698}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: MiniGameCube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
