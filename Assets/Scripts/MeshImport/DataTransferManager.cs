@@ -193,7 +193,7 @@ public class DataTransferManager : MonoBehaviour {
 		UnityThreadHelper.Dispatcher.Dispatch(() =>
 			{
 				ObjImporter objectImporter = new ObjImporter ();
-				Mesh mesh = FastObjImporter.Instance.ImportString(data);
+				Mesh mesh = MarkerFileParser.Instance.ImportString(data);
 				List<Transform> transforms = getTransformOfTriangles (mesh);
 				List<float> markerSizes = getMarkerSizes (mesh);
 				int numberOfMarkers = transforms.Count;

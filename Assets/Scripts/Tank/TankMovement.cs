@@ -66,9 +66,10 @@ public class TankMovement : NetworkBehaviour
 			lookAngle = Quaternion.FromToRotation (Vector3.forward, rotatedVector);
 			// think about combining z and y so that it moves away when close to 0 degrees
 			float combined = lookAngle.eulerAngles.y;
-			Quaternion.Euler(new Vector3(0, lookAngle.eulerAngles.y, 0).normalized);
+			lookAngle.eulerAngles = new Vector3(0, lookAngle.eulerAngles.y, 0);
 		}
 
+//		Debug.Log (string.Format ("angle: {0}", lookAngle.eulerAngles));
 		m_Rigidbody.rotation = lookAngle;
 
 		Vector3 movement = transform.forward * joystickVector.magnitude * m_Speed * Time.deltaTime;
@@ -80,7 +81,7 @@ public class TankMovement : NetworkBehaviour
 
 		} else {
 //			m_Rigidbody.velocity = new Vector3(0,0,0);
-//			Debug.Log (string.Format("not updating position: {0} movement: {1}", m_Rigidbody.position, movement));
+//			Debug.Log (string.Format("not updating position, vel: {0}", m_Rigidbody.velocity));
 		}
 
     }

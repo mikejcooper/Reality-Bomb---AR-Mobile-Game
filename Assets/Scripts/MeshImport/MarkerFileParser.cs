@@ -1,34 +1,25 @@
-﻿/* FastObjImporter.cs
- * by Marc Kusters (Nighteyes)
- * 
- * Used for loading .obj files exported by Blender
- * Example usage: Mesh myMesh = FastObjImporter.Instance.ImportFile("path_to_obj_file.obj");
- */
-
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-public sealed class FastObjImporter
+public sealed class MarkerFileParser
 {
 
 	#region singleton
 	// Singleton code
 	// Static can be called from anywhere without having to make an instance
-	private static FastObjImporter _instance;
+	private static MarkerFileParser _instance;
 
 	// If called check if there is an instance, otherwise create it
-	public static FastObjImporter Instance
+	public static MarkerFileParser Instance
 	{
-		get { return _instance ?? (_instance = new FastObjImporter()); }
+		get { return _instance ?? (_instance = new MarkerFileParser()); }
 	}
 	#endregion
 
 	private List<int> triangles;
 	private List<Vector3> vertices;
-	private List<Vector3> normals;
-	private List<int> intArray;
 
 	private const int MIN_POW_10 = -16;
 	private const int MAX_POW_10 = 16;
@@ -40,8 +31,6 @@ public sealed class FastObjImporter
 	{
 		triangles = new List<int>();
 		vertices = new List<Vector3>();
-		normals = new List<Vector3>();
-		intArray = new List<int>();
 
 		LoadMeshData(data);
 
@@ -49,7 +38,7 @@ public sealed class FastObjImporter
 
 		mesh.vertices = vertices.ToArray();
 		mesh.uv = new Vector2[0];
-		mesh.normals = normals.ToArray();
+		mesh.normals = new Vector3[0];
 		mesh.triangles = triangles.ToArray();
 
 		mesh.RecalculateBounds();
@@ -89,13 +78,6 @@ public sealed class FastObjImporter
 						j++;
 					}
 				}
-				else if (sb[0] == 'v' && sb[1] == 'n' && sb[2] == ' ') // Normals
-				{
-					int splitStart = 3;
-
-					normals.Add(new Vector3(GetFloat(sb, ref splitStart, ref sbFloat),
-						GetFloat(sb, ref splitStart, ref sbFloat), GetFloat(sb, ref splitStart, ref sbFloat)));
-				}
 				else if (sb[0] == 'v' && sb[1] == ' ') // Vertices
 				{
 					int splitStart = 2;
@@ -107,40 +89,13 @@ public sealed class FastObjImporter
 				{
 					int splitStart = 2;
 
-					int j = 1;
-					intArray.Clear();
-					int info = 0;
-					// Add faceData, a face can contain multiple triangles, facedata is stored in following order vert, uv, normal. If uv or normal are / set it to a 0
-					while (splitStart < sb.Length && char.IsDigit(sb[splitStart]))
-					{
-						Vector3Int item = new Vector3Int(GetInt(sb, ref splitStart, ref sbFloat),
-							GetInt(sb, ref splitStart, ref sbFloat), GetInt(sb, ref splitStart, ref sbFloat));
-						j++;
+					int p1 = GetInt (sb, ref splitStart, ref sbFloat);
+					int p2 = GetInt (sb, ref splitStart, ref sbFloat);
+					int p3 = GetInt (sb, ref splitStart, ref sbFloat);
 
-						intArray.Add(item.x);
-						faceDataCount++;
-					}
-
-					info += j;
-					j = 1;
-					while (j + 2 < info) //Create triangles out of the face data.  There will generally be more than 1 triangle per face.
-					{
-						triangles.Add(intArray[j+1]-1);
-						triangles.Add(intArray[j]-1);
-						triangles.Add(intArray[0]-1);
-
-						j++;
-					}
-					//
-					//          int splitStart = 2;
-					//
-					//          int p1 = GetInt (sb, ref splitStart, ref sbFloat);
-					//          int p2 = GetInt (sb, ref splitStart, ref sbFloat);
-					//          int p3 = GetInt (sb, ref splitStart, ref sbFloat);
-					//
-					//          triangles.Add (p3-1);
-					//          triangles.Add (p2-1);
-					//          triangles.Add (p1-1);
+					triangles.Add (p3-1);
+					triangles.Add (p2-1);
+					triangles.Add (p1-1);
 
 
 				}
@@ -162,7 +117,7 @@ public sealed class FastObjImporter
 
 			start++;
 		}
-		//    Debug.Log ("part: "+sbFloat);
+		//		Debug.Log ("part: "+sbFloat);
 		start++;
 		if (valid) {
 			return ParseFloat (sbFloat);
@@ -228,21 +183,5 @@ public sealed class FastObjImporter
 			result = 10 * result + (value[i] - 48);
 		}
 		return result;
-	}
-}
-
-public sealed class Vector3Int
-{
-	public int x { get; set; }
-	public int y { get; set; }
-	public int z { get; set; }
-
-	public Vector3Int(){}
-
-	public Vector3Int(int x, int y, int z)
-	{
-		this.x = x;
-		this.y = y;
-		this.z = z;
 	}
 }

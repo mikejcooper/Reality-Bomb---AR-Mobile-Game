@@ -114,24 +114,26 @@ class ARTrackedObjectGizmo
 
 	private static void DrawMultiMarker(ARMarker m, Matrix4x4 mat, bool selected) 
     {
-		for (int i = 0; i < m.Patterns.Length; i++) {
+		if (m != null && m.Patterns != null) {
+			for (int i = 0; i < m.Patterns.Length; i++) {
 
-			Matrix4x4 mat1 = mat * m.Patterns[i].matrix;
+				Matrix4x4 mat1 = mat * m.Patterns[i].matrix;
 
-            float pattWidth = m.Patterns[i].width;
+	            float pattWidth = m.Patterns[i].width;
 
-            //float d = selected ? 1.0f : 0.0f;
+	            //float d = selected ? 1.0f : 0.0f;
 
-			Vector3 origin = mat1.GetColumn(3);
-			Vector3 right = mat1.GetColumn(0);
-			Vector3 up = mat1.GetColumn(1);
+				Vector3 origin = mat1.GetColumn(3);
+				Vector3 right = mat1.GetColumn(0);
+				Vector3 up = mat1.GetColumn(1);
 
-			DrawRectangle(origin, up, right, pattWidth * 0.5f, pattWidth * 0.5f, selected ? MarkerBorderSelected : MarkerBorderUnselected); // Inside border.
-			DrawRectangle(origin, up, right, pattWidth, pattWidth, selected ? MarkerBorderSelected : MarkerBorderUnselected); // Edge.
-			DrawRectangle(origin, up, right, pattWidth * 1.05f, pattWidth * 1.05f, selected ? MarkerEdgeSelected : MarkerEdgeUnselected); // Highlighting.
+				DrawRectangle(origin, up, right, pattWidth * 0.5f, pattWidth * 0.5f, selected ? MarkerBorderSelected : MarkerBorderUnselected); // Inside border.
+				DrawRectangle(origin, up, right, pattWidth, pattWidth, selected ? MarkerBorderSelected : MarkerBorderUnselected); // Edge.
+				DrawRectangle(origin, up, right, pattWidth * 1.05f, pattWidth * 1.05f, selected ? MarkerEdgeSelected : MarkerEdgeUnselected); // Highlighting.
 
-			float wordUnitSize = pattWidth * 0.02f;
-			DrawWord(m.Tag + "(" + i + ")", wordUnitSize, origin - up * (pattWidth * 0.6f + (wordUnitSize * 4)) - right * (pattWidth * 0.525f), up, right * 0.5f);
+				float wordUnitSize = pattWidth * 0.02f;
+				DrawWord(m.Tag + "(" + i + ")", wordUnitSize, origin - up * (pattWidth * 0.6f + (wordUnitSize * 4)) - right * (pattWidth * 0.525f), up, right * 0.5f);
+			}
 		}
                
         //Gizmos.DrawGUITexture(new Rect(origin.x, origin.y, 20, 20), m.MarkerImage);
