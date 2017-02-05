@@ -16,7 +16,7 @@ public class TankController : NetworkBehaviour
     private Rigidbody m_Rigidbody;              // Reference used to move the tank.
     private Vector3 m_Direction;
 
-	private Quaternion lookAngle;
+	private Quaternion lookAngle = 	Quaternion.Euler(Vector3.forward);
 
 	public bool hasBomb;
 
