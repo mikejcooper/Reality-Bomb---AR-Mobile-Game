@@ -20,7 +20,7 @@ public class TankController : NetworkBehaviour
     [SyncVar]
     public bool hasBomb = false;
     private int disabled = 0;
-    private float transferTime = Time.time;
+    private float m_transferTime;
     [SyncVar]
     private float m_Lifetime;
     private Text m_LifetimeText;
@@ -32,6 +32,7 @@ public class TankController : NetworkBehaviour
 		m_Joystick = GameObject.Find("JoystickBack").gameObject.GetComponent<UIJoystick>();
         m_LifetimeText = GameObject.Find("TimeLeftText").gameObject.GetComponent<Text>();
         m_Lifetime = m_MaxLifetime;
+        m_transferTime = Time.time;
         if (isLocalPlayer)
             m_LifetimeText.text = "Time Left: " + string.Format("{0:N2}", m_Lifetime);
     }
@@ -138,9 +139,8 @@ public class TankController : NetworkBehaviour
 
     bool TransferBomb()
     {
-        if (hasBomb && Time.time > transferTime)
+        if (hasBomb && Time.time > m_transferTime)
         {
-            //transferTime = Time.time + 1.0f;
             hasBomb = false;
             ChangeColour(Color.blue);
             return true;
@@ -155,7 +155,7 @@ public class TankController : NetworkBehaviour
             {
                 hasBomb = true;
                 ChangeColour(Color.red);
-                transferTime = Time.time + 1.0f;
+                m_transferTime = Time.time + 1.0f;
             }            
         }
 	}
