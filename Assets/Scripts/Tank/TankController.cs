@@ -9,10 +9,9 @@ public class TankController : NetworkBehaviour
     public int m_PlayerNumber = 1;              // Used to identify which tank belongs to which player.  This is set by this tank's manager.
     public float m_Speed = 3f;                 // How fast the tank moves forward and back.
     public float m_TurnSpeed = 180f;            // How fast the tank turns in degrees per second.
+    public float m_MaxLifetime = 15.0f;
    
     private UIJoystick m_Joystick;
-    private string m_MovementAxisName;          // The name of the input axis for moving forward and back.
-    private string m_TurnAxisName;              // The name of the input axis for turning.
     private Rigidbody m_Rigidbody;              // Reference used to move the tank.
     private Vector3 m_Direction;
 
@@ -23,7 +22,7 @@ public class TankController : NetworkBehaviour
     private int disabled = 0;
     private float transferTime = Time.time;
     [SyncVar]
-    private float m_Lifetime = 30.0f;
+    private float m_Lifetime;
     private Text m_LifetimeText;
 
 
@@ -32,6 +31,7 @@ public class TankController : NetworkBehaviour
         m_Rigidbody = GetComponent<Rigidbody> ();
 		m_Joystick = GameObject.Find("JoystickBack").gameObject.GetComponent<UIJoystick>();
         m_LifetimeText = GameObject.Find("TimeLeftText").gameObject.GetComponent<Text>();
+        m_Lifetime = m_MaxLifetime;
         if (isLocalPlayer)
             m_LifetimeText.text = "Time Left: " + string.Format("{0:N2}", m_Lifetime);
     }
@@ -57,8 +57,6 @@ public class TankController : NetworkBehaviour
     {
         m_Joystick = GameObject.Find("JoystickBack").gameObject.GetComponent<UIJoystick>();
         // The axes names are based on player number.
-        m_MovementAxisName = "Vertical" + m_PlayerNumber;
-		m_TurnAxisName = "Horizontal" + m_PlayerNumber;
 
         //Set the colour
         if (hasBomb)
@@ -76,6 +74,8 @@ public class TankController : NetworkBehaviour
     {
         if (isLocalPlayer)
             m_LifetimeText.text = "Time Left: " + string.Format("{0:N2}", m_Lifetime);
+
+        //Everything after this is only executed on the server
         if (!isServer)
         {
             return;
@@ -86,9 +86,9 @@ public class TankController : NetworkBehaviour
         }
         if (m_Lifetime < 0.0f)
         {
-            ChangeColour(Color.black);
-            m_Rigidbody.isKinematic = true;
-            m_Lifetime = 0.0f;
+            m_Lifetime = m_MaxLifetime;
+
+            RpcRespawn();
         }
     }
 
@@ -159,5 +159,16 @@ public class TankController : NetworkBehaviour
             }            
         }
 	}
+
+    [ClientRpc]
+    void RpcRespawn()
+    {
+        if (isLocalPlayer)
+        {
+            Vector3 spawnPoint = Vector3.zero;
+
+            transform.position = spawnPoint;
+        }
+    }
 
 }
