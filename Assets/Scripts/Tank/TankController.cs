@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
-
+using UnityEngine.UI;
 
 public class TankController : NetworkBehaviour
 {
@@ -22,12 +22,18 @@ public class TankController : NetworkBehaviour
     public bool hasBomb = false;
     private int disabled = 0;
     private float transferTime = Time.time;
+    [SyncVar]
+    private float m_Lifetime = 30.0f;
+    private Text m_LifetimeText;
 
 
     private void Awake ()
     {
         m_Rigidbody = GetComponent<Rigidbody> ();
 		m_Joystick = GameObject.Find("JoystickBack").gameObject.GetComponent<UIJoystick>();
+        m_LifetimeText = GameObject.Find("TimeLeftText").gameObject.GetComponent<Text>();
+        if (isLocalPlayer)
+            m_LifetimeText.text = "Time Left: " + string.Format("{0:N2}", m_Lifetime);
     }
 
 
@@ -68,8 +74,22 @@ public class TankController : NetworkBehaviour
 
     private void Update ()
     {
-
-
+        if (isLocalPlayer)
+            m_LifetimeText.text = "Time Left: " + string.Format("{0:N2}", m_Lifetime);
+        if (!isServer)
+        {
+            return;
+        }
+        if (hasBomb && m_Lifetime > 0.0f)
+        {
+            m_Lifetime -= Time.deltaTime;
+        }
+        if (m_Lifetime < 0.0f)
+        {
+            ChangeColour(Color.black);
+            m_Rigidbody.isKinematic = true;
+            m_Lifetime = 0.0f;
+        }
     }
 
     private void ChangeColour(Color colour)
