@@ -18,7 +18,9 @@ public class TankController : NetworkBehaviour
 
 	private Quaternion lookAngle = 	Quaternion.Euler(Vector3.forward);
 
-	public bool hasBomb;
+    [SyncVar]
+    public bool hasBomb = false;
+    private int disabled = 0;
 
 
     private void Awake ()
@@ -55,16 +57,38 @@ public class TankController : NetworkBehaviour
 
     private void Update ()
     {
-		
-        
+        //TODO: This is very inefficient and needs to change.
+        if (hasBomb)
+        {
+            ChangeColour(Color.red);
+        }
+        else
+        {
+            ChangeColour(Color.blue);
+        }
+    }
 
+    private void ChangeColour(Color colour)
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach (Renderer r in renderers)
+        {
+            foreach (Material m in r.materials)
+            {
+                if (m.HasProperty("_Color"))
+                    m.color = colour;
+            }
+        }
     }
 
     private void FixedUpdate ()
     {
-		// we should find a proper way to spawn tanks so we don't need to rely
-		// on isPlayingSolo
-		if (!isLocalPlayer && !isPlayingSolo)
+        // we should find a proper way to spawn tanks so we don't need to rely
+        // on isPlayingSolo
+        if (disabled > 0)
+            disabled--;
+
+        if (!isLocalPlayer && !isPlayingSolo)
 		{ 
 			return;
 		}
@@ -72,7 +96,6 @@ public class TankController : NetworkBehaviour
 		Vector3 joystickVector = new Vector3 (m_Joystick.Horizontal (), m_Joystick.Vertical (), 0);
 		GameObject ARCamera = GameObject.Find ("ARCamera");
 		Vector3 rotatedVector = ARCamera.transform.rotation * joystickVector;
-
 
 		if (m_Joystick.IsDragging ()) {
 			lookAngle = Quaternion.FromToRotation (Vector3.forward, rotatedVector);
@@ -93,8 +116,15 @@ public class TankController : NetworkBehaviour
 	void OnCollisionEnter(Collision col)
 	{
 		if (col.gameObject.tag == "TankTag") {
-			print ("Hit Tank!");
-		}
+            if (col.gameObject.GetComponent<TankController>().hasBomb && disabled == 0)
+            {
+                col.gameObject.GetComponent<TankController>().hasBomb = false;
+                this.hasBomb = true;
+                this.disabled = 30;
+                col.gameObject.GetComponent<TankController>().disabled = 30;
+            }
+            
+        }
 	}
 
 }
