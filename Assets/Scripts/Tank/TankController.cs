@@ -21,6 +21,7 @@ public class TankController : NetworkBehaviour
     [SyncVar]
     public bool hasBomb = false;
     private int disabled = 0;
+    private float transferTime = Time.time;
 
 
     private void Awake ()
@@ -52,12 +53,8 @@ public class TankController : NetworkBehaviour
         // The axes names are based on player number.
         m_MovementAxisName = "Vertical" + m_PlayerNumber;
 		m_TurnAxisName = "Horizontal" + m_PlayerNumber;
-    }
 
-
-    private void Update ()
-    {
-        //TODO: This is very inefficient and needs to change.
+        //Set the colour
         if (hasBomb)
         {
             ChangeColour(Color.red);
@@ -66,6 +63,13 @@ public class TankController : NetworkBehaviour
         {
             ChangeColour(Color.blue);
         }
+    }
+
+
+    private void Update ()
+    {
+
+
     }
 
     private void ChangeColour(Color colour)
@@ -112,18 +116,27 @@ public class TankController : NetworkBehaviour
 
     }
 
+    bool TransferBomb()
+    {
+        if (hasBomb && Time.time > transferTime)
+        {
+            //transferTime = Time.time + 1.0f;
+            hasBomb = false;
+            ChangeColour(Color.blue);
+            return true;
+        }
+        return false;
+    }
 
 	void OnCollisionEnter(Collision col)
 	{
 		if (col.gameObject.tag == "TankTag") {
-            if (col.gameObject.GetComponent<TankController>().hasBomb && disabled == 0)
+            if (col.gameObject.GetComponent<TankController>().TransferBomb())
             {
-                col.gameObject.GetComponent<TankController>().hasBomb = false;
-                this.hasBomb = true;
-                this.disabled = 30;
-                col.gameObject.GetComponent<TankController>().disabled = 30;
-            }
-            
+                hasBomb = true;
+                ChangeColour(Color.red);
+                transferTime = Time.time + 1.0f;
+            }            
         }
 	}
 
