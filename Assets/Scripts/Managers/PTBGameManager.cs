@@ -17,23 +17,8 @@ public class PTBGameManager : NetworkManager {
 		
 	}
 
-//	[ClientRpc]
-//	public void spawnPlayer(GameObject mesh) {
-//		tankObject.transform = mesh.transform;
-//		tankObject.transform.position.y += mesh.GetComponent<MeshRenderer> ().bounds.size.y/2;
-//		// use the tank references to spawn to some location
-//
-//		// use center of mesh with random
-//
-//		// show
-//		tankObject.SetActive (true);
-//	}
-
 	public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
 	{
-//		var pos = GetStartPosition ();
-//		Debug.Log (pos);
-
 		tankObject = (GameObject)GameObject.Instantiate (playerPrefab, new Vector3(0,0,0), Quaternion.identity);
 		
 
@@ -44,9 +29,6 @@ public class PTBGameManager : NetworkManager {
 			tankObject.gameObject.GetComponent<TankController>().hasBomb = true;
         }
 		NetworkServer.AddPlayerForConnection(conn, tankObject, playerControllerId);
-
-		// hides the tank when its spawned
-		tankObject.SetActive (false);
 
 
     }

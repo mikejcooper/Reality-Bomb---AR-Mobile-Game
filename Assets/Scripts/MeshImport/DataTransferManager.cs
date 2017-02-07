@@ -34,18 +34,13 @@ public class DataTransferManager : NetworkBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		// Only the server executes past this point
-		if (!isServer) {
-			Debug.Log ("NOT SERVER");
-			return;
-		}
-		Debug.Log ("IS SERVER");
 		// singleton needs to be started here on Main thread
 		var ugly = UnityThreadHelper.Dispatcher;
 
-
-		UnityThreading.ActionThread myThread = UnityThreadHelper.CreateThread (ListenForBroadcasts);
-		// connectWebsocket("localhost", 3111);
+		if (isServer) {
+			UnityThreading.ActionThread myThread = UnityThreadHelper.CreateThread (ListenForBroadcasts);
+			// connectWebsocket("localhost", 3111);
+		}
 
 	}
 
@@ -132,7 +127,7 @@ public class DataTransferManager : NetworkBehaviour {
 				// choose the material - we can get round to using a custom invisible
 				// shader at some point here, but for development purposes it's nice
 				// to be able to see the mesh
-				Material material = Resources.Load("Materials/Blue", typeof(Material)) as Material;
+				Material material = Resources.Load("Materials/MeshDefault", typeof(Material)) as Material;
 
 				// convert the mesh object string into an actual Unity mesh
 				mesh = FastObjImporter.Instance.ImportString(data);
@@ -156,30 +151,42 @@ public class DataTransferManager : NetworkBehaviour {
 				MeshRenderer meshRenderer = worldMesh.GetComponent<MeshRenderer>();
 				meshRenderer.material = material;
 
-				NetworkIdentity networkIdentity = worldMesh.AddComponent<NetworkIdentity>();
-
-				// set visibility based on whether or not the marker is currently visible
-//				GameObject toolkit = GameObject.Find("ARToolKit");
-//				ARMarker marker = toolkit.GetComponent<ARMarker>();
-//				worldMesh.SetActive(marker.Visible);
-
 				// assign to correct layer for ArToolKit
 				SetLayerRecursively(worldMesh, 9);
 
+				// add network identity so that it's propagated
+				NetworkIdentity networkIdentity = worldMesh.AddComponent<NetworkIdentity>();
 
+				// propagate mesh across clients (TODO)
 
-				foreach (GameObject obj in GameObject.FindGameObjectsWithTag("TankTag")) {
-					if (obj.GetComponent<NetworkIdentity>().isLocalPlayer || obj.GetComponent<TankController>().isPlayingSolo) {
-						obj.transform.position = new Vector3(obj.transform.position.x, 100, obj.transform.position.z);
-					} else {
-						Debug.Log("NOT LOCAL");
-					}
-				}
-//				NetworkServer.Spawn(worldMesh);
-				//Spawns the tanks when mesh is ready
-//				spawnManager.spawnPlayer(worldMesh);
+				// spawn local tank with delay
+				Invoke("SpawnLocalPlayerTank", 2);
 
 			});
+	}
+
+	// moves the local player's tank to a valid random position on the mesh
+	void SpawnLocalPlayerTank() {
+		foreach (GameObject obj in GameObject.FindGameObjectsWithTag("TankTag")) {
+			if (obj.GetComponent<NetworkIdentity>().isLocalPlayer || obj.GetComponent<TankController>().isPlayingSolo) {
+				obj.GetComponent<Rigidbody> ().velocity = new Vector3 (0, 0, 0);
+				Bounds bounds = worldMesh.transform.GetComponent<MeshRenderer> ().bounds;
+				Vector3 center = bounds.center;
+				for (int i=0; i<30; i++) {
+					float x = UnityEngine.Random.Range (center.x - (bounds.size.x / 2), center.x + (bounds.size.x / 2));
+					float z = UnityEngine.Random.Range (center.x - (bounds.size.z / 2), center.z + (bounds.size.z / 2));
+
+					Vector3 position = new Vector3 (x, center.y+bounds.size.y, z);
+					RaycastHit hit;
+
+					if (Physics.Raycast(position, Vector3.down, out hit, bounds.size.y*2)) {
+						position.y = hit.point.y;
+						GameObject.Find ("GameManager").GetComponent<PassTheBombManager> ().SpawnTank (position);
+						break;
+					}
+				}
+			}
+		}
 	}
 
 	void handleMarkers(string data) {
@@ -230,8 +237,16 @@ public class DataTransferManager : NetworkBehaviour {
 					GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 					cube.transform.position = transforms[i].transform.position;
 					cube.transform.rotation = transforms[i].transform.rotation;
+
+					cube.transform.position = new Vector3(transforms[i].transform.position.x, transforms[i].transform.position.y-markerSizes[i]/2.5f, transforms[i].transform.position.z);
+
 					cube.transform.localScale = new Vector3 (markerSizes[i],markerSizes[i],markerSizes[i]);
+
+
+					cube.AddComponent<Obscurable>();
+//
 					SetLayerRecursively(cube, 9);
+
 				}
 			});
 	}

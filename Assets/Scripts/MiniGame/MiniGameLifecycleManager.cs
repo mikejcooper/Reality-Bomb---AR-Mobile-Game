@@ -34,7 +34,7 @@ public class MiniGameLifecycleManager : MonoBehaviour
 	void Start() 
 	{
 		m_Cube.rend.enabled = true;	//Sets the visibility of the active cube to true
-		m_Tank.m_SpawnPoint = m_SpawnPoint.transform;
+		m_Tank.m_SpawnPoint = m_SpawnPoint.transform.position;
 		Debug.Log("starting");
 		SpawnTank();
 	}
@@ -91,9 +91,9 @@ public class MiniGameLifecycleManager : MonoBehaviour
 	private void SpawnTank()
 	{
 	
-		m_Tank.m_Instance = Instantiate(m_TankPrefab, m_Tank.m_SpawnPoint.position, m_Tank.m_SpawnPoint.rotation) as GameObject;
+		m_Tank.m_Instance = Instantiate(m_TankPrefab, m_Tank.m_SpawnPoint, Quaternion.Euler(new Vector3(0,0,0))) as GameObject;
 		m_Tank.m_PlayerNumber = 0;
-		m_Tank.m_Instance.GetComponent<TankMovement>().isPlayingSolo = true;
+		m_Tank.m_Instance.GetComponent<TankController>().isPlayingSolo = true;
 		m_Tank.Setup();
 
 		// attach to same object as spawn point

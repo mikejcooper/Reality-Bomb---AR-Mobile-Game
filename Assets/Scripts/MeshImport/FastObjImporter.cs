@@ -93,8 +93,9 @@ public sealed class FastObjImporter
 				{
 					int splitStart = 3;
 
-					normals.Add(new Vector3(GetFloat(sb, ref splitStart, ref sbFloat),
-						GetFloat(sb, ref splitStart, ref sbFloat), GetFloat(sb, ref splitStart, ref sbFloat)));
+					Vector3 vec = new Vector3(GetFloat(sb, ref splitStart, ref sbFloat),
+						GetFloat(sb, ref splitStart, ref sbFloat), GetFloat(sb, ref splitStart, ref sbFloat));
+					normals.Add (new Vector3 (-vec.z, -vec.y, vec.x));
 				}
 				else if (sb[0] == 'v' && sb[1] == ' ') // Vertices
 				{

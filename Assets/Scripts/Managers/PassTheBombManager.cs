@@ -5,11 +5,9 @@ using UnityEngine.UI;
 
 public class PassTheBombManager : MonoBehaviour
 {
-	public GameObject m_SpawnPoint;
 	public GameObject m_TankPrefab;             // Reference to the prefab the players will control.
 	public TankManager m_Tank;		//Reference the to tank object
 
-	public CubeCollisionManager m_Cube;		//Reference to the Cube in the scene
 	private float m_TimeLeft;		//Remaining time to get to Trigger Zone
 	private Text m_TimeLeftText;	//Text displaying the amount of time left
 	private int m_Score;			//Keeps count of the score
@@ -21,6 +19,11 @@ public class PassTheBombManager : MonoBehaviour
 
 	void Awake() 
 	{
+		
+	}
+
+	void Start() 
+	{
 		m_TimeLeft = 5.0f;			//Initialises time on clock to 5 secs
 		m_TimeLeftText = GameObject.Find("TimeLeftText").gameObject.GetComponent<Text>();  //Reference to Component which displays tiem remaining
 		m_TimeLeftText.text = "Time Left: " + string.Format("{0:N2}", m_TimeLeft); //Sets the time remaining text
@@ -29,75 +32,73 @@ public class PassTheBombManager : MonoBehaviour
 		m_ScoreText.text = "Score: " + m_Score;	// Sets the Text for the user score
 		m_StartTime = Time.time;	//Get current time
 		m_GameOver = false;			//Initially game such that we haven't run out of time
-	}
 
-	void Start() 
-	{
-		m_Cube.rend.enabled = true;	//Sets the visibility of the active cube to true
-		m_Tank.m_SpawnPoint = m_SpawnPoint.transform;
-		Debug.Log("starting");
-		//SpawnTank();
 	}
 
 
 	// This is called from start and will run each phase of the game one after another.
 	void Update() 
 	{
-		if (m_Tank.m_Instance.activeSelf) {
-			m_TimeLeft -= Time.deltaTime;	//Subtracts the elapsed time from the remaining time
+		// disabled timing logic so that it's playable
 
-			//If the player has run out of time
-			if (m_TimeLeft < 0) {	
-				//If we have just lost then set then reset the game and set GameOver to true
-				if (m_GameOver == false) {
-					m_GameOver = true;		
-					m_StartTime = Time.time + 3.0f;
-					m_TimeLeftText.text = "Time Left: " + string.Format ("{0:N2}", 5.0f);
-					m_Score = 0;
-					m_ScoreText.text = "Score: " + m_Score; //Updates the current user score
-					m_Tank.DisableControl ();
-					m_Tank.Reset ();
-				}
-				//wait until the game restarts and then set Gameover to false begin playing again
-				if (Time.time > m_StartTime) {
-					m_TimeLeft = 5.0f;
-					m_GameOver = false;
-					m_Tank.EnableControl ();
-				}
-			} 
-		//If the player still has time left
-		else {			
-				m_TimeLeftText.text = "Time Left: " + string.Format ("{0:N2}", m_TimeLeft); //Updates the remaining time
-				m_ScoreText.text = "Score: " + m_Score; //Updates the current user score
-
-				//if active cube is entered
-				if (m_Cube.IsTriggered () == true) {	//If player has entered trigger zone
-					//update active cube
-					UpdateCube ();			//Move the cube to a new random position
-					m_TimeLeft += 5.0f;		//Increment time left by 5 secs
-					m_Score++;				//Increment user score
-				}
-			}
-		}
+//		if (m_Tank.m_Instance != null && m_Tank.m_Instance.activeSelf) {
+//			m_TimeLeft -= Time.deltaTime;	//Subtracts the elapsed time from the remaining time
+//
+//			//If the player has run out of time
+//			if (m_TimeLeft < 0) {	
+//				//If we have just lost then set then reset the game and set GameOver to true
+//				if (m_GameOver == false) {
+//					m_GameOver = true;		
+//					m_StartTime = Time.time + 3.0f;
+//
+//					if (m_TimeLeftText != null) {
+//						m_TimeLeftText.text = "Time Left: " + string.Format ("{0:N2}", 5.0f);
+//					}
+//
+//
+//					m_Score = 0;
+//					if (m_ScoreText != null) {
+//						m_ScoreText.text = "Score: " + m_Score; //Updates the current user score
+//					}
+//					m_Tank.DisableControl ();
+//					m_Tank.Reset ();
+//				}
+//				//wait until the game restarts and then set Gameover to false begin playing again
+//				if (Time.time > m_StartTime) {
+//					m_TimeLeft = 5.0f;
+//					m_GameOver = false;
+//					m_Tank.EnableControl ();
+//				}
+//			} 
+//		//If the player still has time left
+//		else {			
+//				Debug.Log (m_TimeLeftText);
+//
+//				m_TimeLeftText.text = "Time Left: " + string.Format ("{0:N2}", m_TimeLeft); //Updates the remaining time
+//
+//				if (m_ScoreText != null) {
+//					m_ScoreText.text = "Score: " + m_Score; //Updates the current user score
+//				}
+//
+//			
+//			}
+//		}
 	}
-
-	//Give the cube a new random position
-	private void UpdateCube() 
-	{
-		m_Cube.transform.position = new Vector3 (Random.Range (-20.0f,20.0f), 0, Random.Range(-20.0f,20.0f));
-	}
+		
 
 	//Create the tank object and initialise its values
-	private void SpawnTank()
+	public void SpawnTank(Vector3 spawnPosition)
 	{
 	
-		m_Tank.m_Instance = Instantiate(m_TankPrefab, m_Tank.m_SpawnPoint.position, m_Tank.m_SpawnPoint.rotation) as GameObject;
+		m_Tank.m_Instance = Instantiate(m_TankPrefab, spawnPosition, Quaternion.Euler(new Vector3(0,0,0))) as GameObject;
 		m_Tank.m_PlayerNumber = 0;
-		m_Tank.m_Instance.GetComponent<TankMovement>().isPlayingSolo = true;
+		m_Tank.m_Instance.GetComponent<TankController>().isPlayingSolo = true;
 		m_Tank.Setup();
 
+		m_Tank.m_SpawnPoint = spawnPosition;
+
 		// attach to same object as spawn point
-		m_Tank.m_Instance.transform.parent = m_SpawnPoint.transform.parent.transform;
+		m_Tank.m_Instance.transform.parent = GameObject.Find("Marker scene").transform;
 
 		// set visibility based on whether or not the marker is currently visible
 		GameObject toolkit = GameObject.Find("ARToolKit");

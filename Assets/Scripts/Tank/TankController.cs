@@ -29,12 +29,6 @@ public class TankController : NetworkBehaviour
     private void Awake ()
     {
         m_Rigidbody = GetComponent<Rigidbody> ();
-//		if (GameObject.Find("JoystickBack") != null) {
-//			m_Joystick = GameObject.Find("JoystickBack").gameObject.GetComponent<UIJoystick>();
-//		}
-//		if (GameObject.Find ("TimeLeftText") != null) {
-//			m_LifetimeText = GameObject.Find ("TimeLeftText").gameObject.GetComponent<Text> ();
-//		}
         m_Lifetime = m_MaxLifetime;
         m_transferTime = Time.time;
         if (isLocalPlayer)
