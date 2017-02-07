@@ -14,11 +14,14 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using UnityThreading;
+using UnityEngine.Networking;
 
-public class DataTransferManager : MonoBehaviour {
+public class DataTransferManager : NetworkBehaviour {
 
 	WebSocket ws;
 	Mesh mesh;
+
+	private GameObject worldMesh;
 
 
 	public static void SetLayerRecursively(GameObject go, int layerNumber)
@@ -31,43 +34,54 @@ public class DataTransferManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+		// Only the server executes past this point
+		if (!isServer) {
+			Debug.Log ("NOT SERVER");
+			return;
+		}
+		Debug.Log ("IS SERVER");
 		// singleton needs to be started here on Main thread
 		var ugly = UnityThreadHelper.Dispatcher;
 
 
 		UnityThreading.ActionThread myThread = UnityThreadHelper.CreateThread (ListenForBroadcasts);
-//		connectWebsocket("localhost", 3111);
+		// connectWebsocket("localhost", 3111);
 
 	}
 
 	void ListenForBroadcasts()
 	{
 		int port = 3110;
-		var client = new UdpClient(port);
 
+		try {
+			var client = new UdpClient (port);
 
-		while (true) {
-			try
-			{
-				IPEndPoint anyIP = new IPEndPoint(IPAddress.Any, 0);
-				byte[] data = client.Receive(ref anyIP);
+			while (true) {
+				try {
+					IPEndPoint anyIP = new IPEndPoint (IPAddress.Any, 0);
+					byte[] data = client.Receive (ref anyIP);
 
-				string text = Encoding.UTF8.GetString(data);
+					string text = Encoding.UTF8.GetString (data);
 
-				if (text == "RealityBomb") {
-					// we've found our server
-					connectWebsocket(anyIP.Address.ToString(), port+1);
+					if (text == "RealityBomb") {
+						// we've found our server
+						connectWebsocket (anyIP.Address.ToString (), port + 1);
+					}
+
+				} catch (Exception err) {
+					print (err.ToString ());
 				}
 
 			}
-			catch (Exception err)
-			{
-				print(err.ToString());
-			}
-				
+		
+
+		} catch (SocketException e) {
+			Debug.Log ("broadcast socket is already in use, assuming broadcast is coming from localhost");
+			connectWebsocket ("localhost", port + 1);
 		}
+
 	}
+
 
 
 	void connectWebsocket (string address, int port) {
@@ -118,13 +132,14 @@ public class DataTransferManager : MonoBehaviour {
 				// choose the material - we can get round to using a custom invisible
 				// shader at some point here, but for development purposes it's nice
 				// to be able to see the mesh
-				Material material = Resources.Load("Materials/MeshDefault", typeof(Material)) as Material;
+				Material material = Resources.Load("Materials/Blue", typeof(Material)) as Material;
 
 				// convert the mesh object string into an actual Unity mesh
 				mesh = FastObjImporter.Instance.ImportString(data);
 				mesh.RecalculateBounds();
 
-				GameObject worldMesh = new GameObject("world mesh");
+				worldMesh = new GameObject("world mesh");
+
 				MeshFilter filter = worldMesh.AddComponent<MeshFilter>();
 				filter.mesh = mesh;
 
@@ -141,6 +156,8 @@ public class DataTransferManager : MonoBehaviour {
 				MeshRenderer meshRenderer = worldMesh.GetComponent<MeshRenderer>();
 				meshRenderer.material = material;
 
+				NetworkIdentity networkIdentity = worldMesh.AddComponent<NetworkIdentity>();
+
 				// set visibility based on whether or not the marker is currently visible
 //				GameObject toolkit = GameObject.Find("ARToolKit");
 //				ARMarker marker = toolkit.GetComponent<ARMarker>();
@@ -149,6 +166,18 @@ public class DataTransferManager : MonoBehaviour {
 				// assign to correct layer for ArToolKit
 				SetLayerRecursively(worldMesh, 9);
 
+
+
+				foreach (GameObject obj in GameObject.FindGameObjectsWithTag("TankTag")) {
+					if (obj.GetComponent<NetworkIdentity>().isLocalPlayer || obj.GetComponent<TankController>().isPlayingSolo) {
+						obj.transform.position = new Vector3(obj.transform.position.x, 100, obj.transform.position.z);
+					} else {
+						Debug.Log("NOT LOCAL");
+					}
+				}
+//				NetworkServer.Spawn(worldMesh);
+				//Spawns the tanks when mesh is ready
+//				spawnManager.spawnPlayer(worldMesh);
 
 			});
 	}
@@ -244,5 +273,6 @@ public class DataTransferManager : MonoBehaviour {
 	void Update () {
 	
 	}
+
 }
 		

@@ -1,6 +1,12 @@
 var ws = require("nodejs-websocket")
 var fsp = require('fs-promise')
- 
+var dgram = require('dgram');
+var dgramClient = dgram.createSocket("udp4");
+var ip = require('ip');
+
+var UDP_BROADCAST_PORT = 3110;
+var TRANSFER_PORT = 3111;
+var UDP_PAYLOAD = "RealityBomb";
 var B_START = "\033[1m"
 var B_END = "\033[0m"
 
@@ -38,13 +44,28 @@ fsp.readFile(meshFile)
     openServer()
   }).catch(error => console.log(error))
 
+var sendBroadcast = function () {
+  console.log(`Broadcasting to ${ip.subnet(ip.address(), '255.255.255.0').broadcastAddress}`);
+  dgramClient.send(UDP_PAYLOAD, 0, UDP_PAYLOAD.length, UDP_BROADCAST_PORT, ip.subnet(ip.address(), '255.255.255.0').broadcastAddress);
+}
+
 var openServer = function () {
+
+  dgramClient.on('listening', function(){
+      dgramClient.setBroadcast(true);
+      sendBroadcast();
+      setInterval(sendBroadcast, 5000);
+      // dgramClient.close();
+  });
+
+  dgramClient.bind(UDP_BROADCAST_PORT);
+
   ws.createServer(function (conn) {
     console.log("new connection")
     conn.sendText(`mesh${meshStr}`)
     conn.sendText(`markers${transformsStr}`)
     conn.sendText(`triangles${triangleStr}`)
-  }).listen(3110)
+  }).listen(TRANSFER_PORT)
 
   console.log('server running')
 }

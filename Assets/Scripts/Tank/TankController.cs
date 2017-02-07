@@ -29,8 +29,12 @@ public class TankController : NetworkBehaviour
     private void Awake ()
     {
         m_Rigidbody = GetComponent<Rigidbody> ();
-		m_Joystick = GameObject.Find("JoystickBack").gameObject.GetComponent<UIJoystick>();
-        m_LifetimeText = GameObject.Find("TimeLeftText").gameObject.GetComponent<Text>();
+//		if (GameObject.Find("JoystickBack") != null) {
+//			m_Joystick = GameObject.Find("JoystickBack").gameObject.GetComponent<UIJoystick>();
+//		}
+//		if (GameObject.Find ("TimeLeftText") != null) {
+//			m_LifetimeText = GameObject.Find ("TimeLeftText").gameObject.GetComponent<Text> ();
+//		}
         m_Lifetime = m_MaxLifetime;
         m_transferTime = Time.time;
         if (isLocalPlayer)
@@ -56,7 +60,12 @@ public class TankController : NetworkBehaviour
 
     private void Start ()
     {
-        m_Joystick = GameObject.Find("JoystickBack").gameObject.GetComponent<UIJoystick>();
+		if (GameObject.Find("JoystickBack") != null) {
+			m_Joystick = GameObject.Find("JoystickBack").gameObject.GetComponent<UIJoystick>();
+		}
+		if (GameObject.Find ("TimeLeftText") != null) {
+			m_LifetimeText = GameObject.Find ("TimeLeftText").gameObject.GetComponent<Text> ();
+		}
         // The axes names are based on player number.
 
         //Set the colour
