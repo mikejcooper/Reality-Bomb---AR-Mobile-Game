@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4465934, g: 0.49642956, b: 0.5748249, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657868, g: 0.49641263, b: 0.57481706, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -281,21 +281,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 1818879296}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -859942077, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Script: {fileID: 11500000, guid: cd6a5ae90842eea418b06b6b8f3161db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_NetworkPort: 7777
   m_ServerBindToIP: 0
   m_ServerBindAddress: 
-  m_NetworkAddress: localhost
+  m_NetworkAddress: 6c6f63616c686f7374
   m_DontDestroyOnLoad: 1
   m_RunInBackground: 1
   m_ScriptCRCCheck: 1
   m_MaxDelay: 0.01
   m_LogLevel: 2
-  m_PlayerPrefab: {fileID: 0}
+  m_PlayerPrefab: {fileID: 1072149507112704, guid: 4d80ee73587c25345b17359d127e5a8b,
+    type: 2}
   m_AutoCreatePlayer: 1
-  m_PlayerSpawnMethod: 0
+  m_PlayerSpawnMethod: 1
   m_OfflineScene: Lobby
   m_OnlineScene: 
   m_SpawnPrefabs: []
@@ -335,22 +336,22 @@ MonoBehaviour:
   m_PacketLossPercentage: 0
   m_MaxBufferedPackets: 16
   m_AllowFragmentation: 1
-  m_MatchHost: mm.unet.unity3d.com
+  m_MatchHost: 6d6d2e756e65742e756e69747933642e636f6d
   m_MatchPort: 443
-  matchName: default
+  matchName: 64656661756c74
   matchSize: 4
   isNetworkActive: 0
   matchMaker: {fileID: 0}
   m_ShowLobbyGUI: 1
-  m_MaxPlayers: 2
+  m_MaxPlayers: 8
   m_MaxPlayersPerConnection: 1
-  m_MinPlayers: 0
+  m_MinPlayers: 2
   m_LobbyPlayerPrefab: {fileID: 114346451124435684, guid: 872aadcc45bbf274ea7e2a9999fb07af,
     type: 2}
   m_GamePlayerPrefab: {fileID: 1072149507112704, guid: 4d80ee73587c25345b17359d127e5a8b,
     type: 2}
   m_LobbyScene: Lobby
-  m_PlayScene: Mini_Game
+  m_PlayScene: Pass_The_Bomb
   lobbySlots: []
 --- !u!4 &1818879299
 Transform:
