@@ -9,7 +9,9 @@
   "author": "Rory Smith",
   "license": "ISC",
   "dependencies": {
+    "dgram": "^1.0.1",
     "fs-promise": "^1.0.0",
+    "ip": "^1.1.4",
     "nodejs-websocket": "^1.7.1"
   }
 }

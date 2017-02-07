@@ -44,30 +44,36 @@ public class DataTransferManager : MonoBehaviour {
 	void ListenForBroadcasts()
 	{
 		int port = 3110;
-		var client = new UdpClient(port);
 
+		try {
+			var client = new UdpClient (port);
 
-		while (true) {
-			try
-			{
-				IPEndPoint anyIP = new IPEndPoint(IPAddress.Any, 0);
-				byte[] data = client.Receive(ref anyIP);
+			while (true) {
+				try {
+					IPEndPoint anyIP = new IPEndPoint (IPAddress.Any, 0);
+					byte[] data = client.Receive (ref anyIP);
 
-				string text = Encoding.UTF8.GetString(data);
+					string text = Encoding.UTF8.GetString (data);
 
-				if (text == "RealityBomb") {
-					// we've found our server
-					connectWebsocket(anyIP.Address.ToString(), port+1);
+					if (text == "RealityBomb") {
+						// we've found our server
+						connectWebsocket (anyIP.Address.ToString (), port + 1);
+					}
+
+				} catch (Exception err) {
+					print (err.ToString ());
 				}
 
 			}
-			catch (Exception err)
-			{
-				print(err.ToString());
-			}
-				
+		
+
+		} catch (SocketException e) {
+			Debug.Log ("broadcast socket is already in use, assuming broadcast is coming from localhost");
+			connectWebsocket ("localhost", port + 1);
 		}
+
 	}
+
 
 
 	void connectWebsocket (string address, int port) {
