@@ -9,7 +9,7 @@ public class PassTheBombManager : MonoBehaviour
 	public GameObject m_TankPrefab;             // Reference to the prefab the players will control.
 	public TankManager m_Tank;		//Reference the to tank object
 
-	public CubeManager m_Cube;		//Reference to the Cube in the scene
+	public CubeCollisionManager m_Cube;		//Reference to the Cube in the scene
 	private float m_TimeLeft;		//Remaining time to get to Trigger Zone
 	private Text m_TimeLeftText;	//Text displaying the amount of time left
 	private int m_Score;			//Keeps count of the score

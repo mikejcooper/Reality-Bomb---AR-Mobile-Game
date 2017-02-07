@@ -27,6 +27,8 @@ public sealed class FastObjImporter
 
 	private List<int> triangles;
 	private List<Vector3> vertices;
+	private List<Vector3> normals;
+	private List<int> intArray;
 
 	private const int MIN_POW_10 = -16;
 	private const int MAX_POW_10 = 16;
@@ -38,28 +40,17 @@ public sealed class FastObjImporter
 	{
 		triangles = new List<int>();
 		vertices = new List<Vector3>();
+		normals = new List<Vector3>();
+		intArray = new List<int>();
 
 		LoadMeshData(data);
 
-		Vector3[] newVerts = new Vector3[vertices.Count];
-
-		int[] triArray = triangles.ToArray ();
-
-		Debug.Log (triArray.Length + " triangles");
-		Debug.Log (vertices.Count + " vertices");
-
-		for (int i = 0; i < vertices.Count; i++)
-		{
-			newVerts[i] = vertices[i];
-		}
-
-
 		Mesh mesh = new Mesh();
 
-		mesh.vertices = newVerts;
+		mesh.vertices = vertices.ToArray();
 		mesh.uv = new Vector2[0];
-		mesh.normals = new Vector3[0];
-		mesh.triangles = triArray;
+		mesh.normals = normals.ToArray();
+		mesh.triangles = triangles.ToArray();
 
 		mesh.RecalculateBounds();
 		;
@@ -98,6 +89,13 @@ public sealed class FastObjImporter
 						j++;
 					}
 				}
+				else if (sb[0] == 'v' && sb[1] == 'n' && sb[2] == ' ') // Normals
+				{
+					int splitStart = 3;
+
+					normals.Add(new Vector3(GetFloat(sb, ref splitStart, ref sbFloat),
+						GetFloat(sb, ref splitStart, ref sbFloat), GetFloat(sb, ref splitStart, ref sbFloat)));
+				}
 				else if (sb[0] == 'v' && sb[1] == ' ') // Vertices
 				{
 					int splitStart = 2;
@@ -109,13 +107,40 @@ public sealed class FastObjImporter
 				{
 					int splitStart = 2;
 
-					int p1 = GetInt (sb, ref splitStart, ref sbFloat);
-					int p2 = GetInt (sb, ref splitStart, ref sbFloat);
-					int p3 = GetInt (sb, ref splitStart, ref sbFloat);
+					int j = 1;
+					intArray.Clear();
+					int info = 0;
+					// Add faceData, a face can contain multiple triangles, facedata is stored in following order vert, uv, normal. If uv or normal are / set it to a 0
+					while (splitStart < sb.Length && char.IsDigit(sb[splitStart]))
+					{
+						Vector3Int item = new Vector3Int(GetInt(sb, ref splitStart, ref sbFloat),
+							GetInt(sb, ref splitStart, ref sbFloat), GetInt(sb, ref splitStart, ref sbFloat));
+						j++;
 
-					triangles.Add (p3-1);
-					triangles.Add (p2-1);
-					triangles.Add (p1-1);
+						intArray.Add(item.x);
+						faceDataCount++;
+					}
+
+					info += j;
+					j = 1;
+					while (j + 2 < info) //Create triangles out of the face data.  There will generally be more than 1 triangle per face.
+					{
+						triangles.Add(intArray[j+1]-1);
+						triangles.Add(intArray[j]-1);
+						triangles.Add(intArray[0]-1);
+
+						j++;
+					}
+					//
+					//          int splitStart = 2;
+					//
+					//          int p1 = GetInt (sb, ref splitStart, ref sbFloat);
+					//          int p2 = GetInt (sb, ref splitStart, ref sbFloat);
+					//          int p3 = GetInt (sb, ref splitStart, ref sbFloat);
+					//
+					//          triangles.Add (p3-1);
+					//          triangles.Add (p2-1);
+					//          triangles.Add (p1-1);
 
 
 				}
@@ -132,12 +157,12 @@ public sealed class FastObjImporter
 		{
 			if (sb [start] == 'e')
 				valid = false;
-			
+
 			sbFloat.Append(sb[start]);
 
 			start++;
 		}
-//		Debug.Log ("part: "+sbFloat);
+		//    Debug.Log ("part: "+sbFloat);
 		start++;
 		if (valid) {
 			return ParseFloat (sbFloat);

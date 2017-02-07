@@ -6,6 +6,10 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
+    path: Assets/_Scenes/Mesh_Test.unity
+  - enabled: 0
+    path: Assets/_Scenes/Test_Scene.unity
+  - enabled: 0
     path: Assets/_Scenes/Mini_Game.unity
   - enabled: 0
     path: Assets/_Scenes/Main.unity
