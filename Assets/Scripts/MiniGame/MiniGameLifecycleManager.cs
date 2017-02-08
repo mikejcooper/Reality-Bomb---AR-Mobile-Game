@@ -43,7 +43,7 @@ public class MiniGameLifecycleManager : MonoBehaviour
 	// This is called from start and will run each phase of the game one after another.
 	void Update() 
 	{
-		if (m_Tank.m_Instance.activeSelf && false) {
+		if (m_Tank.m_Instance.activeSelf) {
 			m_TimeLeft -= Time.deltaTime;	//Subtracts the elapsed time from the remaining time
 
 			//If the player has run out of time
@@ -84,7 +84,7 @@ public class MiniGameLifecycleManager : MonoBehaviour
 	//Give the cube a new random position
 	private void UpdateCube() 
 	{
-		m_Cube.transform.position = new Vector3 (Random.Range (-20.0f,20.0f), 0, Random.Range(-20.0f,20.0f));
+		m_Cube.transform.position = new Vector3 (Random.Range (-100.0f,100.0f), 6, Random.Range(-100.0f,100.0f));
 	}
 
 	//Create the tank object and initialise its values

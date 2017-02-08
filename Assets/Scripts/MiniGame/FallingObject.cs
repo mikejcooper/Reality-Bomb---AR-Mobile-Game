@@ -10,6 +10,8 @@ public class FallingObject : MonoBehaviour {
 	public float spinSpeed = 250.0f;
 	private string type; // will store the type of power up (boost, invinsible, invisible, etc)
 
+	private float speedup;
+
 	// Use this for initialization
 	void Start () {
 		rend = GetComponent<Renderer> ();
@@ -24,12 +26,32 @@ public class FallingObject : MonoBehaviour {
 
 	}
 
-	void OnTriggerEnter(Collider other) {	//When player enters trigger zone
+	void OnTriggerEnter(Collider player) {	//When player enters trigger zone
 		rend.enabled = false;
-		print ("sphere hit tank");
 
-		// switch statement based on the power up type to match relevant action of powerup
+
+		if (player.tag == "TankTag") {
+			ActivatePowerUp (player, "Speed");
+
+			//TODO finish powerup decactivation
+
+			//			StartCoroutine(DeactivatePowerUp (player, "Speed"));
+		}
 	}
 
+	void ActivatePowerUp(Collider player, string str){
+		if (str.Equals ("Speed")) {
+			print ("Speed boost activated!");
+			player.gameObject.GetComponent<TankController> ().m_Speed = 60;
+		}
+	}
+
+//	//Trying to deactive powerup after 5 secs
+//	IEnumerator DeactivatePowerUp(Collider player, string str){
+//		yield return WaitForSeconds (5.0f);
+//		if (str.Equals("Speed"))
+//			player.gameObject.GetComponent<TankController> ().m_Speed = 30;
+//		return;
+//	}
 }
 

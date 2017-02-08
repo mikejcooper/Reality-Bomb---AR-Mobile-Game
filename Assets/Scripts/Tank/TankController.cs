@@ -66,9 +66,7 @@ public class TankController : NetworkBehaviour
         if (hasBomb)
         {
             ChangeColour(Color.red);
-        }
-        else
-        {
+        }else{
             ChangeColour(Color.blue);
         }
     }
@@ -91,7 +89,6 @@ public class TankController : NetworkBehaviour
         if (m_Lifetime < 0.0f)
         {
             m_Lifetime = m_MaxLifetime;
-
             RpcRespawn();
         }
     }
@@ -173,5 +170,7 @@ public class TankController : NetworkBehaviour
             transform.position = spawnPoint;
         }
     }
+
+
 
 }
