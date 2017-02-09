@@ -37,10 +37,7 @@ public class DataTransferManager : NetworkBehaviour {
 		// singleton needs to be started here on Main thread
 		var ugly = UnityThreadHelper.Dispatcher;
 
-		if (isServer) {
-			UnityThreading.ActionThread myThread = UnityThreadHelper.CreateThread (ListenForBroadcasts);
-			// connectWebsocket("localhost", 3111);
-		}
+        UnityThreading.ActionThread myThread = UnityThreadHelper.CreateThread(ListenForBroadcasts);
 
 	}
 
@@ -155,39 +152,54 @@ public class DataTransferManager : NetworkBehaviour {
 				SetLayerRecursively(worldMesh, 9);
 
 				// add network identity so that it's propagated
-				NetworkIdentity networkIdentity = worldMesh.AddComponent<NetworkIdentity>();
+				//NetworkIdentity networkIdentity = worldMesh.AddComponent<NetworkIdentity>();
 
-				// propagate mesh across clients (TODO)
+                // propagate mesh across clients (TODO)
+                //NetworkServer.Spawn(worldMesh);
 
-				// spawn local tank with delay
-				Invoke("SpawnLocalPlayerTank", 2);
-
+                // spawn local tank with delay
+				Invoke("RepositionTanks", 2);
 			});
 	}
 
 	// moves the local player's tank to a valid random position on the mesh
-	void SpawnLocalPlayerTank() {
+	void RepositionTanks() {
+        if (!isServer)
+            return;
+
+        Bounds bounds = worldMesh.transform.GetComponent<MeshRenderer>().bounds;
+        Vector3 center = bounds.center;
+        Debug.Log("RepositionTanks");
 		foreach (GameObject obj in GameObject.FindGameObjectsWithTag("TankTag")) {
-			if (obj.GetComponent<NetworkIdentity>().isLocalPlayer || obj.GetComponent<TankController>().isPlayingSolo) {
-				obj.GetComponent<Rigidbody> ().velocity = new Vector3 (0, 0, 0);
-				Bounds bounds = worldMesh.transform.GetComponent<MeshRenderer> ().bounds;
-				Vector3 center = bounds.center;
-				for (int i=0; i<30; i++) {
-					float x = UnityEngine.Random.Range (center.x - (bounds.size.x / 2), center.x + (bounds.size.x / 2));
-					float z = UnityEngine.Random.Range (center.x - (bounds.size.z / 2), center.z + (bounds.size.z / 2));
+            Debug.Log("Found tank with TankTag");
+			//if (obj.GetComponent<NetworkIdentity>().isLocalPlayer || obj.GetComponent<TankController>().isPlayingSolo) {
+			obj.GetComponent<Rigidbody> ().velocity = Vector3.zero;
+			
+			for (int i=0; i<30; i++) {
+                Debug.Log("Trying random position " + i);
+				float x = UnityEngine.Random.Range (center.x - (bounds.size.x / 2), center.x + (bounds.size.x / 2));
+				float z = UnityEngine.Random.Range (center.x - (bounds.size.z / 2), center.z + (bounds.size.z / 2));
 
-					Vector3 position = new Vector3 (x, center.y+bounds.size.y, z);
-					RaycastHit hit;
+				Vector3 position = new Vector3 (x, center.y+bounds.size.y, z);
+				RaycastHit hit;
 
-					if (Physics.Raycast(position, Vector3.down, out hit, bounds.size.y*2)) {
-						position.y = hit.point.y;
-						GameObject.Find ("GameManager").GetComponent<PassTheBombManager> ().SpawnTank (position);
-						break;
-					}
+				if (Physics.Raycast(position, Vector3.down, out hit, bounds.size.y*2)) {
+					position.y = hit.point.y;
+                    obj.transform.position = position;
+					break;
 				}
 			}
+			
 		}
+
+        RpcEnableCameraLayer();
 	}
+
+    [ClientRpc]
+    void RpcEnableCameraLayer()
+    {
+        Camera.current.cullingMask |= 1 << LayerMask.NameToLayer("Players");
+    }
 
 	void handleMarkers(string data) {
 		Debug.Log ("received markers");

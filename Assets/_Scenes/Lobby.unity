@@ -287,7 +287,7 @@ MonoBehaviour:
   m_NetworkPort: 7777
   m_ServerBindToIP: 0
   m_ServerBindAddress: 
-  m_NetworkAddress: 6c6f63616c686f7374
+  m_NetworkAddress: localhost
   m_DontDestroyOnLoad: 1
   m_RunInBackground: 1
   m_ScriptCRCCheck: 1
@@ -345,7 +345,7 @@ MonoBehaviour:
   m_ShowLobbyGUI: 1
   m_MaxPlayers: 8
   m_MaxPlayersPerConnection: 1
-  m_MinPlayers: 2
+  m_MinPlayers: 1
   m_LobbyPlayerPrefab: {fileID: 114346451124435684, guid: 872aadcc45bbf274ea7e2a9999fb07af,
     type: 2}
   m_GamePlayerPrefab: {fileID: 1072149507112704, guid: 4d80ee73587c25345b17359d127e5a8b,
