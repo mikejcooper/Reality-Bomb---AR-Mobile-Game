@@ -37,10 +37,7 @@ public class DataTransferManager : NetworkBehaviour {
 		// singleton needs to be started here on Main thread
 		var ugly = UnityThreadHelper.Dispatcher;
 
-		if (isServer) {
-			UnityThreading.ActionThread myThread = UnityThreadHelper.CreateThread (ListenForBroadcasts);
-			// connectWebsocket("localhost", 3111);
-		}
+        UnityThreading.ActionThread myThread = UnityThreadHelper.CreateThread(ListenForBroadcasts);
 
 	}
 
@@ -155,9 +152,10 @@ public class DataTransferManager : NetworkBehaviour {
 				SetLayerRecursively(worldMesh, 9);
 
 				// add network identity so that it's propagated
-				NetworkIdentity networkIdentity = worldMesh.AddComponent<NetworkIdentity>();
+				//NetworkIdentity networkIdentity = worldMesh.AddComponent<NetworkIdentity>();
 
                 // propagate mesh across clients (TODO)
+                //NetworkServer.Spawn(worldMesh);
 
                 // spawn local tank with delay
 				Invoke("RepositionTanks", 2);
@@ -194,8 +192,14 @@ public class DataTransferManager : NetworkBehaviour {
 			
 		}
 
-        Camera.current.cullingMask |= 1 << LayerMask.NameToLayer("Players");
+        RpcEnableCameraLayer();
 	}
+
+    [ClientRpc]
+    void RpcEnableCameraLayer()
+    {
+        Camera.current.cullingMask |= 1 << LayerMask.NameToLayer("Players");
+    }
 
 	void handleMarkers(string data) {
 		Debug.Log ("received markers");
