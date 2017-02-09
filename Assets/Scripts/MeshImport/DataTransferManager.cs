@@ -187,15 +187,14 @@ public class DataTransferManager : NetworkBehaviour {
 
 				if (Physics.Raycast(position, Vector3.down, out hit, bounds.size.y*2)) {
 					position.y = hit.point.y;
-                    //GameObject.Find ("GameManager").GetComponent<PassTheBombManager> ().SpawnTank (position);
                     obj.transform.position = position;
-                    //obj.GetComponent<Renderer>().enabled = true;
-                    Debug.Log("Set visible");
 					break;
 				}
 			}
 			
 		}
+
+        Camera.current.cullingMask |= 1 << LayerMask.NameToLayer("Players");
 	}
 
 	void handleMarkers(string data) {
