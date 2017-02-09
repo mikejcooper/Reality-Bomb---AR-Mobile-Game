@@ -25,6 +25,9 @@ public class TankController : NetworkBehaviour
     private float m_Lifetime;
     private Text m_LifetimeText;
 
+	public float powerUpEndTime;
+	public bool powerUpActive;
+
 
     private void Awake ()
     {
@@ -33,6 +36,8 @@ public class TankController : NetworkBehaviour
         m_transferTime = Time.time;
         if (isLocalPlayer)
             m_LifetimeText.text = "Time Left: " + string.Format("{0:N2}", m_Lifetime);
+
+		powerUpActive = false;
     }
 
 
@@ -40,8 +45,6 @@ public class TankController : NetworkBehaviour
     {
         // When the tank is turned on, make sure it's not kinematic.
         m_Rigidbody.isKinematic = false;
-
-        // Also reset the input values.
     }
 
 
@@ -74,20 +77,23 @@ public class TankController : NetworkBehaviour
 
     private void Update ()
     {
-        if (isLocalPlayer)
-            m_LifetimeText.text = "Time Left: " + string.Format("{0:N2}", m_Lifetime);
+		if (isLocalPlayer  || isPlayingSolo) {
+
+			if (powerUpActive  && Time.time > powerUpEndTime) {
+				powerUpActive = false;
+				m_Speed = 30.0f;
+				print ("PowerUp Deactivated");
+			}
+		}
 
         //Everything after this is only executed on the server
-        if (!isServer)
-        {
+        if (!isServer){
             return;
         }
-        if (hasBomb && m_Lifetime > 0.0f)
-        {
+        if (hasBomb && m_Lifetime > 0.0f){
             m_Lifetime -= Time.deltaTime;
         }
-        if (m_Lifetime < 0.0f)
-        {
+        if (m_Lifetime < 0.0f){
             m_Lifetime = m_MaxLifetime;
             RpcRespawn();
         }

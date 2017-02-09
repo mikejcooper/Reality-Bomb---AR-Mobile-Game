@@ -16,7 +16,12 @@ public class MarkerlessRunner : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+		if (Application.isEditor || !Application.isMobilePlatform) {
+			markerScene.GetComponent<ARTrackedObject> ().enabled = false;
+			foreach (Transform child in markerScene.transform) {
+				child.gameObject.SetActive (true);
+			}
+		}
 	}
 	
 	// Update is called once per frame
@@ -25,10 +30,7 @@ public class MarkerlessRunner : MonoBehaviour {
 			camera.transform.position = new Vector3 (cameraXPosition, cameraYPosition, cameraZPosition);
 			camera.transform.rotation = Quaternion.Euler (cameraXRotation, cameraYRotation, cameraZRotation);
 
-			markerScene.GetComponent<ARTrackedObject> ().enabled = false;
-			foreach (Transform child in markerScene.transform) {
-				child.gameObject.SetActive (true);
-			}
+
 
 		}
 	}

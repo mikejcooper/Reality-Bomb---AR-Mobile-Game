@@ -14,44 +14,39 @@ public class FallingObject : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		rend = GetComponent<Renderer> ();
-		rend.enabled = true;
+		gameObject.SetActive (true);
 	}
 
 	void Update() {
-		if(transform.position.y > 7) {
-			transform.Translate (Vector3.down * fallSpeed * Time.deltaTime, Space.World);
+		if (gameObject.activeSelf) {
+			if (transform.position.y > 7) {
+				transform.Translate (Vector3.down * 10*fallSpeed * Time.deltaTime, Space.World);
+			}
+			transform.Rotate (Vector3.forward, spinSpeed * Time.deltaTime);
 		}
-		transform.Rotate(Vector3.forward, spinSpeed * Time.deltaTime);
-
 	}
 
 	void OnTriggerEnter(Collider player) {	//When player enters trigger zone
-		rend.enabled = false;
-
-
+		/******* below makes sphere invisible but it still exists in the scene ... needs to be deactivated altogether ********/
 		if (player.tag == "TankTag") {
 			ActivatePowerUp (player, "Speed");
-
-			//TODO finish powerup decactivation
-
-			//			StartCoroutine(DeactivatePowerUp (player, "Speed"));
 		}
+		Invoke ("Kill", 0.2f);
+	}
+
+	void Kill() {
+		gameObject.SetActive (false);
 	}
 
 	void ActivatePowerUp(Collider player, string str){
 		if (str.Equals ("Speed")) {
 			print ("Speed boost activated!");
-			player.gameObject.GetComponent<TankController> ().m_Speed = 60;
+			player.gameObject.GetComponent<TankController> ().m_Speed = 60.0f;
 		}
-	}
 
-//	//Trying to deactive powerup after 5 secs
-//	IEnumerator DeactivatePowerUp(Collider player, string str){
-//		yield return WaitForSeconds (5.0f);
-//		if (str.Equals("Speed"))
-//			player.gameObject.GetComponent<TankController> ().m_Speed = 30;
-//		return;
-//	}
+		player.gameObject.GetComponent<TankController> ().powerUpActive = true;
+		player.gameObject.GetComponent<TankController> ().powerUpEndTime = Time.time + 5.0f;
+	}
+		
 }
 
