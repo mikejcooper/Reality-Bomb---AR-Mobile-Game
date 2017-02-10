@@ -162,7 +162,9 @@ public class DataTransferManager : NetworkBehaviour {
 
                 // Reposition with delay.
                 //TODO: Change this to use events or a callback
-                Invoke("Reposition", 2);
+
+                //Invoke("Reposition", 2);
+                PTBGameManager.s_Instance.RepositionAllCars();
             });
     }
 

@@ -47,8 +47,8 @@ public class PTBGameManager : NetworkBehaviour {
 
     public void RepositionAllCars()
     {
-        if (!isServer)
-            return;
+        //if (!isServer)
+        //    return;
         for (int i = 0; i < m_Players.Count; i++)
         {
             m_Players[i].Reposition();
