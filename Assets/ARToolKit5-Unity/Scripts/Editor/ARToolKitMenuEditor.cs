@@ -52,11 +52,11 @@ public class ARToolKitMenuEditor : MonoBehaviour {
     private const  string SOURCE_URL            = "https://github.com/artoolkit/artoolkit5";
     private const  string PLUGIN_SOURCE_URL     = "https://github.com/artoolkit/arunity5";
 	private const  string TOOLS_URL             = "http://artoolkit.org/download-artoolkit-sdk#unity";
-    private const  string VERSION               = "ARToolKit/ARToolKit for Unity Version 5.3.2";
+    private const  string VERSION               = "ARToolKit/ARToolKit for Unity Version 5.3.2r3";
     private const  string WINDOWS_UNITY_MESSAGE = "Thank you for choosing ARToolKit for Unity! " +
             "<b>ARToolKit requires the Microsoft C++ Redistributables to be installed on your system.</b>\n" +
             "Please select \"{0}\" from the menu above, and install the required packages.";
-    private const  string GET_TOOLS_MESSAGE     = "ARToolKit for Unity Version 5.3.2! <b>To make your own markers, you'll need to download our tools.</b>\n" +
+    private const  string GET_TOOLS_MESSAGE     = "ARToolKit for Unity Version 5.3.2r3! <b>To make your own markers, you'll need to download our tools.</b>\n" +
 		"Please select {0} from menu above to download them.";
 
     static ARToolKitMenuEditor() {
