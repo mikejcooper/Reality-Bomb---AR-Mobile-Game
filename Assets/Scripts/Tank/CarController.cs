@@ -2,7 +2,7 @@
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-public class TankController : NetworkBehaviour
+public class CarController : NetworkBehaviour
 {
 	public bool isPlayingSolo = false; // temporary hack to allow tank prefab to be spawned and played without a network system
 
@@ -19,7 +19,7 @@ public class TankController : NetworkBehaviour
 
     [SyncVar]
     public bool hasBomb = false;
-    private int disabled = 0;
+    public bool alive = true;
     private float m_transferTime;
     [SyncVar]
     private float m_Lifetime;
@@ -34,9 +34,7 @@ public class TankController : NetworkBehaviour
         m_Rigidbody = GetComponent<Rigidbody> ();
         m_Lifetime = m_MaxLifetime;
         m_transferTime = Time.time;
-        if (isLocalPlayer)
-            m_LifetimeText.text = "Time Left: " + string.Format("{0:N2}", m_Lifetime);
-
+        
 		powerUpActive = false;
     }
 
@@ -78,8 +76,9 @@ public class TankController : NetworkBehaviour
     private void Update ()
     {
 		if (isLocalPlayer  || isPlayingSolo) {
+            m_LifetimeText.text = "Time Left: " + string.Format("{0:N2}", m_Lifetime);
 
-			if (powerUpActive  && Time.time > powerUpEndTime) {
+            if (powerUpActive  && Time.time > powerUpEndTime) {
 				powerUpActive = false;
 				m_Speed = 30.0f;
 				print ("PowerUp Deactivated");
@@ -94,8 +93,8 @@ public class TankController : NetworkBehaviour
             m_Lifetime -= Time.deltaTime;
         }
         if (m_Lifetime < 0.0f){
-            m_Lifetime = m_MaxLifetime;
-            RpcRespawn();
+            m_Lifetime = 0.0f;
+            alive = false;
         }
     }
 
@@ -116,8 +115,6 @@ public class TankController : NetworkBehaviour
     {
         // we should find a proper way to spawn tanks so we don't need to rely
         // on isPlayingSolo
-        if (disabled > 0)
-            disabled--;
 
         if (!isLocalPlayer && !isPlayingSolo)
 		{ 
@@ -157,7 +154,7 @@ public class TankController : NetworkBehaviour
 	void OnCollisionEnter(Collision col)
 	{
 		if (col.gameObject.tag == "TankTag") {
-            if (col.gameObject.GetComponent<TankController>().TransferBomb())
+            if (col.gameObject.GetComponent<CarController>().TransferBomb())
             {
                 hasBomb = true;
                 ChangeColour(Color.red);
@@ -166,17 +163,31 @@ public class TankController : NetworkBehaviour
         }
 	}
 
-    [ClientRpc]
-    void RpcRespawn()
+    public void Reposition()
     {
-        if (isLocalPlayer)
-        {
-            Vector3 spawnPoint = Vector3.zero;
+        if (!isLocalPlayer)
+            return;
 
-            transform.position = spawnPoint;
+        Bounds bounds = DataTransferManager.s_WorldMesh.transform.GetComponent<MeshRenderer>().bounds;
+        Vector3 center = bounds.center;
+       
+        GetComponent<Rigidbody>().velocity = Vector3.zero;
+
+        for (int i = 0; i < 30; i++)
+        {
+            Debug.Log("Trying random position " + i);
+            float x = UnityEngine.Random.Range(center.x - (bounds.size.x / 2), center.x + (bounds.size.x / 2));
+            float z = UnityEngine.Random.Range(center.x - (bounds.size.z / 2), center.z + (bounds.size.z / 2));
+
+            Vector3 position = new Vector3(x, center.y + bounds.size.y, z);
+            RaycastHit hit;
+
+            if (Physics.Raycast(position, Vector3.down, out hit, bounds.size.y * 2))
+            {
+                position.y = hit.point.y;
+                transform.position = position;
+                break;
+            }
         }
     }
-
-
-
 }

@@ -41,11 +41,11 @@ public class FallingObject : MonoBehaviour {
 	void ActivatePowerUp(Collider player, string str){
 		if (str.Equals ("Speed")) {
 			print ("Speed boost activated!");
-			player.gameObject.GetComponent<TankController> ().m_Speed = 60.0f;
+			player.gameObject.GetComponent<CarController> ().m_Speed = 60.0f;
 		}
 
-		player.gameObject.GetComponent<TankController> ().powerUpActive = true;
-		player.gameObject.GetComponent<TankController> ().powerUpEndTime = Time.time + 5.0f;
+		player.gameObject.GetComponent<CarController> ().powerUpActive = true;
+		player.gameObject.GetComponent<CarController> ().powerUpEndTime = Time.time + 5.0f;
 	}
 		
 }

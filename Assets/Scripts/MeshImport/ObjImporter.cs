@@ -56,12 +56,14 @@ public class ObjImporter {
 		mesh.normals = newNormals;
 		mesh.triangles = newMesh.triangles;
 
+        /*
 		for (int j = 0; j < mesh.triangles.Length; j += 3)
 		{
 			Vector3 p1 = mesh.vertices[mesh.triangles[j + 0]];
 			Vector3 p2 = mesh.vertices[mesh.triangles[j + 1]];
 			Vector3 p3 = mesh.vertices[mesh.triangles[j + 2]];
 		}
+        */
 
 		mesh.RecalculateBounds();
 //		mesh.Optimize();

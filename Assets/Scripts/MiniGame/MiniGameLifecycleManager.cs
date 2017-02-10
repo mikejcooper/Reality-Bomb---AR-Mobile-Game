@@ -93,7 +93,7 @@ public class MiniGameLifecycleManager : MonoBehaviour
 	
 		m_Tank.m_Instance = Instantiate(m_TankPrefab, m_Tank.m_SpawnPoint, Quaternion.Euler(new Vector3(0,0,0))) as GameObject;
 		m_Tank.m_PlayerNumber = 0;
-		m_Tank.m_Instance.GetComponent<TankController>().isPlayingSolo = true;
+		m_Tank.m_Instance.GetComponent<CarController>().isPlayingSolo = true;
 		m_Tank.Setup();
 
 		// attach to same object as spawn point

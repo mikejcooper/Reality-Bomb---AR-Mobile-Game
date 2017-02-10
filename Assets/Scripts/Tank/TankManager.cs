@@ -18,14 +18,14 @@ public class TankManager
     [HideInInspector] public int m_Wins;                    // The number of wins this player has so far.
     
 
-	private TankController m_Movement;                        // Reference to tank's movement script, used to disable and enable control.
+	private CarController m_Movement;                        // Reference to tank's movement script, used to disable and enable control.
     private GameObject m_CanvasGameObject;                  // Used to disable the world space UI during the Starting and Ending phases of each round.
 
 
     public void Setup ()
     {
         // Get references to the components.
-		m_Movement = m_Instance.GetComponent<TankController> ();
+		m_Movement = m_Instance.GetComponent<CarController> ();
 	
         m_CanvasGameObject = m_Instance.GetComponentInChildren<Canvas> ().gameObject;
 

@@ -54,7 +54,6 @@ public sealed class MarkerFileParser
 		string text = data;
 		int start = 0;
 		string objectName = null;
-		int faceDataCount = 0;
 
 		StringBuilder sbFloat = new StringBuilder();
 
