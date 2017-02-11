@@ -8,10 +8,13 @@ using UnityEngine.SceneManagement;
 public class ClientSceneManager : MonoBehaviour
 {
 
+	public GameObject capsulePrefab;
+
 	private DiscoveryClient discoveryClient;
 	private CommunicationClient communicationClient;
 
 	private Process innerProcess;
+	private string CurrentScene = "Idle";
 
 	void Start ()
 	{
@@ -24,8 +27,18 @@ public class ClientSceneManager : MonoBehaviour
 		// register listeners for when players connect / disconnect
 		communicationClient.serverConnectedEvent += new CommunicationClient.ServerConnectedCallback (onUserConnectedToGame);
 		communicationClient.serverDisconnectedEvent += new CommunicationClient.ServerDisconnectedCallback(onUserLeaveGame);
+		communicationClient.changeSceneEvent += new CommunicationClient.ChangeSceneCallback (onServerRequestSceneChange);
 
 		discoveryClient.serverDiscoveryEvent += new DiscoveryClient.ServerDiscoveredCallback(onServerDiscovered);
+
+		SceneManager.sceneLoaded += new UnityEngine.Events.UnityAction<Scene, LoadSceneMode> (OnSceneLoaded);
+	}
+
+	private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+		if (scene.name == "Game") {
+			// notify server we've loaded
+			communicationClient.NotifySceneLoaded(scene.name, capsulePrefab);
+		}
 	}
 
 	public void onUserJoinGame () {
@@ -83,6 +96,17 @@ public class ClientSceneManager : MonoBehaviour
 		ensureCorrectScene ();
 	}
 
+	private void onServerRequestSceneChange (string sceneName) {
+		switch (sceneName) {
+		case "Game":
+			onServerGameReady ();
+			break;
+		default:
+			Debug.Log (string.Format ("unknown server scene request: {0}", sceneName));
+			break;
+		}
+	}
+
 
 	private void ensureCorrectScene ()
 	{
@@ -90,16 +114,28 @@ public class ClientSceneManager : MonoBehaviour
 		case ProcessState.Idle:
 		case ProcessState.Searching:
 		case ProcessState.Connecting:
-			SceneManager.LoadScene ("Idle");
+			if (CurrentScene != "Idle") {
+				CurrentScene = "Idle";
+				SceneManager.LoadScene ("Idle");
+			}
 			break;
 		case ProcessState.MiniGame:
-			SceneManager.LoadScene ("MiniGame");
+			if (CurrentScene != "MiniGame") {
+				CurrentScene = "MiniGame";
+				SceneManager.LoadScene ("MiniGame");
+			}
 			break;
 		case ProcessState.PlayingGame:
-			SceneManager.LoadScene ("Game");
+			if (CurrentScene != "Game") {
+				CurrentScene = "Game";
+				SceneManager.LoadScene ("Game");
+			}
 			break;
 		case ProcessState.Leaderboard:
-			SceneManager.LoadScene ("Leaderboard");
+			if (CurrentScene != "Leaderboard") {
+				CurrentScene = "Leaderboard";
+				SceneManager.LoadScene ("Leaderboard");
+			}
 			break;
 		}
 	}

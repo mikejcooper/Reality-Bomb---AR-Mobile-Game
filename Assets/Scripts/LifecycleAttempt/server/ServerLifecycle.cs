@@ -45,10 +45,11 @@ namespace ServerLifecycle {
 				{ new StateTransition(ProcessState.AwaitingPlayers, Command.EnoughPlayersJoined), ProcessState.PreparingGame },
 				{ new StateTransition(ProcessState.PreparingGame, Command.GameReady), ProcessState.PlayingGame },
 
+				{ new StateTransition(ProcessState.PlayingGame, Command.TooFewPlayersRemaining), ProcessState.AwaitingPlayers },
 				{ new StateTransition(ProcessState.PreparingGame, Command.TooFewPlayersRemaining), ProcessState.AwaitingPlayers },
 				{ new StateTransition(ProcessState.AwaitingMesh, Command.TooFewPlayersRemaining), ProcessState.AwaitingData },
 
-				{ new StateTransition(ProcessState.PlayingGame, Command.GameEnd), ProcessState.AwaitingData }
+				{ new StateTransition(ProcessState.PlayingGame, Command.GameEnd), ProcessState.AwaitingPlayers }
 			};
 		}
 
