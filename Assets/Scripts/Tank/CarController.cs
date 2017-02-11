@@ -17,7 +17,7 @@ public class CarController : NetworkBehaviour
 
 	private Quaternion lookAngle = 	Quaternion.Euler(Vector3.forward);
 
-    [SyncVar]
+    //[SyncVar]
     public bool hasBomb = false;
     public bool alive = true;
     private float m_transferTime;
@@ -64,11 +64,9 @@ public class CarController : NetworkBehaviour
         // The axes names are based on player number.
 
         //Set the colour
-        if (hasBomb)
+        if (isServer)
         {
-            ChangeColour(Color.red);
-        }else{
-            ChangeColour(Color.blue);
+            RpcSetBomb(hasBomb);
         }
     }
 
@@ -144,20 +142,33 @@ public class CarController : NetworkBehaviour
     {
         if (hasBomb && Time.time > m_transferTime)
         {
-            hasBomb = false;
-            ChangeColour(Color.blue);
+            RpcSetBomb(false);
             return true;
         }
         return false;
     }
 
+    [ClientRpc]
+    void RpcSetBomb(bool state)
+    {
+        hasBomb = state;
+        if (hasBomb)
+        {
+            ChangeColour(Color.red);
+        }
+        else
+        {
+            ChangeColour(Color.blue);
+        }
+    }
+
+    [ServerCallback]
 	void OnCollisionEnter(Collision col)
 	{
 		if (col.gameObject.tag == "TankTag") {
             if (col.gameObject.GetComponent<CarController>().TransferBomb())
             {
-                hasBomb = true;
-                ChangeColour(Color.red);
+                RpcSetBomb(true);
                 m_transferTime = Time.time + 1.0f;
             }            
         }
