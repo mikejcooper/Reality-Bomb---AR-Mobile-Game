@@ -37,12 +37,12 @@ public class DataTransferManager : NetworkBehaviour {
 		// singleton needs to be started here on Main thread
 		var ugly = UnityThreadHelper.Dispatcher;
 
-        UnityThreadHelper.CreateThread(ListenForBroadcasts);
-        //UnityThreading.ActionThread myThread =
+        UnityThreading.ActionThread myThread = UnityThreadHelper.CreateThread(() => ListenForBroadcasts());
+
 
     }
 
-	void ListenForBroadcasts()
+    void ListenForBroadcasts()
 	{
 		int port = 3110;
 

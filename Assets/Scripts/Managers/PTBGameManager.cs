@@ -7,7 +7,7 @@ public class PTBGameManager : NetworkBehaviour {
 
     public static PTBGameManager s_Instance;
 
-    public static List<CarController> m_Players = new List<CarController>();
+    public static List<CarController> m_Cars = new List<CarController>();
 
     public static List<CarController> m_DeathOrder = new List<CarController>();
 
@@ -24,34 +24,32 @@ public class PTBGameManager : NetworkBehaviour {
 
     public static void AddCar(GameObject gamePlayer)
     {
-        m_Players.Add(gamePlayer.GetComponent<CarController>());
-        Debug.Log("Tank added!");
+        m_Cars.Add(gamePlayer.GetComponent<CarController>());
+        Debug.Log("Car added!");
     }
 
     private void CheckDeaths()
     {
-        for (int i = 0; i < m_Players.Count; i++)
+        for (int i = 0; i < m_Cars.Count; i++)
         {
-            if (!m_Players[i].alive)
+            if (!m_Cars[i].alive)
             {
-                m_DeathOrder.Add(m_Players[i]);
-                m_Players.RemoveAt(i);
+                m_DeathOrder.Add(m_Cars[i]);
+                m_Cars.RemoveAt(i);
             }
         }
     }
 
     private bool GameOver()
     {
-        return m_Players.Count == 1;
+        return m_Cars.Count == 1;
     }
 
     public void RepositionAllCars()
     {
-        //if (!isServer)
-        //    return;
-        for (int i = 0; i < m_Players.Count; i++)
+        for (int i = 0; i < m_Cars.Count; i++)
         {
-            m_Players[i].Reposition();
+            m_Cars[i].Reposition();
         }
         EnableCameraLayer();
     }

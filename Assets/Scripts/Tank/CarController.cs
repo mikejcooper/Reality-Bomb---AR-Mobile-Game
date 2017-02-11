@@ -163,15 +163,32 @@ public class CarController : NetworkBehaviour
         }
 	}
 
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+
+        if (!isServer)
+        {
+            PTBGameManager.AddCar(gameObject);
+        }
+    }
+
     public void Reposition()
     {
-        if (!isLocalPlayer)
+        if (!hasAuthority)
             return;
+
+        
+        Rigidbody rbd = GetComponent<Rigidbody>();
+
+        Debug.Log("Repositioning car");
 
         Bounds bounds = DataTransferManager.s_WorldMesh.transform.GetComponent<MeshRenderer>().bounds;
         Vector3 center = bounds.center;
        
-        GetComponent<Rigidbody>().velocity = Vector3.zero;
+        //Set velocities to zero
+        rbd.velocity = Vector3.zero;
+        rbd.angularVelocity = Vector3.zero;
 
         for (int i = 0; i < 30; i++)
         {
@@ -185,7 +202,7 @@ public class CarController : NetworkBehaviour
             if (Physics.Raycast(position, Vector3.down, out hit, bounds.size.y * 2))
             {
                 position.y = hit.point.y;
-                transform.position = position;
+                rbd.position = position;
                 break;
             }
         }

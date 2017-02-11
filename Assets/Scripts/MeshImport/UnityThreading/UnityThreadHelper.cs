@@ -100,10 +100,10 @@ public class UnityThreadHelper
     /// <summary>
     /// Creates new thread which runs the given action. The given action will be wrapped so that any exception will be catched and logged.
     /// </summary>
-    /// <param name="action">The action which the new thread should run.</param>
     /// <param name="autoStartThread">True when the thread should start immediately after creation.</param>
+    /// <param name="action">The action which the new thread should run.</param>
     /// <returns>The instance of the created thread class.</returns>
-    public static UnityThreading.ActionThread CreateThread(System.Action<UnityThreading.ActionThread> action, bool autoStartThread)
+    public static UnityThreading.ActionThread CreateThread(bool autoStartThread, System.Action<UnityThreading.ActionThread> action)
     {
         Instance.EnsureHelperInstance();
 
@@ -130,7 +130,7 @@ public class UnityThreadHelper
     /// <returns>The instance of the created thread class.</returns>
     public static UnityThreading.ActionThread CreateThread(System.Action<UnityThreading.ActionThread> action)
     {
-        return CreateThread(action, true);
+        return CreateThread(true, action);
     }
 
     /// <summary>
@@ -141,7 +141,7 @@ public class UnityThreadHelper
     /// <returns>The instance of the created thread class.</returns>
     public static UnityThreading.ActionThread CreateThread(System.Action action, bool autoStartThread)
     {
-        return CreateThread((thread) => action(), autoStartThread);
+        return CreateThread(autoStartThread, (thread) => action());
     }
 
     /// <summary>
@@ -151,7 +151,7 @@ public class UnityThreadHelper
     /// <returns>The instance of the created thread class.</returns>
     public static UnityThreading.ActionThread CreateThread(System.Action action)
     {
-        return CreateThread((thread) => action(), true);
+        return CreateThread(true, (thread) => action());
     }
 
     #region Enumeratable
