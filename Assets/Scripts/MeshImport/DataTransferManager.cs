@@ -16,12 +16,18 @@ using System.Text;
 using UnityThreading;
 using UnityEngine.Networking;
 
-public class DataTransferManager : NetworkBehaviour {
+public class DataTransferManager {
 
-	WebSocket ws;
-	Mesh mesh;
+	public delegate void OnMeshDataReceivedCallback ();
 
-	public static GameObject s_WorldMesh;
+	public event OnMeshDataReceivedCallback onMeshDataReceivedEvent;
+
+	public string meshData;
+
+	private WebSocket ws;
+
+
+//	public static GameObject s_WorldMesh;
 
 
 	public static void SetLayerRecursively(GameObject go, int layerNumber)
@@ -33,52 +39,52 @@ public class DataTransferManager : NetworkBehaviour {
 	}
 
 	// Use this for initialization
-	void Start () {
-		// singleton needs to be started here on Main thread
-		var ugly = UnityThreadHelper.Dispatcher;
+//	void Start () {
+//		// singleton needs to be started here on Main thread
+////		var ugly = UnityThreadHelper.Dispatcher;
+////
+////		UnityThreading.ActionThread myThread = UnityThreadHelper.CreateThread(() => ListenForBroadcasts());
+//
+//
+//	}
 
-		UnityThreading.ActionThread myThread = UnityThreadHelper.CreateThread(() => ListenForBroadcasts());
-
-
-	}
-
-	void ListenForBroadcasts()
-	{
-		int port = 3110;
-
-		try {
-			var client = new UdpClient (port);
-
-			while (true) {
-				try {
-					IPEndPoint anyIP = new IPEndPoint (IPAddress.Any, 0);
-					byte[] data = client.Receive (ref anyIP);
-
-					string text = Encoding.UTF8.GetString (data);
-
-					if (text == "RealityBomb") {
-						// we've found our server
-						connectWebsocket (anyIP.Address.ToString (), port + 1);
-					}
-
-				} catch (Exception err) {
-					print (err.ToString ());
-				}
-
-			}
-
-
-		} catch (SocketException e) {
-			Debug.Log ("broadcast socket is already in use, assuming broadcast is coming from localhost");
-			Debug.Log(e);
-			connectWebsocket ("localhost", port + 1);
-		}
-
-	}
+//	void ListenForBroadcasts()
+//	{
+//		int port = 3110;
+//
+//		try {
+//			var client = new UdpClient (port);
+//
+//			while (true) {
+//				try {
+//					IPEndPoint anyIP = new IPEndPoint (IPAddress.Any, 0);
+//					byte[] data = client.Receive (ref anyIP);
+//
+//					string text = Encoding.UTF8.GetString (data);
+//
+//					if (text == "RealityBomb") {
+//						// we've found our server
+//						connectWebsocket (anyIP.Address.ToString (), port + 1);
+//					}
+//
+//				} catch (Exception err) {
+//					print (err.ToString ());
+//				}
+//
+//			}
+//
+//
+//		} catch (SocketException e) {
+//			Debug.Log ("broadcast socket is already in use, assuming broadcast is coming from localhost");
+//			Debug.Log(e);
+//			connectWebsocket ("localhost", port + 1);
+//		}
+//
+//	}
 
 
 
-	void connectWebsocket (string address, int port) {
+	public void fetchData (string address, int port) {
 
 		var url = "ws://" + address + ":" + port.ToString ();
 
@@ -91,28 +97,33 @@ public class DataTransferManager : NetworkBehaviour {
 		ws.OnMessage += (sender, e) => {
 			if (e.IsText) {
 				Debug.Log("received message");
-
-				if (e.Data.StartsWith("mesh")) {
-					handleMesh(e.Data.Substring(4));
-				} else if (e.Data.StartsWith("markers")) {
-					handleMarkers(e.Data.Substring(7));
-				} else if (e.Data.StartsWith("triangles")) {
-					handleTrianglesMesh(e.Data.Substring(9));
-				} else {
-					Debug.Log("unknwon websocket event: "+e.Data);
-				}
+				UnityThreadHelper.Dispatcher.Dispatch(() =>
+					{
+						if (e.Data.StartsWith("mesh")) {
+							meshData = e.Data.Substring(4);
+							onMeshDataReceivedEvent ();
+		//					handleMesh(e.Data.Substring(4));
+						} else if (e.Data.StartsWith("markers")) {
+		//					handleMarkers(e.Data.Substring(7));
+						} else if (e.Data.StartsWith("triangles")) {
+		//					handleTrianglesMesh(e.Data.Substring(9));
+						} else {
+							Debug.Log("unknwon websocket event: "+e.Data);
+						}
+					}
+				);
 
 			}
 		};
 
 		ws.OnClose += (object sender, CloseEventArgs e) => {
 			Debug.Log("websocket closed");
-			Invoke("connectWebsocket", 5);
+//			Invoke("connectWebsocket", 5);
 		};
 
 		ws.OnError += (object sender, WebSocketSharp.ErrorEventArgs e) => {
 			Debug.Log("websocket error");
-			Invoke("connectWebsocket", 5);
+//			Invoke("connectWebsocket", 5);
 		};
 
 		UnityThreadHelper.Dispatcher.Dispatch (() => {
@@ -120,53 +131,52 @@ public class DataTransferManager : NetworkBehaviour {
 		});
 	}
 
-	void handleMesh(string data)
-	{
-		UnityThreadHelper.Dispatcher.Dispatch(() =>
-			{
-				// choose the material - we can get round to using a custom invisible
-				// shader at some point here, but for development purposes it's nice
-				// to be able to see the mesh
-				Material material = Resources.Load("Materials/MeshDefault", typeof(Material)) as Material;
+	public void produceMeshObject (GameObject gameObject, string meshData) {
+		// choose the material - we can get round to using a custom invisible
+		// shader at some point here, but for development purposes it's nice
+		// to be able to see the mesh
+		Material material = Resources.Load("Materials/MeshDefault", typeof(Material)) as Material;
 
-				// convert the mesh object string into an actual Unity mesh
-				mesh = FastObjImporter.Instance.ImportString(data);
-				mesh.RecalculateBounds();
+		// convert the mesh object string into an actual Unity mesh
+		Mesh mesh = FastObjImporter.Instance.ImportString(meshData);
+		mesh.RecalculateBounds();
 
-				s_WorldMesh = new GameObject("world mesh");
+		MeshFilter filter = gameObject.GetComponent<MeshFilter> ();
+		if (filter == null) filter = gameObject.AddComponent<MeshFilter> ();
 
-				MeshFilter filter = s_WorldMesh.AddComponent<MeshFilter>();
-				filter.mesh = mesh;
+		filter.mesh = mesh;
 
-				s_WorldMesh.AddComponent<MeshRenderer>();
+		MeshRenderer renderer = gameObject.GetComponent<MeshRenderer> ();
+		if (renderer == null) renderer = gameObject.AddComponent<MeshRenderer> ();
 
-				MeshCollider collider = s_WorldMesh.AddComponent<MeshCollider>();
-				collider.sharedMesh = mesh;
+		MeshCollider collider = gameObject.GetComponent<MeshCollider> ();
+		if (collider == null) collider = gameObject.AddComponent<MeshCollider> ();
 
-				// attach to Marker scene
-				GameObject root = GameObject.Find("Marker scene");
-				s_WorldMesh.transform.parent = root.transform;
+		collider.sharedMesh = mesh;
 
-				// set mesh material
-				MeshRenderer meshRenderer = s_WorldMesh.GetComponent<MeshRenderer>();
-				meshRenderer.material = material;
+		// attach to Marker scene
+		GameObject root = GameObject.Find("Marker scene");
+		gameObject.transform.parent = root.transform;
 
-				// assign to correct layer for ArToolKit
-				SetLayerRecursively(s_WorldMesh, 9);
+		// set mesh material
+		renderer.material = material;
 
-				// add network identity so that it's propagated
-				//NetworkIdentity networkIdentity = s_WorldMesh.AddComponent<NetworkIdentity>();
+		// assign to correct layer for ArToolKit
+		SetLayerRecursively(gameObject, 9);
 
-				// propagate mesh across clients (TODO)
-				//NetworkServer.Spawn(s_WorldMesh);
+		// add network identity so that it's propagated
+		//NetworkIdentity networkIdentity = s_WorldMesh.AddComponent<NetworkIdentity>();
 
-				// Reposition with delay.
-				//TODO: Change this to use events or a callback
+		// propagate mesh across clients (TODO)
+		//NetworkServer.Spawn(s_WorldMesh);
 
-				//Invoke("Reposition", 2);
-				PTBGameManager.s_Instance.RepositionAllCars();
-			});
+		// Reposition with delay.
+		//TODO: Change this to use events or a callback
+
+		//Invoke("Reposition", 2);
+//		PTBGameManager.s_Instance.RepositionAllCars();
 	}
+
 
 	void handleMarkers(string data) {
 		Debug.Log ("received markers");

@@ -128,7 +128,9 @@ namespace ServerNetworking
 
 						if (text == "RealityBomb") {
 							// we've found our server
-							meshServerDiscoveredCallback(anyIP.Address.ToString (), port + 1);
+							UnityThreadHelper.Dispatcher.Dispatch (() => {
+								meshServerDiscoveredCallback(anyIP.Address.ToString (), port + 1);
+							});
 						}
 
 					} catch (Exception err) {
@@ -140,7 +142,9 @@ namespace ServerNetworking
 
 			} catch (SocketException e) {
 				Debug.Log ("broadcast socket is already in use, assuming broadcast is coming from localhost");
-				meshServerDiscoveredCallback("localhost", port + 1);
+				UnityThreadHelper.Dispatcher.Dispatch (() => {
+					meshServerDiscoveredCallback ("localhost", port + 1);
+				});
 			}
 
 		}

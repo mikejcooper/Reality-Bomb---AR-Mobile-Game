@@ -8,6 +8,13 @@ using UnityEngine.SceneManagement;
 public class ServerSceneManager : MonoBehaviour
 {
 
+	public enum MeshRetrievalState
+	{
+		Idle, Retrieving
+	}
+
+	public MeshRetrievalState meshRetrievalState = MeshRetrievalState.Idle;
+
 	public UnityEngine.Networking.NetworkLobbyPlayer lobbyPlayerPrefab;
 	public GameObject gamePlayerPrefab;
 
@@ -19,21 +26,29 @@ public class ServerSceneManager : MonoBehaviour
 
 	private DiscoveryServer discoveryServer;
 	private PTBGameLobbyManager networkLobbyManager;
-//	private MeshDiscoveryServer meshDiscoveryServer;
+	private MeshDiscoveryServer meshDiscoveryServer;
+	private DataTransferManager dataTransferManager;
 	private Process innerProcess;
-	private Mesh currentMesh;
+
 	private string currentScene = "Idle";
 	private int LoadedPlayerCount = 0;
 
 
 	void Start ()
 	{
+		var ugly = UnityThreadHelper.Dispatcher;
+
 		// init
 		DontDestroyOnLoad (transform.gameObject);
 		innerProcess = new Process ();
 		discoveryServer = transform.gameObject.AddComponent<DiscoveryServer> ();
 		networkLobbyManager = transform.gameObject.AddComponent<PTBGameLobbyManager> ();
-//		meshDiscoveryServer = new MeshDiscoveryServer ();
+		meshDiscoveryServer = new MeshDiscoveryServer ();
+		dataTransferManager = new DataTransferManager ();
+
+
+//		networkLobbyManager.connectionConfig.AddChannel (UnityEngine.Networking.QosType.Reliable);
+//		networkLobbyManager.connectionConfig.AddChannel (UnityEngine.Networking.QosType.ReliableFragmented);
 
 		// register listeners for when players connect / disconnect
 		networkLobbyManager.lobbySlots = new UnityEngine.Networking.NetworkLobbyPlayer[networkLobbyManager.maxPlayers];
@@ -47,16 +62,18 @@ public class ServerSceneManager : MonoBehaviour
 		networkLobbyManager.networkAddress = "localhost";
 		networkLobbyManager.networkPort = 7777;
 
-		networkLobbyManager.StartServer();
+		networkLobbyManager.StartServer ();
 
 
 		networkLobbyManager.OnLobbyServerConnectEvent += onPlayerConnected;
 		networkLobbyManager.OnLobbyServerDisconnectEvent += onPlayerDisconnected;
 	
 
-//		meshDiscoveryServer.meshServerDiscoveredCallback += new MeshDiscoveryServer.MeshServerDiscoveredCallback (onMeshServerFound);
+		meshDiscoveryServer.meshServerDiscoveredCallback += new MeshDiscoveryServer.MeshServerDiscoveredCallback (onMeshServerFound);
 
-		onStartWaitingForData ();
+		dataTransferManager.onMeshDataReceivedEvent += onMeshDataReceived;
+
+		loadNewMesh ();
 	}
 
 	public int ConnectedPlayerCount { get; private set; }
@@ -66,27 +83,37 @@ public class ServerSceneManager : MonoBehaviour
 	}
 
 
-	public void onStartWaitingForData() {
+	public void loadNewMesh() {
+		DebugConsole.Log ("loadNewMesh");
 //		meshDiscoveryServer.StartSearching ();
-		// for now
-		onMeshReceived (null);
 	}
 
 	public void onMeshServerFound (string address, int port) {
+		DebugConsole.Log ("onMeshServerFound");
 //		meshDiscoveryServer.StopSearching ();
-		// for now
-		onMeshReceived (null);
+//
+//		// now we ask some class to get the mesh data, with a callback when it's done
+//		dataTransferManager.fetchData(address, port);
+		onMeshReceived();
 	}
 
-	public void onMeshReceived (Mesh mesh)
+	public void onMeshDataReceived () {
+		DebugConsole.Log ("onMeshDataReceived");
+		// invalidate all clients
+
+		// now send to all clients
+		UnityEngine.Networking.NetworkSystem.StringMessage outMsg = new UnityEngine.Networking.NetworkSystem.StringMessage(dataTransferManager.meshData);
+		UnityEngine.Networking.NetworkServer.SendToAll(3110, outMsg);
+	}
+
+	public void onMeshReceived ()
 	{
 		DebugConsole.Log ("onMeshReceived");
-		currentMesh = mesh;
 		innerProcess.MoveNext (Command.MeshReceived);
 		ensureCorrectScene ();
 	}
 
-	public void onPlayerConnected ()
+	public void onPlayerConnected (UnityEngine.Networking.NetworkConnection conn)
 	{
 		DebugConsole.Log ("onPlayerConnected");
 		ConnectedPlayerCount++;
@@ -95,6 +122,16 @@ public class ServerSceneManager : MonoBehaviour
 			innerProcess.MoveNext (Command.EnoughPlayersJoined);
 		}
 		ensureCorrectScene ();
+
+//		// for the case that we have data already
+//		if (dataTransferManager.meshData != null) {
+//			// send this new client the meshd data
+//			DebugConsole.Log ("sending mesh to new client");
+//			UnityEngine.Networking.NetworkSystem.StringMessage outMsg = new UnityEngine.Networking.NetworkSystem.StringMessage (dataTransferManager.meshData);
+//			UnityEngine.Networking.NetworkServer.SendByChannelToAll(928, outMsg, 1);
+//		} else {
+//			DebugConsole.Log("not sending mesh to new client");
+//		}
 	}
 
 	public void onPlayerDisconnected ()
@@ -118,7 +155,7 @@ public class ServerSceneManager : MonoBehaviour
 		DebugConsole.Log ("onGameEnd");
 		innerProcess.MoveNext (Command.GameEnd);
 		ensureCorrectScene ();
-		onStartWaitingForData ();
+		// todo call correct things at game end
 	}
 
 	private void ensureCorrectScene ()
@@ -139,6 +176,7 @@ public class ServerSceneManager : MonoBehaviour
 				currentScene = "Game";
 				LoadedPlayerCount = 0;
 
+				networkLobbyManager.ServerChangeScene ("Pass_The_Bomb");
 //				communicationServer.ChangeClientsScene ("Game");
 
 //				SceneManager.LoadScene ("Pass_The_Bomb");

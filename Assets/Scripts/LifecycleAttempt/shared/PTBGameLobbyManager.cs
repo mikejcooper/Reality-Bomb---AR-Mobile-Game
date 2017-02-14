@@ -7,7 +7,7 @@ public class PTBGameLobbyManager : NetworkLobbyManager {
 	private int players = 0;
 	private int bombPlayer = -1;
 
-	public delegate void OnLobbyServerConnectCallback ();
+	public delegate void OnLobbyServerConnectCallback (NetworkConnection conn);
 	public delegate void OnLobbyServerDisconnectCallback ();
 	public delegate void OnLobbyClientConnectCallback ();
 	public delegate void OnLobbyClientDisconnectCallback ();
@@ -42,28 +42,29 @@ public class PTBGameLobbyManager : NetworkLobbyManager {
 		DebugConsole.Log ("OnServerAddPlayer");
 		base.OnServerAddPlayer (conn, playerControllerId);
 
-		UnityEngine.Networking.PlayerController lobbyController = null;
-		for (int i = 0; i < conn.playerControllers.Count; i++) {
-			if (conn.playerControllers [i] != null && conn.playerControllers [i].playerControllerId == playerControllerId) {
-				lobbyController = conn.playerControllers [i];
-				break;
-			}
-		}
-		if (lobbyController == null)
-		{
-			Debug.LogError ("NetworkLobbyManager OnServerReadyToBeginMessage invalid playerControllerId " + playerControllerId);
-			return;
-		}
 
-		// set this player ready
-		var lobbyPlayer = lobbyController.gameObject.GetComponent<NetworkLobbyPlayer>();
-		lobbyPlayer.readyToBegin = true;
-
-		// tell every player that this player is ready
-		var outMsg = new LobbyReadyToBeginMessage();
-		outMsg.slotId = lobbyPlayer.slot;
-		outMsg.readyState = true;
-		NetworkServer.SendToReady(null, MsgType.LobbyReadyToBegin, outMsg);
+//		UnityEngine.Networking.PlayerController lobbyController = null;
+//		for (int i = 0; i < conn.playerControllers.Count; i++) {
+//			if (conn.playerControllers [i] != null && conn.playerControllers [i].playerControllerId == playerControllerId) {
+//				lobbyController = conn.playerControllers [i];
+//				break;
+//			}
+//		}
+//		if (lobbyController == null)
+//		{
+//			Debug.LogError ("NetworkLobbyManager OnServerReadyToBeginMessage invalid playerControllerId " + playerControllerId);
+//			return;
+//		}
+//
+//		// set this player ready
+//		var lobbyPlayer = lobbyController.gameObject.GetComponent<NetworkLobbyPlayer>();
+//		lobbyPlayer.readyToBegin = true;
+//
+//		// tell every player that this player is ready
+//		var outMsg = new LobbyReadyToBeginMessage();
+//		outMsg.slotId = lobbyPlayer.slot;
+//		outMsg.readyState = true;
+//		NetworkServer.SendToReady(null, MsgType.LobbyReadyToBegin, outMsg);
 
 	}
 
@@ -74,7 +75,7 @@ public class PTBGameLobbyManager : NetworkLobbyManager {
 	}
 
 	public override void OnLobbyServerConnect (NetworkConnection conn) {
-		OnLobbyServerConnectEvent ();
+		OnLobbyServerConnectEvent (conn);
 
 	}
 
@@ -136,5 +137,19 @@ public class PTBGameLobbyManager : NetworkLobbyManager {
 	public override void OnLobbyClientSceneChanged(UnityEngine.Networking.NetworkConnection conn) {
 		Debug.Log ("OnLobbyClientSceneChanged");
 	}
+
+//	public override void OnClientConnect (UnityEngine.Networking.NetworkConnection conn) {
+//		DebugConsole.Log ("OnClientConnect");
+//		if (client != null) {
+//			DebugConsole.Log ("OnClientConnect worked");
+//			client.RegisterHandler (928, OnClientMeshDataReceived);		
+//		}
+//	}
+//
+//	public void OnClientMeshDataReceived (NetworkMessage netMsg) {
+//		DebugConsole.Log ("OnClientMeshDataReceived");
+//		string meshData = netMsg.ReadMessage<UnityEngine.Networking.NetworkSystem.StringMessage>().value;
+//		Debug.Log (meshData);
+//	}
 		
 }

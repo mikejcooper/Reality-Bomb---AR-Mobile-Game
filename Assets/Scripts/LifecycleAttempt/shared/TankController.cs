@@ -189,30 +189,30 @@ public class CarController : NetworkBehaviour
 		if (!hasAuthority)
 			return;
 
-		Debug.Log("Repositioning car");
-
-		Bounds bounds = DataTransferManager.s_WorldMesh.transform.GetComponent<MeshRenderer>().bounds;
-		Vector3 center = bounds.center;
-
-		//Set velocities to zero
-		m_Rigidbody.velocity = Vector3.zero;
-		m_Rigidbody.angularVelocity = Vector3.zero;
-
-		for (int i = 0; i < 30; i++)
-		{
-			Debug.Log("Trying random position " + i);
-			float x = UnityEngine.Random.Range(center.x - (bounds.size.x / 2), center.x + (bounds.size.x / 2));
-			float z = UnityEngine.Random.Range(center.x - (bounds.size.z / 2), center.z + (bounds.size.z / 2));
-
-			Vector3 position = new Vector3(x, center.y + bounds.size.y, z);
-			RaycastHit hit;
-
-			if (Physics.Raycast(position, Vector3.down, out hit, bounds.size.y * 2))
-			{
-				position.y = hit.point.y;
-				m_Rigidbody.position = position;
-				break;
-			}
-		}
+//		Debug.Log("Repositioning car");
+//
+//		Bounds bounds = DataTransferManager.s_WorldMesh.transform.GetComponent<MeshRenderer>().bounds;
+//		Vector3 center = bounds.center;
+//
+//		//Set velocities to zero
+//		m_Rigidbody.velocity = Vector3.zero;
+//		m_Rigidbody.angularVelocity = Vector3.zero;
+//
+//		for (int i = 0; i < 30; i++)
+//		{
+//			Debug.Log("Trying random position " + i);
+//			float x = UnityEngine.Random.Range(center.x - (bounds.size.x / 2), center.x + (bounds.size.x / 2));
+//			float z = UnityEngine.Random.Range(center.x - (bounds.size.z / 2), center.z + (bounds.size.z / 2));
+//
+//			Vector3 position = new Vector3(x, center.y + bounds.size.y, z);
+//			RaycastHit hit;
+//
+//			if (Physics.Raycast(position, Vector3.down, out hit, bounds.size.y * 2))
+//			{
+//				position.y = hit.point.y;
+//				m_Rigidbody.position = position;
+//				break;
+//			}
+//		}
 	}
 }

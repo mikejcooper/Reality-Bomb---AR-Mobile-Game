@@ -28,6 +28,7 @@ public class ClientSceneManager : MonoBehaviour
 		discoveryClient = transform.gameObject.AddComponent<DiscoveryClient> ();
 		networkLobbyManager = transform.gameObject.AddComponent<PTBGameLobbyManager> ();
 
+
 		networkLobbyManager.lobbySlots = new UnityEngine.Networking.NetworkLobbyPlayer[networkLobbyManager.maxPlayers];
 		networkLobbyManager.lobbyScene = "Idle";
 
@@ -72,8 +73,11 @@ public class ClientSceneManager : MonoBehaviour
 			discoveryClient.StopBroadcast ();
 		}
 
-		networkLobbyManager.networkPort = 7777;
+//		networkLobbyManager.connectionConfig.AddChannel (UnityEngine.Networking.QosType.Reliable);
+//		networkLobbyManager.connectionConfig.AddChannel (UnityEngine.Networking.QosType.ReliableFragmented);
+
 		networkLobbyManager.networkAddress = "localhost";
+		networkLobbyManager.networkPort = 7777;
 		networkLobbyManager.StartClient ();
 	}
 
@@ -149,10 +153,10 @@ public class ClientSceneManager : MonoBehaviour
 			}
 			break;
 		case ProcessState.MiniGame:
-//			if (CurrentScene != "MiniGame") {
-//				CurrentScene = "MiniGame";
-//				SceneManager.LoadScene ("MiniGame");
-//			}
+			if (CurrentScene != "MiniGame") {
+				CurrentScene = "MiniGame";
+				SceneManager.LoadScene ("MiniGame");
+			}
 			break;
 		case ProcessState.PlayingGame:
 			if (CurrentScene != "Game") {
