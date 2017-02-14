@@ -18,11 +18,12 @@ public class ServerSceneManager : MonoBehaviour
 	public UnityEngine.Networking.NetworkLobbyPlayer lobbyPlayerPrefab;
 	public GameObject gamePlayerPrefab;
 
+	public GameResults lastGameResults;
 
 	public delegate void StateChangeCallback(ProcessState state);
 	public event StateChangeCallback stateChangeEvent;
 
-	private const int MIN_REQ_PLAYERS = 1;
+	private const int MIN_REQ_PLAYERS = 2;
 
 	private DiscoveryServer discoveryServer;
 	private PTBGameLobbyManager networkLobbyManager;
@@ -46,6 +47,7 @@ public class ServerSceneManager : MonoBehaviour
 		meshDiscoveryServer = new MeshDiscoveryServer ();
 		dataTransferManager = new DataTransferManager ();
 
+		networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Debug;
 
 //		networkLobbyManager.connectionConfig.AddChannel (UnityEngine.Networking.QosType.Reliable);
 //		networkLobbyManager.connectionConfig.AddChannel (UnityEngine.Networking.QosType.ReliableFragmented);
@@ -86,6 +88,7 @@ public class ServerSceneManager : MonoBehaviour
 	public void loadNewMesh() {
 		DebugConsole.Log ("loadNewMesh");
 //		meshDiscoveryServer.StartSearching ();
+		onMeshReceived();
 	}
 
 	public void onMeshServerFound (string address, int port) {
@@ -94,7 +97,7 @@ public class ServerSceneManager : MonoBehaviour
 //
 //		// now we ask some class to get the mesh data, with a callback when it's done
 //		dataTransferManager.fetchData(address, port);
-		onMeshReceived();
+
 	}
 
 	public void onMeshDataReceived () {
@@ -151,7 +154,8 @@ public class ServerSceneManager : MonoBehaviour
 		ensureCorrectScene ();
 	}
 
-	public void onGameEnd () {
+	public void onGameEnd (GameResults gameResults) {
+		lastGameResults = gameResults;
 		DebugConsole.Log ("onGameEnd");
 		innerProcess.MoveNext (Command.GameEnd);
 		ensureCorrectScene ();
@@ -165,10 +169,13 @@ public class ServerSceneManager : MonoBehaviour
 		case ProcessState.AwaitingMesh:
 		case ProcessState.AwaitingPlayers:
 		case ProcessState.PreparingGame:
-			if (currentScene != "Idle") {
-				currentScene = "Idle";
-				SceneManager.LoadScene ("Idle");
-
+			if (lastGameResults != null) {
+				networkLobbyManager.ServerChangeScene ("Leaderboard");
+			} else {
+				if (currentScene != "Idle") {
+					currentScene = "Idle";
+					SceneManager.LoadScene ("Idle");
+				}
 			}
 			break;
 		case ProcessState.PlayingGame:
@@ -176,7 +183,7 @@ public class ServerSceneManager : MonoBehaviour
 				currentScene = "Game";
 				LoadedPlayerCount = 0;
 
-				networkLobbyManager.ServerChangeScene ("Pass_The_Bomb");
+				networkLobbyManager.ServerChangeScene ("Game");
 //				communicationServer.ChangeClientsScene ("Game");
 
 //				SceneManager.LoadScene ("Pass_The_Bomb");

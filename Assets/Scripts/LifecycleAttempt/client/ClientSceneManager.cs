@@ -28,6 +28,7 @@ public class ClientSceneManager : MonoBehaviour
 		discoveryClient = transform.gameObject.AddComponent<DiscoveryClient> ();
 		networkLobbyManager = transform.gameObject.AddComponent<PTBGameLobbyManager> ();
 
+		networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Debug;
 
 		networkLobbyManager.lobbySlots = new UnityEngine.Networking.NetworkLobbyPlayer[networkLobbyManager.maxPlayers];
 		networkLobbyManager.lobbyScene = "Idle";
@@ -48,6 +49,7 @@ public class ClientSceneManager : MonoBehaviour
 
 	private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
 		if (scene.name == "Game") {
+			onServerGameReady ();
 			// notify server we've loaded
 //			communicationClient.NotifySceneLoaded(scene.name, capsulePrefab);
 		}
@@ -159,16 +161,16 @@ public class ClientSceneManager : MonoBehaviour
 			}
 			break;
 		case ProcessState.PlayingGame:
-			if (CurrentScene != "Game") {
-				CurrentScene = "Game";
-				SceneManager.LoadScene ("Game");
-			}
+//			if (CurrentScene != "Game") {
+//				CurrentScene = "Game";
+//				SceneManager.LoadScene ("Game");
+//			}
 			break;
 		case ProcessState.Leaderboard:
-			if (CurrentScene != "Leaderboard") {
-				CurrentScene = "Leaderboard";
-				SceneManager.LoadScene ("Leaderboard");
-			}
+//			if (CurrentScene != "Leaderboard") {
+//				CurrentScene = "Leaderboard";
+//				SceneManager.LoadScene ("Leaderboard");
+//			}
 			break;
 		}
 	}

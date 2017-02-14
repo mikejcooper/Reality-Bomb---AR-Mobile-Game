@@ -4,8 +4,6 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public class PTBGameLobbyManager : NetworkLobbyManager {
-	private int players = 0;
-	private int bombPlayer = -1;
 
 	public delegate void OnLobbyServerConnectCallback (NetworkConnection conn);
 	public delegate void OnLobbyServerDisconnectCallback ();
@@ -21,20 +19,15 @@ public class PTBGameLobbyManager : NetworkLobbyManager {
 		DebugConsole.Log ("OnLobbyServerPlayersReady");
 	}
 
-	public override GameObject OnLobbyServerCreateGamePlayer(NetworkConnection conn, short playerControllerId)
-	{
-		if (bombPlayer == -1)
-		{
-			bombPlayer = Random.Range(0, numPlayers);
-		}
-		var gamePlayer = (GameObject)Instantiate(gamePlayerPrefab, Vector3.zero, Quaternion.identity);
-		if (players == bombPlayer)
-		{
-			gamePlayer.gameObject.GetComponent<CarController>().hasBomb = true;
-		}
-		players++;
-		return gamePlayer;
-	}
+//	public override GameObject OnLobbyServerCreateGamePlayer(NetworkConnection conn, short playerControllerId)
+//	{
+//		NetworkServer.connections
+//		return null;
+//	}
+
+//	public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayerGameObject, GameObject gamePlayer) {
+//		
+//	}
 
 	public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
 	{
@@ -43,36 +36,36 @@ public class PTBGameLobbyManager : NetworkLobbyManager {
 		base.OnServerAddPlayer (conn, playerControllerId);
 
 
-//		UnityEngine.Networking.PlayerController lobbyController = null;
-//		for (int i = 0; i < conn.playerControllers.Count; i++) {
-//			if (conn.playerControllers [i] != null && conn.playerControllers [i].playerControllerId == playerControllerId) {
-//				lobbyController = conn.playerControllers [i];
-//				break;
-//			}
-//		}
-//		if (lobbyController == null)
-//		{
-//			Debug.LogError ("NetworkLobbyManager OnServerReadyToBeginMessage invalid playerControllerId " + playerControllerId);
-//			return;
-//		}
-//
-//		// set this player ready
-//		var lobbyPlayer = lobbyController.gameObject.GetComponent<NetworkLobbyPlayer>();
-//		lobbyPlayer.readyToBegin = true;
-//
-//		// tell every player that this player is ready
-//		var outMsg = new LobbyReadyToBeginMessage();
-//		outMsg.slotId = lobbyPlayer.slot;
-//		outMsg.readyState = true;
-//		NetworkServer.SendToReady(null, MsgType.LobbyReadyToBegin, outMsg);
+		UnityEngine.Networking.PlayerController lobbyController = null;
+		for (int i = 0; i < conn.playerControllers.Count; i++) {
+			if (conn.playerControllers [i] != null && conn.playerControllers [i].playerControllerId == playerControllerId) {
+				lobbyController = conn.playerControllers [i];
+				break;
+			}
+		}
+		if (lobbyController == null)
+		{
+			Debug.LogError ("NetworkLobbyManager OnServerReadyToBeginMessage invalid playerControllerId " + playerControllerId);
+			return;
+		}
+
+		// set this player ready
+		var lobbyPlayer = lobbyController.gameObject.GetComponent<NetworkLobbyPlayer>();
+		lobbyPlayer.readyToBegin = true;
+
+		// tell every player that this player is ready
+		var outMsg = new LobbyReadyToBeginMessage();
+		outMsg.slotId = lobbyPlayer.slot;
+		outMsg.readyState = true;
+		NetworkServer.SendToReady(null, MsgType.LobbyReadyToBegin, outMsg);
 
 	}
 
-	public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayer, GameObject gamePlayer)
-	{
-		PTBGameManager.AddCar(gamePlayer);
-		return true;
-	}
+//	public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayer, GameObject gamePlayer)
+//	{
+//		NetworkServer.ReplacePlayerForConnection(conn, gamePlayer, gamePlayer);
+//		return false;
+//	}
 
 	public override void OnLobbyServerConnect (NetworkConnection conn) {
 		OnLobbyServerConnectEvent (conn);
@@ -107,6 +100,10 @@ public class PTBGameLobbyManager : NetworkLobbyManager {
 
 	public override void OnLobbyClientDisconnect (NetworkConnection conn) {
 		OnLobbyClientDisconnectEvent ();
+	}
+
+	public override void OnClientError (NetworkConnection conn, int err) {
+		DebugConsole.Log ("error: " + err);
 	}
 
 	public override void OnStartClient(NetworkClient lobbyClient)
