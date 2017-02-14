@@ -13,7 +13,6 @@ public class ClientSceneManager : MonoBehaviour
 	public GameObject gamePlayerPrefab;
 
 	private DiscoveryClient discoveryClient;
-//	private CommunicationClient communicationClient;
 	private PTBGameLobbyManager networkLobbyManager;
 
 	private Process innerProcess;
@@ -28,8 +27,8 @@ public class ClientSceneManager : MonoBehaviour
 		innerProcess = new Process ();	
 		discoveryClient = transform.gameObject.AddComponent<DiscoveryClient> ();
 		networkLobbyManager = transform.gameObject.AddComponent<PTBGameLobbyManager> ();
-//		communicationClient = new CommunicationClient();
 
+		networkLobbyManager.lobbySlots = new UnityEngine.Networking.NetworkLobbyPlayer[networkLobbyManager.maxPlayers];
 		networkLobbyManager.lobbyScene = "Idle";
 
 		networkLobbyManager.playScene = "Game";
@@ -40,9 +39,6 @@ public class ClientSceneManager : MonoBehaviour
 		// register listeners for when players connect / disconnect
 		networkLobbyManager.OnLobbyClientConnectEvent += onUserConnectedToGame;
 		networkLobbyManager.OnLobbyClientDisconnectEvent += onUserLeaveGame;
-//		communicationClient.serverConnectedEvent += new CommunicationClient.ServerConnectedCallback (onUserConnectedToGame);
-//		communicationClient.serverDisconnectedEvent += new CommunicationClient.ServerDisconnectedCallback(onUserLeaveGame);
-//		communicationClient.changeSceneEvent += new CommunicationClient.ChangeSceneCallback (onServerRequestSceneChange);
 
 		discoveryClient.serverDiscoveryEvent += new DiscoveryClient.ServerDiscoveredCallback(onServerDiscovered);
 
@@ -79,12 +75,24 @@ public class ClientSceneManager : MonoBehaviour
 		networkLobbyManager.networkPort = 7777;
 		networkLobbyManager.networkAddress = "localhost";
 		networkLobbyManager.StartClient ();
-		// attempt to connect to server
-//		networkLobbyManager.client.Connect(address, 7777);
-//		communicationClient.ConnectToAddress (address);
+	}
 
+	class LobbyReadyToBeginMessage : UnityEngine.Networking.MessageBase
+	{
+		public byte slotId;
+		public bool readyState;
 
+		public override void Deserialize(UnityEngine.Networking.NetworkReader reader)
+		{
+			slotId = reader.ReadByte();
+			readyState = reader.ReadBoolean();
+		}
 
+		public override void Serialize(UnityEngine.Networking.NetworkWriter writer)
+		{
+			writer.Write(slotId);
+			writer.Write(readyState);
+		}
 	}
 
 	public void onUserConnectedToGame () {
@@ -141,10 +149,10 @@ public class ClientSceneManager : MonoBehaviour
 			}
 			break;
 		case ProcessState.MiniGame:
-			if (CurrentScene != "MiniGame") {
-				CurrentScene = "MiniGame";
-				SceneManager.LoadScene ("MiniGame");
-			}
+//			if (CurrentScene != "MiniGame") {
+//				CurrentScene = "MiniGame";
+//				SceneManager.LoadScene ("MiniGame");
+//			}
 			break;
 		case ProcessState.PlayingGame:
 			if (CurrentScene != "Game") {

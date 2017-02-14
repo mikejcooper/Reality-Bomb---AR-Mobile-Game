@@ -36,6 +36,37 @@ public class PTBGameLobbyManager : NetworkLobbyManager {
 		return gamePlayer;
 	}
 
+	public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
+	{
+		
+		DebugConsole.Log ("OnServerAddPlayer");
+		base.OnServerAddPlayer (conn, playerControllerId);
+
+		UnityEngine.Networking.PlayerController lobbyController = null;
+		for (int i = 0; i < conn.playerControllers.Count; i++) {
+			if (conn.playerControllers [i] != null && conn.playerControllers [i].playerControllerId == playerControllerId) {
+				lobbyController = conn.playerControllers [i];
+				break;
+			}
+		}
+		if (lobbyController == null)
+		{
+			Debug.LogError ("NetworkLobbyManager OnServerReadyToBeginMessage invalid playerControllerId " + playerControllerId);
+			return;
+		}
+
+		// set this player ready
+		var lobbyPlayer = lobbyController.gameObject.GetComponent<NetworkLobbyPlayer>();
+		lobbyPlayer.readyToBegin = true;
+
+		// tell every player that this player is ready
+		var outMsg = new LobbyReadyToBeginMessage();
+		outMsg.slotId = lobbyPlayer.slot;
+		outMsg.readyState = true;
+		NetworkServer.SendToReady(null, MsgType.LobbyReadyToBegin, outMsg);
+
+	}
+
 	public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayer, GameObject gamePlayer)
 	{
 		PTBGameManager.AddCar(gamePlayer);
@@ -44,6 +75,25 @@ public class PTBGameLobbyManager : NetworkLobbyManager {
 
 	public override void OnLobbyServerConnect (NetworkConnection conn) {
 		OnLobbyServerConnectEvent ();
+
+	}
+
+	class LobbyReadyToBeginMessage : UnityEngine.Networking.MessageBase
+	{
+		public byte slotId;
+		public bool readyState;
+
+		public override void Deserialize(UnityEngine.Networking.NetworkReader reader)
+		{
+			slotId = reader.ReadByte();
+			readyState = reader.ReadBoolean();
+		}
+
+		public override void Serialize(UnityEngine.Networking.NetworkWriter writer)
+		{
+			writer.Write(slotId);
+			writer.Write(readyState);
+		}
 	}
 
 	public override void OnLobbyServerDisconnect (NetworkConnection conn) {
@@ -51,10 +101,40 @@ public class PTBGameLobbyManager : NetworkLobbyManager {
 	}
 
 	public override void OnLobbyClientConnect (NetworkConnection conn) {
-		OnLobbyClientConnectEvent ();
+		
 	}
 
 	public override void OnLobbyClientDisconnect (NetworkConnection conn) {
 		OnLobbyClientDisconnectEvent ();
 	}
+
+	public override void OnStartClient(NetworkClient lobbyClient)
+	{
+		
+
+		if (lobbySlots.Length == 0)
+		{
+			lobbySlots = new NetworkLobbyPlayer[maxPlayers];
+		}
+
+		base.OnStartClient (lobbyClient);
+	}
+
+	public override void OnLobbyClientAddPlayerFailed () {
+		Debug.Log ("OnLobbyClientAddPlayerFailed");
+	}
+
+	public override void OnLobbyClientEnter () {
+		Debug.Log ("OnLobbyClientEnter");
+		OnLobbyClientConnectEvent ();
+	}
+
+	public override void OnLobbyClientExit () {
+		Debug.Log ("OnLobbyClientExit");
+	}
+
+	public override void OnLobbyClientSceneChanged(UnityEngine.Networking.NetworkConnection conn) {
+		Debug.Log ("OnLobbyClientSceneChanged");
+	}
+		
 }

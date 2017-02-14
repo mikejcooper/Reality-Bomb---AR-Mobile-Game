@@ -17,7 +17,6 @@ public class ServerSceneManager : MonoBehaviour
 
 	private const int MIN_REQ_PLAYERS = 1;
 
-//	private CommunicationServer communicationServer;
 	private DiscoveryServer discoveryServer;
 	private PTBGameLobbyManager networkLobbyManager;
 //	private MeshDiscoveryServer meshDiscoveryServer;
@@ -34,17 +33,22 @@ public class ServerSceneManager : MonoBehaviour
 		innerProcess = new Process ();
 		discoveryServer = transform.gameObject.AddComponent<DiscoveryServer> ();
 		networkLobbyManager = transform.gameObject.AddComponent<PTBGameLobbyManager> ();
-//		communicationServer = new CommunicationServer ();
 //		meshDiscoveryServer = new MeshDiscoveryServer ();
 
 		// register listeners for when players connect / disconnect
-
+		networkLobbyManager.lobbySlots = new UnityEngine.Networking.NetworkLobbyPlayer[networkLobbyManager.maxPlayers];
 		networkLobbyManager.lobbyScene = "Idle";
 
 		networkLobbyManager.playScene = "Game";
 
 		networkLobbyManager.lobbyPlayerPrefab = lobbyPlayerPrefab;
 		networkLobbyManager.gamePlayerPrefab = gamePlayerPrefab;
+
+		networkLobbyManager.networkAddress = "localhost";
+		networkLobbyManager.networkPort = 7777;
+
+		networkLobbyManager.StartServer();
+
 
 		networkLobbyManager.OnLobbyServerConnectEvent += onPlayerConnected;
 		networkLobbyManager.OnLobbyServerDisconnectEvent += onPlayerDisconnected;
@@ -136,7 +140,8 @@ public class ServerSceneManager : MonoBehaviour
 				LoadedPlayerCount = 0;
 
 //				communicationServer.ChangeClientsScene ("Game");
-				SceneManager.LoadScene ("Game");
+
+//				SceneManager.LoadScene ("Pass_The_Bomb");
 			}
 			break;
 		}
