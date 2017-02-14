@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BuildScripts 
 {
-	[MenuItem("Builds/OS X T")]
+	[MenuItem("Builds/OS X TV")]
 	public static void BuildMacTV ()
 	{
 		// Get filename.

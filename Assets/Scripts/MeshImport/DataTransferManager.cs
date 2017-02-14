@@ -21,7 +21,7 @@ public class DataTransferManager : NetworkBehaviour {
 	WebSocket ws;
 	Mesh mesh;
 
-	private GameObject worldMesh;
+	public static GameObject s_WorldMesh;
 
 
 	public static void SetLayerRecursively(GameObject go, int layerNumber)
@@ -37,7 +37,8 @@ public class DataTransferManager : NetworkBehaviour {
 		// singleton needs to be started here on Main thread
 		var ugly = UnityThreadHelper.Dispatcher;
 
-        UnityThreading.ActionThread myThread = UnityThreadHelper.CreateThread(ListenForBroadcasts);
+		UnityThreading.ActionThread myThread = UnityThreadHelper.CreateThread(() => ListenForBroadcasts());
+
 
 	}
 
@@ -65,10 +66,11 @@ public class DataTransferManager : NetworkBehaviour {
 				}
 
 			}
-		
+
 
 		} catch (SocketException e) {
 			Debug.Log ("broadcast socket is already in use, assuming broadcast is coming from localhost");
+			Debug.Log(e);
 			connectWebsocket ("localhost", port + 1);
 		}
 
@@ -118,7 +120,8 @@ public class DataTransferManager : NetworkBehaviour {
 		});
 	}
 
-	void handleMesh (string data) {
+	void handleMesh(string data)
+	{
 		UnityThreadHelper.Dispatcher.Dispatch(() =>
 			{
 				// choose the material - we can get round to using a custom invisible
@@ -130,76 +133,40 @@ public class DataTransferManager : NetworkBehaviour {
 				mesh = FastObjImporter.Instance.ImportString(data);
 				mesh.RecalculateBounds();
 
-				worldMesh = new GameObject("world mesh");
+				s_WorldMesh = new GameObject("world mesh");
 
-				MeshFilter filter = worldMesh.AddComponent<MeshFilter>();
+				MeshFilter filter = s_WorldMesh.AddComponent<MeshFilter>();
 				filter.mesh = mesh;
 
-				worldMesh.AddComponent<MeshRenderer>();
+				s_WorldMesh.AddComponent<MeshRenderer>();
 
-				MeshCollider collider = worldMesh.AddComponent<MeshCollider>();
+				MeshCollider collider = s_WorldMesh.AddComponent<MeshCollider>();
 				collider.sharedMesh = mesh;
 
 				// attach to Marker scene
 				GameObject root = GameObject.Find("Marker scene");
-				worldMesh.transform.parent = root.transform;
+				s_WorldMesh.transform.parent = root.transform;
 
 				// set mesh material
-				MeshRenderer meshRenderer = worldMesh.GetComponent<MeshRenderer>();
+				MeshRenderer meshRenderer = s_WorldMesh.GetComponent<MeshRenderer>();
 				meshRenderer.material = material;
 
 				// assign to correct layer for ArToolKit
-				SetLayerRecursively(worldMesh, 9);
+				SetLayerRecursively(s_WorldMesh, 9);
 
 				// add network identity so that it's propagated
-				//NetworkIdentity networkIdentity = worldMesh.AddComponent<NetworkIdentity>();
+				//NetworkIdentity networkIdentity = s_WorldMesh.AddComponent<NetworkIdentity>();
 
-                // propagate mesh across clients (TODO)
-                //NetworkServer.Spawn(worldMesh);
+				// propagate mesh across clients (TODO)
+				//NetworkServer.Spawn(s_WorldMesh);
 
-                // spawn local tank with delay
-				Invoke("RepositionTanks", 2);
+				// Reposition with delay.
+				//TODO: Change this to use events or a callback
+
+				//Invoke("Reposition", 2);
+				PTBGameManager.s_Instance.RepositionAllCars();
 			});
 	}
-
-	// moves the local player's tank to a valid random position on the mesh
-	void RepositionTanks() {
-        if (!isServer)
-            return;
-
-        Bounds bounds = worldMesh.transform.GetComponent<MeshRenderer>().bounds;
-        Vector3 center = bounds.center;
-        Debug.Log("RepositionTanks");
-		foreach (GameObject obj in GameObject.FindGameObjectsWithTag("TankTag")) {
-            Debug.Log("Found tank with TankTag");
-			//if (obj.GetComponent<NetworkIdentity>().isLocalPlayer || obj.GetComponent<TankController>().isPlayingSolo) {
-			obj.GetComponent<Rigidbody> ().velocity = Vector3.zero;
-			
-			for (int i=0; i<30; i++) {
-                Debug.Log("Trying random position " + i);
-				float x = UnityEngine.Random.Range (center.x - (bounds.size.x / 2), center.x + (bounds.size.x / 2));
-				float z = UnityEngine.Random.Range (center.x - (bounds.size.z / 2), center.z + (bounds.size.z / 2));
-
-				Vector3 position = new Vector3 (x, center.y+bounds.size.y, z);
-				RaycastHit hit;
-
-				if (Physics.Raycast(position, Vector3.down, out hit, bounds.size.y*2)) {
-					position.y = hit.point.y;
-                    obj.transform.position = position;
-					break;
-				}
-			}
-			
-		}
-
-        RpcEnableCameraLayer();
-	}
-
-    [ClientRpc]
-    void RpcEnableCameraLayer()
-    {
-        Camera.current.cullingMask |= 1 << LayerMask.NameToLayer("Players");
-    }
 
 	void handleMarkers(string data) {
 		Debug.Log ("received markers");
@@ -240,7 +207,6 @@ public class DataTransferManager : NetworkBehaviour {
 	void handleTrianglesMesh(string data){
 		UnityThreadHelper.Dispatcher.Dispatch(() =>
 			{
-				ObjImporter objectImporter = new ObjImporter ();
 				Mesh mesh = MarkerFileParser.Instance.ImportString(data);
 				List<Transform> transforms = getTransformOfTriangles (mesh);
 				List<float> markerSizes = getMarkerSizes (mesh);
@@ -256,7 +222,7 @@ public class DataTransferManager : NetworkBehaviour {
 
 
 					cube.AddComponent<Obscurable>();
-//
+					//
 					SetLayerRecursively(cube, 9);
 
 				}
@@ -295,11 +261,10 @@ public class DataTransferManager : NetworkBehaviour {
 		ws.Close ();
 	}
 
-	
+
 	// Update is called once per frame
 	void Update () {
-	
+
 	}
 
 }
-		
