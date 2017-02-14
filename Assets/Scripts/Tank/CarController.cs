@@ -189,17 +189,14 @@ public class CarController : NetworkBehaviour
         if (!hasAuthority)
             return;
 
-        
-        Rigidbody rbd = GetComponent<Rigidbody>();
-
         Debug.Log("Repositioning car");
 
         Bounds bounds = DataTransferManager.s_WorldMesh.transform.GetComponent<MeshRenderer>().bounds;
         Vector3 center = bounds.center;
        
         //Set velocities to zero
-        rbd.velocity = Vector3.zero;
-        rbd.angularVelocity = Vector3.zero;
+        m_Rigidbody.velocity = Vector3.zero;
+        m_Rigidbody.angularVelocity = Vector3.zero;
 
         for (int i = 0; i < 30; i++)
         {
@@ -213,7 +210,7 @@ public class CarController : NetworkBehaviour
             if (Physics.Raycast(position, Vector3.down, out hit, bounds.size.y * 2))
             {
                 position.y = hit.point.y;
-                rbd.position = position;
+                m_Rigidbody.position = position;
                 break;
             }
         }
