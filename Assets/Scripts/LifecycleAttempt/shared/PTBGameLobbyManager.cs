@@ -29,6 +29,44 @@ public class PTBGameLobbyManager : NetworkLobbyManager {
 //		
 //	}
 
+	public void ServerChangeScene(string sceneName, bool toLobby)
+	{
+		if (toLobby)
+		{
+			foreach (var lobbyPlayer in lobbySlots)
+			{
+				if (lobbyPlayer == null)
+					continue;
+
+				// find the game-player object for this connection, and destroy it
+				var uv = lobbyPlayer.GetComponent<NetworkIdentity>();
+
+				UnityEngine.Networking.PlayerController playerController = GetPlayerController (uv.playerControllerId, uv.connectionToClient);
+				if (playerController != null)
+				{
+					NetworkServer.Destroy(playerController.gameObject);
+				}
+
+				if (NetworkServer.active)
+				{
+					// re-add the lobby object
+					lobbyPlayer.GetComponent<NetworkLobbyPlayer>().readyToBegin = false;
+					NetworkServer.ReplacePlayerForConnection(uv.connectionToClient, lobbyPlayer.gameObject, uv.playerControllerId);
+				}
+			}
+		}
+		base.ServerChangeScene(sceneName);
+	}
+
+	private UnityEngine.Networking.PlayerController GetPlayerController(short id, NetworkConnection conn) {
+		for (int i = 0; i < conn.playerControllers.Count; i++) {
+			if (conn.playerControllers [i] != null && conn.playerControllers [i].playerControllerId == id) {
+				return conn.playerControllers [i];
+			}
+		}
+		return null;
+	}
+
 	public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
 	{
 		

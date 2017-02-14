@@ -7,14 +7,14 @@ using ServerLifecycle;
 
 public abstract class ServerStateViewBehaviour : MonoBehaviour {
 	
-	public GameObject persistentObject;
-	protected ServerSceneManager serverSceneManager;
-
 	// Use this for initialization
 	void Start () {
-		serverSceneManager = persistentObject.GetComponent<ServerSceneManager> ();
-		serverSceneManager.stateChangeEvent += new ServerSceneManager.StateChangeCallback (OnServerStateChange);
-		OnServerStateChange (serverSceneManager.CurrentState ());
+		ServerSceneManager.instance.stateChangeEvent += OnServerStateChange;
+		OnServerStateChange (ServerSceneManager.instance.CurrentState ());
+	}
+
+	void OnDestroy () {
+		ServerSceneManager.instance.stateChangeEvent -= OnServerStateChange;
 	}
 
 	protected abstract void OnServerStateChange (ProcessState state);

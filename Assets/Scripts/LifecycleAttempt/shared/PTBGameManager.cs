@@ -22,6 +22,7 @@ public class PTBGameManager : NetworkBehaviour {
 		}
 	}
 
+	[Server]
 	private void Update()
 	{
 		CheckDeaths();

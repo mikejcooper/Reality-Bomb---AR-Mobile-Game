@@ -53,7 +53,7 @@ namespace ServerLifecycle {
 				{ new StateTransition(ProcessState.PreparingGame, Command.TooFewPlayersRemaining), ProcessState.AwaitingPlayers },
 				{ new StateTransition(ProcessState.AwaitingMesh, Command.TooFewPlayersRemaining), ProcessState.AwaitingData },
 
-				{ new StateTransition(ProcessState.PlayingGame, Command.GameEnd), ProcessState.AwaitingPlayers }
+				{ new StateTransition(ProcessState.PlayingGame, Command.GameEnd), ProcessState.PreparingGame }
 			};
 		}
 

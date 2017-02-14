@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 public class ClientSceneManager : MonoBehaviour
 {
 
+	public static ClientSceneManager instance;
+
 	public GameObject capsulePrefab;
 	public UnityEngine.Networking.NetworkLobbyPlayer lobbyPlayerPrefab;
 	public GameObject gamePlayerPrefab;
@@ -18,17 +20,26 @@ public class ClientSceneManager : MonoBehaviour
 	private Process innerProcess;
 	private string CurrentScene = "Idle";
 
+	void Awake () {
+		if (instance == null) {
+			instance = this;
+		} else if (instance != this){
+			Destroy(gameObject);
+		}
+		DontDestroyOnLoad (gameObject);
 
+		Init ();
+	}
 
-	void Start ()
+	void Init ()
 	{
 		// init
-		DontDestroyOnLoad (transform.gameObject);
 		innerProcess = new Process ();	
 		discoveryClient = transform.gameObject.AddComponent<DiscoveryClient> ();
 		networkLobbyManager = transform.gameObject.AddComponent<PTBGameLobbyManager> ();
 
 		networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Debug;
+		networkLobbyManager.showLobbyGUI = false;
 
 		networkLobbyManager.lobbySlots = new UnityEngine.Networking.NetworkLobbyPlayer[networkLobbyManager.maxPlayers];
 		networkLobbyManager.lobbyScene = "Idle";
@@ -49,9 +60,13 @@ public class ClientSceneManager : MonoBehaviour
 
 	private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
 		if (scene.name == "Game") {
+			CurrentScene = "Game";
 			onServerGameReady ();
 			// notify server we've loaded
 //			communicationClient.NotifySceneLoaded(scene.name, capsulePrefab);
+		} else if (scene.name == "Leaderboard") {
+			CurrentScene = "Leaderboard";
+			onServerGameEnd ();
 		}
 	}
 
@@ -128,18 +143,11 @@ public class ClientSceneManager : MonoBehaviour
 	public void onUserLeaveGame () {
 		DebugConsole.Log ("onUserLeaveGame");
 		innerProcess.MoveNext (Command.LeaveGame);
-		ensureCorrectScene ();
-	}
 
-	private void onServerRequestSceneChange (string sceneName) {
-		switch (sceneName) {
-		case "Game":
-			onServerGameReady ();
-			break;
-		default:
-			Debug.Log (string.Format ("unknown server scene request: {0}", sceneName));
-			break;
-		}
+		networkLobbyManager.StopClient ();
+
+
+		ensureCorrectScene ();
 	}
 
 
@@ -161,12 +169,14 @@ public class ClientSceneManager : MonoBehaviour
 			}
 			break;
 		case ProcessState.PlayingGame:
+			// this is managed for us by LobbyNetworkManager
 //			if (CurrentScene != "Game") {
 //				CurrentScene = "Game";
 //				SceneManager.LoadScene ("Game");
 //			}
 			break;
 		case ProcessState.Leaderboard:
+			// this is managed for us by LobbyNetworkManager
 //			if (CurrentScene != "Leaderboard") {
 //				CurrentScene = "Leaderboard";
 //				SceneManager.LoadScene ("Leaderboard");

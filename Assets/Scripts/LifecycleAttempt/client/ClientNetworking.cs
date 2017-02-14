@@ -19,10 +19,12 @@ namespace ClientNetworking
 		{
 			showGUI = false;
 			broadcastKey = BROADCAST_KEY;
-			Initialize();
+
 		}
 
 		public void ListenForServers () {
+			// Initialize needs to be called before StartAsClient every time
+			Initialize();
 			StartAsClient ();
 		}
 

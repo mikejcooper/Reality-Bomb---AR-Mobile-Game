@@ -13,6 +13,8 @@ public class ServerSceneManager : MonoBehaviour
 		Idle, Retrieving
 	}
 
+	public static ServerSceneManager instance;
+
 	public MeshRetrievalState meshRetrievalState = MeshRetrievalState.Idle;
 
 	public UnityEngine.Networking.NetworkLobbyPlayer lobbyPlayerPrefab;
@@ -34,13 +36,22 @@ public class ServerSceneManager : MonoBehaviour
 	private string currentScene = "Idle";
 	private int LoadedPlayerCount = 0;
 
+	void Awake () {
+		if (instance == null) {
+			instance = this;
+		} else if (instance != this){
+			Destroy(gameObject);
+		}
+		DontDestroyOnLoad (gameObject);
 
-	void Start ()
+		Init ();
+	}
+
+	void Init ()
 	{
 		var ugly = UnityThreadHelper.Dispatcher;
 
 		// init
-		DontDestroyOnLoad (transform.gameObject);
 		innerProcess = new Process ();
 		discoveryServer = transform.gameObject.AddComponent<DiscoveryServer> ();
 		networkLobbyManager = transform.gameObject.AddComponent<PTBGameLobbyManager> ();
@@ -48,6 +59,7 @@ public class ServerSceneManager : MonoBehaviour
 		dataTransferManager = new DataTransferManager ();
 
 		networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Debug;
+		networkLobbyManager.showLobbyGUI = false;
 
 //		networkLobbyManager.connectionConfig.AddChannel (UnityEngine.Networking.QosType.Reliable);
 //		networkLobbyManager.connectionConfig.AddChannel (UnityEngine.Networking.QosType.ReliableFragmented);
@@ -190,6 +202,8 @@ public class ServerSceneManager : MonoBehaviour
 			}
 			break;
 		}
+
+		if (stateChangeEvent != null)
 		stateChangeEvent (innerProcess.CurrentState);
 	}
 
