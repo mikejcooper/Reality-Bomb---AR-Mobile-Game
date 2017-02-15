@@ -18,8 +18,8 @@ public sealed class MarkerFileParser
 	}
 	#endregion
 
-	private List<int> triangles;
-	private List<Vector3> vertices;
+	private List<int> _triangles;
+	private List<Vector3> _vertices;
 
 	private const int MIN_POW_10 = -16;
 	private const int MAX_POW_10 = 16;
@@ -29,17 +29,17 @@ public sealed class MarkerFileParser
 	// Use this for initialization
 	public Mesh ImportString(string data)
 	{
-		triangles = new List<int>();
-		vertices = new List<Vector3>();
+		_triangles = new List<int>();
+		_vertices = new List<Vector3>();
 
 		LoadMeshData(data);
 
 		Mesh mesh = new Mesh();
 
-		mesh.vertices = vertices.ToArray();
+		mesh.vertices = _vertices.ToArray();
 		mesh.uv = new Vector2[0];
 		mesh.normals = new Vector3[0];
-		mesh.triangles = triangles.ToArray();
+		mesh.triangles = _triangles.ToArray();
 
 		mesh.RecalculateBounds();
 		;
@@ -54,7 +54,6 @@ public sealed class MarkerFileParser
 		string text = data;
 		int start = 0;
 		string objectName = null;
-		int faceDataCount = 0;
 
 		StringBuilder sbFloat = new StringBuilder();
 
@@ -82,7 +81,7 @@ public sealed class MarkerFileParser
 				{
 					int splitStart = 2;
 
-					vertices.Add(new Vector3(-GetFloat(sb, ref splitStart, ref sbFloat),
+					_vertices.Add(new Vector3(-GetFloat(sb, ref splitStart, ref sbFloat),
 						GetFloat(sb, ref splitStart, ref sbFloat), GetFloat(sb, ref splitStart, ref sbFloat)));
 				}
 				else if (sb[0] == 'f' && sb[1] == ' ')
@@ -93,9 +92,9 @@ public sealed class MarkerFileParser
 					int p2 = GetInt (sb, ref splitStart, ref sbFloat);
 					int p3 = GetInt (sb, ref splitStart, ref sbFloat);
 
-					triangles.Add (p3-1);
-					triangles.Add (p2-1);
-					triangles.Add (p1-1);
+					_triangles.Add (p3-1);
+					_triangles.Add (p2-1);
+					_triangles.Add (p1-1);
 
 
 				}

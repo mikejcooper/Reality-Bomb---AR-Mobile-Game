@@ -25,10 +25,10 @@ public sealed class FastObjImporter
 	}
 	#endregion
 
-	private List<int> triangles;
-	private List<Vector3> vertices;
-	private List<Vector3> normals;
-	private List<int> intArray;
+	private List<int> _triangles;
+	private List<Vector3> _vertices;
+	private List<Vector3> _normals;
+	private List<int> _intArray;
 
 	private const int MIN_POW_10 = -16;
 	private const int MAX_POW_10 = 16;
@@ -38,19 +38,19 @@ public sealed class FastObjImporter
 	// Use this for initialization
 	public Mesh ImportString(string data)
 	{
-		triangles = new List<int>();
-		vertices = new List<Vector3>();
-		normals = new List<Vector3>();
-		intArray = new List<int>();
+		_triangles = new List<int>();
+		_vertices = new List<Vector3>();
+		_normals = new List<Vector3>();
+		_intArray = new List<int>();
 
 		LoadMeshData(data);
 
 		Mesh mesh = new Mesh();
 
-		mesh.vertices = vertices.ToArray();
+		mesh.vertices = _vertices.ToArray();
 		mesh.uv = new Vector2[0];
-		mesh.normals = normals.ToArray();
-		mesh.triangles = triangles.ToArray();
+		mesh.normals = _normals.ToArray();
+		mesh.triangles = _triangles.ToArray();
 
 		mesh.RecalculateBounds();
 		;
@@ -95,13 +95,13 @@ public sealed class FastObjImporter
 
 					Vector3 vec = new Vector3(GetFloat(sb, ref splitStart, ref sbFloat),
 						GetFloat(sb, ref splitStart, ref sbFloat), GetFloat(sb, ref splitStart, ref sbFloat));
-					normals.Add (new Vector3 (-vec.z, -vec.y, vec.x));
+					_normals.Add (new Vector3 (-vec.z, -vec.y, vec.x));
 				}
 				else if (sb[0] == 'v' && sb[1] == ' ') // Vertices
 				{
 					int splitStart = 2;
 
-					vertices.Add(new Vector3(-GetFloat(sb, ref splitStart, ref sbFloat),
+					_vertices.Add(new Vector3(-GetFloat(sb, ref splitStart, ref sbFloat),
 						GetFloat(sb, ref splitStart, ref sbFloat), GetFloat(sb, ref splitStart, ref sbFloat)));
 				}
 				else if (sb[0] == 'f' && sb[1] == ' ')
@@ -109,7 +109,7 @@ public sealed class FastObjImporter
 					int splitStart = 2;
 
 					int j = 1;
-					intArray.Clear();
+					_intArray.Clear();
 					int info = 0;
 					// Add faceData, a face can contain multiple triangles, facedata is stored in following order vert, uv, normal. If uv or normal are / set it to a 0
 					while (splitStart < sb.Length && char.IsDigit(sb[splitStart]))
@@ -118,7 +118,7 @@ public sealed class FastObjImporter
 							GetInt(sb, ref splitStart, ref sbFloat), GetInt(sb, ref splitStart, ref sbFloat));
 						j++;
 
-						intArray.Add(item.x);
+						_intArray.Add(item.x);
 						faceDataCount++;
 					}
 
@@ -126,9 +126,9 @@ public sealed class FastObjImporter
 					j = 1;
 					while (j + 2 < info) //Create triangles out of the face data.  There will generally be more than 1 triangle per face.
 					{
-						triangles.Add(intArray[j+1]-1);
-						triangles.Add(intArray[j]-1);
-						triangles.Add(intArray[0]-1);
+						_triangles.Add(_intArray[j+1]-1);
+						_triangles.Add(_intArray[j]-1);
+						_triangles.Add(_intArray[0]-1);
 
 						j++;
 					}

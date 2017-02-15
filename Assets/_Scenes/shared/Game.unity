@@ -120,7 +120,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bcbaa1e835654059b46fd364b03cb0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bombPlayerConnectionId: 0
+  BombPlayerConnectionId: 0
 --- !u!114 &30509391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -734,9 +734,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b4b592e8bd9e4fe5a979eac820f9010, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rend: {fileID: 0}
-  fallSpeed: 8
-  spinSpeed: 250
+  FallSpeed: 60
+  SpinSpeed: 250
 --- !u!23 &1474138051
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1281,11 +1280,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73c899522f94a4893a4ac0aecc1e5c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 614231944}
-  markerScene: {fileID: 188577963}
-  cameraXPosition: 0
-  cameraYPosition: 400
-  cameraZPosition: 0
-  cameraXRotation: 90
-  cameraYRotation: 0
-  cameraZRotation: 0
+  CameraObject: {fileID: 614231944}
+  MarkerScene: {fileID: 188577963}
+  CameraXPosition: 0
+  CameraYPosition: 400
+  CameraZPosition: 0
+  CameraXRotation: 90
+  CameraYRotation: 0
+  CameraZRotation: 0

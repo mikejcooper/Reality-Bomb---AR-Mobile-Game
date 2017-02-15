@@ -410,15 +410,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5d9678d34a4948bbbd300e6f8323630, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isPlayingSolo: 0
-  m_PlayerNumber: 1
-  m_Speed: 40
-  m_TurnSpeed: 180
-  m_MaxLifetime: 15
-  hasBomb: 0
-  alive: 1
-  powerUpEndTime: 0
-  powerUpActive: 0
+  IsPlayingSolo: 0
+  Speed: 40
+  TurnSpeed: 180
+  MaxLifetime: 15
+  HasBomb: 0
+  Alive: 1
+  PowerUpEndTime: 0
+  PowerUpActive: 0
 --- !u!114 &114300567772753998
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -431,7 +430,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_TransformSyncMode: 1
-  m_SendInterval: 0.1
+  m_SendInterval: 0.04761905
   m_SyncRotationAxis: 2
   m_RotationSyncCompression: 0
   m_SyncSpin: 0

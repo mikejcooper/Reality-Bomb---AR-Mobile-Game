@@ -707,9 +707,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0575df13e4c884c019ca30a6930195a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  capsulePrefab: {fileID: 1559845829664170, guid: 36d382039a945483a9c7ef14852dc968,
+  LobbyPlayerPrefab: {fileID: 114346451124435684, guid: 872aadcc45bbf274ea7e2a9999fb07af,
     type: 2}
-  lobbyPlayerPrefab: {fileID: 114346451124435684, guid: 872aadcc45bbf274ea7e2a9999fb07af,
-    type: 2}
-  gamePlayerPrefab: {fileID: 1072149507112704, guid: 4d80ee73587c25345b17359d127e5a8b,
+  GamePlayerPrefab: {fileID: 1072149507112704, guid: 4d80ee73587c25345b17359d127e5a8b,
     type: 2}
