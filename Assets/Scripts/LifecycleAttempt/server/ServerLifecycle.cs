@@ -43,6 +43,7 @@ namespace ServerLifecycle {
 				{ new StateTransition(ProcessState.AwaitingData, Command.MeshReceived), ProcessState.AwaitingPlayers },
 				{ new StateTransition(ProcessState.AwaitingMesh, Command.MeshReceived), ProcessState.PreparingGame },
 
+				{ new StateTransition(ProcessState.AwaitingPlayers, Command.TooFewPlayersRemaining), ProcessState.AwaitingPlayers },
 				{ new StateTransition(ProcessState.AwaitingPlayers, Command.EnoughPlayersJoined), ProcessState.PreparingGame },
 				{ new StateTransition(ProcessState.PreparingGame, Command.EnoughPlayersJoined), ProcessState.PreparingGame },
 				{ new StateTransition(ProcessState.AwaitingMesh, Command.EnoughPlayersJoined), ProcessState.PreparingGame },
@@ -68,7 +69,9 @@ namespace ServerLifecycle {
 
 		public ProcessState MoveNext(Command command)
 		{
+			ProcessState lastState = CurrentState;
 			CurrentState = GetNext(command);
+			UnityEngine.Debug.Log (string.Format("Succesfully moved: {0} -({1})-> {2}", lastState, command, CurrentState));
 			return CurrentState;
 		}
 	}

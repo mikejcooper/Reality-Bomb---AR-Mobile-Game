@@ -3,9 +3,5 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GameResults {
-	public List<CarController> deaths {
-		get;
-		set;
-	}
-
+	public List<string> deathList = new List<string>();
 }

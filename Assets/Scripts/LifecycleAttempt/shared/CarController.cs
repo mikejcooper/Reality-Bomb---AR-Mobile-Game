@@ -56,7 +56,7 @@ public class CarController : NetworkBehaviour
 			CmdRequestColour ();
 		} else {
 			// register
-			GameObject.Find ("GameManager").GetComponent<PTBGameManager> ().AddCar (gameObject);
+			PTBGameManager.Instance.AddCar (gameObject);
 		}
 
 		Reposition (GameObject.Find ("World Mesh"));
@@ -68,8 +68,8 @@ public class CarController : NetworkBehaviour
 		DebugConsole.Log ("I am server and I choose bomb");
 		// set colour based off server's game manager
 
-		bool isBomb = connectionToClient.connectionId == GameObject.Find("GameManager").GetComponent<PTBGameManager>().bombPlayerConnectionId ;
-		DebugConsole.Log (string.Format ("is {0} == {1} ? {2}", connectionToClient.connectionId, GameObject.Find("GameManager").GetComponent<PTBGameManager>().bombPlayerConnectionId, isBomb));
+		bool isBomb = connectionToClient.connectionId == PTBGameManager.Instance.bombPlayerConnectionId ;
+		DebugConsole.Log (string.Format ("is {0} == {1} ? {2}", connectionToClient.connectionId, PTBGameManager.Instance.bombPlayerConnectionId, isBomb));
 		AllDevicesSetBomb (isBomb);
 	}
 
@@ -80,16 +80,14 @@ public class CarController : NetworkBehaviour
 
 	[ClientRpc]
 	private void RpcSetBomb(bool isBomb) {
-		DebugConsole.Log("isBomb: " + isBomb);
-		hasBomb = isBomb;
-		if (isBomb) {
-			ChangeColour (Color.red);
-		} else {
-			ChangeColour (Color.blue);
-		}
+		processSetBombMessage (isBomb);
 	}
 
 	private void ServerSetBomb(bool isBomb) {
+		processSetBombMessage (isBomb);
+	}
+
+	private void processSetBombMessage(bool isBomb) {
 		DebugConsole.Log("isBomb: " + isBomb);
 		hasBomb = isBomb;
 		if (isBomb) {
@@ -116,10 +114,17 @@ public class CarController : NetworkBehaviour
 				m_Lifetime -= Time.deltaTime;
 			}
 			if (m_Lifetime < 0.0f) {
-				m_Lifetime = 0.0f;
-				alive = false;
+				kill ();
 			}
 		}
+	}
+
+	[Server]
+	private void kill () {
+		DebugConsole.Log ("player has run out of time");
+		m_Lifetime = 0.0f;
+		alive = false;
+		PTBGameManager.Instance.AllDevicesKillPlayer (this);
 	}
 
 	private void ChangeColour(Color colour)
@@ -180,7 +185,6 @@ public class CarController : NetworkBehaviour
 	{
 		
 		if (col.gameObject.tag == "TankTag") {
-			DebugConsole.Log ("There is a collision with a tank");
 			if (col.gameObject.GetComponent<CarController>().TransferBomb())
 			{
 				AllDevicesSetBomb(true);

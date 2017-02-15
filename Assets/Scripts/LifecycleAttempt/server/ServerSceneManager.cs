@@ -13,11 +13,9 @@ public class ServerSceneManager : MonoBehaviour
 		Idle, Retrieving
 	}
 
-	public static ServerSceneManager instance;
-
 	public MeshRetrievalState meshRetrievalState = MeshRetrievalState.Idle;
 
-	public UnityEngine.Networking.NetworkLobbyPlayer lobbyPlayerPrefab;
+	public NetworkCompat.NetworkLobbyPlayer lobbyPlayerPrefab;
 	public GameObject gamePlayerPrefab;
 
 	public GameResults lastGameResults;
@@ -36,19 +34,24 @@ public class ServerSceneManager : MonoBehaviour
 	private string currentScene = "Idle";
 	private int LoadedPlayerCount = 0;
 
-	void Awake () {
-		if (instance == null) {
-			instance = this;
-		} else if (instance != this){
-			Destroy(gameObject);
-		}
-		DontDestroyOnLoad (gameObject);
+	private static ServerSceneManager _instance;
 
-		Init ();
+	public static ServerSceneManager Instance { get { return _instance; } }
+
+
+	private void Awake()
+	{
+		if (_instance != null && _instance != this)
+		{
+			Destroy(this.gameObject);
+		} else {
+			_instance = this;
+		}
 	}
 
-	void Init ()
+	void Start ()
 	{
+		DontDestroyOnLoad (gameObject);
 		var ugly = UnityThreadHelper.Dispatcher;
 
 		// init
@@ -65,8 +68,12 @@ public class ServerSceneManager : MonoBehaviour
 //		networkLobbyManager.connectionConfig.AddChannel (UnityEngine.Networking.QosType.ReliableFragmented);
 
 		// register listeners for when players connect / disconnect
-		networkLobbyManager.lobbySlots = new UnityEngine.Networking.NetworkLobbyPlayer[networkLobbyManager.maxPlayers];
-		networkLobbyManager.lobbyScene = "Idle";
+		networkLobbyManager.lobbySlots = new NetworkCompat.NetworkLobbyPlayer[networkLobbyManager.maxPlayers];
+
+		List<string> lobbyScenes = new List<string> ();
+		lobbyScenes.Add ("Idle");
+		lobbyScenes.Add ("Leaderboard");
+		networkLobbyManager.lobbyScenes = lobbyScenes;
 
 		networkLobbyManager.playScene = "Game";
 
@@ -166,8 +173,7 @@ public class ServerSceneManager : MonoBehaviour
 		ensureCorrectScene ();
 	}
 
-	public void onGameEnd (GameResults gameResults) {
-		lastGameResults = gameResults;
+	public void onGameEnd () {
 		DebugConsole.Log ("onGameEnd");
 		innerProcess.MoveNext (Command.GameEnd);
 		ensureCorrectScene ();
@@ -182,18 +188,36 @@ public class ServerSceneManager : MonoBehaviour
 		case ProcessState.AwaitingPlayers:
 		case ProcessState.PreparingGame:
 			if (lastGameResults != null) {
-				networkLobbyManager.ServerChangeScene ("Leaderboard");
+//				networkLobbyManager.ServerChangeScene ("Leaderboard");
+				if (currentScene != "Leaderboard") {
+					networkLobbyManager.ServerChangeScene("Leaderboard");
+					currentScene = "Leaderboard"; // put this in some scene load callback
+					foreach (var lobbyPlayer in networkLobbyManager.lobbySlots) {
+
+						if (lobbyPlayer == null)
+							continue;
+					
+						lobbyPlayer.GetComponent<UnityEngine.Networking.NetworkLobbyPlayer> ().readyToBegin = true;
+
+						// tell every player that this player is ready
+						var outMsg = new NetworkCompat.LobbyReadyToBeginMessage ();
+						outMsg.slotId = lobbyPlayer.slot;
+						outMsg.readyState = true;
+						UnityEngine.Networking.NetworkServer.SendToReady (null, UnityEngine.Networking.MsgType.LobbyReadyToBegin, outMsg);
+					}
+				}
 			} else {
 				if (currentScene != "Idle") {
-					currentScene = "Idle";
+					currentScene = "Idle";  // put this in some scene load callback
 					SceneManager.LoadScene ("Idle");
 				}
 			}
 			break;
 		case ProcessState.PlayingGame:
 			if (currentScene != "Game") {
-				currentScene = "Game";
+				currentScene = "Game"; // put this in some scene load callback
 				LoadedPlayerCount = 0;
+				networkLobbyManager.CheckReadyToBegin (); // this needs to be called before we change scene
 
 				networkLobbyManager.ServerChangeScene ("Game");
 //				communicationServer.ChangeClientsScene ("Game");

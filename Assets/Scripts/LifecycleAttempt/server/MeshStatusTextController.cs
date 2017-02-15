@@ -18,7 +18,7 @@ public class MeshStatusTextController : ServerStateViewBehaviour {
 //			meshStatus += "we don't have a mesh";
 //		}
 
-		switch (ServerSceneManager.instance.meshRetrievalState) {
+		switch (ServerSceneManager.Instance.meshRetrievalState) {
 		case ServerSceneManager.MeshRetrievalState.Idle:
 			meshStatus += " and we're not getting a new one";
 			break;

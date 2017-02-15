@@ -8,11 +8,11 @@ using UnityEngine.SceneManagement;
 public class ClientSceneManager : MonoBehaviour
 {
 
-	public static ClientSceneManager instance;
-
 	public GameObject capsulePrefab;
-	public UnityEngine.Networking.NetworkLobbyPlayer lobbyPlayerPrefab;
+	public NetworkCompat.NetworkLobbyPlayer lobbyPlayerPrefab;
 	public GameObject gamePlayerPrefab;
+
+	public GameResults lastGameResults;
 
 	private DiscoveryClient discoveryClient;
 	private PTBGameLobbyManager networkLobbyManager;
@@ -20,20 +20,25 @@ public class ClientSceneManager : MonoBehaviour
 	private Process innerProcess;
 	private string CurrentScene = "Idle";
 
-	void Awake () {
-		if (instance == null) {
-			instance = this;
-		} else if (instance != this){
-			Destroy(gameObject);
-		}
-		DontDestroyOnLoad (gameObject);
+	private static ClientSceneManager _instance;
 
-		Init ();
+	public static ClientSceneManager Instance { get { return _instance; } }
+
+
+	private void Awake()
+	{
+		if (_instance != null && _instance != this)
+		{
+			Destroy(this.gameObject);
+		} else {
+			_instance = this;
+		}
 	}
 
-	void Init ()
+	void Start ()
 	{
 		// init
+		DontDestroyOnLoad (gameObject);
 		innerProcess = new Process ();	
 		discoveryClient = transform.gameObject.AddComponent<DiscoveryClient> ();
 		networkLobbyManager = transform.gameObject.AddComponent<PTBGameLobbyManager> ();
@@ -41,8 +46,12 @@ public class ClientSceneManager : MonoBehaviour
 		networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Debug;
 		networkLobbyManager.showLobbyGUI = false;
 
-		networkLobbyManager.lobbySlots = new UnityEngine.Networking.NetworkLobbyPlayer[networkLobbyManager.maxPlayers];
-		networkLobbyManager.lobbyScene = "Idle";
+		networkLobbyManager.lobbySlots = new NetworkCompat.NetworkLobbyPlayer[networkLobbyManager.maxPlayers];
+
+		List<string> lobbyScenes = new List<string> ();
+		lobbyScenes.Add ("Idle");
+		lobbyScenes.Add ("Leaderboard");
+		networkLobbyManager.lobbyScenes = lobbyScenes;
 
 		networkLobbyManager.playScene = "Game";
 
@@ -96,24 +105,6 @@ public class ClientSceneManager : MonoBehaviour
 		networkLobbyManager.networkAddress = "localhost";
 		networkLobbyManager.networkPort = 7777;
 		networkLobbyManager.StartClient ();
-	}
-
-	class LobbyReadyToBeginMessage : UnityEngine.Networking.MessageBase
-	{
-		public byte slotId;
-		public bool readyState;
-
-		public override void Deserialize(UnityEngine.Networking.NetworkReader reader)
-		{
-			slotId = reader.ReadByte();
-			readyState = reader.ReadBoolean();
-		}
-
-		public override void Serialize(UnityEngine.Networking.NetworkWriter writer)
-		{
-			writer.Write(slotId);
-			writer.Write(readyState);
-		}
 	}
 
 	public void onUserConnectedToGame () {

@@ -120,9 +120,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bcbaa1e835654059b46fd364b03cb0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Cars: []
-  m_DeathOrder: []
-  bombPlayerIndex: 0
   bombPlayerConnectionId: 0
 --- !u!114 &30509391
 MonoBehaviour:

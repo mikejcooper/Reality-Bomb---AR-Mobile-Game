@@ -8,8 +8,8 @@ public class ServerIdleGUI : MonoBehaviour {
 	public UnityEngine.UI.Selectable loadMeshButton;
 
 	void Start () {
-		startGameButton.GetComponent<UnityEngine.UI.Button> ().onClick.AddListener(() => ServerSceneManager.instance.onGameReady());
-		loadMeshButton.GetComponent<UnityEngine.UI.Button> ().onClick.AddListener(() => ServerSceneManager.instance.loadNewMesh());
+		startGameButton.GetComponent<UnityEngine.UI.Button> ().onClick.AddListener(() => ServerSceneManager.Instance.onGameReady());
+		loadMeshButton.GetComponent<UnityEngine.UI.Button> ().onClick.AddListener(() => ServerSceneManager.Instance.loadNewMesh());
 	}
 
 }

@@ -5,74 +5,91 @@ using UnityEngine.Networking;
 
 public class PTBGameManager : NetworkBehaviour {
 
-	public List<CarController> m_Cars = new List<CarController>();
-
-	public List<CarController> m_DeathOrder = new List<CarController>();
-
-	public int bombPlayerIndex;
 	public int bombPlayerConnectionId;
 
-	void Start () {
-		if (isServer) {
-			// index 1 is server I think
-			bombPlayerIndex = Random.Range(1, UnityEngine.Networking.NetworkServer.connections.Count);
-			DebugConsole.Log (string.Format ("chose index {0} from connections size of {1}", bombPlayerIndex, UnityEngine.Networking.NetworkServer.connections.Count));
-			bombPlayerConnectionId = UnityEngine.Networking.NetworkServer.connections [bombPlayerIndex].connectionId;
+	private List<CarController> cars = new List<CarController>();
+
+	private List<string> deathList = new List<string>();
+
+
+	private static PTBGameManager _instance;
+
+	public static PTBGameManager Instance { get { return _instance; } }
+
+
+	private void Awake()
+	{
+		if (_instance != null && _instance != this)
+		{
+			Destroy(this.gameObject);
+		} else {
+			_instance = this;
+		}
+	}
+
+	void Start ()
+	{
+		if (!isServer) {
+			ClientSceneManager.Instance.lastGameResults = new GameResults ();
+		} else if (isServer) {
+			ServerSceneManager.Instance.lastGameResults = new GameResults ();
+
+			List<int> activeConnectionIds = new List<int>();
+			for (int i=0; i<UnityEngine.Networking.NetworkServer.connections.Count; i++) {
+				if (UnityEngine.Networking.NetworkServer.connections [i] != null &&
+				    UnityEngine.Networking.NetworkServer.connections [i].isConnected) {
+					activeConnectionIds.Add (UnityEngine.Networking.NetworkServer.connections [i].connectionId);
+				}
+			}
+			int bombPlayerIndex = Random.Range(0, activeConnectionIds.Count);
+			DebugConsole.Log (string.Format ("chose index {0} from connections size of {1}", bombPlayerIndex, activeConnectionIds.Count));
+			bombPlayerConnectionId = activeConnectionIds [bombPlayerIndex];
 			DebugConsole.Log ("=> bombPlayerConnectionId: " + bombPlayerConnectionId);
 		}
 	}
 
+
 	[Server]
-	private void Update()
-	{
-		CheckDeaths();
-		if (GameOver ()) {
-			DebugConsole.Log ("GAME OVER");
-			GameObject.Find ("Persistent").GetComponent<ServerSceneManager> ().onGameEnd (makeGameResults());
+	private string getPlayerName (CarController car) {
+		return string.Format ("player {0}", car.connectionToClient.connectionId);
+	}
+
+	[Server]
+	public void AllDevicesKillPlayer (CarController car) {
+		string playerName = getPlayerName (car);
+		RpcKillPlayer (playerName);
+		ServerKillPlayer (playerName);
+		CheckForGameOver ();
+	}
+
+	[ClientRpc]
+	private void RpcKillPlayer(string playerName) {
+		ProcessKillPlayerMessage (playerName);
+		ClientSceneManager.Instance.lastGameResults.deathList.Add (playerName);
+	}
+
+	[Server]
+	private void ServerKillPlayer(string playerName) {
+		ProcessKillPlayerMessage (playerName);
+		ServerSceneManager.Instance.lastGameResults.deathList.Add (playerName);
+	}
+
+
+	private void ProcessKillPlayerMessage (string playerName) {
+		deathList.Add (playerName);
+	}
+
+	[Server]
+	private void CheckForGameOver () {
+		if (deathList.Count >= (cars.Count - 1)) {
+			ServerSceneManager.Instance.onGameEnd ();
 		}
-
 	}
 
-	private GameResults makeGameResults () {
-		GameResults results = new GameResults ();
-		results.deaths = m_DeathOrder;
-		return results;
-	}
 
 	public void AddCar(GameObject gamePlayer)
 	{
-		m_Cars.Add(gamePlayer.GetComponent<CarController>());
-		Debug.Log("Car added!");
+		cars.Add(gamePlayer.GetComponent<CarController>());
 	}
-
-	private void CheckDeaths()
-	{
-		for (int i = 0; i < m_Cars.Count; i++)
-		{
-			if (!m_Cars[i].alive)
-			{
-				m_DeathOrder.Add(m_Cars[i]);
-				m_Cars.RemoveAt(i);
-			}
-		}
-	}
-
-	private bool GameOver()
-	{
-		return m_Cars.Count == 1;
-	}
-
-//	public void RepositionAllCars()
-//	{
-//		for (int i = 0; i < m_Cars.Count; i++)
-//		{
-//			m_Cars[i].Reposition();
-//		}
-//		EnableCameraLayer();
-//	}
-
-//	void EnableCameraLayer()
-//	{
-//		Camera.current.cullingMask |= 1 << LayerMask.NameToLayer("Players");
-//	}
+		
 }

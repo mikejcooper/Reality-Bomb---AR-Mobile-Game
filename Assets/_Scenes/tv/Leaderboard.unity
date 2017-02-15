@@ -122,7 +122,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startGameButton: {fileID: 412507199}
-  leadMeshButton: {fileID: 1646876629}
+  loadMeshButton: {fileID: 1646876629}
 --- !u!114 &90019950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -373,7 +373,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af033ff0878834c438191dcf226d110f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  persistentObject: {fileID: 0}
   button: {fileID: 412507199}
 --- !u!222 &412507202
 CanvasRenderer:
@@ -501,7 +500,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e87a087811564668a283b5fb46bfe29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  persistentObject: {fileID: 0}
   playerCountText: {fileID: 1166811388}
 --- !u!114 &1166811388
 MonoBehaviour:
@@ -676,7 +674,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b25b4f7e838834d389cdc522919cbe42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  persistentObject: {fileID: 0}
   meshStatusText: {fileID: 1507739562}
 --- !u!114 &1507739562
 MonoBehaviour:
@@ -826,7 +823,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af033ff0878834c438191dcf226d110f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  persistentObject: {fileID: 0}
   button: {fileID: 1646876629}
 --- !u!222 &1646876632
 CanvasRenderer:

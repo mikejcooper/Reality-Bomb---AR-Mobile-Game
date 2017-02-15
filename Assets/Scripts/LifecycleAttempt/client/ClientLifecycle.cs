@@ -46,6 +46,11 @@ namespace ClientLifecycle {
 				{ new StateTransition(ProcessState.PlayingGame, Command.GameEnd), ProcessState.Leaderboard },
 				{ new StateTransition(ProcessState.Leaderboard, Command.PlayMinigame), ProcessState.MiniGame },
 
+				{ new StateTransition(ProcessState.MiniGame, Command.GameEnd), ProcessState.Leaderboard },
+
+				{ new StateTransition(ProcessState.Leaderboard, Command.JoinedGame), ProcessState.Leaderboard },
+				{ new StateTransition(ProcessState.Leaderboard, Command.GameReady), ProcessState.PlayingGame },
+
 				{ new StateTransition(ProcessState.Searching, Command.LeaveGame), ProcessState.Idle },
 				{ new StateTransition(ProcessState.Connecting, Command.LeaveGame), ProcessState.Idle },
 				{ new StateTransition(ProcessState.MiniGame, Command.LeaveGame), ProcessState.Idle },
@@ -69,7 +74,9 @@ namespace ClientLifecycle {
 
 		public ProcessState MoveNext(Command command)
 		{
+			ProcessState lastState = CurrentState;
 			CurrentState = GetNext(command);
+			UnityEngine.Debug.Log (string.Format("Succesfully moved: {0} -({1})-> {2}", lastState, command, CurrentState));
 			return CurrentState;
 		}
 	}

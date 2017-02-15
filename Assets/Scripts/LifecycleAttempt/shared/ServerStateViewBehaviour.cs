@@ -9,12 +9,12 @@ public abstract class ServerStateViewBehaviour : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		ServerSceneManager.instance.stateChangeEvent += OnServerStateChange;
-		OnServerStateChange (ServerSceneManager.instance.CurrentState ());
+		ServerSceneManager.Instance.stateChangeEvent += OnServerStateChange;
+		OnServerStateChange (ServerSceneManager.Instance.CurrentState ());
 	}
 
 	void OnDestroy () {
-		ServerSceneManager.instance.stateChangeEvent -= OnServerStateChange;
+		ServerSceneManager.Instance.stateChangeEvent -= OnServerStateChange;
 	}
 
 	protected abstract void OnServerStateChange (ProcessState state);

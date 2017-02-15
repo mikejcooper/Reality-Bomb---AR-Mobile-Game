@@ -423,7 +423,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startGameButton: {fileID: 1958474382}
-  leadMeshButton: {fileID: 1318118803}
+  loadMeshButton: {fileID: 1318118803}
 --- !u!1 &719905286
 GameObject:
   m_ObjectHideFlags: 0

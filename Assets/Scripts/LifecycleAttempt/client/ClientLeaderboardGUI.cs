@@ -8,8 +8,8 @@ public class ClientLeaderboardGUI : MonoBehaviour {
 	public UnityEngine.UI.Selectable leaveButton;
 
 	void Start () {
-		playMinigameButton.GetComponent<UnityEngine.UI.Button> ().onClick.AddListener(() => ClientSceneManager.instance.onUserPlayMinigame());
-		leaveButton.GetComponent<UnityEngine.UI.Button> ().onClick.AddListener(() => ClientSceneManager.instance.onUserLeaveGame());
+		playMinigameButton.GetComponent<UnityEngine.UI.Button> ().onClick.AddListener(() => ClientSceneManager.Instance.onUserPlayMinigame());
+		leaveButton.GetComponent<UnityEngine.UI.Button> ().onClick.AddListener(() => ClientSceneManager.Instance.onUserLeaveGame());
 	}
 
 }
