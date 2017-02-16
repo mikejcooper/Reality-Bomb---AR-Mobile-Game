@@ -91,9 +91,16 @@ public class ClientSceneManager : MonoBehaviour
 		ensureCorrectScene ();
 
 		// stop listening for broadcasts
-		if (_discoveryClient != null && Application.platform != RuntimePlatform.WindowsEditor) {
-			_discoveryClient.StopBroadcast ();
-		}
+		if (_discoveryClient != null) {
+            if (Application.platform == RuntimePlatform.WindowsEditor)
+            {
+                Destroy(_discoveryClient);
+            }
+            else
+            {
+                _discoveryClient.StopBroadcast();
+            }
+        }
 
 		if (NetworkConstants.FORCE_LOCALHOST) {
 			_networkLobbyManager.networkAddress = "localhost";
