@@ -105,14 +105,7 @@ public class ClientSceneManager : MonoBehaviour
 
 		// stop listening for broadcasts
 		if (_discoveryClient != null) {
-            if (Application.platform == RuntimePlatform.WindowsEditor)
-            {
-                Destroy(_discoveryClient);
-            }
-            else
-            {
                 _discoveryClient.StopBroadcast();
-            }
         }
 
 		if (NetworkConstants.FORCE_LOCALHOST) {
