@@ -35,6 +35,8 @@ public class ServerSceneManager : MonoBehaviour
 
 	public static ServerSceneManager Instance { get { return _instance; } }
 
+    private string _meshServerAddress;
+    private int _meshServerPort;
 
 	private void Awake()
 	{
@@ -101,20 +103,29 @@ public class ServerSceneManager : MonoBehaviour
 	public void OnServerRequestLoadNewMesh () {
 		DebugConsole.Log ("OnRequestLoadNewMesh");
 		Debug.Log ("OnRequestLoadNewMesh not implemented");
-//		meshDiscoveryServer.StartSearching ();
-		OnMeshDataReceived();
-	}
+        _meshDiscoveryServer.StartSearching();
+        //OnMeshDataReceived();
+    }
 
 	private void OnMeshServerFound (string address, int port) {
 		DebugConsole.Log ("OnMeshServerFound");
-//		meshDiscoveryServer.StopSearching ();
-//
-//		// now we ask some class to get the mesh data, with a callback when it's done
-//		dataTransferManager.fetchData(address, port);
+        _meshDiscoveryServer.StopSearching();
 
-	}
+        //Save for later use
+        _meshServerAddress = address;
+        _meshServerPort = port;
+        //
+        //		// now we ask some class to get the mesh data, with a callback when it's done
+        //		dataTransferManager.fetchData(address, port);
 
-	private void OnMeshDataReceived () {
+        //Tell clients to get their meshes from this address and port
+        SocketMessage msg = new SocketMessage();
+        msg.address = address;
+        msg.port = port;
+        UnityEngine.Networking.NetworkServer.SendToAll(928, msg);
+    }
+
+    private void OnMeshDataReceived () {
 		DebugConsole.Log ("OnMeshDataReceived");
 
 		_innerProcess.MoveNext (Command.MeshReceived);
@@ -127,7 +138,7 @@ public class ServerSceneManager : MonoBehaviour
 	}
 
 
-	private void OnPlayerConnected ()
+	private void OnPlayerConnected (UnityEngine.Networking.NetworkConnection conn)
 	{
 		DebugConsole.Log ("OnPlayerConnected");
 		ConnectedPlayerCount++;
@@ -137,16 +148,20 @@ public class ServerSceneManager : MonoBehaviour
 		}
 		ensureCorrectScene ();
 
-//		// for the case that we have data already
-//		if (dataTransferManager.meshData != null) {
-//			// send this new client the meshd data
-//			DebugConsole.Log ("sending mesh to new client");
-//			UnityEngine.Networking.NetworkSystem.StringMessage outMsg = new UnityEngine.Networking.NetworkSystem.StringMessage (dataTransferManager.meshData);
-//			UnityEngine.Networking.NetworkServer.SendByChannelToAll(928, outMsg, 1);
-//		} else {
-//			DebugConsole.Log("not sending mesh to new client");
-//		}
-	}
+        //		// for the case that we have data already
+        //		if (dataTransferManager.meshData != null) {
+        //			// send this new client the meshd data
+        //			DebugConsole.Log ("sending mesh to new client");
+        //			UnityEngine.Networking.NetworkSystem.StringMessage outMsg = new UnityEngine.Networking.NetworkSystem.StringMessage (dataTransferManager.meshData);
+        //			UnityEngine.Networking.NetworkServer.SendByChannelToAll(928, outMsg, 1);
+        //		} else {
+        //			DebugConsole.Log("not sending mesh to new client");
+        //		}
+        SocketMessage msg = new SocketMessage();
+        msg.address = _meshServerAddress;
+        msg.port = _meshServerPort;
+        UnityEngine.Networking.NetworkServer.SendToClient(conn.connectionId, 928, msg);
+    }
 
 	private void OnPlayerDisconnected ()
 	{

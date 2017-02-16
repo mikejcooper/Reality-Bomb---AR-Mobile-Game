@@ -5,18 +5,20 @@ using UnityEngine.Networking;
 
 public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 
-	public delegate void OnLobbyServerConnected ();
+	public delegate void OnLobbyServerConnected (NetworkConnection conn);
 	public delegate void OnLobbyServerDisconnected ();
 	public delegate void OnLobbyClientConnected ();
 	public delegate void OnLobbyClientDisconnected ();
+    public delegate void OnMeshClearToDownloadCallback(string address, int port);
 
-	public event OnLobbyServerConnected OnLobbyServerConnectedEvent;
+    public event OnLobbyServerConnected OnLobbyServerConnectedEvent;
 	public event OnLobbyServerDisconnected OnLobbyServerDisconnectedEvent;
 	public event OnLobbyClientConnected OnLobbyClientConnectedEvent;
 	public event OnLobbyClientDisconnected OnLobbyClientDisconnectedEvent;
+    public event OnMeshClearToDownloadCallback OnMeshClearToDownloadEvent;
 
 
-	public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
+    public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
 	{
 		
 		DebugConsole.Log ("OnServerAddPlayer: "+playerControllerId);
@@ -49,7 +51,7 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 	}
 
 	public override void OnLobbyServerConnect (NetworkConnection conn) {
-		OnLobbyServerConnectedEvent ();
+		OnLobbyServerConnectedEvent (conn);
 
 	}
 
@@ -70,4 +72,23 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 		Debug.Log ("OnLobbyClientEnter");
 		OnLobbyClientConnectedEvent ();
 	}
+
+    public override void OnClientConnect(NetworkConnection conn)
+    {
+        base.OnClientConnect(conn);
+        if (client != null)
+        {
+            DebugConsole.Log("OnClientConnect worked");
+            client.RegisterHandler(928, OnClientClearToDownloadMesh);
+        }
+    }
+
+    public void OnClientClearToDownloadMesh(NetworkMessage netMsg)
+    {
+        DebugConsole.Log("OnClientClearToDownloadMesh");
+        ServerNetworking.SocketMessage socketMsg = netMsg.ReadMessage<ServerNetworking.SocketMessage>();
+        Debug.Log(socketMsg.address);
+
+        OnMeshClearToDownloadEvent(socketMsg.address, socketMsg.port);
+    }
 }

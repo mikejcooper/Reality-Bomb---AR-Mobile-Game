@@ -16,9 +16,13 @@ using GlobalNetworking;
 
 namespace ServerNetworking
 {
+    public class SocketMessage : MessageBase
+    {
+        public string address;
+        public int port;
+    }
 
-
-	public class DiscoveryServer : NetworkDiscovery {
+    public class DiscoveryServer : NetworkDiscovery {
 	
 		void Start()
 		{
@@ -42,7 +46,7 @@ namespace ServerNetworking
 
 		public void StartSearching () {
 			_searching = true;
-			_searchThread = UnityThreadHelper.CreateThread(ListenForBroadcasts);
+			_searchThread = UnityThreadHelper.CreateThread(() => ListenForBroadcasts());
 		}
 
 		public void StopSearching () {

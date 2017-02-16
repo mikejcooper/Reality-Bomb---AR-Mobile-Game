@@ -16,6 +16,7 @@ public class ClientSceneManager : MonoBehaviour
 
 	private DiscoveryClient _discoveryClient;
 	private GameLobbyManager _networkLobbyManager;
+    private DataTransferManager _dataTransferManager;
 	private Process _innerProcess;
 	private string _currentScene = "Idle";
 	private static ClientSceneManager _instance;
@@ -39,6 +40,7 @@ public class ClientSceneManager : MonoBehaviour
 		_innerProcess = new Process ();	
 		_discoveryClient = transform.gameObject.AddComponent<DiscoveryClient> ();
 		_networkLobbyManager = transform.gameObject.AddComponent<GameLobbyManager> ();
+        _dataTransferManager = new DataTransferManager();
 
 		_networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Debug;
 		_networkLobbyManager.showLobbyGUI = false;
@@ -58,11 +60,22 @@ public class ClientSceneManager : MonoBehaviour
 		// register listeners for when players connect / disconnect
 		_networkLobbyManager.OnLobbyClientConnectedEvent += OnUserConnectedToGame;
 		_networkLobbyManager.OnLobbyClientDisconnectedEvent += OnUserRequestLeaveGame;
+        _networkLobbyManager.OnMeshClearToDownloadEvent += _dataTransferManager.fetchData;
+
+        //Listener for when the we have finished downloading the mesh
+        _dataTransferManager.OnMeshDataReceivedEvent += OnMeshDataReceived;
 
 		_discoveryClient.serverDiscoveryEvent += OnServerDiscovered;
 
 		SceneManager.sceneLoaded += OnSceneLoaded;
 	}
+
+    private void OnMeshDataReceived()
+    {
+        DebugConsole.Log("OnMeshDataReceived");
+
+        //Handle scene transition?
+    }
 
 	// todo: move all current scene assignments here
 	private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
