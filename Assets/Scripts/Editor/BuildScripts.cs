@@ -36,12 +36,12 @@ public class BuildScripts
     [MenuItem("Builds/Windows TV")]
     public static void BuildWindowsTV()
     {
-		BuildAndRun ("TV.app", TV_LEVELS, BuildTarget.StandaloneWindows64, GenerateBuildOptions ());
+		BuildAndRun ("TV.exe", TV_LEVELS, BuildTarget.StandaloneWindows64, GenerateBuildOptions ());
     }
 
     [MenuItem("Builds/Windows client")]
     public static void BuildWindowsClient()
     {
-		BuildAndRun ("client.app", CLIENT_LEVELS, BuildTarget.StandaloneWindows64, GenerateBuildOptions ());
+		BuildAndRun ("client.exe", CLIENT_LEVELS, BuildTarget.StandaloneWindows64, GenerateBuildOptions ());
     }
 }
