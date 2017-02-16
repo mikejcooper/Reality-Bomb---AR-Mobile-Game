@@ -14,15 +14,16 @@ using UnityEngine.Networking;
 public class DataTransferManager {
 
 	public delegate void OnMeshDataReceived ();
+    public delegate void OnMeshDataProcessed();
 
-	public event OnMeshDataReceived OnMeshDataReceivedEvent;
+    public event OnMeshDataReceived OnMeshDataReceivedEvent;
+    public event OnMeshDataProcessed OnMeshDataProcessedEvent;
 
-	public string MeshData;
+    public string MeshData;
 
 	private WebSocket _ws;
-
-
-//	public static GameObject s_WorldMesh;
+    
+	public static GameObject WorldMesh;
 
 
 	public static void SetLayerRecursively(GameObject go, int layerNumber)
@@ -52,7 +53,8 @@ public class DataTransferManager {
 							MeshData = e.Data.Substring(4);
 							if (OnMeshDataReceivedEvent != null)
 								OnMeshDataReceivedEvent ();
-		//					handleMesh(e.Data.Substring(4));
+                            //					handleMesh(e.Data.Substring(4));
+                            //produceMeshObject(WorldMesh, MeshData);
 						} else if (e.Data.StartsWith("markers")) {
 		//					handleMarkers(e.Data.Substring(7));
 						} else if (e.Data.StartsWith("triangles")) {
@@ -81,50 +83,42 @@ public class DataTransferManager {
 		});
 	}
 
-	public void produceMeshObject (GameObject gameObject, string meshData) {
+	public void produceMeshObject () {
 		// choose the material - we can get round to using a custom invisible
 		// shader at some point here, but for development purposes it's nice
 		// to be able to see the mesh
 		Material material = Resources.Load("Materials/MeshDefault", typeof(Material)) as Material;
 
 		// convert the mesh object string into an actual Unity mesh
-		Mesh mesh = FastObjImporter.Instance.ImportString(meshData);
+		Mesh mesh = FastObjImporter.Instance.ImportString(MeshData);
 		mesh.RecalculateBounds();
+        WorldMesh = new GameObject();
+        WorldMesh.name = "World Mesh";
 
-		MeshFilter filter = gameObject.GetComponent<MeshFilter> ();
-		if (filter == null) filter = gameObject.AddComponent<MeshFilter> ();
+        //MeshFilter filter = WorldMesh.GetComponent<MeshFilter> ();
+		MeshFilter filter = WorldMesh.AddComponent<MeshFilter> ();
 
 		filter.mesh = mesh;
 
-		MeshRenderer renderer = gameObject.GetComponent<MeshRenderer> ();
-		if (renderer == null) renderer = gameObject.AddComponent<MeshRenderer> ();
+		//MeshRenderer renderer = WorldMesh.GetComponent<MeshRenderer> ();
+		MeshRenderer renderer = WorldMesh.AddComponent<MeshRenderer> ();
 
-		MeshCollider collider = gameObject.GetComponent<MeshCollider> ();
-		if (collider == null) collider = gameObject.AddComponent<MeshCollider> ();
+		//MeshCollider collider = WorldMesh.GetComponent<MeshCollider> ();
+        MeshCollider collider = WorldMesh.AddComponent<MeshCollider> ();
 
 		collider.sharedMesh = mesh;
 
 		// attach to Marker scene
 		GameObject root = GameObject.Find("Marker scene");
-		gameObject.transform.parent = root.transform;
+		WorldMesh.transform.parent = root.transform;
 
 		// set mesh material
 		renderer.material = material;
 
-		// assign to correct layer for ArToolKit
-		SetLayerRecursively(gameObject, 9);
+        // assign to correct layer for ArToolKit
+        SetLayerRecursively(WorldMesh, 9);
 
-		// add network identity so that it's propagated
-		//NetworkIdentity networkIdentity = s_WorldMesh.AddComponent<NetworkIdentity>();
-
-		// propagate mesh across clients (TODO)
-		//NetworkServer.Spawn(s_WorldMesh);
-
-		// Reposition with delay.
-		//TODO: Change this to use events or a callback
-
-		//Invoke("Reposition", 2);
-//		GameManager.s_Instance.RepositionAllCars();
+        OnMeshDataProcessedEvent();
 	}
 
 

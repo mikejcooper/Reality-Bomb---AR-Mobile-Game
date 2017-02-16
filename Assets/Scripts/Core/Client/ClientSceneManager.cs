@@ -64,8 +64,9 @@ public class ClientSceneManager : MonoBehaviour
 
         //Listener for when the we have finished downloading the mesh
         _dataTransferManager.OnMeshDataReceivedEvent += OnMeshDataReceived;
+        _dataTransferManager.OnMeshDataProcessedEvent += OnMeshDataProcessed;
 
-		_discoveryClient.serverDiscoveryEvent += OnServerDiscovered;
+        _discoveryClient.serverDiscoveryEvent += OnServerDiscovered;
 
 		SceneManager.sceneLoaded += OnSceneLoaded;
 	}
@@ -74,14 +75,21 @@ public class ClientSceneManager : MonoBehaviour
     {
         DebugConsole.Log("OnMeshDataReceived");
 
-        //Handle scene transition?
     }
 
-	// todo: move all current scene assignments here
-	private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+    private void OnMeshDataProcessed()
+    {
+        DebugConsole.Log("OnMeshDataProcessed");
+        Debug.Log("OnMeshDataProcessed");
+
+    }
+
+    // todo: move all current scene assignments here
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
 		if (scene.name == "Game") {
 			_currentScene = "Game";
 			OnServerGameReady ();
+            _dataTransferManager.produceMeshObject();
 		} else if (scene.name == "Leaderboard") {
 			_currentScene = "Leaderboard";
 			OnServerGameEnd ();

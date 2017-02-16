@@ -10,7 +10,7 @@ using NetworkCompat;
 public class ServerSceneManager : MonoBehaviour
 {
 
-	private const int MIN_REQ_PLAYERS = 2;
+	private const int MIN_REQ_PLAYERS = 1;
 
 	public enum MeshRetrievalState
 	{
@@ -89,7 +89,9 @@ public class ServerSceneManager : MonoBehaviour
 		_meshDiscoveryServer.MeshServerDiscoveredEvent += OnMeshServerFound;
 
 		_dataTransferManager.OnMeshDataReceivedEvent += OnMeshDataReceived;
+        _dataTransferManager.OnMeshDataProcessedEvent += OnMeshDataProcessed;
 
+        SceneManager.sceneLoaded += OnSceneLoaded;
 		// development
 		OnServerRequestLoadNewMesh ();
 	}
@@ -116,14 +118,15 @@ public class ServerSceneManager : MonoBehaviour
         _meshServerAddress = address;
         _meshServerPort = port;
         //
-        //		// now we ask some class to get the mesh data, with a callback when it's done
-        //		dataTransferManager.fetchData(address, port);
+        // now we ask some class to get the mesh data, with a callback when it's done
+        _dataTransferManager.fetchData(address, port);
 
         //Tell clients to get their meshes from this address and port
         SocketMessage msg = new SocketMessage();
         msg.address = address;
         msg.port = port;
         UnityEngine.Networking.NetworkServer.SendToAll(928, msg);
+        //Need to wait until all clients have downloaded before we change scenes really
     }
 
     private void OnMeshDataReceived () {
@@ -131,15 +134,22 @@ public class ServerSceneManager : MonoBehaviour
 
 		_innerProcess.MoveNext (Command.MeshReceived);
 		ensureCorrectScene ();
-
-		// invalidate all clients
-//		// now send to all clients
-//		UnityEngine.Networking.NetworkSystem.StringMessage outMsg = new UnityEngine.Networking.NetworkSystem.StringMessage(dataTransferManager.meshData);
-//		UnityEngine.Networking.NetworkServer.SendToAll(3110, outMsg);
 	}
 
+    private void OnMeshDataProcessed()
+    {
+        DebugConsole.Log("OnMeshDataProcessed");
+    }
 
-	private void OnPlayerConnected (UnityEngine.Networking.NetworkConnection conn)
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Game")
+        {
+            _dataTransferManager.produceMeshObject();
+        }
+    }
+
+    private void OnPlayerConnected (UnityEngine.Networking.NetworkConnection conn)
 	{
 		DebugConsole.Log ("OnPlayerConnected");
 		ConnectedPlayerCount++;
