@@ -34,16 +34,7 @@ public class GameManager : NetworkBehaviour {
 		} else if (isServer) {
 			ServerSceneManager.Instance.LastGameResults = new GameResults ();
 
-			List<int> activeConnectionIds = new List<int>();
-			for (int i=0; i<UnityEngine.Networking.NetworkServer.connections.Count; i++) {
-				if (UnityEngine.Networking.NetworkServer.connections [i] != null &&
-				    UnityEngine.Networking.NetworkServer.connections [i].isConnected) {
-					activeConnectionIds.Add (UnityEngine.Networking.NetworkServer.connections [i].connectionId);
-				}
-			}
-			int bombPlayerIndex = Random.Range(0, activeConnectionIds.Count);
-			DebugConsole.Log (string.Format ("chose index {0} from connections size of {1}", bombPlayerIndex, activeConnectionIds.Count));
-			BombPlayerConnectionId = activeConnectionIds [bombPlayerIndex];
+			BombPlayerConnectionId = GameUtils.ChooseRandomPlayerConnectionId ();
 			DebugConsole.Log ("=> bombPlayerConnectionId: " + BombPlayerConnectionId);
 		}
 	}

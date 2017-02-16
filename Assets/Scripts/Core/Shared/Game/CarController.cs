@@ -201,33 +201,20 @@ public class CarController : NetworkBehaviour
 
 			Debug.Log ("Repositioning car");
 
-			Bounds bounds = worldMesh.transform.GetComponent<MeshRenderer> ().bounds;
-			Vector3 center = bounds.center;
-
 			//Set velocities to zero
 			_rigidbody.velocity = Vector3.zero;
 			_rigidbody.angularVelocity = Vector3.zero;
 
-			for (int i = 0; i < 30; i++) {
-				Debug.Log ("Trying random position " + i);
-				float x = UnityEngine.Random.Range (center.x - (bounds.size.x / 2), center.x + (bounds.size.x / 2));
-				float z = UnityEngine.Random.Range (center.x - (bounds.size.z / 2), center.z + (bounds.size.z / 2));
+			Vector3 position = GameUtils.FindSpawnLocation (worldMesh);
 
-				Vector3 position = new Vector3 (x, center.y + bounds.size.y, z);
-				RaycastHit hit;
+			if (position != Vector3.zero) {
+				DebugConsole.Log ("unfreezing");
+				// now unfreeze and show
 
-				if (Physics.Raycast (position, Vector3.down, out hit, bounds.size.y * 2)) {
-					position.y = hit.point.y;
+				gameObject.SetActive (true);
+				_rigidbody.isKinematic = false;
 
-					DebugConsole.Log ("unfreezing");
-					// now unfreeze and show
-
-					gameObject.SetActive (true);
-					_rigidbody.isKinematic = false;
-
-					_rigidbody.position = position;
-					break;
-				}
+				_rigidbody.position = position;
 			}
 
 		}
