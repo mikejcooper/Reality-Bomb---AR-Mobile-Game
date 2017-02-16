@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 114300567772753998}
   - component: {fileID: 114679729912052536}
   - component: {fileID: 114278611766446164}
+  - component: {fileID: 114027518523747406}
   m_Layer: 9
   m_Name: Car
   m_TagString: TankTag
@@ -367,6 +368,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114027518523747406
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1072149507112704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5090c8b5dabcd4814ae58d23310c3a3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Speed: 40
 --- !u!114 &114115522974382278
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -411,7 +424,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsPlayingSolo: 0
-  Speed: 40
+  CarProperties: {fileID: 114027518523747406}
   TurnSpeed: 180
   MaxLifetime: 15
   HasBomb: 0

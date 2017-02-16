@@ -10,13 +10,12 @@ public class OfflineCarController : MonoBehaviour
 
 	// Used to identify which tank belongs to which player.  This is set by this tank's manager.
 	public int PlayerNumber = 1;
-	// How fast the tank moves forward and back.
-	public float Speed = 3f;
+
+	public CarProperties CarProperties;
+
 	// How fast the tank turns in degrees per second.
 	public float TurnSpeed = 180f;
 	public float MaxLifetime = 15.0f;
-	public float PowerUpEndTime;
-	public bool PowerUpActive;
 
 	private UIJoystick _joystick;
 	// Reference used to move the tank.
@@ -35,7 +34,7 @@ public class OfflineCarController : MonoBehaviour
 
 		_lifetimeText.text = "Time Left: " + string.Format("{0:N2}", _lifetime);
 
-		PowerUpActive = false;
+		CarProperties.PowerUpActive = false;
 	}
 
 
@@ -69,9 +68,9 @@ public class OfflineCarController : MonoBehaviour
 	private void Update ()
 	{
 
-		if (PowerUpActive  && Time.time > PowerUpEndTime) {
-			PowerUpActive = false;
-			Speed = 30.0f;
+		if (CarProperties.PowerUpActive  && Time.time > CarProperties.PowerUpEndTime) {
+			CarProperties.PowerUpActive = false;
+			CarProperties.Speed = 30.0f;
 			print ("PowerUp Deactivated");
 		}
 	}
@@ -96,7 +95,7 @@ public class OfflineCarController : MonoBehaviour
 
 		_rigidbody.rotation = _lookAngle;
 
-		Vector3 movement = transform.forward * joystickVector.magnitude * Speed * Time.deltaTime;
+		Vector3 movement = transform.forward * joystickVector.magnitude * CarProperties.Speed * Time.deltaTime;
 
 		_rigidbody.position += movement;
 

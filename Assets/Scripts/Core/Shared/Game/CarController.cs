@@ -6,15 +6,15 @@ public class CarController : NetworkBehaviour
 {
 	// temporary hack to allow tank prefab to be spawned and played without a network system
 	public bool IsPlayingSolo = false; 
-	// How fast the tank moves forward and back.
-	public float Speed = 3f;
+
+	public CarProperties CarProperties;
+
 	// How fast the tank turns in degrees per second.
 	public float TurnSpeed = 180f;
 	public float MaxLifetime = 15.0f;
 	public bool HasBomb = false;
 	public bool Alive = true;
-	public float PowerUpEndTime;
-	public bool PowerUpActive;
+
 
 	private UIJoystick _joystick;
 	// Reference used to move the tank.
@@ -50,7 +50,7 @@ public class CarController : NetworkBehaviour
 			gameObject.SetActive (false);
 		}
 
-		PowerUpActive = false;
+		CarProperties.PowerUpActive = false;
 
 		if (!isServer) {
 			CmdRequestColour ();
@@ -105,9 +105,9 @@ public class CarController : NetworkBehaviour
 		if (isLocalPlayer || IsPlayingSolo) {
 			_lifetimeText.text = "Time Left: " + string.Format ("{0:N2}", _lifetime);
 
-			if (PowerUpActive && Time.time > PowerUpEndTime) {
-				PowerUpActive = false;
-				Speed = 30.0f;
+			if (CarProperties.PowerUpActive && Time.time > CarProperties.PowerUpEndTime) {
+				CarProperties.PowerUpActive = false;
+				CarProperties.Speed = 30.0f;
 				print ("PowerUp Deactivated");
 			}
 		} else if (isServer) {
@@ -163,7 +163,7 @@ public class CarController : NetworkBehaviour
 
 		_rigidbody.rotation = _lookAngle;
 
-		Vector3 movement = transform.forward * joystickVector.magnitude * Speed * Time.deltaTime;
+		Vector3 movement = transform.forward * joystickVector.magnitude * CarProperties.Speed * Time.deltaTime;
 
 		_rigidbody.position += movement;
 
