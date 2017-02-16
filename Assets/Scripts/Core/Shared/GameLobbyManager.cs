@@ -40,14 +40,15 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 
 		// set this player ready
 		var lobbyPlayer = lobbyController.gameObject.GetComponent<NetworkLobbyPlayer>();
-		lobbyPlayer.readyToBegin = true;
-
-		// tell every player that this player is ready
-		var outMsg = new NetworkCompat.LobbyReadyToBeginMessage();
-		outMsg.slotId = lobbyPlayer.slot;
-		outMsg.readyState = true;
-		NetworkServer.SendToReady(null, MsgType.LobbyReadyToBegin, outMsg);
-
+        if (lobbyPlayer != null) //TODO: Work out what's going on here
+        {
+            lobbyPlayer.readyToBegin = true;
+            // tell every player that this player is ready
+		    var outMsg = new NetworkCompat.LobbyReadyToBeginMessage();
+		    outMsg.slotId = lobbyPlayer.slot;
+		    outMsg.readyState = true;
+		    NetworkServer.SendToReady(null, MsgType.LobbyReadyToBegin, outMsg);
+        }
 	}
 
 	public override void OnLobbyServerConnect (NetworkConnection conn) {

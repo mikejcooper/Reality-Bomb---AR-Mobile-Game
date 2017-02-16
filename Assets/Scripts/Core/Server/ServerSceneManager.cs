@@ -46,13 +46,14 @@ public class ServerSceneManager : MonoBehaviour
 		} else {
 			_instance = this;
 		}
-	}
+        _innerProcess = new Process();
+    }
 
 	void Start ()
 	{
 		DontDestroyOnLoad (gameObject);
 		var ugly = UnityThreadHelper.Dispatcher;
-		_innerProcess = new Process ();
+		
 		transform.gameObject.AddComponent<DiscoveryServer> ();
 		_networkLobbyManager = transform.gameObject.AddComponent<GameLobbyManager> ();
 		_meshDiscoveryServer = new MeshDiscoveryServer ();
@@ -95,7 +96,7 @@ public class ServerSceneManager : MonoBehaviour
 		
 	public int ConnectedPlayerCount { get; private set; }
 
-	public ProcessState CurrentState () { 
+	public ProcessState CurrentState () {
 		return _innerProcess.CurrentState;
 	}
 
