@@ -13,10 +13,11 @@ public class ClientSceneManager : MonoBehaviour
 	public NetworkLobbyPlayer LobbyPlayerPrefab;
 	public GameObject GamePlayerPrefab;
 	public GameResults LastGameResults;
+	public GameObject WorldMesh { get { return _meshTransferManager.ProduceGameObject (); }}
 
 	private DiscoveryClient _discoveryClient;
 	private GameLobbyManager _networkLobbyManager;
-    private DataTransferManager _dataTransferManager;
+    private MeshTransferManager _meshTransferManager;
 	private Process _innerProcess;
 	private string _currentScene = "Idle";
 	private static ClientSceneManager _instance;
@@ -40,7 +41,7 @@ public class ClientSceneManager : MonoBehaviour
 		_innerProcess = new Process ();	
 		_discoveryClient = transform.gameObject.AddComponent<DiscoveryClient> ();
 		_networkLobbyManager = transform.gameObject.AddComponent<GameLobbyManager> ();
-        _dataTransferManager = new DataTransferManager();
+		_meshTransferManager = new MeshTransferManager();
 
 		_networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Debug;
 		_networkLobbyManager.showLobbyGUI = false;
@@ -60,36 +61,29 @@ public class ClientSceneManager : MonoBehaviour
 		// register listeners for when players connect / disconnect
 		_networkLobbyManager.OnLobbyClientConnectedEvent += OnUserConnectedToGame;
 		_networkLobbyManager.OnLobbyClientDisconnectedEvent += OnUserRequestLeaveGame;
-        _networkLobbyManager.OnMeshClearToDownloadEvent += _dataTransferManager.fetchData;
+		_networkLobbyManager.OnMeshClearToDownloadEvent += _meshTransferManager.FetchData;
 
         //Listener for when the we have finished downloading the mesh
-        _dataTransferManager.OnMeshDataReceivedEvent += OnMeshDataReceived;
-        _dataTransferManager.OnMeshDataProcessedEvent += OnMeshDataProcessed;
+		_meshTransferManager.OnMeshDataReceivedEvent += OnMeshDataReceived;
 
-        _discoveryClient.serverDiscoveryEvent += OnServerDiscovered;
+		_discoveryClient.serverDiscoveryEvent += OnServerDiscovered;
 
 		SceneManager.sceneLoaded += OnSceneLoaded;
 	}
 
     private void OnMeshDataReceived()
     {
-        DebugConsole.Log("OnMeshDataReceived");
+		Debug.Log("OnMeshDataReceived");
+
+		_networkLobbyManager.SetReady ();
 
     }
 
-    private void OnMeshDataProcessed()
-    {
-        DebugConsole.Log("OnMeshDataProcessed");
-        Debug.Log("OnMeshDataProcessed");
-
-    }
-
-    // todo: move all current scene assignments here
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+	// todo: move all current scene assignments here
+	private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
 		if (scene.name == "Game") {
 			_currentScene = "Game";
 			OnServerGameReady ();
-            _dataTransferManager.produceMeshObject();
 		} else if (scene.name == "Leaderboard") {
 			_currentScene = "Leaderboard";
 			OnServerGameEnd ();
@@ -113,7 +107,7 @@ public class ClientSceneManager : MonoBehaviour
 
 		// stop listening for broadcasts
 		if (_discoveryClient != null) {
-                _discoveryClient.StopBroadcast();
+        	_discoveryClient.StopBroadcast();
         }
 
 		if (NetworkConstants.FORCE_LOCALHOST) {

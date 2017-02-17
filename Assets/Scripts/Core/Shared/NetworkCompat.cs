@@ -200,14 +200,7 @@ namespace NetworkCompat {
 			return countPlayers;
 		}
 
-		public void CheckReadyToBegin()
-		{
-			string loadedSceneName = SceneManager.GetSceneAt(0).name;
-			if (!lobbyScenes.Contains(loadedSceneName))
-			{
-				return;
-			}
-
+		public int ReadyPlayerCount () {
 			int readyCount = 0;
 
 			foreach (var conn in NetworkServer.connections)
@@ -217,14 +210,33 @@ namespace NetworkCompat {
 
 				readyCount += CheckConnectionIsReadyToBegin(conn);
 			}
+
+			return readyCount;
+		}
+
+		public bool IsReadyToBegin () {
+			string loadedSceneName = SceneManager.GetSceneAt(0).name;
+			if (!lobbyScenes.Contains(loadedSceneName))
+			{
+				return false;
+			}
+
+			int readyCount = ReadyPlayerCount ();
 			if (m_MinPlayers > 0 && readyCount < m_MinPlayers)
 			{
 				// not enough players ready yet.
-				return;
+				return false;
 			}
 
-			m_PendingPlayers.Clear();
-			OnLobbyServerPlayersReady();
+			return true;
+		}
+
+		public void CheckReadyToBegin()
+		{
+			if (IsReadyToBegin ()) {
+				m_PendingPlayers.Clear ();
+				OnLobbyServerPlayersReady ();
+			}
 		}
 
 		public void ServerReturnToLobby(string lobbySceneName)
@@ -465,6 +477,8 @@ namespace NetworkCompat {
 			outMsg.readyState = s_ReadyToBeginMessage.readyState;
 			NetworkServer.SendToReady(null, MsgType.LobbyReadyToBegin, outMsg);
 
+			OnLobbyServerReadyToBegin (netMsg.conn);
+
 			// maybe start the game
 			CheckReadyToBegin();
 		}
@@ -652,6 +666,10 @@ namespace NetworkCompat {
 		{
 		}
 
+		public virtual void OnLobbyServerReadyToBegin(NetworkConnection conn)
+		{
+		}
+
 		public virtual GameObject OnLobbyServerCreateLobbyPlayer(NetworkConnection conn, short playerControllerId)
 		{
 			return null;
@@ -675,7 +693,7 @@ namespace NetworkCompat {
 		public virtual void OnLobbyServerPlayersReady()
 		{
 			// all players are readyToBegin, start the game
-			ServerChangeScene(m_PlayScene);
+//			ServerChangeScene(m_PlayScene);
 		}
 
 		// ------------------------ lobby client virtuals ------------------------

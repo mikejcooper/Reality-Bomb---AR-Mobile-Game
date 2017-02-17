@@ -9,6 +9,7 @@ namespace GlobalNetworking
 		public const int MESH_TRANSFER_PORT = 3111;
 		public const int GAME_PORT = 7777;
 		public const bool FORCE_LOCALHOST = true;
+		public const int MSG_GET_MESH = 928;
 	}
 }
 
