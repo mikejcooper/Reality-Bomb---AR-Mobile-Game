@@ -172,8 +172,12 @@ public class ServerSceneManager : MonoBehaviour
 
 	public void OnServerRequestGameReady () {
 		DebugConsole.Log ("OnGameIsReady");
-		_innerProcess.MoveNext (Command.GameReady);
-		OnStateUpdate ();
+		if (_networkLobbyManager.IsReadyToBegin ()) {
+			_innerProcess.MoveNext (Command.GameReady);
+			OnStateUpdate ();
+		} else {
+			Debug.LogError ("Not all clients are ready. This means they haven't all loaded a mesh. try clicking 'load mesh' to force a reload");
+		}
 	}
 
 	public void OnServerRequestGameEnd () {
@@ -224,8 +228,9 @@ public class ServerSceneManager : MonoBehaviour
 				_currentScene = "Game"; 
 
 				// this needs to be called before we change scene
-				_networkLobbyManager.CheckReadyToBegin ();
-				_networkLobbyManager.ServerChangeScene("Game");
+				if (_networkLobbyManager.IsReadyToBegin ()) {
+					_networkLobbyManager.ServerChangeScene ("Game");
+				}
 			}
 			break;
 		}
