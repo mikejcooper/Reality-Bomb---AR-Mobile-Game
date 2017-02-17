@@ -226,9 +226,36 @@ public class CarController : NetworkBehaviour
 		}
 	}
 
+	public void Reposition(GameObject worldMesh)
+	{
+		DebugConsole.Log ("repositioning");
+		if (hasAuthority) {
+			DebugConsole.Log ("repositioning with authority");
+
+			Debug.Log ("Repositioning car");
+
+			//Set velocities to zero
+			_rigidbody.velocity = Vector3.zero;
+			_rigidbody.angularVelocity = Vector3.zero;
+
+			Vector3 position = GameUtils.FindSpawnLocation (worldMesh);
+
+			if (position != Vector3.zero) {
+				DebugConsole.Log ("unfreezing");
+				// now unfreeze and show
+
+				gameObject.SetActive (true);
+				_rigidbody.isKinematic = false;
+
+				_rigidbody.position = position;
+			}
+
+		}
+	}
+
 	public void PutCarOnGameMap(){
 		// todo: don't use Find 
-		CarSpawning.Reposition (GameObject.Find ("World Mesh"), hasAuthority, _rigidbody, gameObject);
+		Reposition (GameObject.Find ("World Mesh"));
 	}
 
 	public void CheckCarIsOnMap(){
