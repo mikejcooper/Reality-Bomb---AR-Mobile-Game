@@ -32,12 +32,9 @@ public class CarController : NetworkBehaviour
 	private void Start ()
 	{
 		DebugConsole.Log ("CarController start");
-		if (GameObject.Find("JoystickBack") != null) {
-			_joystick = GameObject.Find("JoystickBack").gameObject.GetComponent<UIJoystick>();
-		}
-		if (GameObject.Find ("TimeLeftText") != null) {
-			_lifetimeText = GameObject.Find ("TimeLeftText").gameObject.GetComponent<Text> ();
-		}
+		_joystick = GameManager.Instance.JoystickBack.gameObject.GetComponent<UIJoystick>();
+		_lifetimeText = GameManager.Instance.TimeLeftText.gameObject.GetComponent<Text> ();
+
 		// The axes names are based on player number.
 
 		_rigidbody = GetComponent<Rigidbody> ();
@@ -59,9 +56,8 @@ public class CarController : NetworkBehaviour
 			DebugConsole.Log("GameManager.Instance.AddCar (gameObject);");
 			GameManager.Instance.AddCar (gameObject);
 		}
-
-		// todo: don't use Find
-		Reposition (GameObject.Find ("World Mesh"));
+        
+		Reposition (DataTransferManager.WorldMesh);
 	}
 
 

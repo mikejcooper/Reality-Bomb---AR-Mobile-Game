@@ -16,6 +16,8 @@ public class GameManager : NetworkBehaviour {
 
 	public static GameManager Instance { get { return _instance; } }
 
+    public GameObject JoystickBack;
+    public GameObject TimeLeftText;
 
 	private void Awake()
 	{
