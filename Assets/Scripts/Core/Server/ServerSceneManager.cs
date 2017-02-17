@@ -10,7 +10,7 @@ using NetworkCompat;
 public class ServerSceneManager : MonoBehaviour
 {
 
-	private const int MIN_REQ_PLAYERS = 2;
+	private const int MIN_REQ_PLAYERS = 1;
 
 	public enum MeshRetrievalState
 	{

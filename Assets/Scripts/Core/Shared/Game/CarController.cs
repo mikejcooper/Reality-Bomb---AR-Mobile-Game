@@ -11,9 +11,13 @@ public class CarController : NetworkBehaviour
 
 	// How fast the tank turns in degrees per second.
 	public float TurnSpeed = 180f;
-	public float MaxLifetime = 15.0f;
+	public float MaxLifetime = 60.0f;
 	public bool HasBomb = false;
 	public bool Alive = true;
+	public bool ControlsDisabled = false;
+	public float FallDistanceBeforeRespawn = -150f;
+	public int DisableControlsForXSecs = 2;
+
 
 
 	private UIJoystick _joystick;
@@ -25,6 +29,7 @@ public class CarController : NetworkBehaviour
 	[SyncVar]
 	private float _lifetime;
 	private Text _lifetimeText;
+
 
 
 
@@ -60,8 +65,7 @@ public class CarController : NetworkBehaviour
 			GameManager.Instance.AddCar (gameObject);
 		}
 
-		// todo: don't use Find
-		Reposition (GameObject.Find ("World Mesh"));
+		PutCarOnGameMap ();
 	}
 
 
@@ -110,6 +114,7 @@ public class CarController : NetworkBehaviour
 				CarProperties.Speed = 30.0f;
 				print ("PowerUp Deactivated");
 			}
+			CheckCarIsOnMap ();
 		} else if (isServer) {
 			// let the server authoratively update vital stats
 			if (HasBomb && _lifetime > 0.0f) {
@@ -150,23 +155,24 @@ public class CarController : NetworkBehaviour
 			return;
 		}
 
-		Vector3 joystickVector = new Vector3 (_joystick.Horizontal (), _joystick.Vertical (), 0);
-		GameObject ARCamera = GameObject.Find ("ARCamera");
-		Vector3 rotatedVector = ARCamera.transform.rotation * joystickVector;
+		if (!ControlsDisabled) {
+			Vector3 joystickVector = new Vector3 (_joystick.Horizontal (), _joystick.Vertical (), 0);
+			GameObject ARCamera = GameObject.Find ("ARCamera");
+			Vector3 rotatedVector = ARCamera.transform.rotation * joystickVector;
 
-		if (_joystick.IsDragging ()) {
-			_lookAngle = Quaternion.FromToRotation (Vector3.forward, rotatedVector);
-			// think about combining z and y so that it moves away when close to 0 degrees
-			float combined = _lookAngle.eulerAngles.y;
-			_lookAngle.eulerAngles = new Vector3(0, combined, 0);
+			if (_joystick.IsDragging ()) {
+				_lookAngle = Quaternion.FromToRotation (Vector3.forward, rotatedVector);
+				// think about combining z and y so that it moves away when close to 0 degrees
+				float combined = _lookAngle.eulerAngles.y;
+				_lookAngle.eulerAngles = new Vector3(0, combined, 0);
+			}
+
+			_rigidbody.rotation = _lookAngle;
+
+			Vector3 movement = transform.forward * joystickVector.magnitude * CarProperties.Speed * Time.deltaTime;
+
+			_rigidbody.position += movement;
 		}
-
-		_rigidbody.rotation = _lookAngle;
-
-		Vector3 movement = transform.forward * joystickVector.magnitude * CarProperties.Speed * Time.deltaTime;
-
-		_rigidbody.position += movement;
-
 	}
 
 	bool TransferBomb()
@@ -193,33 +199,29 @@ public class CarController : NetworkBehaviour
 		}
 	}
 
-	public void Reposition(GameObject worldMesh)
-	{
-		DebugConsole.Log ("repositioning");
-		if (hasAuthority) {
-			DebugConsole.Log ("repositioning with authority");
+	public void PutCarOnGameMap(){
+		// todo: don't use Find 
+		CarSpawning.Reposition (GameObject.Find ("World Mesh"), hasAuthority, _rigidbody, gameObject);
+	}
 
-			Debug.Log ("Repositioning car");
-
-			//Set velocities to zero
-			_rigidbody.velocity = Vector3.zero;
-			_rigidbody.angularVelocity = Vector3.zero;
-
-			Vector3 position = GameUtils.FindSpawnLocation (worldMesh);
-
-			if (position != Vector3.zero) {
-				DebugConsole.Log ("unfreezing");
-				// now unfreeze and show
-
-				gameObject.SetActive (true);
-				_rigidbody.isKinematic = false;
-
-				_rigidbody.position = position;
-			}
-
+	public void CheckCarIsOnMap(){
+		if(_rigidbody.position.y <= FallDistanceBeforeRespawn){
+			PutCarOnGameMap();
+			DisableControls (DisableControlsForXSecs);
 		}
+	}
 
+	public void DisableControls(int seconds){
+		ToggleControls();
+		Invoke("ToggleControls", seconds);
+	}
 
-
+	public void ToggleControls(){
+		if (ControlsDisabled) {
+			ControlsDisabled = false;
+		} 
+		else {
+			ControlsDisabled = true;   
+		}
 	}
 }

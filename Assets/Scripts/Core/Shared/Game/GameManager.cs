@@ -82,5 +82,7 @@ public class GameManager : NetworkBehaviour {
 	{
 		_cars.Add(gamePlayer.GetComponent<CarController>());
 	}
+
+
 		
 }
