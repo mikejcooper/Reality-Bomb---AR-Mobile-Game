@@ -64,7 +64,7 @@ PluginImporter:
       enabled: 1
       settings:
         CompileFlags: 
-        FrameworkDependencies: MobileCoreServices;Accelerate;
+        FrameworkDependencies: MobileCoreServices;Security;Accelerate;
   userData: 
   assetBundleName: 
   assetBundleVariant: 

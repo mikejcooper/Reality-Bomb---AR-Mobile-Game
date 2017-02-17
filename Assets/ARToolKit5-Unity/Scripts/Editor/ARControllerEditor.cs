@@ -69,6 +69,9 @@ public class ARControllerEditor : Editor
         if (showVideoOptions)
         {
 			arcontroller.videoCParamName0 = EditorGUILayout.TextField("Camera parameters", arcontroller.videoCParamName0);
+			if (!string.IsNullOrEmpty(arcontroller.videoCParamName0)) {
+				EditorGUILayout.HelpBox("Automatic camera parameters (if available) will be overridden.", MessageType.Info);
+			}
             arcontroller.videoConfigurationWindows0 = EditorGUILayout.TextField("Video config. (Windows)", arcontroller.videoConfigurationWindows0);
             arcontroller.videoConfigurationMacOSX0 = EditorGUILayout.TextField("Video config. (Mac OS X)", arcontroller.videoConfigurationMacOSX0);
             arcontroller.videoConfigurationiOS0 = EditorGUILayout.TextField("Video config. (iOS)", arcontroller.videoConfigurationiOS0);
@@ -80,6 +83,9 @@ public class ARControllerEditor : Editor
 			arcontroller.VideoIsStereo = EditorGUILayout.Toggle("Video source is stereo", arcontroller.VideoIsStereo);
 			if (arcontroller.VideoIsStereo) {
 				arcontroller.videoCParamName1 = EditorGUILayout.TextField("Camera parameters (R)", arcontroller.videoCParamName1);
+				if (!string.IsNullOrEmpty(arcontroller.videoCParamName1)) {
+						EditorGUILayout.HelpBox("Automatic camera parameters (if available) will be overridden.", MessageType.Info);
+				}
 				arcontroller.videoConfigurationWindows1 = EditorGUILayout.TextField("Video config.(R) (Windows)", arcontroller.videoConfigurationWindows1);
 				arcontroller.videoConfigurationMacOSX1 = EditorGUILayout.TextField("Video config.(R) (Mac OS X)", arcontroller.videoConfigurationMacOSX1);
 				arcontroller.videoConfigurationiOS1 = EditorGUILayout.TextField("Video config.(R) (iOS)", arcontroller.videoConfigurationiOS1);
