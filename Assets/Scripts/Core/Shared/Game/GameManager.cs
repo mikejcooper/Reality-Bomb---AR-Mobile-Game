@@ -5,40 +5,46 @@ using UnityEngine.Networking;
 
 public class GameManager : NetworkBehaviour {
 
+	public delegate void OnWorldMeshAvailable(GameObject worldMesh);
+
+	public event OnWorldMeshAvailable OnWorldMeshAvailableEvent;
+
+	public GameObject MarkerScene;
 	public int BombPlayerConnectionId;
 
 	private List<CarController> _cars = new List<CarController>();
 
 	private List<string> _deathList = new List<string>();
 
-
-	private static GameManager _instance;
-
-	public static GameManager Instance { get { return _instance; } }
-
-
-	private void Awake()
-	{
-		if (_instance != null && _instance != this)
-		{
-			Destroy(this.gameObject);
-		} else {
-			_instance = this;
-		}
-	}
+	public GameObject WorldMesh { get; private set; }
 
 	void Start ()
 	{
 		if (!isServer) {
 			ClientSceneManager.Instance.LastGameResults = new GameResults ();
+
+			WorldMesh = ClientSceneManager.Instance.WorldMesh;
 		} else if (isServer) {
 			ServerSceneManager.Instance.LastGameResults = new GameResults ();
 
 			BombPlayerConnectionId = GameUtils.ChooseRandomPlayerConnectionId ();
 			DebugConsole.Log ("=> bombPlayerConnectionId: " + BombPlayerConnectionId);
-		}
-	}
 
+			WorldMesh = ServerSceneManager.Instance.WorldMesh;
+		}
+
+		WorldMesh.transform.parent = MarkerScene.transform;
+
+
+		if (OnWorldMeshAvailableEvent != null)
+			OnWorldMeshAvailableEvent (WorldMesh);
+		
+
+		foreach (var existingCarController in GameObject.FindObjectsOfType<CarController>()) {
+			existingCarController.init ();
+		}
+
+	}
 
 	[Server]
 	private string GetPlayerName (CarController car) {
@@ -80,6 +86,7 @@ public class GameManager : NetworkBehaviour {
 
 	public void AddCar(GameObject gamePlayer)
 	{
+		Debug.LogError (string.Format ("AddCar id: {0}", gamePlayer.GetInstanceID()));
 		_cars.Add(gamePlayer.GetComponent<CarController>());
 	}
 

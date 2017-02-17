@@ -1,4 +1,4 @@
-﻿/*
+/*
  *  ARMarker.cs
  *  ARToolKit for Unity
  *
@@ -185,6 +185,10 @@ public class ARMarker : MonoBehaviour
 	// Load the underlying ARToolKit marker structure(s) and set the UID.
     public void Load() 
     {
+		if (this.enabled == false) {
+			return;
+		}
+
 		//ARController.Log(LogTag + "ARMarker.Load()");
         if (UID != NO_ID) {
 			//ARController.Log(LogTag + "Marker already loaded.");
@@ -211,26 +215,26 @@ public class ARMarker : MonoBehaviour
 				cfg = "single_barcode;" + BarcodeID + ";" + PatternWidth*1000.0f;
 				break;
 			
-			case MarkerType.Multimarker:
-					#if !UNITY_METRO
-				if (dir.Contains ("://")) {
+            case MarkerType.Multimarker:
+				#if !UNITY_METRO
+				if (dir.Contains("://")) {
 					// On Android, we need to unpack the StreamingAssets from the .jar file in which
 					// they're archived into the native file system.
 					dir = Application.temporaryCachePath;
-					if (!unpackStreamingAssetToCacheDir (MultiConfigFile)) {
+					if (!unpackStreamingAssetToCacheDir(MultiConfigFile)) {
 						dir = "";
 					} else {
-						
+					
 						//string[] unpackFiles = getPatternFiles;
 						//foreach (string patternFile in patternFiles) {
 						//if (!unpackStreamingAssetToCacheDir(patternFile)) {
 						//    dir = "";
 						//    break;
 						//}
-					}
+				    }
 				}
-					#endif
-					
+				#endif
+				
 				if (MultiConfigNonStreamingFile.Length > 0) {
 					// ArToolKit doesn't expect files to be anywhere except for StreamingAssets
 					// we add the MultiConfigNonCacheFile field so we can specify its actual location
@@ -282,10 +286,10 @@ public class ARMarker : MonoBehaviour
 				Filtered = currentFiltered;
 				FilterSampleRate = currentFilterSampleRate;
 				FilterCutoffFreq = currentFilterCutoffFreq;
-				if (MarkerType == MarkerType.NFT) NFTScale = currentNFTScale;
 
 				// Retrieve any required information from the configured ARToolKit ARMarker.
 				if (MarkerType == MarkerType.NFT) {
+					NFTScale = currentNFTScale;
 
 					int imageSizeX, imageSizeY;
 					PluginFunctions.arwGetMarkerPatternConfig(UID, 0, null, out NFTWidth, out NFTHeight, out imageSizeX, out imageSizeY);

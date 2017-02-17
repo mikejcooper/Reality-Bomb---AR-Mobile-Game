@@ -10,7 +10,7 @@ public class PlayerCountTextController : ServerStateViewBehaviour {
 
 
 	protected override void OnServerStateChange (ProcessState state) {
-		playerCountText.text = string.Format("{0} players connected", ServerSceneManager.Instance.ConnectedPlayerCount);
+		playerCountText.text = string.Format("{0}/{1} players ready", ServerSceneManager.Instance.ReadyPlayerCount, ServerSceneManager.Instance.ConnectedPlayerCount);
 	}
 
 

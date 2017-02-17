@@ -2,54 +2,72 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using GlobalNetworking;
+using NetworkCompat;
 
 public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 
-	public delegate void OnLobbyServerConnected ();
+	public delegate void OnLobbyServerConnected (NetworkConnection conn);
 	public delegate void OnLobbyServerDisconnected ();
 	public delegate void OnLobbyClientConnected ();
 	public delegate void OnLobbyClientDisconnected ();
+	public delegate void OnLobbyClientReadyToBegin ();
+    public delegate void OnMeshClearToDownloadCallback(string address, int port);
 
-	public event OnLobbyServerConnected OnLobbyServerConnectedEvent;
+    public event OnLobbyServerConnected OnLobbyServerConnectedEvent;
 	public event OnLobbyServerDisconnected OnLobbyServerDisconnectedEvent;
 	public event OnLobbyClientConnected OnLobbyClientConnectedEvent;
 	public event OnLobbyClientDisconnected OnLobbyClientDisconnectedEvent;
+	public event OnLobbyClientReadyToBegin OnLobbyClientReadyToBeginEvent;
+    public event OnMeshClearToDownloadCallback OnMeshClearToDownloadEvent;
 
+	// sent from server to set all its clients to not ready and tell all clients they are not ready
+	public void SetAllClientsNotReady () {
+		foreach (var player in lobbySlots)
+		{
+			if (player != null)
+			{
+				player.GetComponent<NetworkCompat.NetworkLobbyPlayer>().readyToBegin = false;
 
-	public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
-	{
-		
-		DebugConsole.Log ("OnServerAddPlayer: "+playerControllerId);
-		base.OnServerAddPlayer (conn, playerControllerId);
-
-		// automatically set them as ready - client has no choice
-		UnityEngine.Networking.PlayerController lobbyController = null;
-		for (int i = 0; i < conn.playerControllers.Count; i++) {
-			if (conn.playerControllers [i] != null && conn.playerControllers [i].playerControllerId == playerControllerId) {
-				lobbyController = conn.playerControllers [i];
-				break;
+				LobbyReadyToBeginMessage msg = new LobbyReadyToBeginMessage ();
+				msg.slotId = player.slot;
+				msg.readyState = false;
+				UnityEngine.Networking.NetworkServer.SendToReady(null, UnityEngine.Networking.MsgType.LobbyReadyToBegin, msg);
 			}
 		}
-		if (lobbyController == null)
-		{
-			Debug.LogError ("NetworkLobbyManager OnServerReadyToBeginMessage invalid playerControllerId " + playerControllerId);
-			return;
+	}
+
+	// sent from a client to tell the server it's ready
+	public void SetReady () {
+		// notify server that we're ready
+		foreach (var p in lobbySlots) {
+			if (p != null && p.playerControllerId >= 0) {
+				var msg = new LobbyReadyToBeginMessage ();
+				msg.slotId = (byte)p.playerControllerId;
+				msg.readyState = true;
+				client.Send (UnityEngine.Networking.MsgType.LobbyReadyToBegin, msg);
+			}
 		}
+	}
 
-		// set this player ready
-		var lobbyPlayer = lobbyController.gameObject.GetComponent<NetworkLobbyPlayer>();
-		lobbyPlayer.readyToBegin = true;
+	// sent from server to all clients to tell them to download a mesh
+	public void AllClientsGetMesh (string address, int port) {
+		ServerNetworking.SocketMessage msg = new ServerNetworking.SocketMessage();
+		msg.address = address;
+		msg.port = port;
+		UnityEngine.Networking.NetworkServer.SendToAll(NetworkConstants.MSG_GET_MESH, msg);
+	}
 
-		// tell every player that this player is ready
-		var outMsg = new NetworkCompat.LobbyReadyToBeginMessage();
-		outMsg.slotId = lobbyPlayer.slot;
-		outMsg.readyState = true;
-		NetworkServer.SendToReady(null, MsgType.LobbyReadyToBegin, outMsg);
-
+	// sent from server to specific client to tell it to download a mesh
+	public void ClientGetMesh(string address, int port, int connectionId) {
+		ServerNetworking.SocketMessage msg = new ServerNetworking.SocketMessage ();
+		msg.address = address;
+		msg.port = port;
+		UnityEngine.Networking.NetworkServer.SendToClient (connectionId, NetworkConstants.MSG_GET_MESH, msg);
 	}
 
 	public override void OnLobbyServerConnect (NetworkConnection conn) {
-		OnLobbyServerConnectedEvent ();
+		OnLobbyServerConnectedEvent (conn);
 
 	}
 
@@ -65,9 +83,32 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 		DebugConsole.Log ("error: " + err);
 	}
 
+	public override void OnLobbyServerReadyToBegin(NetworkConnection conn) {
+		if (OnLobbyClientReadyToBeginEvent != null)
+			OnLobbyClientReadyToBeginEvent ();
+	}
+
 
 	public override void OnLobbyClientEnter () {
 		Debug.Log ("OnLobbyClientEnter");
 		OnLobbyClientConnectedEvent ();
 	}
+
+    public override void OnClientConnect(NetworkConnection conn)
+    {
+        base.OnClientConnect(conn);
+        if (client != null)
+        {
+            DebugConsole.Log("OnClientConnect worked");
+			client.RegisterHandler(NetworkConstants.MSG_GET_MESH, OnClientClearToDownloadMesh);
+        }
+    }
+
+    public void OnClientClearToDownloadMesh(NetworkMessage netMsg)
+    {
+        ServerNetworking.SocketMessage socketMsg = netMsg.ReadMessage<ServerNetworking.SocketMessage>();
+        Debug.Log(socketMsg.address);
+
+        OnMeshClearToDownloadEvent(socketMsg.address, socketMsg.port);
+    }
 }

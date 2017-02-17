@@ -29,6 +29,7 @@ public class CarController : NetworkBehaviour
 	[SyncVar]
 	private float _lifetime;
 	private Text _lifetimeText;
+	private bool _initialised;
 
 
 
@@ -36,46 +37,67 @@ public class CarController : NetworkBehaviour
 
 	private void Start ()
 	{
-		DebugConsole.Log ("CarController start");
-		if (GameObject.Find("JoystickBack") != null) {
-			_joystick = GameObject.Find("JoystickBack").gameObject.GetComponent<UIJoystick>();
-		}
-		if (GameObject.Find ("TimeLeftText") != null) {
-			_lifetimeText = GameObject.Find ("TimeLeftText").gameObject.GetComponent<Text> ();
-		}
-		// The axes names are based on player number.
-
-		_rigidbody = GetComponent<Rigidbody> ();
-		_lifetime = MaxLifetime;
-		_transferTime = Time.time;
-
-		// hide and freeze so we can correctly position
-		if (hasAuthority) {
-			_rigidbody.isKinematic = true;
-			gameObject.SetActive (false);
+		if (GameObject.FindObjectOfType<GameManager> () != null) {
+			init ();
 		}
 
-		CarProperties.PowerUpActive = false;
+	}
 
-		if (!isServer) {
-			CmdRequestColour ();
-		} else {
-			// register
-			DebugConsole.Log("GameManager.Instance.AddCar (gameObject);");
-			GameManager.Instance.AddCar (gameObject);
+	public void init () {
+
+		if (!_initialised) {
+			DebugConsole.Log ("CarController start");
+			if (GameObject.Find ("JoystickBack") != null) {
+				_joystick = GameObject.Find ("JoystickBack").gameObject.GetComponent<UIJoystick> ();
+			}
+			if (GameObject.Find ("TimeLeftText") != null) {
+				_lifetimeText = GameObject.Find ("TimeLeftText").gameObject.GetComponent<Text> ();
+			}
+			// The axes names are based on player number.
+
+			_rigidbody = GetComponent<Rigidbody> ();
+			_lifetime = MaxLifetime;
+			_transferTime = Time.time;
+			_initialised = true;
+
+			// hide and freeze so we can correctly position
+			if (hasAuthority) {
+				_rigidbody.isKinematic = true;
+				gameObject.SetActive (false);
+			}
+
+			CarProperties.PowerUpActive = false;
+
+			if (!isServer) {
+				CmdRequestColour ();
+			} else {
+				// register
+				DebugConsole.Log ("GameManager.Instance.AddCar (gameObject);");
+				GameObject.FindObjectOfType<GameManager> ().AddCar (gameObject);
+			}
+
+			if (GameObject.FindObjectOfType<GameManager> ().WorldMesh != null) {
+				DebugConsole.Log ("available");
+				Reposition (GameObject.FindObjectOfType<GameManager> ().WorldMesh);
+			} else {
+				DebugConsole.Log ("unavailable");
+				GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += Reposition;
+			}
 		}
-
 		PutCarOnGameMap ();
 	}
 
+	void OnDestroy () {
+		GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent -= Reposition;
+	}
 
 	[Command]
 	private void CmdRequestColour () {
 		DebugConsole.Log ("I am server and I choose bomb");
 		// set colour based off server's game manager
 
-		bool isBomb = connectionToClient.connectionId == GameManager.Instance.BombPlayerConnectionId ;
-		DebugConsole.Log (string.Format ("is {0} == {1} ? {2}", connectionToClient.connectionId, GameManager.Instance.BombPlayerConnectionId, isBomb));
+		bool isBomb = connectionToClient.connectionId == GameObject.FindObjectOfType<GameManager>().BombPlayerConnectionId ;
+		DebugConsole.Log (string.Format ("is {0} == {1} ? {2}", connectionToClient.connectionId, GameObject.FindObjectOfType<GameManager>().BombPlayerConnectionId, isBomb));
 		AllDevicesSetBomb (isBomb);
 	}
 
@@ -106,6 +128,9 @@ public class CarController : NetworkBehaviour
 
 	private void Update ()
 	{
+		if (!_initialised)
+			return;
+		
 		if (isLocalPlayer || IsPlayingSolo) {
 			_lifetimeText.text = "Time Left: " + string.Format ("{0:N2}", _lifetime);
 
@@ -131,7 +156,7 @@ public class CarController : NetworkBehaviour
 		DebugConsole.Log ("player has run out of time");
 		_lifetime = 0.0f;
 		Alive = false;
-		GameManager.Instance.AllDevicesKillPlayer (this);
+		GameObject.FindObjectOfType<GameManager>().AllDevicesKillPlayer (this);
 	}
 
 	private void ChangeColour(Color colour)
@@ -149,7 +174,9 @@ public class CarController : NetworkBehaviour
 
 	private void FixedUpdate ()
 	{
-
+		if (!_initialised)
+			return;
+		
 		if (!isLocalPlayer && !IsPlayingSolo)
 		{ 
 			return;

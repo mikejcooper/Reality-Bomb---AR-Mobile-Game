@@ -104,11 +104,16 @@ public class ARToolKitPostProcessor {
     private const string PBXGROUP_SUBSET_2                     = "children = (";
     private const string PBXGROUP_STRING_FORMAT                = "\n\t\t\t\t{0} /* {1} */,";
 
+    private const string ENABLE_BITCODE                        = "ENABLE_BITCODE = YES";
+    private const string DISABLE_BITCODE                       = "ENABLE_BITCODE = NO";
+
     private static IosFramework[] iosFrameworks = {
         new IosFramework("libstdc++.6.dylib",    "E0005ED91B047A0C00FEB577", "E0005ED81B047A0C00FEB577", "\"compiled.mach-o.dylib\"",
                          "\"libstdc++.6.dylib\"", "\"usr/lib/libstdc++.6.dylib\"",                  "SDKROOT"),
         new IosFramework("Accelerate.framework", "E0005ED51B04798800FEB577", "E0005ED41B04798800FEB577", "wrapper.framework",
-                         "Accelerate.framework",  "System/Library/Frameworks/Accelerate.framework", "SDKROOT")
+                         "Accelerate.framework",  "System/Library/Frameworks/Accelerate.framework", "SDKROOT"),
+        new IosFramework("libsqlite3.dylib",     "E0005ED91B047FF800FEB577", "E0005ED81B047FF800FEB577", "\"compiled.mach-o.dylib\"",
+                         "\"libsqlite3.dylib\"", "\"usr/lib/libsqlite3.dylib\"", "SDKROOT")
     };
 
     private static StreamWriter streamWriter = null;
@@ -176,6 +181,9 @@ public class ARToolKitPostProcessor {
                     index = pbxproj.IndexOf(PBXGROUP_SUBSET_2, index) + PBXGROUP_SUBSET_2.Length;
                     pbxproj = pbxproj.Insert(index, pbxGroup);
                     streamWriter.WriteLine("OnPostProcessBuild - Injected PBXGROUP");
+
+                    pbxproj = pbxproj.Replace(ENABLE_BITCODE, DISABLE_BITCODE);
+                    streamWriter.WriteLine("OnPostProcessBuild - Disabled Bitcode");
 
                     File.Delete(pbxprojPath);
                     File.WriteAllText(pbxprojPath, pbxproj);
