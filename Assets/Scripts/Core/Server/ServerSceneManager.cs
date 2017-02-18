@@ -115,7 +115,7 @@ public class ServerSceneManager : MonoBehaviour
     }
 
 	private void OnMeshServerFound (string address, int port) {
-		DebugConsole.Log ("OnMeshServerFound");
+		DebugConsole.Log (string.Format("OnMeshServerFound, address: {0}", address));
 		_meshTransferProcess.MoveNext (MeshServerLifecycle.Command.Download);
 
         _meshDiscoveryServer.StopSearching();

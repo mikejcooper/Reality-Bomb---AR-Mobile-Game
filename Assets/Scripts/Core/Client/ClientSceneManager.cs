@@ -32,13 +32,17 @@ public class ClientSceneManager : MonoBehaviour
 			Destroy(this.gameObject);
 		} else {
 			_instance = this;
+
+			_innerProcess = new Process ();	
 		}
 	}
 
 	void Start ()
 	{
 		DontDestroyOnLoad (gameObject);
-		_innerProcess = new Process ();	
+		var ugly = UnityThreadHelper.Dispatcher;
+
+
 		_discoveryClient = transform.gameObject.AddComponent<DiscoveryClient> ();
 		_networkLobbyManager = transform.gameObject.AddComponent<GameLobbyManager> ();
 		_meshTransferManager = new MeshTransferManager();

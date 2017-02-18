@@ -88,7 +88,7 @@ namespace ServerNetworking
 				Debug.Log ("broadcast socket is already in use, assuming broadcast is coming from localhost");
 				UnityThreadHelper.Dispatcher.Dispatch (() => {
 					if (MeshServerDiscoveredEvent != null)
-						MeshServerDiscoveredEvent ("localhost", NetworkConstants.MESH_TRANSFER_PORT);
+						MeshServerDiscoveredEvent (Network.player.ipAddress, NetworkConstants.MESH_TRANSFER_PORT);
 				});
 			}
 

@@ -27,6 +27,7 @@ public class UnityThreadHelper
                 if (null == (object)instance)
                 {
                     var go = new GameObject("[UnityThreadHelper]");
+					DontDestroyOnLoad(go);
                     go.hideFlags = HideFlags.NotEditable | HideFlags.HideInHierarchy | HideFlags.HideInInspector;
                     instance = go.AddComponent<UnityThreadHelper>();
                     instance.EnsureHelperInstance();

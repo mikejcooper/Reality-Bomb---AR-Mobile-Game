@@ -19,9 +19,10 @@ public class MeshTransferManager {
 
 	private WebSocket _ws;
 
-	private Mesh Mesh;
-	//  public static GameObject s_WorldMesh;
-
+	private Vector3[] _vertices;
+	private Vector3[] _normals;
+	private Vector2[] _uvs;
+	private int[] _triangles;
 
 	public static void SetLayerRecursively(GameObject go, int layerNumber)
 	{
@@ -33,33 +34,39 @@ public class MeshTransferManager {
 
 	public void FetchData (string address, int port) {
 
+		Debug.Log (string.Format ("FetchData address: {0}, port: {1}", address, port));
 		var url = "ws://" + address + ":" + port.ToString ();
 
 		if (_ws != null && _ws.IsAlive && _ws.Url.Host == address) {
 			Debug.Log ("existing ws: " + _ws.Url.Host);
 			return;
 		}
+		Debug.Log("initing websocket");
 		_ws = new WebSocket (url);
 
 		_ws.OnMessage += (sender, e) => {
 			if (e.IsText) {
 				Debug.Log("received message");
-				UnityThreadHelper.Dispatcher.Dispatch(() =>
-					{
-						if (e.Data.StartsWith("mesh")) {
-							string data = e.Data.Substring(4);
-							Mesh = ProduceMesh(data);
+
+				if (e.Data.StartsWith("mesh")) {
+					string data = e.Data.Substring(4);
+					Debug.Log("producing mesh");
+					FastObjImporter.Instance.ImportString(data, ref _vertices, ref _normals, ref _uvs, ref _triangles);
+					Debug.Log("produced mesh");
+					UnityThreadHelper.Dispatcher.Dispatch(() =>
+						{
 							if (OnMeshDataReceivedEvent != null)
 								OnMeshDataReceivedEvent ();
-						} else if (e.Data.StartsWith("markers")) {
-							//          handleMarkers(e.Data.Substring(7));
-						} else if (e.Data.StartsWith("triangles")) {
-							//          handleTrianglesMesh(e.Data.Substring(9));
-						} else {
-							Debug.Log("unknwon websocket event: "+e.Data);
 						}
-					}
-				);
+					);
+				} else if (e.Data.StartsWith("markers")) {
+					//          handleMarkers(e.Data.Substring(7));
+				} else if (e.Data.StartsWith("triangles")) {
+					//          handleTrianglesMesh(e.Data.Substring(9));
+				} else {
+					Debug.Log("unknwon websocket event: "+e.Data);
+				}
+				
 
 			}
 			_ws.Close();
@@ -72,23 +79,26 @@ public class MeshTransferManager {
 
 		_ws.OnError += (object sender, WebSocketSharp.ErrorEventArgs e) => {
 			Debug.Log("websocket error");
+			Debug.LogError(e.Exception);
 			//      Invoke("connectWebsocket", 5);
 		};
 
-		UnityThreadHelper.Dispatcher.Dispatch (() => {
+//		UnityThreadHelper.Dispatcher.Dispatch (() => {
+			Debug.Log("connecting websocket");
 			_ws.Connect ();
-		});
+//		});
 	}
-
-	private Mesh ProduceMesh (string meshData) {
-		// convert the mesh object string into an actual Unity mesh
-		Mesh mesh = FastObjImporter.Instance.ImportString(meshData);
-		mesh.RecalculateBounds();
-
-		return mesh;
-	}
-
+		
 	public GameObject ProduceGameObject () {
+
+		Mesh mesh = new Mesh ();
+		mesh.vertices = _vertices;
+		mesh.normals = _normals;
+		mesh.uv = _uvs;
+		mesh.triangles = _triangles;
+
+		mesh.RecalculateBounds ();
+
 		// choose the material - we can get round to using a custom invisible
 		// shader at some point here, but for development purposes it's nice
 		// to be able to see the mesh
@@ -99,7 +109,7 @@ public class MeshTransferManager {
 		MeshFilter filter = worldMeshObj.GetComponent<MeshFilter> ();
 		if (filter == null) filter = worldMeshObj.AddComponent<MeshFilter> ();
 
-		filter.mesh = Mesh;
+		filter.mesh = mesh;
 
 		MeshRenderer renderer = worldMeshObj.GetComponent<MeshRenderer> ();
 		if (renderer == null) renderer = worldMeshObj.AddComponent<MeshRenderer> ();
@@ -107,7 +117,7 @@ public class MeshTransferManager {
 		MeshCollider collider = worldMeshObj.GetComponent<MeshCollider> ();
 		if (collider == null) collider = worldMeshObj.AddComponent<MeshCollider> ();
 
-		collider.sharedMesh = Mesh;
+		collider.sharedMesh = mesh;
 
 		// set mesh material
 		renderer.material = material;

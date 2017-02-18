@@ -36,7 +36,7 @@ public sealed class FastObjImporter
 	private static readonly float[] pow10 = GenerateLookupTable();
 
 	// Use this for initialization
-	public Mesh ImportString(string data)
+	public void ImportString(string data, ref Vector3[] vertices, ref Vector3[] normals, ref Vector2[] uvs, ref int[] triangles)
 	{
 		_triangles = new List<int>();
 		_vertices = new List<Vector3>();
@@ -45,17 +45,11 @@ public sealed class FastObjImporter
 
 		LoadMeshData(data);
 
-		Mesh mesh = new Mesh();
-
-		mesh.vertices = _vertices.ToArray();
-		mesh.uv = new Vector2[0];
-		mesh.normals = _normals.ToArray();
-		mesh.triangles = _triangles.ToArray();
-
-		mesh.RecalculateBounds();
-		;
-
-		return mesh;
+		vertices = _vertices.ToArray();
+		uvs = new Vector2[0];
+		normals = _normals.ToArray();
+		triangles = _triangles.ToArray();
+	
 	}
 
 	private void LoadMeshData(string data)
