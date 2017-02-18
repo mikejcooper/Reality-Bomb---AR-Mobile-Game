@@ -5,37 +5,12 @@ using UnityEngine.UI;
 
 public class OfflineCarController : MonoBehaviour
 {
-	// temporary hack to allow tank prefab to be spawned and played without a network system
-	public bool IsPlayingSolo = false;
-
-	// Used to identify which tank belongs to which player.  This is set by this tank's manager.
-	public int PlayerNumber = 1;
-
 	public CarProperties CarProperties;
-
-	// How fast the tank turns in degrees per second.
-	public float TurnSpeed = 180f;
-	public float MaxLifetime = 15.0f;
 
 	private UIJoystick _joystick;
 	// Reference used to move the tank.
 	private Rigidbody _rigidbody;
-	private Vector3 _direction;
 	private Quaternion _lookAngle = Quaternion.Euler(Vector3.forward);
-	private int _disabled = 0;
-	private float _lifetime;
-	private Text _lifetimeText;
-
-
-	private void Awake ()
-	{
-		_rigidbody = GetComponent<Rigidbody> ();
-		_lifetime = MaxLifetime;
-
-		_lifetimeText.text = "Time Left: " + string.Format("{0:N2}", _lifetime);
-
-		CarProperties.PowerUpActive = false;
-	}
 
 
 	private void OnEnable ()
@@ -52,15 +27,16 @@ public class OfflineCarController : MonoBehaviour
 	}
 
 
-	private void Start ()
+	private void Awake ()
 	{
 		if (GameObject.Find("JoystickBack") != null) {
 			_joystick = GameObject.Find("JoystickBack").gameObject.GetComponent<UIJoystick>();
 		}
-		if (GameObject.Find ("TimeLeftText") != null) {
-			_lifetimeText = GameObject.Find ("TimeLeftText").gameObject.GetComponent<Text> ();
-		}
-		// The axes names are based on player number.
+
+
+		_rigidbody = GetComponent<Rigidbody> ();
+
+		CarProperties.PowerUpActive = false;
 
 	}
 
@@ -77,10 +53,6 @@ public class OfflineCarController : MonoBehaviour
 
 	private void FixedUpdate ()
 	{
-		// we should find a proper way to spawn tanks so we don't need to rely
-		// on isPlayingSolo
-		if (_disabled > 0)
-			_disabled--;
 
 		Vector3 joystickVector = new Vector3 (_joystick.Horizontal (), _joystick.Vertical (), 0);
 		GameObject ARCamera = GameObject.Find ("ARCamera");

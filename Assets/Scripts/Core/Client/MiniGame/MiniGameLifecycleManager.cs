@@ -115,7 +115,6 @@ public class MiniGameLifecycleManager : MonoBehaviour
 	{
 	
 		MiniGameController.CarObject = Instantiate(CarPrefab, MiniGameController.SpawnPoint, Quaternion.Euler(new Vector3(0,0,0))) as GameObject;
-		MiniGameController.CarObject.GetComponent<OfflineCarController>().IsPlayingSolo = true;
 		MiniGameController.Setup();
 
 		// attach to same object as spawn point

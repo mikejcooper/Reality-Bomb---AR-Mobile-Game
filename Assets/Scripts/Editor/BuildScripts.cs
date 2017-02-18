@@ -8,17 +8,17 @@ public class BuildScripts
 	static string[] CLIENT_LEVELS = new string[] {"Assets/_Scenes/mobile/Idle.unity", "Assets/_Scenes/mobile/MiniGame.unity", "Assets/_Scenes/shared/Game.unity", "Assets/_Scenes/mobile/Leaderboard.unity"};
 
 	private static BuildOptions GenerateBuildOptions () {
-		return BuildOptions.Development;
+		return BuildOptions.Development | BuildOptions.AutoRunPlayer;
 	}
 
 	private static void BuildAndRun (string fileName, string[] levelsArray, BuildTarget buildTarget, BuildOptions buildOptions) {
 		// Build player.
 		BuildPipeline.BuildPlayer(levelsArray, fileName, buildTarget, buildOptions);
 
-		// Run
-		Process proc = new Process();
-		proc.StartInfo.FileName = fileName;
-		proc.Start();
+//		// Run
+//		Process proc = new Process();
+//		proc.StartInfo.FileName = fileName;
+//		proc.Start();
 	}
 
 	[MenuItem("Builds/OS X TV")]
@@ -31,6 +31,12 @@ public class BuildScripts
 	public static void BuildMacClient ()
 	{
 		BuildAndRun ("client.app", CLIENT_LEVELS, BuildTarget.StandaloneOSXUniversal, GenerateBuildOptions ());
+	}
+
+	[MenuItem("Builds/Android")]
+	public static void BuildAndroid ()
+	{
+		BuildAndRun ("Android.app", CLIENT_LEVELS, BuildTarget.Android, GenerateBuildOptions ());
 	}
 
     [MenuItem("Builds/Windows TV")]
