@@ -14,9 +14,8 @@ public class CarController : NetworkBehaviour
 	public float MaxLifetime = 60.0f;
 	public bool HasBomb = false;
 	public bool Alive = true;
-	public bool ControlsDisabled = false;
 	public float FallDistanceBeforeRespawn = -150f;
-	public int DisableControlsForXSecs = 2;
+	public int DisabledControlDurationSeconds = 2;
 
 
 
@@ -30,6 +29,7 @@ public class CarController : NetworkBehaviour
 	private float _lifetime;
 	private Text _lifetimeText;
 	private bool _initialised;
+	private bool _controlsDisabled = false;
 
 
 
@@ -83,8 +83,9 @@ public class CarController : NetworkBehaviour
 				DebugConsole.Log ("unavailable");
 				GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += Reposition;
 			}
+				
 		}
-		PutCarOnGameMap ();
+
 	}
 
 	void OnDestroy () {
@@ -139,7 +140,7 @@ public class CarController : NetworkBehaviour
 				CarProperties.Speed = 30.0f;
 				print ("PowerUp Deactivated");
 			}
-			CheckCarIsOnMap ();
+			EnsureCarIsOnMap ();
 		} else if (isServer) {
 			// let the server authoratively update vital stats
 			if (HasBomb && _lifetime > 0.0f) {
@@ -182,7 +183,7 @@ public class CarController : NetworkBehaviour
 			return;
 		}
 
-		if (!ControlsDisabled) {
+		if (!_controlsDisabled) {
 			Vector3 joystickVector = new Vector3 (_joystick.Horizontal (), _joystick.Vertical (), 0);
 			GameObject ARCamera = GameObject.Find ("ARCamera");
 			Vector3 rotatedVector = ARCamera.transform.rotation * joystickVector;
@@ -253,15 +254,10 @@ public class CarController : NetworkBehaviour
 		}
 	}
 
-	public void PutCarOnGameMap(){
-		// todo: don't use Find 
-		Reposition (GameObject.Find ("World Mesh"));
-	}
-
-	public void CheckCarIsOnMap(){
+	public void EnsureCarIsOnMap(){
 		if(_rigidbody.position.y <= FallDistanceBeforeRespawn){
-			PutCarOnGameMap();
-			DisableControls (DisableControlsForXSecs);
+			Reposition (GameObject.FindObjectOfType<GameManager> ().WorldMesh);
+			DisableControls (DisabledControlDurationSeconds);
 		}
 	}
 
@@ -271,11 +267,6 @@ public class CarController : NetworkBehaviour
 	}
 
 	public void ToggleControls(){
-		if (ControlsDisabled) {
-			ControlsDisabled = false;
-		} 
-		else {
-			ControlsDisabled = true;   
-		}
+		_controlsDisabled = !_controlsDisabled;
 	}
 }
