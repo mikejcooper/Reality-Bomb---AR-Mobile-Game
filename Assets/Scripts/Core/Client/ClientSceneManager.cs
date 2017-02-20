@@ -142,9 +142,9 @@ public class ClientSceneManager : MonoBehaviour
 		ensureCorrectScene ();
 	}
 
-	public void OnUserRequestPlayMinigame () {
-		DebugConsole.Log ("OnUserRequestPlayMinigame");
-		_innerProcess.MoveNext (Command.PlayMinigame);
+	public void OnUserRequestPlaySandbox () {
+		DebugConsole.Log ("OnUserRequestPlaySandbox");
+		_innerProcess.MoveNext (Command.PlaySandbox);
 		ensureCorrectScene ();
 	}
 
@@ -170,10 +170,10 @@ public class ClientSceneManager : MonoBehaviour
 				SceneManager.LoadScene ("Idle");
 			}
 			break;
-		case ProcessState.MiniGame:
-			if (_currentScene != "MiniGame") {
-				_currentScene = "MiniGame";
-				SceneManager.LoadScene ("MiniGame");
+		case ProcessState.Sandbox:
+			if (_currentScene != "Sandbox") {
+				_currentScene = "Sandbox";
+				SceneManager.LoadScene ("Sandbox");
 			}
 			break;
 		case ProcessState.PlayingGame:
