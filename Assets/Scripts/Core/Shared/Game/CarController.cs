@@ -102,7 +102,7 @@ public class CarController : NetworkBehaviour
 		AllDevicesSetBomb (isBomb);
 	}
 
-	private void AllDevicesSetBomb(bool isBomb) {
+	public void AllDevicesSetBomb(bool isBomb) {
 		RpcSetBomb (isBomb);
 		ServerSetBomb (isBomb);
 	}
@@ -203,28 +203,19 @@ public class CarController : NetworkBehaviour
 		}
 	}
 
-	bool TransferBomb()
+	public bool IsTransferTimeExpired()
 	{
-		if (HasBomb && Time.time > _transferTime)
-		{
-			
-			AllDevicesSetBomb(false);
-			return true;
-		}
-		return false;
+		return Time.time > _transferTime;
+	}
+
+	public void UpdateTransferTime(float inc){
+		_transferTime = Time.time + inc;
 	}
 
 	[ServerCallback]
 	void OnCollisionEnter(Collision col)
 	{
-		
-		if (col.gameObject.tag == "TankTag") {
-			if (col.gameObject.GetComponent<CarController>().TransferBomb())
-			{
-				AllDevicesSetBomb(true);
-				_transferTime = Time.time + 1.0f;
-			}            
-		}
+		GameObject.FindObjectOfType<GameManager> ().CollisionEvent (this, col);
 	}
 
 	public void Reposition(GameObject worldMesh)

@@ -13,6 +13,7 @@ public class GameManager : NetworkBehaviour {
 	public int BombPlayerConnectionId;
 
 	private List<CarController> _cars = new List<CarController>();
+	private List<CarController> _remainingCars = new List<CarController>();
 
 	private List<string> _deathList = new List<string>();
 
@@ -54,9 +55,11 @@ public class GameManager : NetworkBehaviour {
 	[Server]
 	public void AllDevicesKillPlayer (CarController car) {
 		string playerName = GetPlayerName (car);
+		_deathList.Add (playerName);
 		RpcKillPlayer (playerName);
 		ServerKillPlayer (playerName);
 		CheckForGameOver ();
+		PassBombRandomPlayer ();
 	}
 
 	[ClientRpc]
@@ -73,7 +76,7 @@ public class GameManager : NetworkBehaviour {
 
 
 	private void ProcessKillPlayerMessage (string playerName) {
-		_deathList.Add (playerName);
+		RemoveByName (_remainingCars, playerName);
 	}
 
 	[Server]
@@ -88,6 +91,55 @@ public class GameManager : NetworkBehaviour {
 	{
 		Debug.LogError (string.Format ("AddCar id: {0}", gamePlayer.GetInstanceID()));
 		_cars.Add(gamePlayer.GetComponent<CarController>());
+		_remainingCars.Add(gamePlayer.GetComponent<CarController>());
+	}
+
+	private void PassBombRandomPlayer(){
+		Debug.Log ("Bomb is passed to new random player");
+		CarController randCar = _remainingCars[Random.Range(0,_remainingCars.Count)];
+		randCar.AllDevicesSetBomb (true);
+	}
+
+	private void RemoveByName( List<CarController> list, string name){
+		CarController tempCar = null;
+		foreach (CarController car in list) {
+			if (GetPlayerName (car).Equals (name)) {
+				tempCar = car;
+			}
+		}
+		if (tempCar != null) {
+			list.Remove (tempCar);
+		}
+	}
+
+	[Server]
+	public void CollisionEvent(CarController car, Collision col){
+		CarController collisionCar = col.gameObject.GetComponent<CarController>();
+
+		if (col.gameObject.tag == "TankTag") {
+			if ( collisionCar.IsTransferTimeExpired() && collisionCar.HasBomb )
+			{
+				collisionCar.AllDevicesSetBomb(false);
+				car.AllDevicesSetBomb (true);
+				car.UpdateTransferTime (1.0f);
+			} 
+		}
+	} 
+
+	[Server]
+	public void OnPlayerDisconnected(){
+		if(!IsBombInGame()){
+			PassBombRandomPlayer ();
+		}
+	}
+
+	private bool IsBombInGame(){
+		foreach (CarController car in _cars) {
+			if (car.HasBomb) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 
