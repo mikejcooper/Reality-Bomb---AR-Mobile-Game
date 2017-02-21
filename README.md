@@ -13,6 +13,17 @@ There are a few build scripts available in the Unity toolbar up top under the he
 
 On MacOS if you want to launch more than one instance of an app you can right click it, "show package contents" and then run the executable in Contents/MacOS as many times as you need.
 
+### iOS
+There is a build script for iOS, but on top of requiring Xcode, there are a few other steps you need to complete:
+  - Under Unity-iPhone -> General:
+    - Change signing team to your personal signing team. (there may be a clash in package names. If there is, just add something extra to the package name so that it reads com.augment.realitybomb.*yournamehere*)
+  - Under Unity-iPhone -> Build Settings:
+    - Go to Build Options and disable bitcode
+  - Under Unity-iPhone -> Build Phases
+    - Go to Link Binary With Libraries and add
+      - libz.tbd
+      - libsqlite3.tbd
+
 ## Conventions
 To make code more readable and easier to maintain we use a few coding conventions:
 

@@ -39,6 +39,12 @@ public class BuildScripts
 		BuildAndRun ("Android.app", CLIENT_LEVELS, BuildTarget.Android, GenerateBuildOptions ());
 	}
 
+	[MenuItem("Builds/iOS")]
+	public static void BuildIOS ()
+	{
+		BuildAndRun ("iOS.app", CLIENT_LEVELS, BuildTarget.iOS, GenerateBuildOptions ());
+	}
+
     [MenuItem("Builds/Windows TV")]
     public static void BuildWindowsTV()
     {
