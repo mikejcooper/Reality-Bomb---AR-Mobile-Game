@@ -3,14 +3,25 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class FallingObject : MonoBehaviour {
+public class PowerUp : MonoBehaviour {
 
 	// Used to enable and disable visibility of trigger
 	private Renderer _renderer;
-	public float FallSpeed = 60.0f;
+	public float FallSpeed = 2.0f;
 	public float SpinSpeed = 250.0f;
+
 	// will store the type of power up (boost, invinsible, invisible, etc)
-	private string _powerType; 
+	public int P_Type;
+
+
+//	private enum _powerUpList{
+//		Speed,
+//		Ink,
+//		Other
+//	}
+//	public _powerUpList _powerUpType;
+
+
 
 	private float _speedup;
 
@@ -31,7 +42,7 @@ public class FallingObject : MonoBehaviour {
 	void OnTriggerEnter(Collider player) {
 		// below makes sphere invisible but it still exists in the scene ... needs to be deactivated altogether
 		if (player.tag == "TankTag") {
-			ActivatePowerUp (player, "Speed");
+			ActivatePowerUp (player, P_Type);
 		}
 		Invoke ("Kill", 0.2f);
 	}
@@ -40,15 +51,29 @@ public class FallingObject : MonoBehaviour {
 		gameObject.SetActive (false);
 	}
 
-	void ActivatePowerUp(Collider player, string str){
-		if (str.Equals ("Speed")) {
+	void ActivatePowerUp(Collider player, /*_powerUpList type*/ int type){
+		player.gameObject.GetComponent<CarProperties> ().PowerUpActive = true;
+
+//		if (type.Equals(_powerUpList.Speed)) {
+//			print ("Speed boost activated!");
+//			player.gameObject.GetComponent<CarProperties> ().Speed = 60.0f;
+//		} else if (type.Equals(_powerUpList.Ink)) {
+//			print ("Ink Splatter Activated!");
+//		} else if (type.Equals(_powerUpList.Other)) {
+//			print ("Some other powerup Activated");
+//		}
+//			
+
+		if (type == 0) {	 // Speed Boost
 			print ("Speed boost activated!");
 			player.gameObject.GetComponent<CarProperties> ().Speed = 60.0f;
+		} else if (type == 1) {		// Ink Splatter
+			print ("Ink Splatter Activated!");
+		} else if (type == 2) {		// Place Holder
+			print ("Some other powerup Activated");
 		}
-			
-		player.gameObject.GetComponent<CarProperties> ().PowerUpActive = true;
 		player.gameObject.GetComponent<CarProperties> ().PowerUpEndTime = Time.time + 5.0f;
 	}
 		
 }
-
+	
