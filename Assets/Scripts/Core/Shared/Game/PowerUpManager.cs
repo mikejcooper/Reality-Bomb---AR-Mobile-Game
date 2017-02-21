@@ -43,15 +43,20 @@ public class PowerUpManager : MonoBehaviour
 	// Generate a powerup once the decision to spawn one has been made
 	private void GenPowerUp ( ) {
 		
-		GameObject powerUpObj = new GameObject ();
+		GameObject powerUpObj = GameObject.CreatePrimitive (PrimitiveType.Sphere);
 		PowerUp powerUp = powerUpObj.AddComponent<PowerUp> ();
+		Collider collider = powerUpObj.GetComponent<SphereCollider> ();
+
+		powerUpObj.name = "powerup";
+
 		Vector3 position = GameUtils.FindSpawnLocation (PlaneObject);
 		position.y += (_yOffSet + 200.0f);
 		powerUpObj.transform.position = position;
+		powerUpObj.transform.localScale = 10.0f * Vector3.one;
+
 		powerUp.P_Type = GenPowerUpType ();
 
-		Collider col = powerUpObj.AddComponent<BoxCollider> ();
-		col.isTrigger = true;
+		collider.isTrigger = true;
 
 
 	}
