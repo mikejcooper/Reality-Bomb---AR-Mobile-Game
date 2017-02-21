@@ -389,6 +389,7 @@ GameObject:
   m_Component:
   - component: {fileID: 757163055}
   - component: {fileID: 757163054}
+  - component: {fileID: 757163056}
   m_Layer: 0
   m_Name: SandboxManager
   m_TagString: Untagged
@@ -407,7 +408,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e8f828535bbc45f6a77bb41b093fc0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CarObject: {fileID: 0}
+  CarObject: {fileID: 1692454824}
   PlaneObject: {fileID: 2137931947}
 --- !u!4 &757163055
 Transform:
@@ -422,6 +423,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &757163056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 757163053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18e641c5ee95745239fc787b67dc3075, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlaneObject: {fileID: 2137931947}
 --- !u!1 &943544711
 GameObject:
   m_ObjectHideFlags: 0
