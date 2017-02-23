@@ -15,6 +15,7 @@ public class PowerUpManager : MonoBehaviour
 	}
 
 	void Start () {
+		GameObject.FindGameObjectWithTag("Splatter").GetComponent<UnityEngine.UI.RawImage>().enabled = false;
 		OnMeshReady ();
 	}
 		
@@ -54,7 +55,8 @@ public class PowerUpManager : MonoBehaviour
 		powerUpObj.transform.position = position;
 		powerUpObj.transform.localScale = 10.0f * Vector3.one;
 
-		powerUp.P_Type = GenPowerUpType ();
+//		powerUp.P_Type = GenPowerUpType ();
+		powerUp.P_Type = 1;
 
 		collider.isTrigger = true;
 
@@ -63,7 +65,6 @@ public class PowerUpManager : MonoBehaviour
 
 	//Generate a Random Type for a powerup when spawning 
 	private int GenPowerUpType () {
-//		return (_powerUpList) Random.Range(0,3);
 		return Random.Range(0,3);
 	}
 
