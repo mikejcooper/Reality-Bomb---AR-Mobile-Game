@@ -11,6 +11,7 @@ TagManager:
   - Glove
   - Target
   - TankTag
+  - Splatter
   layers:
   - Default
   - TransparentFX

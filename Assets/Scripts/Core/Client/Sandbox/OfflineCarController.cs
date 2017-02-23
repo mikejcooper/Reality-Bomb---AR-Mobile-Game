@@ -43,12 +43,7 @@ public class OfflineCarController : MonoBehaviour
 
 	private void Update ()
 	{
-//		Debug.Log (CarProperties.PowerUpEndTime);
-		if (CarProperties.PowerUpActive  && Time.time > CarProperties.PowerUpEndTime) {
-			CarProperties.PowerUpActive = false;
-			CarProperties.Speed = 30.0f;
-			print ("PowerUp Deactivated");
-		}
+		
 	}
 
 	private void FixedUpdate ()

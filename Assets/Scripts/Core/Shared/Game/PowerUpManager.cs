@@ -56,7 +56,7 @@ public class PowerUpManager : MonoBehaviour
 		powerUpObj.transform.localScale = 10.0f * Vector3.one;
 
 //		powerUp.P_Type = GenPowerUpType ();
-		powerUp.P_Type = 1;
+		powerUp.SetPowerUpType(0);
 
 		collider.isTrigger = true;
 
