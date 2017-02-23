@@ -103,6 +103,7 @@ public class MeshTransferManager {
 		// shader at some point here, but for development purposes it's nice
 		// to be able to see the mesh
 		Material material = Resources.Load("Materials/MeshVisible", typeof(Material)) as Material;
+		PhysicMaterial physicMaterial = Resources.Load("Materials/BouncyMaterial", typeof(PhysicMaterial)) as PhysicMaterial;
 
 		GameObject worldMeshObj = new GameObject("World Mesh");
 
@@ -118,6 +119,7 @@ public class MeshTransferManager {
 		if (collider == null) collider = worldMeshObj.AddComponent<MeshCollider> ();
 
 		collider.sharedMesh = mesh;
+		collider.material = physicMaterial;
 
 		// set mesh material
 		renderer.material = material;

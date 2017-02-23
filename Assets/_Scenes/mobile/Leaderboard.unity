@@ -444,7 +444,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5498c73011cb4a50b515ebc65214dfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playSandboxButton: {fileID: 0}
+  playSandboxButton: {fileID: 1818621396}
   leaveButton: {fileID: 216645033}
 --- !u!1 &1552867308
 GameObject:
@@ -594,7 +594,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Play MiniGame
+  m_Text: 'Enter Sandbox
+
+'
 --- !u!222 &1732171823
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -613,7 +615,7 @@ GameObject:
   - component: {fileID: 1818621397}
   - component: {fileID: 1818621396}
   m_Layer: 5
-  m_Name: MiniGameButton
+  m_Name: SandboxButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

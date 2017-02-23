@@ -325,8 +325,8 @@ Rigidbody:
   m_GameObject: {fileID: 1072149507112704}
   serializedVersion: 2
   m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_Drag: 1
+  m_AngularDrag: 1000
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -379,7 +379,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5090c8b5dabcd4814ae58d23310c3a3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 40
+  Speed: 100
+  PowerUpEndTime: 0
+  PowerUpActive: 0
 --- !u!114 &114115522974382278
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -429,8 +431,8 @@ MonoBehaviour:
   MaxLifetime: 15
   HasBomb: 0
   Alive: 1
-  PowerUpEndTime: 0
-  PowerUpActive: 0
+  FallDistanceBeforeRespawn: -150
+  DisabledControlDurationSeconds: 2
 --- !u!114 &114300567772753998
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -442,13 +444,13 @@ MonoBehaviour:
   m_Script: {fileID: -1768714887, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TransformSyncMode: 1
-  m_SendInterval: 0.04761905
+  m_TransformSyncMode: 3
+  m_SendInterval: 0.033333335
   m_SyncRotationAxis: 2
   m_RotationSyncCompression: 0
   m_SyncSpin: 0
-  m_MovementTheshold: 0.001
-  m_SnapThreshold: 5
+  m_MovementTheshold: 0.01
+  m_SnapThreshold: 100
   m_InterpolateRotation: 10
   m_InterpolateMovement: 1
 --- !u!114 &114525320214286566

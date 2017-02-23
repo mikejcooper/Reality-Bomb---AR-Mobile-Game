@@ -62,9 +62,13 @@ public class OfflineCarController : MonoBehaviour
 
 		_rigidbody.rotation = _lookAngle;
 
-		Vector3 movement = transform.forward * joystickVector.magnitude * CarProperties.Speed * Time.deltaTime;
 
-		_rigidbody.position += movement;
+		if (_joystick.IsDragging ()) {
+			
+			_rigidbody.velocity = CarProperties.Speed * new Vector3 (_joystick.Horizontal (), 0, _joystick.Vertical ());
+
+		}
+
 
 	}
 }

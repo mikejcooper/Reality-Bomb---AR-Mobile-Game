@@ -19,7 +19,8 @@ public class IdleSceneController : MonoBehaviour
 	
 	void Update ()
 	{
-		CameraObject.transform.RotateAround(ObjectsRotatePoint, Vector3.up, PanSpeed * Time.deltaTime);
+		Vector3 axis = new Vector3 (0.1f, 1, 0);
+		CameraObject.transform.RotateAround(ObjectsRotatePoint, axis, PanSpeed * Time.deltaTime);
 	}
 }
 
