@@ -849,7 +849,7 @@ MonoBehaviour:
   currentImageProcMode: 0
   currentUseVideoBackground: 1
   currentNFTMultiMode: 0
-  currentLogLevel: 1
+  currentLogLevel: 3
   scrollPosition: {x: 0, y: 0}
 --- !u!114 &1965431133
 MonoBehaviour:
