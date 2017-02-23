@@ -147,7 +147,7 @@ public class CarController : NetworkBehaviour
 				_lifetime -= Time.deltaTime;
 			}
 			if (_lifetime < 0.0f) {
-//				Kill ();
+				Kill ();
 			}
 		}
 	}
