@@ -147,7 +147,7 @@ public class CarController : NetworkBehaviour
 				_lifetime -= Time.deltaTime;
 			}
 			if (_lifetime < 0.0f) {
-				Kill ();
+//				Kill ();
 			}
 		}
 	}
@@ -197,9 +197,10 @@ public class CarController : NetworkBehaviour
 
 			_rigidbody.rotation = _lookAngle;
 
-			Vector3 movement = transform.forward * joystickVector.magnitude * CarProperties.Speed * Time.deltaTime;
+			if (_joystick.IsDragging ()) {
+				_rigidbody.velocity = CarProperties.Speed * new Vector3 (_joystick.Horizontal (), 0, _joystick.Vertical ());
+			}
 
-			_rigidbody.position += movement;
 		}
 	}
 
