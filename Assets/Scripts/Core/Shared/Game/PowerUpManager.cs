@@ -23,7 +23,7 @@ public class PowerUpManager : MonoBehaviour
 	}
 
 	// use coroutines rather than running on every update
-	IEnumerator tryToSpawn()
+	IEnumerator TryToSpawn()
 	{
 		while(true) 
 		{ 
@@ -43,7 +43,7 @@ public class PowerUpManager : MonoBehaviour
 		Bounds bounds = PlaneObject.transform.GetComponent<MeshRenderer> ().bounds;
 		_yOffSet = bounds.size.y / 2.0f;
 
-		StartCoroutine (tryToSpawn());
+		StartCoroutine (TryToSpawn());
 	}
 
 
@@ -63,7 +63,7 @@ public class PowerUpManager : MonoBehaviour
 		powerUpObj.transform.position = position;
 		powerUpObj.transform.localScale = 10.0f * Vector3.one;
 
-		powerUp.SetPowerUpType (0);//GenPowerUpType ());
+		powerUp.SetPowerUpType (1);//GenPowerUpType ());
 		powerUp.PlayerCanvas = PlayerCanvas;
 		powerUp.SplatterTex = SplatterTexture;
 
