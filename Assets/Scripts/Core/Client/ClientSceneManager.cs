@@ -138,7 +138,8 @@ public class ClientSceneManager : MonoBehaviour
 
 	//call at end of GameManager (client)
 	public void OnGameLoaded () {
-		
+		Debug.Log ("Notifying server that we have finished loading game");
+		_networkLobbyManager.SetGameLoaded ();
 	}
 
 	private void OnServerGameEnd () {

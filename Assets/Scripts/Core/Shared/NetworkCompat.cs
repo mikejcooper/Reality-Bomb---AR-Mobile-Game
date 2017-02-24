@@ -27,6 +27,26 @@ namespace NetworkCompat {
 
 	}
 
+
+	public class GameLoadedMessage : MessageBase
+	{
+		public byte slotId;
+		public bool loadedState;
+
+		public override void Deserialize(UnityEngine.Networking.NetworkReader reader)
+		{
+			slotId = reader.ReadByte();
+			loadedState = reader.ReadBoolean();
+		}
+
+		public override void Serialize(UnityEngine.Networking.NetworkWriter writer)
+		{
+			writer.Write(slotId);
+			writer.Write(loadedState);
+		}
+
+	}
+
 	public class Utils {
 		static public UnityEngine.Networking.PlayerController GetPlayerController(short id, NetworkConnection conn) {
 			for (int i = 0; i < conn.playerControllers.Count; i++) {
@@ -65,6 +85,7 @@ namespace NetworkCompat {
 		static NetworkCompat.LobbyReadyToBeginMessage s_ReadyToBeginMessage = new NetworkCompat.LobbyReadyToBeginMessage();
 		static IntegerMessage s_SceneLoadedMessage = new IntegerMessage();
 		static NetworkCompat.LobbyReadyToBeginMessage s_LobbyReadyToBeginMessage = new NetworkCompat.LobbyReadyToBeginMessage();
+		static NetworkCompat.GameLoadedMessage s_GameLoadedMessage = new NetworkCompat.GameLoadedMessage();
 
 		// properties
 		public bool showLobbyGUI             { get { return m_ShowLobbyGUI; } set { m_ShowLobbyGUI = value; } }
@@ -264,6 +285,7 @@ namespace NetworkCompat {
 					continue;
 
 				player.readyToBegin = false;
+				player.gameLoaded = false;
 				player.OnClientEnterLobby();
 			}
 		}
@@ -403,6 +425,12 @@ namespace NetworkCompat {
 					s_LobbyReadyToBeginMessage.slotId = p.slot;
 					s_LobbyReadyToBeginMessage.readyState = false;
 					NetworkServer.SendToReady(null, MsgType.LobbyReadyToBegin, s_LobbyReadyToBeginMessage);
+
+					p.GetComponent<NetworkLobbyPlayer> ().gameLoaded = false;
+
+					s_GameLoadedMessage.slotId = p.slot;
+					s_GameLoadedMessage.loadedState = false;
+					NetworkServer.SendToReady(null, GlobalNetworking.NetworkConstants.MSG_GAME_LOADED, s_GameLoadedMessage);
 				}
 			}
 
@@ -431,6 +459,7 @@ namespace NetworkCompat {
 					{
 						// re-add the lobby object
 						lobbyPlayer.GetComponent<NetworkLobbyPlayer>().readyToBegin = false;
+						lobbyPlayer.GetComponent<NetworkLobbyPlayer> ().gameLoaded = false;
 						NetworkServer.ReplacePlayerForConnection(uv.connectionToClient, lobbyPlayer.gameObject, uv.playerControllerId);
 					}
 				}
@@ -453,6 +482,32 @@ namespace NetworkCompat {
 			}
 
 			OnLobbyServerSceneChanged(sceneName);
+		}
+
+		// received on server when a client has loaded their game
+		void OnServergameLoadedMessage (NetworkMessage netMsg) {
+			if (LogFilter.logDebug) { Debug.Log("GameLobbyManager OnServergameLoadedMessage"); }
+			GameLoadedMessage gameLoadedMessage;
+			netMsg.ReadMessage(gameLoadedMessage);
+
+			UnityEngine.Networking.PlayerController lobbyController = NetworkCompat.Utils.GetPlayerController (gameLoadedMessage.slotId, netMsg.conn);
+			if (lobbyController == null)
+			{
+				if (LogFilter.logError) { Debug.LogError("NetworkLobbyManager OnServerReadyToBeginMessage invalid playerControllerId " + gameLoadedMessage.slotId); }
+				return;
+			}
+
+			// set this player ready
+			var lobbyPlayer = lobbyController.gameObject.GetComponent<NetworkCompat.NetworkLobbyPlayer>();
+			lobbyPlayer.gameLoaded = gameLoadedMessage.loadedState;
+
+			// tell every player that this player is ready
+			var outMsg = new GameLoadedMessage();
+			outMsg.slotId = lobbyPlayer.slot;
+			outMsg.loadedState = gameLoadedMessage.loadedState;
+			NetworkServer.SendToReady(null, GlobalNetworking.NetworkConstants.MSG_GAME_LOADED, outMsg);
+
+			OnLobbyServerGameLoaded (netMsg.conn);
 		}
 
 		void OnServerReadyToBeginMessage(NetworkMessage netMsg)
@@ -526,6 +581,7 @@ namespace NetworkCompat {
 			}
 
 			NetworkServer.RegisterHandler(MsgType.LobbyReadyToBegin, OnServerReadyToBeginMessage);
+			NetworkServer.RegisterHandler(GlobalNetworking.NetworkConstants.MSG_GAME_LOADED, OnServergameLoadedMessage);
 			NetworkServer.RegisterHandler(MsgType.LobbySceneLoaded, OnServerSceneLoadedMessage);
 			NetworkServer.RegisterHandler(MsgType.LobbyReturnToLobby, OnServerReturnToLobbyMessage);
 
@@ -663,6 +719,10 @@ namespace NetworkCompat {
 		}
 
 		public virtual void OnLobbyServerSceneChanged(string sceneName)
+		{
+		}
+
+		public virtual void OnLobbyServerGameLoaded(NetworkConnection conn)
 		{
 		}
 

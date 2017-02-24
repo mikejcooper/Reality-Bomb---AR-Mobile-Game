@@ -12,6 +12,7 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 	public delegate void OnLobbyClientConnected ();
 	public delegate void OnLobbyClientDisconnected ();
 	public delegate void OnLobbyClientReadyToBegin ();
+	public delegate void OnLobbyClientGameLoaded ();
     public delegate void OnMeshClearToDownloadCallback(string address, int port);
 
     public event OnLobbyServerConnected OnLobbyServerConnectedEvent;
@@ -19,7 +20,19 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 	public event OnLobbyClientConnected OnLobbyClientConnectedEvent;
 	public event OnLobbyClientDisconnected OnLobbyClientDisconnectedEvent;
 	public event OnLobbyClientReadyToBegin OnLobbyClientReadyToBeginEvent;
+	public event OnLobbyClientGameLoaded OnLobbyClientGameLoadedEvent;
     public event OnMeshClearToDownloadCallback OnMeshClearToDownloadEvent;
+
+	public override void OnStartServer()
+	{
+		base.OnStartServer ();
+
+	}
+
+	public override void OnLobbyServerGameLoaded(NetworkConnection conn) {
+		if (OnLobbyClientGameLoadedEvent != null)
+			OnLobbyClientGameLoadedEvent ();
+	}
 
 	// sent from server to set all its clients to not ready and tell all clients they are not ready
 	public void SetAllClientsNotReady () {
@@ -46,6 +59,19 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 				msg.slotId = (byte)p.playerControllerId;
 				msg.readyState = true;
 				client.Send (UnityEngine.Networking.MsgType.LobbyReadyToBegin, msg);
+			}
+		}
+	}
+
+	// sent from a client to tell the server the game has loaded
+	public void SetGameLoaded () {
+		// notify server that we're ready
+		foreach (var p in lobbySlots) {
+			if (p != null && p.playerControllerId >= 0) {
+				var msg = new GameLoadedMessage ();
+				msg.slotId = (byte)p.playerControllerId;
+				msg.loadedState = true;
+				client.Send (NetworkConstants.MSG_GAME_LOADED, msg);
 			}
 		}
 	}
@@ -94,8 +120,7 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 		OnLobbyClientConnectedEvent ();
 	}
 
-    public override void OnClientConnect(NetworkConnection conn)
-    {
+    public override void OnClientConnect(NetworkConnection conn) {
         base.OnClientConnect(conn);
         if (client != null)
         {
@@ -104,8 +129,7 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
         }
     }
 
-    public void OnClientClearToDownloadMesh(NetworkMessage netMsg)
-    {
+    public void OnClientClearToDownloadMesh(NetworkMessage netMsg) {
         ServerNetworking.SocketMessage socketMsg = netMsg.ReadMessage<ServerNetworking.SocketMessage>();
         Debug.Log(socketMsg.address);
 

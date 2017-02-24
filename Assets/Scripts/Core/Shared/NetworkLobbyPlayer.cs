@@ -16,9 +16,11 @@ namespace NetworkCompat {
 
 		byte m_Slot;
 		bool m_ReadyToBegin;
+		bool m_GameLoaded;
 
 		public byte slot { get { return m_Slot; } set { m_Slot = value; }}
 		public bool readyToBegin { get { return m_ReadyToBegin; } set { m_ReadyToBegin = value; } }
+		public bool gameLoaded { get { return m_GameLoaded; } set { m_GameLoaded = value; } }
 
 		void Start()
 		{
@@ -32,6 +34,7 @@ namespace NetworkCompat {
 			{
 				lobby.lobbySlots[m_Slot] = this;
 				m_ReadyToBegin = false;
+				gameLoaded = false;
 				OnClientEnterLobby();
 			}
 			else
@@ -132,6 +135,7 @@ namespace NetworkCompat {
 
 			writer.Write(m_Slot);
 			writer.Write(m_ReadyToBegin);
+			writer.Write (m_GameLoaded);
 			return true;
 		}
 
@@ -143,6 +147,7 @@ namespace NetworkCompat {
 
 			m_Slot = reader.ReadByte();
 			m_ReadyToBegin = reader.ReadBoolean();
+			m_GameLoaded = reader.ReadBoolean ();
 		}
 
 		// ------------------------ optional UI ------------------------
