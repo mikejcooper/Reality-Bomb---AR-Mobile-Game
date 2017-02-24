@@ -17,7 +17,6 @@ public class ServerSceneManager : MonoBehaviour
 		Idle, Retrieving
 	}
 
-	// Sub to event 
 	public delegate void StateChange (ProcessState state);
 	public delegate void OnAllPlayersGameLoaded();
 
@@ -92,6 +91,7 @@ public class ServerSceneManager : MonoBehaviour
 		// register listeners for when players connect / disconnect
 		_networkLobbyManager.OnLobbyServerConnectedEvent += OnPlayerConnected;
 		_networkLobbyManager.OnLobbyServerDisconnectedEvent += OnPlayerDisconnected;
+		_networkLobbyManager.OnLobbyClientReadyToBeginEvent += OnPlayerReady;
 		_networkLobbyManager.OnLobbyClientGameLoadedEvent += OnPlayerGameLoaded;
 
 		_meshDiscoveryServer.MeshServerDiscoveredEvent += OnMeshServerFound;
@@ -159,10 +159,15 @@ public class ServerSceneManager : MonoBehaviour
 		}
     }
 
+	private void OnPlayerReady () {
+		OnStateUpdate ();
+	}
+		
+
 	private void OnPlayerGameLoaded () {
-		Debug.Log ("Some player has loaded the game");
+		Debug.LogError ("Some player has loaded the game");
 		if (AreAllPlayersGameLoaded () && OnAllPlayersGameLoadedEvent != null) {
-			Debug.Log ("all players have finished loading the game and someone is subscribed to OnAllPlayersGameLoadedEvent");
+			Debug.LogError ("all players have finished loading the game and someone is subscribed to OnAllPlayersGameLoadedEvent");
 			OnAllPlayersGameLoadedEvent ();
 		}
 		OnStateUpdate ();

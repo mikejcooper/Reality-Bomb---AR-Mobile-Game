@@ -487,24 +487,23 @@ namespace NetworkCompat {
 		// received on server when a client has loaded their game
 		void OnServergameLoadedMessage (NetworkMessage netMsg) {
 			if (LogFilter.logDebug) { Debug.Log("GameLobbyManager OnServergameLoadedMessage"); }
-			GameLoadedMessage gameLoadedMessage;
-			netMsg.ReadMessage(gameLoadedMessage);
+			netMsg.ReadMessage(s_GameLoadedMessage);
 
-			UnityEngine.Networking.PlayerController lobbyController = NetworkCompat.Utils.GetPlayerController (gameLoadedMessage.slotId, netMsg.conn);
+			UnityEngine.Networking.PlayerController lobbyController = NetworkCompat.Utils.GetPlayerController (s_GameLoadedMessage.slotId, netMsg.conn);
 			if (lobbyController == null)
 			{
-				if (LogFilter.logError) { Debug.LogError("NetworkLobbyManager OnServerReadyToBeginMessage invalid playerControllerId " + gameLoadedMessage.slotId); }
+				if (LogFilter.logError) { Debug.LogError("NetworkLobbyManager OnServerReadyToBeginMessage invalid playerControllerId " + s_GameLoadedMessage.slotId); }
 				return;
 			}
 
 			// set this player ready
-			var lobbyPlayer = lobbyController.gameObject.GetComponent<NetworkCompat.NetworkLobbyPlayer>();
-			lobbyPlayer.gameLoaded = gameLoadedMessage.loadedState;
+			var lobbyPlayer = lobbyController.gameObject.GetComponent<NetworkLobbyPlayer>();
+			lobbyPlayer.gameLoaded = s_GameLoadedMessage.loadedState;
 
 			// tell every player that this player is ready
 			var outMsg = new GameLoadedMessage();
 			outMsg.slotId = lobbyPlayer.slot;
-			outMsg.loadedState = gameLoadedMessage.loadedState;
+			outMsg.loadedState = s_GameLoadedMessage.loadedState;
 			NetworkServer.SendToReady(null, GlobalNetworking.NetworkConstants.MSG_GAME_LOADED, outMsg);
 
 			OnLobbyServerGameLoaded (netMsg.conn);

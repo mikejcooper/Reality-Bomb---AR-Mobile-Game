@@ -68,7 +68,7 @@ public class PowerUp : MonoBehaviour {
 		print ("PowerUp Deactivated");
 
 		if (P_Type == 0) {
-			_playerCol.gameObject.GetComponent<CarProperties> ().Speed *= 0.5f;
+//			_playerCol.gameObject.GetComponent<CarProperties> ().Speed *= 0.5f;
 		} else if (P_Type == 1) {
 			GameObject.FindGameObjectWithTag("Splatter").GetComponent<UnityEngine.UI.RawImage>().enabled = false;
 		}

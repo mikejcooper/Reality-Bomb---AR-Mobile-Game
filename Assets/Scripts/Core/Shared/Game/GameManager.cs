@@ -28,7 +28,6 @@ public class GameManager : NetworkBehaviour {
 	{
 		if (!isServer) {
 			ClientSceneManager.Instance.LastGameResults = new GameResults ();
-
 			WorldMesh = ClientSceneManager.Instance.WorldMesh;
 		} else if (isServer) {
 			ServerSceneManager.Instance.LastGameResults = new GameResults ();
@@ -38,7 +37,9 @@ public class GameManager : NetworkBehaviour {
 	
 			WorldMesh = ServerSceneManager.Instance.WorldMesh;
 
-			CheckAllPlayersReady ();
+			ServerSceneManager.Instance.OnAllPlayersGameLoadedEvent += RpcAllPlayersReady;
+			//			RpcAllPlayersReady ();
+
 		}
 
 		WorldMesh.transform.parent = MarkerScene.transform;
@@ -51,7 +52,17 @@ public class GameManager : NetworkBehaviour {
 		foreach (var existingCarController in GameObject.FindObjectsOfType<CarController>()) {
 			existingCarController.init ();
 		}
+			
+		if (!isServer) {
+			ClientSceneManager.Instance.OnGameLoaded ();
+		}
+	}
 
+
+	void OnDestroy () {
+		if (isServer) {
+			ServerSceneManager.Instance.OnAllPlayersGameLoadedEvent -= RpcAllPlayersReady;
+		}
 	}
 
 	[Server]
@@ -92,19 +103,7 @@ public class GameManager : NetworkBehaviour {
 			ServerSceneManager.Instance.OnServerRequestGameEnd ();
 		}
 	}
-
-	[Server]
-	private void CheckAllPlayersReady(){
-		if (ServerSceneManager.Instance.AreAllPlayersReady()) {
-			Debug.LogError ("GM: All Players Ready");
-			DebugConsole.Log ("GM: All Players Ready");
-			RpcAllPlayersReady ();
-		} else {
-			Debug.LogError ("GM: All Players Not Ready. Add Listener");
-			DebugConsole.Log ("GM: All Players Not Ready. Add Listener");
-				OnAllPlayersReadyEvent += RpcAllPlayersReady;
-		}
-	}
+		
 
 	[ClientRpc] // Start game becuase server states all players are ready 
 	private void RpcAllPlayersReady() {

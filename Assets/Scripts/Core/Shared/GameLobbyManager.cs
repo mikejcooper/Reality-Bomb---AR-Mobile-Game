@@ -23,12 +23,6 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 	public event OnLobbyClientGameLoaded OnLobbyClientGameLoadedEvent;
     public event OnMeshClearToDownloadCallback OnMeshClearToDownloadEvent;
 
-	public override void OnStartServer()
-	{
-		base.OnStartServer ();
-
-	}
-
 	public override void OnLobbyServerGameLoaded(NetworkConnection conn) {
 		if (OnLobbyClientGameLoadedEvent != null)
 			OnLobbyClientGameLoadedEvent ();
