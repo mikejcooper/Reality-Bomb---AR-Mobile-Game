@@ -19,9 +19,7 @@ public class PreparingGame : MonoBehaviour
 	private GameObject _twoObj;
 	private GameObject _oneObj;
 	private GameObject _goObj;
-//
-//
-//
+
 
 
 	void Start () {
@@ -31,15 +29,11 @@ public class PreparingGame : MonoBehaviour
 		_oneObj = CreateSprite (One);
 		_goObj = CreateSprite (GO);
 		_waitingForPlayersToConnectObj.SetActive (true);
-		StartGameCountDown ();
 	}
 		
-	IEnumerator StartCountDown() {
+	IEnumerator StartCountDown(CarController player) {
 		float t1 = 0.3f; // time hide and show
 		float t2 = 0.8f; // time image is shown
-//		WaitingForPlayersToConnectObj.SetActive (true);
-//		yield return new WaitForSeconds (t2);
-//		WaitingForPlayersToConnectObj.SetActive (false);
 
 		yield return new WaitForSeconds (t1);
 		_threeObj.SetActive (true);
@@ -57,11 +51,12 @@ public class PreparingGame : MonoBehaviour
 		_goObj.SetActive (true);
 		yield return new WaitForSeconds (t2);
 		_goObj.SetActive (false);
+		player.EnableControls (true);
 	}
 
-	public void StartGameCountDown(){
+	public void StartGameCountDown(CarController player){
 		_waitingForPlayersToConnectObj.SetActive (false);
-		StartCoroutine(StartCountDown ());
+		StartCoroutine(StartCountDown (player));
 	}
 		
 

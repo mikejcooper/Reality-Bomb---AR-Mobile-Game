@@ -29,6 +29,13 @@ public class GameManager : NetworkBehaviour {
 		if (!isServer) {
 			ClientSceneManager.Instance.LastGameResults = new GameResults ();
 			WorldMesh = ClientSceneManager.Instance.WorldMesh;
+
+
+			// ** ToDo faking AllPlayersReady event!!
+			Invoke("RpcAllPlayersReady", 5);
+
+
+
 		} else if (isServer) {
 			ServerSceneManager.Instance.LastGameResults = new GameResults ();
 
@@ -37,8 +44,8 @@ public class GameManager : NetworkBehaviour {
 	
 			WorldMesh = ServerSceneManager.Instance.WorldMesh;
 
-			ServerSceneManager.Instance.OnAllPlayersGameLoadedEvent += RpcAllPlayersReady;
-			//			RpcAllPlayersReady ();
+			// todo fix A
+//			ServerSceneManager.Instance.OnAllPlayersGameLoadedEvent += AllPlayersReady;
 
 		}
 
@@ -61,7 +68,8 @@ public class GameManager : NetworkBehaviour {
 
 	void OnDestroy () {
 		if (isServer) {
-			ServerSceneManager.Instance.OnAllPlayersGameLoadedEvent -= RpcAllPlayersReady;
+			// todo fix A
+//			ServerSceneManager.Instance.OnAllPlayersGameLoadedEvent -= AllPlayersReady;
 		}
 	}
 
@@ -103,12 +111,21 @@ public class GameManager : NetworkBehaviour {
 			ServerSceneManager.Instance.OnServerRequestGameEnd ();
 		}
 	}
+
+	// toDo fix A
+//	private void AllPlayersReady(){
+//		Debug.LogError ("Server: HEREEE");
+//		Debug.Log ("Server: HEREEEEEEEE");
+//		RpcAllPlayersReady();
+//	}
 		
 
-	[ClientRpc] // Start game becuase server states all players are ready 
+//	[ClientRpc] // Runs on all clients, starts game sequence 
 	private void RpcAllPlayersReady() {
-		Debug.Log ("HEREEEEEEEE");
-		Debug.LogError ("HEREEEEEEEE");
+		Debug.Log ("Client: All player are ready, start game countdown ");
+//		Debug.LogError ("Client: All player are ready, start game countdown ");
+
+		PreparingCanvas.StartGameCountDown (GameObject.FindObjectOfType<CarController>());
 	}
 
 
@@ -166,15 +183,5 @@ public class GameManager : NetworkBehaviour {
 		}
 		return false;
 	}
-
-	public void ServerMeshPlayerReady(){
-		foreach (PreparingGame prep in gameObject.GetComponents<PreparingGame>()) {
-			prep.StartGameCountDown ();
-		}
-		foreach (CarController car in _cars) {
-			car.EnableControls (true);
-		}
-	}
-
 		
 }
