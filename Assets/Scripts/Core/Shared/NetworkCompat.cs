@@ -489,15 +489,22 @@ namespace NetworkCompat {
 			if (LogFilter.logDebug) { Debug.Log("GameLobbyManager OnServergameLoadedMessage"); }
 			netMsg.ReadMessage(s_GameLoadedMessage);
 
-			UnityEngine.Networking.PlayerController lobbyController = NetworkCompat.Utils.GetPlayerController (s_GameLoadedMessage.slotId, netMsg.conn);
-			if (lobbyController == null)
-			{
-				if (LogFilter.logError) { Debug.LogError("NetworkLobbyManager OnServerReadyToBeginMessage invalid playerControllerId " + s_GameLoadedMessage.slotId); }
-				return;
-			}
-
-			// set this player ready
-			var lobbyPlayer = lobbyController.gameObject.GetComponent<NetworkLobbyPlayer>();
+			var lobbyPlayer = lobbySlots[s_GameLoadedMessage.slotId];
+//			if (lobbyPlayer == null || lobbyPlayer.gameObject == null)
+//			{
+//				if (LogFilter.logError) { Debug.LogError("NetworkLobbyManager OnClientReadyToBegin no player at lobby slot " + s_LobbyReadyToBeginMessage.slotId); }
+//				return;
+//			}
+//
+//			UnityEngine.Networking.PlayerController lobbyController = NetworkCompat.Utils.GetPlayerController (s_GameLoadedMessage.slotId, netMsg.conn);
+//			if (lobbyController == null)
+//			{
+//				if (LogFilter.logError) { Debug.LogError("NetworkLobbyManager OnServerReadyToBeginMessage invalid playerControllerId " + s_GameLoadedMessage.slotId); }
+//				return;
+//			}
+//
+//			// set this player ready
+//			var lobbyPlayer = lobbyController.gameObject.GetComponent<NetworkLobbyPlayer>();
 			lobbyPlayer.gameLoaded = s_GameLoadedMessage.loadedState;
 
 			// tell every player that this player is ready
