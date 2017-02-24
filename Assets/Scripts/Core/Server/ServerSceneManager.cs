@@ -17,8 +17,12 @@ public class ServerSceneManager : MonoBehaviour
 		Idle, Retrieving
 	}
 
+	// Sub to event 
 	public delegate void StateChange (ProcessState state);
+	public delegate void OnAllPlayersGameLoaded();
+
 	public event StateChange StateChangeEvent;
+	public event OnAllPlayersGameLoaded OnAllPlayersGameLoadedEvent;
 
 	public MeshRetrievalState MeshRetrievalStatus = MeshRetrievalState.Idle;
 	public NetworkLobbyPlayer LobbyPlayerPrefab;
@@ -159,6 +163,10 @@ public class ServerSceneManager : MonoBehaviour
 		OnStateUpdate ();
 	}
 
+	public bool AreAllPlayersGameLoaded () {
+		return false;
+	}
+		
 	private void OnPlayerDisconnected ()
 	{
 		DebugConsole.Log ("OnPlayerDisconnected");
@@ -236,7 +244,7 @@ public class ServerSceneManager : MonoBehaviour
 		}
 
 		if (StateChangeEvent != null)
-			StateChangeEvent (_innerProcess.CurrentState);
+			StateChangeEvent (_innerProcess.CurrentState);	
 	}
 
 }

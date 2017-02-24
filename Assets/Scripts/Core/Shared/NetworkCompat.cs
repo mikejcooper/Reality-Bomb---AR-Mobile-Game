@@ -692,8 +692,6 @@ namespace NetworkCompat {
 
 		public virtual void OnLobbyServerPlayersReady()
 		{
-			// all players are readyToBegin, start the game
-//			ServerChangeScene(m_PlayScene);
 		}
 
 		// ------------------------ lobby client virtuals ------------------------

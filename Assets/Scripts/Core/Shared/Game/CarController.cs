@@ -70,6 +70,7 @@ public class CarController : NetworkBehaviour
 
 			if (!isServer) {
 				CmdRequestColour ();
+				EnableControls (false);
 			} else {
 				// register
 				DebugConsole.Log ("GameManager.Instance.AddCar (gameObject);");
@@ -259,5 +260,13 @@ public class CarController : NetworkBehaviour
 
 	public void ToggleControls(){
 		_controlsDisabled = !_controlsDisabled;
+	}
+
+	public void EnableControls(bool b){
+		if (b) {
+			_controlsDisabled = false;
+		} else {
+			_controlsDisabled = true;
+		}
 	}
 }

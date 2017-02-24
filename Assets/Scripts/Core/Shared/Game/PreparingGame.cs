@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using ServerLifecycle;
 
-public class PreparingGame : MonoBehaviour {
+
+public class PreparingGame : MonoBehaviour
+{
 
 	public Sprite WaitingForPlayersToConnect;
 	public Sprite Three;
@@ -11,128 +14,87 @@ public class PreparingGame : MonoBehaviour {
 	public Sprite One;
 	public Sprite GO;
 
-	GameObject WaitingForPlayersToConnectObj;
-	GameObject ThreeObj;
-	GameObject TwoObj;
-	GameObject OneObj;
-	GameObject GoObj;
+	private GameObject _waitingForPlayersToConnectObj;
+	private GameObject _threeObj;
+	private GameObject _twoObj;
+	private GameObject _oneObj;
+	private GameObject _goObj;
 //
 //
 //
 
-	private Dictionary<CarProperties, GameObject> _sprites;
 
 	void Start () {
-		WaitingForPlayersToConnectObj = CreateSprite (WaitingForPlayersToConnect);
-		ThreeObj = CreateSprite (Three);
-		TwoObj = CreateSprite (Two);
-		OneObj = CreateSprite (One);
-		GoObj = CreateSprite (GO);
-		StartCoroutine(StartCountDown ());
-
+		_waitingForPlayersToConnectObj = CreateSprite (WaitingForPlayersToConnect);
+		_threeObj = CreateSprite (Three);
+		_twoObj = CreateSprite (Two);
+		_oneObj = CreateSprite (One);
+		_goObj = CreateSprite (GO);
+		_waitingForPlayersToConnectObj.SetActive (true);
+		StartGameCountDown ();
 	}
 		
 	IEnumerator StartCountDown() {
-		WaitingForPlayersToConnectObj.SetActive (true);
-		yield return new WaitForSeconds (5f);
-		WaitingForPlayersToConnectObj.SetActive (false);
+		float t1 = 0.3f; // time hide and show
+		float t2 = 0.8f; // time image is shown
+//		WaitingForPlayersToConnectObj.SetActive (true);
+//		yield return new WaitForSeconds (t2);
+//		WaitingForPlayersToConnectObj.SetActive (false);
 
-		yield return new WaitForSeconds (1f);
-		ThreeObj.SetActive (true);
-		yield return new WaitForSeconds (3f);
-		ThreeObj.SetActive (false);
-		yield return new WaitForSeconds (1f);
-		TwoObj.SetActive (true);
-		yield return new WaitForSeconds (3f);
-		TwoObj.SetActive (false);
-		yield return new WaitForSeconds (1f);
-		OneObj.SetActive (true);
-		yield return new WaitForSeconds (3f);
-		OneObj.SetActive (false);
-		yield return new WaitForSeconds (1f);		
-		GoObj.SetActive (true);
-		yield return new WaitForSeconds (3f);
-		GoObj.SetActive (false);
+		yield return new WaitForSeconds (t1);
+		_threeObj.SetActive (true);
+		yield return new WaitForSeconds (t2);
+		_threeObj.SetActive (false);
+		yield return new WaitForSeconds (t1);
+		_twoObj.SetActive (true);
+		yield return new WaitForSeconds (t2);
+		_twoObj.SetActive (false);
+		yield return new WaitForSeconds (t1);
+		_oneObj.SetActive (true);
+		yield return new WaitForSeconds (t2);
+		_oneObj.SetActive (false);
+		yield return new WaitForSeconds (t1);		
+		_goObj.SetActive (true);
+		yield return new WaitForSeconds (t2);
+		_goObj.SetActive (false);
 	}
 
-	void Update () {
-//		foreach (var car in GameObject.FindObjectsOfType<CarProperties>()) {
-//			GameObject sprite;
-//			if (!_sprites.ContainsKey (car)) {
-//				sprite = CreateSprite ();
-//				_sprites[car] = sprite;
-//			} else {
-//				sprite = _sprites [car];
-//			}
-//
-//			RectTransform canvasRect = GetComponent<RectTransform>();
-//
-//			// project onto viewport
-//			Vector2 viewportPosition = CameraObject.WorldToViewportPoint(car.transform.position);
-//
-//			// perform centering adjustments
-//			Vector2 centeredScreenCoords = new Vector2(
-//				((viewportPosition.x*canvasRect.sizeDelta.x) - (canvasRect.sizeDelta.x*0.5f)),
-//				((viewportPosition.y*canvasRect.sizeDelta.y)) - (canvasRect.sizeDelta.y*0.5f));
-//
-//			// clamp values to screen edge
-//			Vector2 clampedCoords = centeredScreenCoords;
-//
-//			float limitX = canvasRect.sizeDelta.x * 0.5f;
-//			float limitY = canvasRect.sizeDelta.y * 0.5f;
-//
-//			if (clampedCoords.x > limitX) {
-//				clampedCoords.x = limitX;
-//			} else if (clampedCoords.x < -limitX) {
-//				clampedCoords.x = -limitX;
-//			}
-//
-//			if (clampedCoords.y > limitY) {
-//				clampedCoords.y = limitY;
-//			} else if (clampedCoords.y < -limitY) {
-//				clampedCoords.y = -limitY;
-//			}
-//
-//			float edgeDistance = Vector2.Distance (centeredScreenCoords, clampedCoords);
-//
-//			if (edgeDistance > 0) {
-//				// calculate scale as distance from screen edge, to a limit
-//				float scale = Mathf.Max (MIN_SCALE, 1.0f - edgeDistance / SCALE_NORMALISER);
-//
-//				Quaternion rotation = ARROW2CANVAS_ROTATION * Quaternion.AngleAxis (Mathf.Rad2Deg * Mathf.Atan2 (centeredScreenCoords.y, centeredScreenCoords.x)-90, Vector3.forward);
-//
-//				sprite.GetComponent<RectTransform>().transform.localPosition = clampedCoords;
-//
-//				sprite.GetComponent<RectTransform>().transform.rotation = rotation;
-//
-//				sprite.GetComponent<RectTransform> ().transform.localScale = scale * Vector3.one;
-//
-//				sprite.SetActive (true);
-//			} else {
-//				// a value of 0 means the player is on-screen
-//				sprite.SetActive (false);
-//			}
-//
-//		}
+	public void StartGameCountDown(){
+		_waitingForPlayersToConnectObj.SetActive (false);
+		StartCoroutine(StartCountDown ());
 	}
+		
 
 	private GameObject CreateSprite (Sprite sprite) {
 		GameObject obj = new GameObject();
-
 		Image image = obj.AddComponent<Image> ();
 		RectTransform rectTransform = obj.GetComponent<RectTransform> ();
 
 		image.sprite = sprite;
 
-
 		RectTransform canvasRect = GetComponent<RectTransform>();
-
 		rectTransform.parent = canvasRect.transform;
-
 		rectTransform.localPosition = Vector3.zero;
 		rectTransform.localScale = Vector3.one;
 
 		obj.SetActive (false);
 		return obj;
+	}
+
+	public void ShowArrowOnCurrentPlayer(){
+		// make arrow appear
+	}	
+
+	public void HideArrowOnCurrentPlayer(){
+	}
+
+
+
+	private void PlayNumberSound(){
+		// Trigger sound
+	}
+
+	private void PlayGoSound(){
+		// Trigger sound 
 	}
 }

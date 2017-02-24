@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using ServerLifecycle;
+
+
 
 public class GameManager : NetworkBehaviour {
 
 	public delegate void OnWorldMeshAvailable(GameObject worldMesh);
 
+
 	public event OnWorldMeshAvailable OnWorldMeshAvailableEvent;
 
+	public PreparingGame PreparingCanvas;
 	public GameObject MarkerScene;
 	public int BombPlayerConnectionId;
 
@@ -30,8 +35,10 @@ public class GameManager : NetworkBehaviour {
 
 			BombPlayerConnectionId = GameUtils.ChooseRandomPlayerConnectionId ();
 			DebugConsole.Log ("=> bombPlayerConnectionId: " + BombPlayerConnectionId);
-
+	
 			WorldMesh = ServerSceneManager.Instance.WorldMesh;
+
+			CheckAllPlayersReady ();
 		}
 
 		WorldMesh.transform.parent = MarkerScene.transform;
@@ -61,7 +68,7 @@ public class GameManager : NetworkBehaviour {
 		CheckForGameOver ();
 		PassBombRandomPlayer ();
 	}
-
+		
 	[ClientRpc]
 	private void RpcKillPlayer(string playerName) {
 		ProcessKillPlayerMessage (playerName);
@@ -84,6 +91,25 @@ public class GameManager : NetworkBehaviour {
 		if (_deathList.Count >= (_cars.Count - 1)) {
 			ServerSceneManager.Instance.OnServerRequestGameEnd ();
 		}
+	}
+
+	[Server]
+	private void CheckAllPlayersReady(){
+		if (ServerSceneManager.Instance.AreAllPlayersReady()) {
+			Debug.LogError ("GM: All Players Ready");
+			DebugConsole.Log ("GM: All Players Ready");
+			RpcAllPlayersReady ();
+		} else {
+			Debug.LogError ("GM: All Players Not Ready. Add Listener");
+			DebugConsole.Log ("GM: All Players Not Ready. Add Listener");
+				OnAllPlayersReadyEvent += RpcAllPlayersReady;
+		}
+	}
+
+	[ClientRpc] // Start game becuase server states all players are ready 
+	private void RpcAllPlayersReady() {
+		Debug.Log ("HEREEEEEEEE");
+		Debug.LogError ("HEREEEEEEEE");
 	}
 
 
@@ -142,6 +168,14 @@ public class GameManager : NetworkBehaviour {
 		return false;
 	}
 
+	public void ServerMeshPlayerReady(){
+		foreach (PreparingGame prep in gameObject.GetComponents<PreparingGame>()) {
+			prep.StartGameCountDown ();
+		}
+		foreach (CarController car in _cars) {
+			car.EnableControls (true);
+		}
+	}
 
 		
 }

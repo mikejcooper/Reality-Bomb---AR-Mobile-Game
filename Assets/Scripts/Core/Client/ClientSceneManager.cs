@@ -136,6 +136,11 @@ public class ClientSceneManager : MonoBehaviour
 		ensureCorrectScene ();
 	}
 
+	//call at end of GameManager (client)
+	public void OnGameLoaded () {
+		
+	}
+
 	private void OnServerGameEnd () {
 		DebugConsole.Log ("OnServerGameEnd");
 		_innerProcess.MoveNext (Command.GameEnd);
