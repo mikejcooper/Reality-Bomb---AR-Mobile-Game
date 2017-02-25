@@ -16,11 +16,10 @@ public class CarController : NetworkBehaviour
 	public bool Alive = true;
 	public float FallDistanceBeforeRespawn = -150f;
 	public int DisabledControlDurationSeconds = 2;
+	[SyncVar]
 	public bool GameHasStarted = false;
-<<<<<<< HEAD
-=======
-
->>>>>>> c24dd28ae605a2c41613834e75f30ea324d882a7
+	[SyncVar]
+	private bool PreparingGame = true;
 
 
 
@@ -37,6 +36,10 @@ public class CarController : NetworkBehaviour
 	private bool _controlsDisabled = false;
 
 
+
+
+
+
 	private void Start ()
 	{
 		if (GameObject.FindObjectOfType<GameManager> () != null) {
@@ -44,7 +47,7 @@ public class CarController : NetworkBehaviour
 		}
 
 	}
-		
+
 	public void init () {
 
 		if (!_initialised) {
@@ -134,12 +137,7 @@ public class CarController : NetworkBehaviour
 	{
 		if (!_initialised)
 			return;
-
-		if (GameHasStarted)
-			HandleUpdate ();
-	}
-
-	private void HandleUpdate(){
+				
 		if ((isLocalPlayer || IsPlayingSolo)) {
 			_lifetimeText.text = "Time Left: " + string.Format ("{0:N2}", _lifetime);
 
@@ -151,7 +149,7 @@ public class CarController : NetworkBehaviour
 			EnsureCarIsOnMap ();
 		} else if (isServer) {
 			// let the server authoratively update vital stats
-			if (HasBomb && _lifetime > 0.0f) {
+			if ((HasBomb && _lifetime > 0.0f) && !PreparingGame) {
 				_lifetime -= Time.deltaTime;
 			}
 			if (_lifetime < 0.0f) {
@@ -159,7 +157,7 @@ public class CarController : NetworkBehaviour
 			}
 		}
 	}
-
+		
 	[Server]
 	private void Kill () {
 		DebugConsole.Log ("player has run out of time");
@@ -252,21 +250,20 @@ public class CarController : NetworkBehaviour
 
 		}
 	}
-<<<<<<< HEAD
-		
-=======
 
->>>>>>> c24dd28ae605a2c41613834e75f30ea324d882a7
 	public void CountDownFinishedStartPlaying(){
 		EnableControls (true);
-		GameHasStarted = true;
+		CmdServerGameStarting ();
 		//Do something with time. 
 	}
-<<<<<<< HEAD
-		
-=======
 
->>>>>>> c24dd28ae605a2c41613834e75f30ea324d882a7
+	[Command]
+	private void CmdServerGameStarting(){
+		Debug.LogError("Server Game stating ***");
+		GameHasStarted = true;
+		PreparingGame = false;
+	}
+
 	public void EnsureCarIsOnMap(){
 		if(_rigidbody.position.y <= FallDistanceBeforeRespawn){
 			Reposition (GameObject.FindObjectOfType<GameManager> ().WorldMesh);
