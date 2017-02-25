@@ -16,6 +16,8 @@ public class CarController : NetworkBehaviour
 	public bool Alive = true;
 	public float FallDistanceBeforeRespawn = -150f;
 	public int DisabledControlDurationSeconds = 2;
+	public bool GameHasStarted = false;
+
 
 
 
@@ -132,8 +134,13 @@ public class CarController : NetworkBehaviour
 	{
 		if (!_initialised)
 			return;
-		
-		if (isLocalPlayer || IsPlayingSolo) {
+
+		if (GameHasStarted)
+			HandleUpdate ();
+	}
+
+	private void HandleUpdate(){
+		if ((isLocalPlayer || IsPlayingSolo)) {
 			_lifetimeText.text = "Time Left: " + string.Format ("{0:N2}", _lifetime);
 
 			if (CarProperties.PowerUpActive && Time.time > CarProperties.PowerUpEndTime) {
@@ -244,6 +251,12 @@ public class CarController : NetworkBehaviour
 			}
 
 		}
+	}
+
+	public void CountDownFinishedStartPlaying(){
+		EnableControls (true);
+		GameHasStarted = true;
+		//Do something with time. 
 	}
 
 	public void EnsureCarIsOnMap(){

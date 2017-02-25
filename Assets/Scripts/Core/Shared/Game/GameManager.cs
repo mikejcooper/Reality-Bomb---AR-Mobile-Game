@@ -29,16 +29,23 @@ public class GameManager : NetworkBehaviour {
 		if (!isServer) {
 			ClientSceneManager.Instance.LastGameResults = new GameResults ();
 			WorldMesh = ClientSceneManager.Instance.WorldMesh;
+			PreparingCanvas.CountDownFinishedEvent += new PreparingGame.CountDownFinished (CountDownFinishedStartPlaying);
+
+
 		} else if (isServer) {
 			ServerSceneManager.Instance.LastGameResults = new GameResults ();
 
 			BombPlayerConnectionId = GameUtils.ChooseRandomPlayerConnectionId ();
 			DebugConsole.Log ("=> bombPlayerConnectionId: " + BombPlayerConnectionId);
-	
+
 			WorldMesh = ServerSceneManager.Instance.WorldMesh;
 
-			ServerSceneManager.Instance.OnAllPlayersGameLoadedEvent += RpcAllPlayersReady;
-			//			RpcAllPlayersReady ();
+			if (ServerSceneManager.Instance.AreAllPlayersGameLoaded ()) {
+				AllPlayersReady ();
+			} else {
+				ServerSceneManager.Instance.OnAllPlayersGameLoadedEvent += AllPlayersReady;
+			}
+
 
 		}
 
@@ -47,13 +54,14 @@ public class GameManager : NetworkBehaviour {
 
 		if (OnWorldMeshAvailableEvent != null)
 			OnWorldMeshAvailableEvent (WorldMesh);
-		
+
 
 		foreach (var existingCarController in GameObject.FindObjectsOfType<CarController>()) {
 			existingCarController.init ();
 		}
-			
+
 		if (!isServer) {
+			Debug.Log ("Client: I've loaded game scene");
 			ClientSceneManager.Instance.OnGameLoaded ();
 		}
 	}
@@ -61,7 +69,7 @@ public class GameManager : NetworkBehaviour {
 
 	void OnDestroy () {
 		if (isServer) {
-			ServerSceneManager.Instance.OnAllPlayersGameLoadedEvent -= RpcAllPlayersReady;
+			ServerSceneManager.Instance.OnAllPlayersGameLoadedEvent -= AllPlayersReady;
 		}
 	}
 
@@ -104,13 +112,22 @@ public class GameManager : NetworkBehaviour {
 		}
 	}
 		
-
-	[ClientRpc] // Start game becuase server states all players are ready 
-	private void RpcAllPlayersReady() {
-		Debug.Log ("HEREEEEEEEE");
-		Debug.LogError ("HEREEEEEEEE");
+	[Server]
+	private void AllPlayersReady(){
+		Debug.Log ("Server: All player are ready, start game countdown");
+		RpcPlayerReady ();
 	}
 
+	[ClientRpc] // All players ready (synced), start countdown 
+	public void RpcPlayerReady() {
+		Debug.Log ("Client: All player are ready, start game countdown ");
+		PreparingCanvas.StartGameCountDown ();
+	}
+
+	private void CountDownFinishedStartPlaying(){
+		CarController player = GameObject.FindObjectOfType<CarController>();
+		player.CountDownFinishedStartPlaying ();
+	}
 
 	public void AddCar(GameObject gamePlayer)
 	{

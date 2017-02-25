@@ -7,6 +7,8 @@ using ServerLifecycle;
 
 public class PreparingGame : MonoBehaviour
 {
+	public delegate void CountDownFinished();
+	public event CountDownFinished CountDownFinishedEvent;  
 
 	public Sprite WaitingForPlayersToConnect;
 	public Sprite Three;
@@ -19,9 +21,7 @@ public class PreparingGame : MonoBehaviour
 	private GameObject _twoObj;
 	private GameObject _oneObj;
 	private GameObject _goObj;
-//
-//
-//
+
 
 
 	void Start () {
@@ -31,15 +31,11 @@ public class PreparingGame : MonoBehaviour
 		_oneObj = CreateSprite (One);
 		_goObj = CreateSprite (GO);
 		_waitingForPlayersToConnectObj.SetActive (true);
-		StartGameCountDown ();
 	}
-		
+
 	IEnumerator StartCountDown() {
 		float t1 = 0.3f; // time hide and show
 		float t2 = 0.8f; // time image is shown
-//		WaitingForPlayersToConnectObj.SetActive (true);
-//		yield return new WaitForSeconds (t2);
-//		WaitingForPlayersToConnectObj.SetActive (false);
 
 		yield return new WaitForSeconds (t1);
 		_threeObj.SetActive (true);
@@ -57,13 +53,15 @@ public class PreparingGame : MonoBehaviour
 		_goObj.SetActive (true);
 		yield return new WaitForSeconds (t2);
 		_goObj.SetActive (false);
+		if(CountDownFinishedEvent != null)
+			CountDownFinishedEvent ();
 	}
 
 	public void StartGameCountDown(){
 		_waitingForPlayersToConnectObj.SetActive (false);
 		StartCoroutine(StartCountDown ());
 	}
-		
+
 
 	private GameObject CreateSprite (Sprite sprite) {
 		GameObject obj = new GameObject();
