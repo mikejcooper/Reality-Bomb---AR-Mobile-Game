@@ -120,8 +120,13 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
         {
             DebugConsole.Log("OnClientConnect worked");
 			client.RegisterHandler(NetworkConstants.MSG_GET_MESH, OnClientClearToDownloadMesh);
+			client.RegisterHandler(NetworkConstants.MSG_GAME_LOADED, OnClientGameReady);
         }
     }
+
+	public void OnClientGameReady(NetworkMessage netMsg) {
+		Debug.Log ("OnClientGameReady");
+	}
 
     public void OnClientClearToDownloadMesh(NetworkMessage netMsg) {
         ServerNetworking.SocketMessage socketMsg = netMsg.ReadMessage<ServerNetworking.SocketMessage>();

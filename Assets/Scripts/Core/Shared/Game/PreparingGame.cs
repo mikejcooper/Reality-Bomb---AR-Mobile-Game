@@ -7,6 +7,8 @@ using ServerLifecycle;
 
 public class PreparingGame : MonoBehaviour
 {
+	public delegate void CountDownFinished();
+	public event CountDownFinished CountDownFinishedEvent;  
 
 	public Sprite WaitingForPlayersToConnect;
 	public Sprite Three;
@@ -31,7 +33,7 @@ public class PreparingGame : MonoBehaviour
 		_waitingForPlayersToConnectObj.SetActive (true);
 	}
 		
-	IEnumerator StartCountDown(CarController player) {
+	IEnumerator StartCountDown() {
 		float t1 = 0.3f; // time hide and show
 		float t2 = 0.8f; // time image is shown
 
@@ -51,12 +53,13 @@ public class PreparingGame : MonoBehaviour
 		_goObj.SetActive (true);
 		yield return new WaitForSeconds (t2);
 		_goObj.SetActive (false);
-		player.EnableControls (true);
+		if(CountDownFinishedEvent != null)
+			CountDownFinishedEvent ();
 	}
 
-	public void StartGameCountDown(CarController player){
+	public void StartGameCountDown(){
 		_waitingForPlayersToConnectObj.SetActive (false);
-		StartCoroutine(StartCountDown (player));
+		StartCoroutine(StartCountDown ());
 	}
 		
 
