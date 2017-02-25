@@ -32,7 +32,7 @@ public class PreparingGame : MonoBehaviour
 		_goObj = CreateSprite (GO);
 		_waitingForPlayersToConnectObj.SetActive (true);
 	}
-		
+
 	IEnumerator StartCountDown() {
 		float t1 = 0.3f; // time hide and show
 		float t2 = 0.8f; // time image is shown
@@ -61,7 +61,7 @@ public class PreparingGame : MonoBehaviour
 		_waitingForPlayersToConnectObj.SetActive (false);
 		StartCoroutine(StartCountDown ());
 	}
-		
+
 
 	private GameObject CreateSprite (Sprite sprite) {
 		GameObject obj = new GameObject();

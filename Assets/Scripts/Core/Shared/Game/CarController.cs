@@ -17,6 +17,10 @@ public class CarController : NetworkBehaviour
 	public float FallDistanceBeforeRespawn = -150f;
 	public int DisabledControlDurationSeconds = 2;
 	public bool GameHasStarted = false;
+<<<<<<< HEAD
+=======
+
+>>>>>>> c24dd28ae605a2c41613834e75f30ea324d882a7
 
 
 
@@ -248,13 +252,21 @@ public class CarController : NetworkBehaviour
 
 		}
 	}
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> c24dd28ae605a2c41613834e75f30ea324d882a7
 	public void CountDownFinishedStartPlaying(){
 		EnableControls (true);
 		GameHasStarted = true;
 		//Do something with time. 
 	}
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> c24dd28ae605a2c41613834e75f30ea324d882a7
 	public void EnsureCarIsOnMap(){
 		if(_rigidbody.position.y <= FallDistanceBeforeRespawn){
 			Reposition (GameObject.FindObjectOfType<GameManager> ().WorldMesh);

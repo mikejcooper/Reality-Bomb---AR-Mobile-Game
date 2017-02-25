@@ -37,7 +37,7 @@ public class GameManager : NetworkBehaviour {
 
 			BombPlayerConnectionId = GameUtils.ChooseRandomPlayerConnectionId ();
 			DebugConsole.Log ("=> bombPlayerConnectionId: " + BombPlayerConnectionId);
-	
+
 			WorldMesh = ServerSceneManager.Instance.WorldMesh;
 
 			if (ServerSceneManager.Instance.AreAllPlayersGameLoaded ()) {
@@ -54,12 +54,12 @@ public class GameManager : NetworkBehaviour {
 
 		if (OnWorldMeshAvailableEvent != null)
 			OnWorldMeshAvailableEvent (WorldMesh);
-		
+
 
 		foreach (var existingCarController in GameObject.FindObjectsOfType<CarController>()) {
 			existingCarController.init ();
 		}
-			
+
 		if (!isServer) {
 			Debug.Log ("Client: I've loaded game scene");
 			ClientSceneManager.Instance.OnGameLoaded ();
@@ -111,6 +111,7 @@ public class GameManager : NetworkBehaviour {
 			ServerSceneManager.Instance.OnServerRequestGameEnd ();
 		}
 	}
+<<<<<<< HEAD
 
 	[Server]
 	private void AllPlayersReady(){
@@ -118,10 +119,20 @@ public class GameManager : NetworkBehaviour {
 		RpcPlayerReady ();
 	}
 
+=======
+		
+	[Server]
+	private void AllPlayersReady(){
+		Debug.Log ("Server: All player are ready, start game countdown");
+		RpcPlayerReady ();
+	}
+
+>>>>>>> c24dd28ae605a2c41613834e75f30ea324d882a7
 	[ClientRpc] // All players ready (synced), start countdown 
 	public void RpcPlayerReady() {
 		Debug.Log ("Client: All player are ready, start game countdown ");
 		PreparingCanvas.StartGameCountDown ();
+<<<<<<< HEAD
 	}
 
 
@@ -134,8 +145,14 @@ public class GameManager : NetworkBehaviour {
 	private void CountDownFinishedStartPlaying(){
 		CarController player = GameObject.FindObjectOfType<CarController>();
 		player.CountDownFinishedStartPlaying ();
+=======
+>>>>>>> c24dd28ae605a2c41613834e75f30ea324d882a7
 	}
 
+	private void CountDownFinishedStartPlaying(){
+		CarController player = GameObject.FindObjectOfType<CarController>();
+		player.CountDownFinishedStartPlaying ();
+	}
 
 	public void AddCar(GameObject gamePlayer)
 	{
