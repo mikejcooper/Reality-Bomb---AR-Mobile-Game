@@ -5,42 +5,23 @@ using UnityEngine.UI;
 
 public class PowerUp : MonoBehaviour {
 
-	// Used to enable and disable visibility of trigger
-	private Renderer _renderer;
-//	public float FallSpeed = 2.0f;
-	public float FallSpeed = 60.0f;
-	public float SpinSpeed = 250.0f;
-	public Image SplatterImg;
+	public Canvas PlayerCanvas;
+	public Texture SplatterTex;
 
 	// will store the type of power up (boost, invinsible, invisible, etc)
 	private int P_Type;
-
-	private Collider _playerCol;
-	private float _powerUpEndTime;
-	private float _powerUpDuration;
+	private GameObject _collidedObject;
+	private GameObject _splatterObject;
 
 	void Start () {
-		_powerUpEndTime = 0.0f;
 		gameObject.SetActive (true);
 	}
 
-	void Update() {
-		if (gameObject.activeSelf) {
-			if (transform.position.y > 7) {
-				transform.Translate (Vector3.down * 10 * FallSpeed * Time.deltaTime, Space.World);
-			}
-			transform.Rotate (Vector3.forward, SpinSpeed * Time.deltaTime);
-		}
-
-		if (Time.time > _powerUpEndTime) {
-			Invoke ("DeactivatePowerUp", _powerUpDuration);
-		}
-	}
-
 	// When player picks up a power up
-	void OnTriggerEnter(Collider player) {
-		_playerCol = player;
-		if (_playerCol.tag == "TankTag") {
+	void OnCollisionEnter(Collision collision) {
+		
+		if (collision.collider.tag == "TankTag") {
+			_collidedObject = collision.gameObject;
 			ActivatePowerUp ();
 		}
 	}
@@ -48,20 +29,32 @@ public class PowerUp : MonoBehaviour {
 	void ActivatePowerUp () {
 		GetComponent<MeshRenderer> ().enabled = false;
 		GetComponent<SphereCollider> ().enabled = false;
+		int powerUpDuration = -1;
 
 		if (P_Type == 0) {	 			// Speed Boost
 			print ("Speed boost activated!");
-			_playerCol.gameObject.GetComponent<CarProperties> ().Speed *= 2.0f;
-			_powerUpDuration = 5.0f;
+			_collidedObject.GetComponent<CarProperties> ().Speed *= 2.0f;
+			powerUpDuration = 5;
 		} else if (P_Type == 1) {		// Ink Splatter
 			print ("Ink Splatter Activated!");
-			GameObject.FindGameObjectWithTag("Splatter").GetComponent<UnityEngine.UI.RawImage>().enabled = true;
-			_powerUpDuration = 5.0f;
+
+			_splatterObject = new GameObject ("Splatter");
+
+			_splatterObject.transform.parent = PlayerCanvas.transform;
+
+			RawImage splatterImage = _splatterObject.AddComponent<RawImage> ();
+			splatterImage.GetComponent<RectTransform> ().localPosition = PlayerCanvas.gameObject.GetComponent<RectTransform> ().rect.center;
+			splatterImage.GetComponent<RectTransform> ().localScale = 3.0f * Vector3.one;
+			splatterImage.texture = SplatterTex;
+
+			powerUpDuration = 5;
 		} else if (P_Type == 2) {		// Place Holder
 			print ("Some other powerup Activated");
 		}
 
-		_powerUpEndTime = Time.time + 5.0f;
+		if (powerUpDuration >= 0) {
+			Invoke ("DeactivatePowerUp", powerUpDuration);
+		}
 	}
 
 	void DeactivatePowerUp () {
@@ -69,11 +62,12 @@ public class PowerUp : MonoBehaviour {
 
 		if (P_Type == 0) {
 //			_playerCol.gameObject.GetComponent<CarProperties> ().Speed *= 0.5f;
+
 		} else if (P_Type == 1) {
-			GameObject.FindGameObjectWithTag("Splatter").GetComponent<UnityEngine.UI.RawImage>().enabled = false;
+			Destroy (_splatterObject);
 		}
 
-		Destroy (this);
+		Destroy (gameObject);
 	}
 
 	public void SetPowerUpType (int type) {

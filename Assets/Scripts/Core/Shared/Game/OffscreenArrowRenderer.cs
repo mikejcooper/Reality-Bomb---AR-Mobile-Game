@@ -86,7 +86,7 @@ public class OffscreenArrowRenderer : MonoBehaviour {
 	}
 
 	private GameObject CreateSprite () {
-		GameObject obj = new GameObject();
+		GameObject obj = new GameObject("OffscreenArrowRenderer");
 
 		Image image = obj.AddComponent<Image> ();
 		RectTransform rectTransform = obj.GetComponent<RectTransform> ();

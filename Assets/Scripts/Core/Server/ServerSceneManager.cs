@@ -42,8 +42,8 @@ public class ServerSceneManager : MonoBehaviour
 
 	public static ServerSceneManager Instance { get { return _instance; } }
 
-    private string _meshServerAddress;
-    private int _meshServerPort;
+	private string _meshServerAddress;
+	private int _meshServerPort;
 
 	private void Awake()
 	{
@@ -53,15 +53,15 @@ public class ServerSceneManager : MonoBehaviour
 		} else {
 			_instance = this;
 		}
-        _innerProcess = new Process();
+		_innerProcess = new Process();
 		_meshTransferProcess = new MeshServerLifecycle.Process ();
-    }
+	}
 
 	void Start ()
 	{
 		DontDestroyOnLoad (gameObject);
 		var ugly = UnityThreadHelper.Dispatcher;
-		
+
 		transform.gameObject.AddComponent<DiscoveryServer> ();
 		_networkLobbyManager = transform.gameObject.AddComponent<GameLobbyManager> ();
 		_meshDiscoveryServer = new MeshDiscoveryServer ();
@@ -100,7 +100,7 @@ public class ServerSceneManager : MonoBehaviour
 
 		OnServerRequestLoadNewMesh ();
 	}
-		
+
 
 
 	public ProcessState CurrentState () {
@@ -111,27 +111,27 @@ public class ServerSceneManager : MonoBehaviour
 	public void OnServerRequestLoadNewMesh () {
 		DebugConsole.Log ("OnRequestLoadNewMesh");
 		_meshTransferProcess.MoveNext (MeshServerLifecycle.Command.FindServer);
-        _meshDiscoveryServer.StartSearching();
+		_meshDiscoveryServer.StartSearching();
 
 		// set all clients to not-ready
 		_networkLobbyManager.SetAllClientsNotReady ();
 		OnStateUpdate ();
-    }
+	}
 
 	private void OnMeshServerFound (string address, int port) {
 		DebugConsole.Log (string.Format("OnMeshServerFound, address: {0}", address));
 		_meshTransferProcess.MoveNext (MeshServerLifecycle.Command.Download);
 
-        _meshDiscoveryServer.StopSearching();
+		_meshDiscoveryServer.StopSearching();
 
 		_meshServerAddress = address;
 		_meshServerPort = port;
 
 		_meshTransferManager.FetchData(address, port);
 		OnStateUpdate ();
-    }
+	}
 
-    private void OnMeshDataReceived () {
+	private void OnMeshDataReceived () {
 		DebugConsole.Log ("OnMeshDataReceived");
 		_meshTransferProcess.MoveNext (MeshServerLifecycle.Command.DownloadFinished);
 
@@ -157,12 +157,12 @@ public class ServerSceneManager : MonoBehaviour
 		if (_meshTransferProcess.CurrentState == MeshServerLifecycle.ProcessState.HasMesh) {
 			_networkLobbyManager.ClientGetMesh (_meshServerAddress, _meshServerPort, conn.connectionId);
 		}
-    }
+	}
 
 	private void OnPlayerReady () {
 		OnStateUpdate ();
 	}
-		
+
 
 	private void OnPlayerGameLoaded () {
 		Debug.LogError ("Some player has loaded the game");
@@ -181,7 +181,7 @@ public class ServerSceneManager : MonoBehaviour
 		}
 		return true;
 	}
-		
+
 	private void OnPlayerDisconnected ()
 	{
 		DebugConsole.Log ("OnPlayerDisconnected");
@@ -218,7 +218,7 @@ public class ServerSceneManager : MonoBehaviour
 		case ProcessState.AwaitingPlayers:
 		case ProcessState.PreparingGame:
 			if (LastGameResults != null) {
-//				networkLobbyManager.ServerChangeScene ("Leaderboard");
+				//				networkLobbyManager.ServerChangeScene ("Leaderboard");
 				if (_currentScene != "Leaderboard") {
 					Debug.LogError("sent a scene change: Leaderboard");
 					_networkLobbyManager.ServerChangeScene("Leaderboard");
@@ -227,7 +227,7 @@ public class ServerSceneManager : MonoBehaviour
 
 						if (lobbyPlayer == null)
 							continue;
-					
+
 						lobbyPlayer.GetComponent<NetworkCompat.NetworkLobbyPlayer> ().readyToBegin = true;
 
 						// tell every player that this player is ready

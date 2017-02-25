@@ -24,6 +24,7 @@ public class CarController : NetworkBehaviour
 
 
 	private UIJoystick _joystick;
+    private Slider _healthBar;
 	// Reference used to move the tank.
 	private Rigidbody _rigidbody;
 	private Vector3 _direction;
@@ -58,10 +59,16 @@ public class CarController : NetworkBehaviour
 			if (GameObject.Find ("TimeLeftText") != null) {
 				_lifetimeText = GameObject.Find ("TimeLeftText").gameObject.GetComponent<Text> ();
 			}
-			// The axes names are based on player number.
+            if (GameObject.Find("HealthBar") != null)
+            {
+                _healthBar = GameObject.Find("HealthBar").gameObject.GetComponent<Slider>();
+            }
+            // The axes names are based on player number.
 
-			_rigidbody = GetComponent<Rigidbody> ();
+            _rigidbody = GetComponent<Rigidbody> ();
 			_lifetime = MaxLifetime;
+            _healthBar.maxValue = MaxLifetime;
+            _healthBar.minValue = 0;
 			_transferTime = Time.time;
 			_initialised = true;
 
@@ -140,6 +147,7 @@ public class CarController : NetworkBehaviour
 				
 		if ((isLocalPlayer || IsPlayingSolo)) {
 			_lifetimeText.text = "Time Left: " + string.Format ("{0:N2}", _lifetime);
+            _healthBar.value = _lifetime;
 
 			if (CarProperties.PowerUpActive && Time.time > CarProperties.PowerUpEndTime) {
 				CarProperties.PowerUpActive = false;
@@ -203,9 +211,10 @@ public class CarController : NetworkBehaviour
 
 			_rigidbody.rotation = _lookAngle;
 
-			Vector3 movement = transform.forward * joystickVector.magnitude * CarProperties.Speed * Time.deltaTime;
+			if (_joystick.IsDragging ()) {
+				_rigidbody.velocity = CarProperties.Speed * new Vector3 (_joystick.Horizontal (), 0, _joystick.Vertical ());
+			}
 
-			_rigidbody.position += movement;
 		}
 	}
 
