@@ -29,7 +29,7 @@ public class GameManager : NetworkBehaviour {
 		if (!isServer) {
 			ClientSceneManager.Instance.LastGameResults = new GameResults ();
 			WorldMesh = ClientSceneManager.Instance.WorldMesh;
-			PreparingCanvas.CountDownFinishedEvent += new PreparingGame.CountDownFinished (RpcCountDownFinishedStartPlaying);
+//			PreparingCanvas.CountDownFinishedEvent += new PreparingGame.CountDownFinished (RpcCountDownFinishedStartPlaying);
 
 
 		} else if (isServer) {
@@ -40,11 +40,11 @@ public class GameManager : NetworkBehaviour {
 
 			WorldMesh = ServerSceneManager.Instance.WorldMesh;
 
-			if (ServerSceneManager.Instance.AreAllPlayersGameLoaded ()) {
-				AllPlayersReady ();
-			} else {
-				ServerSceneManager.Instance.OnAllPlayersGameLoadedEvent += AllPlayersReady;
-			}
+//			if (ServerSceneManager.Instance.AreAllPlayersGameLoaded ()) {
+//				AllPlayersReady ();
+//			} else {
+//				ServerSceneManager.Instance.OnAllPlayersGameLoadedEvent += AllPlayersReady;
+//			}
 
 
 		}

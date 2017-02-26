@@ -82,7 +82,7 @@ public class CarController : NetworkBehaviour
 
 			if (!isServer) {
 				CmdRequestColour ();
-				EnableControls (false);
+//				EnableControls (false);
 			} else {
 				// register
 				DebugConsole.Log ("GameManager.Instance.AddCar (gameObject);");
@@ -157,7 +157,8 @@ public class CarController : NetworkBehaviour
 			EnsureCarIsOnMap ();
 		} else if (isServer) {
 			// let the server authoratively update vital stats
-			if ((HasBomb && _lifetime > 0.0f) && !PreparingGame) {
+//			if ((HasBomb && _lifetime > 0.0f) && !PreparingGame) {
+			if ((HasBomb && _lifetime > 0.0f)) {
 				_lifetime -= Time.deltaTime;
 			}
 			if (_lifetime < 0.0f) {

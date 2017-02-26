@@ -30,7 +30,7 @@ public class PreparingGame : MonoBehaviour
 		_twoObj = CreateSprite (Two);
 		_oneObj = CreateSprite (One);
 		_goObj = CreateSprite (GO);
-		_waitingForPlayersToConnectObj.SetActive (true);
+//		_waitingForPlayersToConnectObj.SetActive (true);
 	}
 
 	IEnumerator StartCountDown() {
