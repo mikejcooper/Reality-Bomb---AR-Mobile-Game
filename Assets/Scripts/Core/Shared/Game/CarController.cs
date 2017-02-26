@@ -24,7 +24,7 @@ public class CarController : NetworkBehaviour
 
 
 	private UIJoystick _joystick;
-    private Slider _healthBar;
+    private UIHealthBar _healthBar;
 	// Reference used to move the tank.
 	private Rigidbody _rigidbody;
 	private Vector3 _direction;
@@ -61,14 +61,14 @@ public class CarController : NetworkBehaviour
 			}
             if (GameObject.Find("HealthBar") != null)
             {
-                _healthBar = GameObject.Find("HealthBar").gameObject.GetComponent<Slider>();
+                _healthBar = GameObject.Find("HealthBar").gameObject.GetComponent<UIHealthBar>();
             }
             // The axes names are based on player number.
 
             _rigidbody = GetComponent<Rigidbody> ();
 			_lifetime = MaxLifetime;
-            _healthBar.maxValue = MaxLifetime;
-            _healthBar.minValue = 0;
+            //_healthBar.maxValue = MaxLifetime;
+            //_healthBar.minValue = 0;
 			_transferTime = Time.time;
 			_initialised = true;
 
