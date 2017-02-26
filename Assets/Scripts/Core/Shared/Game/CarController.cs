@@ -25,6 +25,7 @@ public class CarController : NetworkBehaviour
 
 	private UIJoystick _joystick;
     private UIHealthBar _healthBar;
+    private Image _bombImage;
 	// Reference used to move the tank.
 	private Rigidbody _rigidbody;
 	private Vector3 _direction;
@@ -56,9 +57,10 @@ public class CarController : NetworkBehaviour
 			if (GameObject.Find ("JoystickBack") != null) {
 				_joystick = GameObject.Find ("JoystickBack").gameObject.GetComponent<UIJoystick> ();
 			}
-			if (GameObject.Find ("TimeLeftText") != null) {
-				_lifetimeText = GameObject.Find ("TimeLeftText").gameObject.GetComponent<Text> ();
-			}
+            if (GameObject.Find("BombImage") != null)
+            {
+                _bombImage = GameObject.Find("BombImage").gameObject.GetComponent<Image>();
+            }
             if (GameObject.Find("HealthBar") != null)
             {
                 _healthBar = GameObject.Find("HealthBar").gameObject.GetComponent<UIHealthBar>();
@@ -67,8 +69,8 @@ public class CarController : NetworkBehaviour
 
             _rigidbody = GetComponent<Rigidbody> ();
 			_lifetime = MaxLifetime;
-            //_healthBar.maxValue = MaxLifetime;
-            //_healthBar.minValue = 0;
+            _healthBar.MaxValue = MaxLifetime;
+            _healthBar.MinValue = 0;
 			_transferTime = Time.time;
 			_initialised = true;
 
@@ -134,9 +136,14 @@ public class CarController : NetworkBehaviour
 		HasBomb = isBomb;
 		if (isBomb) {
 			ChangeColour (Color.red);
+            
 		} else {
 			ChangeColour (Color.blue);
 		}
+        if (isLocalPlayer || IsPlayingSolo)
+        {
+            _bombImage.enabled = HasBomb;
+        }
 	}
 
 
@@ -146,10 +153,9 @@ public class CarController : NetworkBehaviour
 			return;
 				
 		if ((isLocalPlayer || IsPlayingSolo)) {
-			_lifetimeText.text = "Time Left: " + string.Format ("{0:N2}", _lifetime);
-            _healthBar.value = _lifetime;
+            _healthBar.Value = _lifetime;
 
-			if (CarProperties.PowerUpActive && Time.time > CarProperties.PowerUpEndTime) {
+            if (CarProperties.PowerUpActive && Time.time > CarProperties.PowerUpEndTime) {
 				CarProperties.PowerUpActive = false;
 				CarProperties.Speed = 30.0f;
 				print ("PowerUp Deactivated");

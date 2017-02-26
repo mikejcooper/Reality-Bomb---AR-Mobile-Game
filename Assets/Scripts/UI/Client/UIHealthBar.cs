@@ -2,18 +2,19 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-class UIHealthBar : UIBehaviour
+class UIHealthBar : MonoBehaviour
 {
 
-    public RectTransform rt;
+    private RectTransform _rt;
+    private Text _txt;
 
     [HideInInspector]
-    public int minValue = 0;
-    public int maxValue = 15;
+    public float MinValue = 0;
+    [HideInInspector]
+    public float MaxValue = 15;
 
-    [SerializeField]
-    protected float _value;
-    public virtual float value
+    private float _value;
+    public float Value
     {
         get
         {
@@ -26,24 +27,41 @@ class UIHealthBar : UIBehaviour
         }
     }
 
-    public float normalizedValue
+    public float NormalizedValue
     {
         get
         {
-            if (Mathf.Approximately(minValue, maxValue))
+            if (Mathf.Approximately(MinValue, MaxValue))
                 return 0;
-            return Mathf.InverseLerp(minValue, maxValue, value);
+            return Mathf.InverseLerp(MinValue, MaxValue, Value);
         }
         set
         {
-            this.value = Mathf.Lerp(minValue, maxValue, value);
+            this.Value = Mathf.Lerp(MinValue, MaxValue, value);
         }
     }
 
     private void UpdateVisuals()
     {
         Vector2 anchorMax = Vector2.one;
-        anchorMax[0] = normalizedValue;
-        rt.anchorMax = anchorMax;
+        anchorMax[0] = NormalizedValue;
+        _rt.anchorMax = anchorMax;
+
+        _txt.text = string.Format("{0:N2}", _value);
+    }
+
+    void Start()
+    {
+        foreach (Transform child in transform)
+        {
+            if (child.gameObject.name == "Fill")
+            {
+                _rt = child.GetComponent<RectTransform>();
+            }
+            if (child.gameObject.name == "Text")
+            {
+                _txt = child.GetComponent<Text>();
+            }
+        }
     }
 }
