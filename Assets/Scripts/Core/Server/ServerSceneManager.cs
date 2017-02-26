@@ -89,10 +89,10 @@ public class ServerSceneManager : MonoBehaviour
 		_networkLobbyManager.StartServer ();
 
 		// register listeners for when players connect / disconnect
-		_networkLobbyManager.OnLobbyServerConnectedEvent += OnPlayerConnected;
-		_networkLobbyManager.OnLobbyServerDisconnectedEvent += OnPlayerDisconnected;
-		_networkLobbyManager.OnLobbyClientReadyToBeginEvent += OnPlayerReady;
-		_networkLobbyManager.OnLobbyClientGameLoadedEvent += OnPlayerGameLoaded;
+		_networkLobbyManager.OnLobbyServerConnectedEvent += OnGamePlayerConnected;
+		_networkLobbyManager.OnLobbyServerDisconnectedEvent += OnGamePlayerDisconnected;
+		_networkLobbyManager.OnLobbyClientReadyToBeginEvent += OnGamePlayerReady;
+		_networkLobbyManager.OnLobbyClientGameLoadedEvent += OnGamePlayerGameLoaded;
 
 		_meshDiscoveryServer.MeshServerDiscoveredEvent += OnMeshServerFound;
 
@@ -144,7 +144,7 @@ public class ServerSceneManager : MonoBehaviour
 	}
 
 
-	private void OnPlayerConnected (UnityEngine.Networking.NetworkConnection conn)
+	private void OnGamePlayerConnected (UnityEngine.Networking.NetworkConnection conn)
 	{
 		DebugConsole.Log ("OnPlayerConnected");
 		ConnectedPlayerCount++;
@@ -159,12 +159,12 @@ public class ServerSceneManager : MonoBehaviour
 		}
 	}
 
-	private void OnPlayerReady () {
+	private void OnGamePlayerReady () {
 		OnStateUpdate ();
 	}
 
 
-	private void OnPlayerGameLoaded () {
+	private void OnGamePlayerGameLoaded () {
 		Debug.LogError ("Some player has loaded the game");
 		if (AreAllPlayersGameLoaded () && OnAllPlayersGameLoadedEvent != null) {
 			Debug.LogError ("all players have finished loading the game and someone is subscribed to OnAllPlayersGameLoadedEvent");
@@ -182,7 +182,7 @@ public class ServerSceneManager : MonoBehaviour
 		return true;
 	}
 
-	private void OnPlayerDisconnected ()
+	private void OnGamePlayerDisconnected ()
 	{
 		DebugConsole.Log ("OnPlayerDisconnected");
 		ConnectedPlayerCount--;
