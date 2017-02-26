@@ -1,11 +1,9 @@
 ﻿using UnityEditor;
-using System.Diagnostics;
 using UnityEngine;
 using UnityEditor.SceneManagement;
 
 public class UtilityScripts
 {
-
     static string[] ScenesList = new string[] { "Assets/_Scenes/shared/Game.unity", "Assets/_Scenes/mobile/Sandbox.unity" };
 
     [MenuItem ("Utilities/Deactivate AR")]
@@ -22,7 +20,7 @@ public class UtilityScripts
 
     private static void SetAllARToolKitStatus(bool state)
     {
-        string originalScene = EditorSceneManager.GetActiveScene().path;
+        //string originalScene = EditorSceneManager.GetActiveScene().path;
         foreach (string scene in ScenesList)
         {
             EditorSceneManager.OpenScene(scene);
@@ -32,6 +30,6 @@ public class UtilityScripts
                 a.enabled = state;
             }
         }
-        EditorSceneManager.OpenScene(originalScene);
+        //EditorSceneManager.OpenScene(originalScene);
     }
 } 
