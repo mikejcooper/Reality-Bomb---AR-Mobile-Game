@@ -222,7 +222,7 @@ public class CarController : NetworkBehaviour
 			_rigidbody.rotation = _lookAngle;
 
 			if (_joystick.IsDragging ()) {
-				_rigidbody.velocity = CarProperties.Speed * new Vector3 (_joystick.Horizontal (), 0, _joystick.Vertical ());
+				_rigidbody.velocity = CarProperties.Speed * transform.forward * joystickVector.magnitude;
 			}
 
 		}
