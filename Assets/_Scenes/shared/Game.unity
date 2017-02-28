@@ -122,7 +122,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PreparingCanvas: {fileID: 1343903781}
   MarkerScene: {fileID: 188577963}
-  BombPlayerConnectionId: 0
+  MarkerComponent: {fileID: 1965431133}
+  _startingBombPlayerConnectionId: 0
 --- !u!114 &30509391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -382,7 +383,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &607957735
 RectTransform:
   m_ObjectHideFlags: 0

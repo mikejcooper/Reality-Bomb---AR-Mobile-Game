@@ -15,14 +15,19 @@ public class GameManager : NetworkBehaviour {
 
 	public PreparingGame PreparingCanvas;
 	public GameObject MarkerScene;
-	public int BombPlayerConnectionId;
+	public ARMarker MarkerComponent;
+	public GameObject BombObject;
 
 	private List<CarController> _cars = new List<CarController>();
 	private List<CarController> _remainingCars = new List<CarController>();
 
 	private List<string> _deathList = new List<string>();
+	public int _startingBombPlayerConnectionId;
 
 	public GameObject WorldMesh { get; private set; }
+
+
+
 
 	void Start ()
 	{
@@ -35,8 +40,8 @@ public class GameManager : NetworkBehaviour {
 		} else if (isServer) {
 			ServerSceneManager.Instance.LastGameResults = new GameResults ();
 
-			BombPlayerConnectionId = GameUtils.ChooseRandomPlayerConnectionId ();
-			DebugConsole.Log ("=> bombPlayerConnectionId: " + BombPlayerConnectionId);
+			_startingBombPlayerConnectionId = GameUtils.ChooseRandomPlayerConnectionId ();
+			DebugConsole.Log ("=> bombPlayerConnectionId: " + _startingBombPlayerConnectionId);
 
 			WorldMesh = ServerSceneManager.Instance.WorldMesh;
 
@@ -46,8 +51,10 @@ public class GameManager : NetworkBehaviour {
 //				ServerSceneManager.Instance.OnAllPlayersGameLoadedEvent += AllPlayersReady;
 //			}
 
-
 		}
+			
+		// use downloaded marker pattern
+		MeshTransferManager.ApplyMarkerData (MarkerComponent);
 
 		WorldMesh.transform.parent = MarkerScene.transform;
 
@@ -64,6 +71,10 @@ public class GameManager : NetworkBehaviour {
 			Debug.Log ("Client: I've loaded game scene");
 			ClientSceneManager.Instance.OnGameLoaded ();
 		}
+	}
+
+	public bool IsStartingBomb (int connectionId) {
+		return connectionId == _startingBombPlayerConnectionId;
 	}
 
 
@@ -134,7 +145,6 @@ public class GameManager : NetworkBehaviour {
 
 	public void AddCar(GameObject gamePlayer)
 	{
-		Debug.LogError (string.Format ("AddCar id: {0}", gamePlayer.GetInstanceID()));
 		_cars.Add(gamePlayer.GetComponent<CarController>());
 		_remainingCars.Add(gamePlayer.GetComponent<CarController>());
 	}

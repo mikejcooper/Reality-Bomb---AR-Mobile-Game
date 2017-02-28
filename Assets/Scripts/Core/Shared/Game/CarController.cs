@@ -25,7 +25,7 @@ public class CarController : NetworkBehaviour
 
 	private UIJoystick _joystick;
     private UIHealthBar _healthBar;
-    private Image _bombImage;
+//    private Image _bombImage;
 	// Reference used to move the tank.
 	private Rigidbody _rigidbody;
 	private Vector3 _direction;
@@ -57,10 +57,10 @@ public class CarController : NetworkBehaviour
 			if (GameObject.Find ("JoystickBack") != null) {
 				_joystick = GameObject.Find ("JoystickBack").gameObject.GetComponent<UIJoystick> ();
 			}
-            if (GameObject.Find("BombImage") != null)
-            {
-                _bombImage = GameObject.Find("BombImage").gameObject.GetComponent<Image>();
-            }
+//            if (GameObject.Find("BombImage") != null)
+//            {
+//                _bombImage = GameObject.Find("BombImage").gameObject.GetComponent<Image>();
+//            }
             if (GameObject.Find("HealthBar") != null)
             {
                 _healthBar = GameObject.Find("HealthBar").gameObject.GetComponent<UIHealthBar>();
@@ -112,8 +112,7 @@ public class CarController : NetworkBehaviour
 		DebugConsole.Log ("I am server and I choose bomb");
 		// set colour based off server's game manager
 
-		bool isBomb = connectionToClient.connectionId == GameObject.FindObjectOfType<GameManager>().BombPlayerConnectionId ;
-		DebugConsole.Log (string.Format ("is {0} == {1} ? {2}", connectionToClient.connectionId, GameObject.FindObjectOfType<GameManager>().BombPlayerConnectionId, isBomb));
+		bool isBomb = GameObject.FindObjectOfType<GameManager>().IsStartingBomb(connectionToClient.connectionId) ;
 		AllDevicesSetBomb (isBomb);
 	}
 
@@ -135,15 +134,19 @@ public class CarController : NetworkBehaviour
 		DebugConsole.Log("isBomb: " + isBomb);
 		HasBomb = isBomb;
 		if (isBomb) {
-			ChangeColour (Color.red);
+			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.parent = transform;
+			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localScale = 0.01f * Vector3.one;
+			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localPosition = new Vector3 (0, 2.5f, 0);
+			GameObject.FindObjectOfType<GameManager> ().BombObject.SetActive (true);
+//			ChangeColour (Color.red);
             
 		} else {
-			ChangeColour (Color.blue);
+//			ChangeColour (Color.blue);
 		}
-        if (isLocalPlayer || IsPlayingSolo)
-        {
-            _bombImage.enabled = HasBomb;
-        }
+//        if (isLocalPlayer || IsPlayingSolo)
+//        {
+//            _bombImage.enabled = HasBomb;
+//        }
 	}
 
 

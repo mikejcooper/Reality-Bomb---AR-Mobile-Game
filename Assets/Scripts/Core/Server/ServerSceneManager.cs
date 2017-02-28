@@ -165,9 +165,7 @@ public class ServerSceneManager : MonoBehaviour
 
 
 	private void OnGamePlayerGameLoaded () {
-		Debug.LogError ("Some player has loaded the game");
 		if (AreAllPlayersGameLoaded () && OnAllPlayersGameLoadedEvent != null) {
-			Debug.LogError ("all players have finished loading the game and someone is subscribed to OnAllPlayersGameLoadedEvent");
 			OnAllPlayersGameLoadedEvent ();
 		}
 		OnStateUpdate ();
