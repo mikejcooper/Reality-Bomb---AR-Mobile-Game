@@ -119,7 +119,7 @@ public class GameManager : NetworkBehaviour {
 	[Server]
 	private void CheckForGameOver () {
 		if (_deathList.Count >= (_cars.Count - 1)) {
-//			ServerSceneManager.Instance.OnServerRequestGameEnd ();
+			ServerSceneManager.Instance.OnServerRequestGameEnd ();
 		}
 	}
 		
