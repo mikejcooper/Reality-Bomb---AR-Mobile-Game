@@ -538,7 +538,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4145881121463690, guid: 5d2cdaabf009c0f4380f9be121e8df39, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 10.82
+      value: 6.58
       objectReference: {fileID: 0}
     - target: {fileID: 4145881121463690, guid: 5d2cdaabf009c0f4380f9be121e8df39, type: 2}
       propertyPath: m_LocalPosition.z
@@ -678,7 +678,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CameraObject: {fileID: 614231949}
-  ArrowSprite: {fileID: 21300000, guid: 5ebdb87ee66f349ed8153edd72f1e39c, type: 3}
+  YouPointer: {fileID: 1633965311520418, guid: 260c1f5cb2f5d42f289d51d52e7c40c8, type: 2}
+  BombPointer: {fileID: 1796071199838278, guid: c1a7e5ed422cf4d14865040fbc2c49f3,
+    type: 2}
 --- !u!1 &1567734487
 GameObject:
   m_ObjectHideFlags: 0
