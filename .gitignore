@@ -41,5 +41,7 @@ ehthumbs.db
 ProjectSettings/ProjectVersion.txt
 
 /*.app
+/*.exe
 
-/*_Data/
+/*_Data/*
+RegisterIcalls.cpp
