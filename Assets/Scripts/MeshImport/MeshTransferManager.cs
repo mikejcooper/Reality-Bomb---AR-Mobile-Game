@@ -51,7 +51,6 @@ public class MeshTransferManager {
 				if (e.Data.StartsWith ("mesh")) {
 					string data = e.Data.Substring (4);
 					FastObjImporter.Instance.ImportString (data, ref _vertices, ref _normals, ref _uvs, ref _triangles);
-					Debug.Log("_triangles: " + _triangles.Length);
 					TryToCallback ();
 				} else if (e.Data.StartsWith ("markers")) {
 					SaveMarkerData (e.Data.Substring (7));
@@ -83,7 +82,6 @@ public class MeshTransferManager {
 	}
 
 	private void TryToCallback () {
-		Debug.LogError (string.Format("_isPatternDataSaved: {0}, _triangles.length: {1}", _isPatternDataSaved, _triangles.Length));
 		if (_isPatternDataSaved && _triangles.Length > 0) {
 			UnityThreadHelper.Dispatcher.Dispatch (() => {
 				if (OnMeshDataReceivedEvent != null)
