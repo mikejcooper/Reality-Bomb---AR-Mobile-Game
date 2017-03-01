@@ -77,8 +77,9 @@ GameObject:
   - component: {fileID: 222158125122385778}
   - component: {fileID: 114628965064406510}
   - component: {fileID: 114674841567501480}
+  - component: {fileID: 114991474333972938}
   m_Layer: 9
-  m_Name: Text
+  m_Name: NameText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -504,7 +505,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 579b186455b5e483c871f92b434a17e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraObj: {fileID: 0}
 --- !u!114 &114986322369375414
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -524,7 +524,20 @@ MonoBehaviour:
   Alive: 1
   FallDistanceBeforeRespawn: -150
   DisabledControlDurationSeconds: 2
+  ServerId: 0
   GameHasStarted: 0
+  Lifetime: 0
+--- !u!114 &114991474333972938
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1720214660145720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d9f87a6712084407906c5f2d2c8b826, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!222 &222158125122385778
 CanvasRenderer:
   m_ObjectHideFlags: 1
@@ -572,7 +585,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0.07999992, y: 0.00000071525574}
-  m_SizeDelta: {x: 0.8, y: 0.5}
+  m_SizeDelta: {x: 2.031579, y: 0.5}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!224 &224519226406610934
 RectTransform:

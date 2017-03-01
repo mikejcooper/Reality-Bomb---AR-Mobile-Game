@@ -21,7 +21,7 @@ public class GameManager : NetworkBehaviour {
 	private List<CarController> _cars = new List<CarController>();
 	private List<CarController> _remainingCars = new List<CarController>();
 
-	private List<string> _deathList = new List<string>();
+	private int _deathCounter = 0;
 	public int _startingBombPlayerConnectionId;
 
 	public GameObject WorldMesh { get; private set; }
@@ -32,13 +32,11 @@ public class GameManager : NetworkBehaviour {
 	void Start ()
 	{
 		if (!isServer) {
-			ClientSceneManager.Instance.LastGameResults = new GameResults ();
 			WorldMesh = ClientSceneManager.Instance.WorldMesh;
 //			PreparingCanvas.CountDownFinishedEvent += new PreparingGame.CountDownFinished (RpcCountDownFinishedStartPlaying);
 
 
 		} else if (isServer) {
-			ServerSceneManager.Instance.LastGameResults = new GameResults ();
 
 			_startingBombPlayerConnectionId = GameUtils.ChooseRandomPlayerConnectionId ();
 			DebugConsole.Log ("=> bombPlayerConnectionId: " + _startingBombPlayerConnectionId);
@@ -90,27 +88,13 @@ public class GameManager : NetworkBehaviour {
 	}
 
 	[Server]
-	public void AllDevicesKillPlayer (CarController car) {
-		string playerName = GetPlayerName (car);
-		_deathList.Add (playerName);
-		RpcKillPlayer (playerName);
-		ServerKillPlayer (playerName);
+	public void KillPlayer (CarController car) {
+		_deathCounter++;
+		int carsLeft = _cars.Count - _deathCounter;
+		ServerSceneManager.Instance.UpdatePlayerGameData (car.ServerId, carsLeft, car.Lifetime);
 		CheckForGameOver ();
 		PassBombRandomPlayer ();
 	}
-		
-	[ClientRpc]
-	private void RpcKillPlayer(string playerName) {
-		ProcessKillPlayerMessage (playerName);
-		ClientSceneManager.Instance.LastGameResults.DeathList.Add (playerName);
-	}
-
-	[Server]
-	private void ServerKillPlayer(string playerName) {
-		ProcessKillPlayerMessage (playerName);
-		ServerSceneManager.Instance.LastGameResults.DeathList.Add (playerName);
-	}
-
 
 	private void ProcessKillPlayerMessage (string playerName) {
 		RemoveByName (_remainingCars, playerName);
@@ -118,7 +102,16 @@ public class GameManager : NetworkBehaviour {
 
 	[Server]
 	private void CheckForGameOver () {
-		if (_deathList.Count >= (_cars.Count - 1)) {
+		if (_deathCounter >= (_cars.Count - 1)) {
+			// update game data for survivor
+			foreach (var car in _cars) {
+				if (car.Alive) {
+					ServerSceneManager.Instance.UpdatePlayerGameData (car.ServerId, 0, car.Lifetime);
+					break;
+				}
+			}
+
+
 			ServerSceneManager.Instance.OnServerRequestGameEnd ();
 		}
 	}

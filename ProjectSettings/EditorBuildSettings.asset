@@ -45,5 +45,7 @@ EditorBuildSettings:
     path: Assets/_Scenes/shared/Game.unity
   - enabled: 1
     path: Assets/_Scenes/tv/Leaderboard.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/_Scenes/mobile/Sandbox.unity
+  - enabled: 0
+    path: Assets/_Scenes/shared/SharedIdle.unity
