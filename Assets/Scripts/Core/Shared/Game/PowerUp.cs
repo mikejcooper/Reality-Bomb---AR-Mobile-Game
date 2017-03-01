@@ -13,8 +13,15 @@ public class PowerUp : MonoBehaviour {
 	private GameObject _collidedObject;
 	private GameObject _splatterObject;
 
+	private string _gui_Txt;
+	private string _splatter_Txt = "You've Activated the Splatter Power Up!\nThis splatters ink on your opponents' screens\n as shown above making it harder for them to see!";
+	private string _speed_Txt = "You've Activated the Speed Boost Power Up!\nEnjoy double the speed but becareful not to lose control!";
 	void Start () {
 		gameObject.SetActive (true);
+	}
+
+	void OnGUI(){
+		GUI.Label(new Rect(Screen.width/2.0f - 150,Screen.height/1.25f, 800, 800), _gui_Txt);
 	}
 
 	// When player picks up a power up
@@ -35,6 +42,8 @@ public class PowerUp : MonoBehaviour {
 			print ("Speed boost activated!");
 			_collidedObject.GetComponent<CarProperties> ().Speed *= 2.0f;
 			powerUpDuration = 5;
+
+			_gui_Txt = _speed_Txt;
 		} else if (P_Type == 1) {		// Ink Splatter
 			print ("Ink Splatter Activated!");
 
@@ -47,11 +56,14 @@ public class PowerUp : MonoBehaviour {
 			splatterImage.GetComponent<RectTransform> ().localScale = 3.0f * Vector3.one;
 			splatterImage.texture = SplatterTex;
 
-			powerUpDuration = 10;
+			powerUpDuration = 8;
 
 			// The following lines fade out the splatter effect over time
 			splatterImage.GetComponent<CanvasRenderer>().SetAlpha(1.0f);
 			splatterImage.CrossFadeAlpha(0.0f,8.0f,false);
+
+			_gui_Txt = _splatter_Txt;
+
 		} else if (P_Type == 2) {		// Place Holder
 			print ("Some other powerup Activated");
 		}
@@ -65,7 +77,7 @@ public class PowerUp : MonoBehaviour {
 		print ("PowerUp Deactivated");
 
 		if (P_Type == 0) {
-//			_playerCol.gameObject.GetComponent<CarProperties> ().Speed *= 0.5f;
+			_collidedObject.GetComponent<CarProperties> ().Speed *= 0.5f;
 
 		} else if (P_Type == 1) {
 			Destroy (_splatterObject);
