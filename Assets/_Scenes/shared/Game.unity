@@ -1330,8 +1330,8 @@ MonoBehaviour:
   CameraObject: {fileID: 614231944}
   MarkerScene: {fileID: 188577963}
   CameraXPosition: 0
-  CameraYPosition: 100
+  CameraYPosition: 400
   CameraZPosition: 0
-  CameraXRotation: 60
+  CameraXRotation: 80
   CameraYRotation: 0
   CameraZRotation: 0
