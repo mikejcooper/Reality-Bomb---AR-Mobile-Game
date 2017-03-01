@@ -20,13 +20,6 @@ public class CarController : NetworkBehaviour
 	// at some point to a better place.
 	public bool HasLoadedGame = false;
 
-	[SyncVar]
-	public bool GameHasStarted = false;
-	[SyncVar]
-	private bool PreparingGame = true;
-
-
-
 
 	private UIJoystick _joystick;
     private UIHealthBar _healthBar;
@@ -40,12 +33,8 @@ public class CarController : NetworkBehaviour
 	private float _lifetime;
 	private Text _lifetimeText;
 	private bool _initialised;
-	private bool _controlsDisabled = false;
-
-
-
-
-
+	private bool _controlsDisabled;
+	private bool _preparingGame;
 
 	private void Start ()
 	{
@@ -58,7 +47,6 @@ public class CarController : NetworkBehaviour
 	public void init () {
 
 		if (!_initialised) {
-			DebugConsole.Log ("CarController start");
 			if (GameObject.Find ("JoystickBack") != null) {
 				_joystick = GameObject.Find ("JoystickBack").gameObject.GetComponent<UIJoystick> ();
 			}
@@ -78,6 +66,7 @@ public class CarController : NetworkBehaviour
             _healthBar.MinValue = 0;
 			_transferTime = Time.time;
 			_initialised = true;
+			_controlsDisabled = false;
 
 			// hide and freeze so we can correctly position
 			if (hasAuthority) {
@@ -91,6 +80,7 @@ public class CarController : NetworkBehaviour
 				CmdRequestColour ();
 				EnableControls (false);
 			} else {
+				_preparingGame = true;
 				// register
 				DebugConsole.Log ("GameManager.Instance.AddCar (gameObject);");
 				GameObject.FindObjectOfType<GameManager> ().AddCar (gameObject);
@@ -161,6 +151,8 @@ public class CarController : NetworkBehaviour
 			return;
 				
 		if ((isLocalPlayer || IsPlayingSolo)) {
+			DebugConsole.Log("Player: " + _preparingGame);
+
             _healthBar.Value = _lifetime;
 
             if (CarProperties.PowerUpActive && Time.time > CarProperties.PowerUpEndTime) {
@@ -169,11 +161,10 @@ public class CarController : NetworkBehaviour
 				print ("PowerUp Deactivated");
 			}
 			EnsureCarIsOnMap ();
-		} else if (isServer) {
+		} else if (isServer) {	
 			// let the server authoratively update vital stats
-//			Debug.Log("GameHasStarted: " + GameHasStarted);
-			if ((HasBomb && _lifetime > 0.0f) && !PreparingGame) {
-				Debug.Log("PreparingGame: " + PreparingGame);
+			if ((HasBomb && _lifetime > 0.0f) && !_preparingGame) {
+				Debug.Log("PreparingGame: " + _preparingGame);
 				_lifetime -= Time.deltaTime;
 			}
 			if (_lifetime < 0.0f) {
@@ -278,9 +269,14 @@ public class CarController : NetworkBehaviour
 
 	[Server]
 	public void ServerGameStarting(){
-		Debug.Log("Server Game stating ***");
-		GameHasStarted = true;
-		PreparingGame = false;
+		DebugConsole.Log("Server: " + _preparingGame);
+		_preparingGame = false;
+	}
+
+	[ClientRpc]
+	public void RpcPlayerGameStarting(){
+		DebugConsole.Log("Player: " + _preparingGame);
+		EnableControls (true);
 	}
 
 	public void EnsureCarIsOnMap(){

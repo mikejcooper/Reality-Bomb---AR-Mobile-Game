@@ -72,21 +72,6 @@ public class GameManager : NetworkBehaviour {
 		}
 	}
 
-	public void CheckAreAllPlayersGameLoaded () {
-		if (AreAllPlayersGameLoaded()) {
-			AllPlayersReady();
-		}
-	}
-
-	public bool AreAllPlayersGameLoaded () {
-		foreach (var car in GameObject.FindObjectsOfType<CarController>()) {
-			if (car != null && !car.HasLoadedGame) {
-				return false;
-			}
-		}
-		return true;
-	}
-
 	public bool IsStartingBomb (int connectionId) {
 		return connectionId == _startingBombPlayerConnectionId;
 	}
@@ -149,21 +134,28 @@ public class GameManager : NetworkBehaviour {
 		Debug.Log ("Client: All player are ready, start game countdown ");
 		PreparingCanvas.StartGameCountDown ();
 	}
-
+		
 	[Server]
-	private void CountDownFinishedStartPlaying(){
-		EnableAllControls (true);
-		CarController server = GameObject.FindObjectOfType<CarController>();
-		server.ServerGameStarting ();
-
+	public void CountDownFinishedStartPlaying(){
+		foreach (CarController car in FindObjectsOfType<CarController>()) {
+			car.RpcPlayerGameStarting ();
+			car.ServerGameStarting ();
+		}
 	}
 
-	[Server]
-	public void EnableAllControls(bool boolean){
-		foreach (CarController car in FindObjectsOfType<CarController>()) {
-			car.RpcEnableALLControls (true);
-			DebugConsole.Log ("Enabled");
+	public void CheckAreAllPlayersGameLoaded () {
+		if (AreAllPlayersGameLoaded()) {
+			AllPlayersReady();
 		}
+	}
+
+	public bool AreAllPlayersGameLoaded () {
+		foreach (var car in GameObject.FindObjectsOfType<CarController>()) {
+			if (car != null && !car.HasLoadedGame) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 
