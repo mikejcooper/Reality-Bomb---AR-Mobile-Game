@@ -47,7 +47,11 @@ public class PowerUp : MonoBehaviour {
 			splatterImage.GetComponent<RectTransform> ().localScale = 3.0f * Vector3.one;
 			splatterImage.texture = SplatterTex;
 
-			powerUpDuration = 5;
+			powerUpDuration = 10;
+
+			// The following lines fade out the splatter effect over time
+			splatterImage.GetComponent<CanvasRenderer>().SetAlpha(1.0f);
+			splatterImage.CrossFadeAlpha(0.0f,8.0f,false);
 		} else if (P_Type == 2) {		// Place Holder
 			print ("Some other powerup Activated");
 		}
