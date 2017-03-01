@@ -31,6 +31,8 @@ public class CarController : NetworkBehaviour
 //    private Image _bombImage;
 	// Reference used to move the tank.
 	private Rigidbody _rigidbody;
+	// Reference used to move the tank.
+	private CharacterController _controller;
 	private Vector3 _direction;
 	private Quaternion _lookAngle = Quaternion.Euler(Vector3.forward);
 	private float _transferTime;
@@ -72,6 +74,7 @@ public class CarController : NetworkBehaviour
             // The axes names are based on player number.
 
             _rigidbody = GetComponent<Rigidbody> ();
+			_controller = GetComponent<CharacterController> ();
 			Lifetime = MaxLifetime;
             _healthBar.MaxValue = MaxLifetime;
             _healthBar.MinValue = 0;
@@ -81,7 +84,7 @@ public class CarController : NetworkBehaviour
 
 			// hide and freeze so we can correctly position
 			if (hasAuthority) {
-				_rigidbody.isKinematic = true;
+				//_rigidbody.isKinematic = true;
 				gameObject.SetActive (false);
 			}
 
@@ -225,10 +228,10 @@ public class CarController : NetworkBehaviour
 				_lookAngle.eulerAngles = new Vector3(0, combined, 0);
 			}
 
-			_rigidbody.rotation = _lookAngle;
+			transform.rotation = _lookAngle;
 
 			if (_joystick.IsDragging ()) {
-				_rigidbody.velocity = CarProperties.Speed * transform.forward * joystickVector.magnitude;
+				_controller.SimpleMove(CarProperties.Speed * new Vector3 (_joystick.Horizontal (), 0, _joystick.Vertical ()));
 			}
 
 		}
@@ -258,8 +261,8 @@ public class CarController : NetworkBehaviour
 			Debug.Log ("Repositioning car");
 
 			//Set velocities to zero
-			_rigidbody.velocity = Vector3.zero;
-			_rigidbody.angularVelocity = Vector3.zero;
+			//_rigidbody.velocity = Vector3.zero;
+			//_rigidbody.angularVelocity = Vector3.zero;
 
 			Vector3 position = GameUtils.FindSpawnLocation (worldMesh);
 
@@ -268,9 +271,9 @@ public class CarController : NetworkBehaviour
 				// now unfreeze and show
 
 				gameObject.SetActive (true);
-				_rigidbody.isKinematic = false;
+				//_rigidbody.isKinematic = false;
 
-				_rigidbody.position = position;
+				transform.position = position;
 			}
 
 		}
@@ -289,7 +292,7 @@ public class CarController : NetworkBehaviour
 	}
 
 	public void EnsureCarIsOnMap(){
-		if(_rigidbody.position.y <= FallDistanceBeforeRespawn){
+		if(transform.position.y <= FallDistanceBeforeRespawn){
 			Reposition (GameObject.FindObjectOfType<GameManager> ().WorldMesh);
 			DisableControls (DisabledControlDurationSeconds);
 		}
