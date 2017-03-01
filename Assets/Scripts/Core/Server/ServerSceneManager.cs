@@ -162,6 +162,7 @@ public class ServerSceneManager : MonoBehaviour
 			_networkLobbyManager.ClientGetMesh (_meshServerAddress, _meshServerPort, conn.connectionId);
 		}
 
+		_networkLobbyManager.SendPlayerID (conn.connectionId);
 		_networkLobbyManager.SendPlayerData (JsonUtility.ToJson (_playerDataManager.list), conn.connectionId);
 	}
 
@@ -218,7 +219,7 @@ public class ServerSceneManager : MonoBehaviour
 	}
 
 	public PlayerDataManager.PlayerData GetPlayerDataById (int serverId) {
-		return _playerDataManager.getPlayerById (serverId);
+		return _playerDataManager.GetPlayerById (serverId);
 	}
 
 	public void OnServerRequestGameEnd () {

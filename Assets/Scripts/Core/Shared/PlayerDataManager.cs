@@ -28,11 +28,16 @@ public class PlayerDataManager {
 	public PlayerDataList list = new PlayerDataList();
 
 	private GameLobbyManager _networkManager;
-
+	private int _thisPlayerID;
 
 	public PlayerDataManager (GameLobbyManager networkManager) {
 		_networkManager = networkManager;
 		_networkManager.OnUpdatePlayerDataEvent += OnListUpdate;
+		_networkManager.OnPlayerIDEvent += OnPlayerID;
+	}
+
+	private void OnPlayerID (int playerID) {
+		_thisPlayerID = playerID;
 	}
 
 	private void OnListUpdate (string data) {
@@ -110,13 +115,17 @@ public class PlayerDataManager {
 		}
 	}
 
-	public PlayerData getPlayerById (int serverId) {
+	public PlayerData GetPlayerById (int serverId) {
 		foreach (var player in list.players) {
 			if (player.ServerId == serverId) {
 				return player;
 			}
 		}
-		return new PlayerData();
+		return null;
+	}
+
+	public PlayerData GetThisPlayer () {
+		return GetPlayerById (_thisPlayerID);	
 	}
 		
 }

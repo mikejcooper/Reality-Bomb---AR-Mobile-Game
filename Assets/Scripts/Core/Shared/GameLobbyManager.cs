@@ -15,6 +15,7 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 	public delegate void OnLobbyClientGameLoaded ();
     public delegate void OnMeshClearToDownloadCallback(string address, int port);
 	public delegate void OnUpdatePlayerDataCallback (string data);
+	public delegate void OnPlayerIDCallback (int playerID);
 
     public event OnLobbyServerConnected OnLobbyServerConnectedEvent;
 	public event OnLobbyServerDisconnected OnLobbyServerDisconnectedEvent;
@@ -24,6 +25,7 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 	public event OnLobbyClientGameLoaded OnLobbyClientGameLoadedEvent;
     public event OnMeshClearToDownloadCallback OnMeshClearToDownloadEvent;
 	public event OnUpdatePlayerDataCallback OnUpdatePlayerDataEvent;
+	public event OnPlayerIDCallback OnPlayerIDEvent;
 
 	public override void OnLobbyServerGameLoaded(NetworkConnection conn) {
 		if (OnLobbyClientGameLoadedEvent != null)
@@ -100,6 +102,11 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 		NetworkServer.SendToClient (connectionId, NetworkConstants.MSG_PLAYER_DATA_UPDATE, msg);
 	}
 
+	public void SendPlayerID (int connectionId) {
+		var msg = new UnityEngine.Networking.NetworkSystem.IntegerMessage (connectionId);
+		NetworkServer.SendToClient (connectionId, NetworkConstants.MSG_PLAYER_DATA_ID, msg);
+	}
+
 	public void UpdatePlayerData (string data) {
 		foreach (var p in lobbySlots) {
 			if (p != null && p.playerControllerId >= 0) {
@@ -144,8 +151,15 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 			client.RegisterHandler(NetworkConstants.MSG_GET_MESH, OnClientClearToDownloadMesh);
 			client.RegisterHandler(NetworkConstants.MSG_GAME_LOADED, OnClientGameReady);
 			client.RegisterHandler(NetworkConstants.MSG_PLAYER_DATA_UPDATE, OnClientPlayerDataUpdate);
+			client.RegisterHandler(NetworkConstants.MSG_PLAYER_DATA_ID, OnClientPlayerID);
 		}
     }
+
+	public void OnClientPlayerID (NetworkMessage netMsg) {
+		if (OnPlayerIDEvent != null) {
+			OnPlayerIDEvent(netMsg.ReadMessage<UnityEngine.Networking.NetworkSystem.IntegerMessage>().value);
+		}
+	}
 
 	public void OnClientPlayerDataUpdate (NetworkMessage netMsg) {
 		if (OnUpdatePlayerDataEvent != null) {
