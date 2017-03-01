@@ -26,6 +26,8 @@ public class CarController : NetworkBehaviour
 	[SyncVar]
 	public float Lifetime;
 
+	private GameObject _ARCamera;
+
 	private UIJoystick _joystick;
     private UIHealthBar _healthBar;
 //    private Image _bombImage;
@@ -53,6 +55,10 @@ public class CarController : NetworkBehaviour
 	public void init () {
 
 		if (!_initialised) {
+			if (GameObject.Find ("ARCamera") != null) {
+				_ARCamera = GameObject.Find ("ARCamera");
+			}
+
 			if (GameObject.Find ("JoystickBack") != null) {
 				_joystick = GameObject.Find ("JoystickBack").gameObject.GetComponent<UIJoystick> ();
 			}
@@ -218,8 +224,7 @@ public class CarController : NetworkBehaviour
 
 		if (!_controlsDisabled) {
 			Vector3 joystickVector = new Vector3 (_joystick.Horizontal (), _joystick.Vertical (), 0);
-			GameObject ARCamera = GameObject.Find ("ARCamera");
-			Vector3 rotatedVector = ARCamera.transform.rotation * joystickVector;
+			Vector3 rotatedVector = _ARCamera.transform.rotation * joystickVector;
 
 			if (_joystick.IsDragging ()) {
 				_lookAngle = Quaternion.FromToRotation (Vector3.forward, rotatedVector);
