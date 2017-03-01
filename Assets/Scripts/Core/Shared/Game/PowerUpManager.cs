@@ -20,7 +20,7 @@ public class PowerUpManager : MonoBehaviour
 
 	void Start () {
 		OnMeshReady ();
-		Invoke ("ClearMessage", 10.0f);
+		Invoke ("ClearGuiTxt", 10.0f);
 	}
 
 	void OnGUI(){
@@ -80,7 +80,7 @@ public class PowerUpManager : MonoBehaviour
 		return Random.Range(0,3);
 	}
 
-	private void ClearMessage(){
+	private void ClearGuiTxt(){
 		_gui_Txt = "";
 	}
 
