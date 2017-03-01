@@ -24,6 +24,13 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
     public event OnMeshClearToDownloadCallback OnMeshClearToDownloadEvent;
 
 	public override void OnLobbyServerGameLoaded(NetworkConnection conn) {
+
+		UnityEngine.Networking.PlayerController lobbyController = NetworkCompat.Utils.GetPlayerController (0, conn);
+
+		if (lobbyController.gameObject.GetComponent<CarController> ()) {
+			lobbyController.gameObject.GetComponent<CarController> ().HasLoadedGame = true;
+		}
+
 		if (OnLobbyClientGameLoadedEvent != null)
 			OnLobbyClientGameLoadedEvent ();
 	}

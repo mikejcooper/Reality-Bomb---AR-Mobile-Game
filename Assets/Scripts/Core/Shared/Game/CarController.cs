@@ -16,6 +16,10 @@ public class CarController : NetworkBehaviour
 	public bool Alive = true;
 	public float FallDistanceBeforeRespawn = -150f;
 	public int DisabledControlDurationSeconds = 2;
+	// This is a server-only field that doesn't get updated on clients. I'll move this
+	// at some point to a better place.
+	public bool HasLoadedGame = false;
+
 	[SyncVar]
 	public bool GameHasStarted = false;
 	[SyncVar]
@@ -23,8 +27,10 @@ public class CarController : NetworkBehaviour
 
 
 
+
 	private UIJoystick _joystick;
-    private Slider _healthBar;
+    private UIHealthBar _healthBar;
+//    private Image _bombImage;
 	// Reference used to move the tank.
 	private Rigidbody _rigidbody;
 	private Vector3 _direction;
@@ -56,19 +62,20 @@ public class CarController : NetworkBehaviour
 			if (GameObject.Find ("JoystickBack") != null) {
 				_joystick = GameObject.Find ("JoystickBack").gameObject.GetComponent<UIJoystick> ();
 			}
-			if (GameObject.Find ("TimeLeftText") != null) {
-				_lifetimeText = GameObject.Find ("TimeLeftText").gameObject.GetComponent<Text> ();
-			}
+//            if (GameObject.Find("BombImage") != null)
+//            {
+//                _bombImage = GameObject.Find("BombImage").gameObject.GetComponent<Image>();
+//            }
             if (GameObject.Find("HealthBar") != null)
             {
-                _healthBar = GameObject.Find("HealthBar").gameObject.GetComponent<Slider>();
+                _healthBar = GameObject.Find("HealthBar").gameObject.GetComponent<UIHealthBar>();
             }
             // The axes names are based on player number.
 
             _rigidbody = GetComponent<Rigidbody> ();
 			_lifetime = MaxLifetime;
-            _healthBar.maxValue = MaxLifetime;
-            _healthBar.minValue = 0;
+            _healthBar.MaxValue = MaxLifetime;
+            _healthBar.MinValue = 0;
 			_transferTime = Time.time;
 			_initialised = true;
 
@@ -110,8 +117,7 @@ public class CarController : NetworkBehaviour
 		DebugConsole.Log ("I am server and I choose bomb");
 		// set colour based off server's game manager
 
-		bool isBomb = connectionToClient.connectionId == GameObject.FindObjectOfType<GameManager>().BombPlayerConnectionId ;
-		DebugConsole.Log (string.Format ("is {0} == {1} ? {2}", connectionToClient.connectionId, GameObject.FindObjectOfType<GameManager>().BombPlayerConnectionId, isBomb));
+		bool isBomb = GameObject.FindObjectOfType<GameManager>().IsStartingBomb(connectionToClient.connectionId) ;
 		AllDevicesSetBomb (isBomb);
 	}
 
@@ -133,10 +139,19 @@ public class CarController : NetworkBehaviour
 		DebugConsole.Log("isBomb: " + isBomb);
 		HasBomb = isBomb;
 		if (isBomb) {
-			ChangeColour (Color.red);
+			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.parent = transform;
+			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localScale = 0.01f * Vector3.one;
+			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localPosition = new Vector3 (0, 2.5f, 0);
+			GameObject.FindObjectOfType<GameManager> ().BombObject.SetActive (true);
+//			ChangeColour (Color.red);
+            
 		} else {
-			ChangeColour (Color.blue);
+//			ChangeColour (Color.blue);
 		}
+//        if (isLocalPlayer || IsPlayingSolo)
+//        {
+//            _bombImage.enabled = HasBomb;
+//        }
 	}
 
 
@@ -146,10 +161,9 @@ public class CarController : NetworkBehaviour
 			return;
 				
 		if ((isLocalPlayer || IsPlayingSolo)) {
-			_lifetimeText.text = "Time Left: " + string.Format ("{0:N2}", _lifetime);
-            _healthBar.value = _lifetime;
+            _healthBar.Value = _lifetime;
 
-			if (CarProperties.PowerUpActive && Time.time > CarProperties.PowerUpEndTime) {
+            if (CarProperties.PowerUpActive && Time.time > CarProperties.PowerUpEndTime) {
 				CarProperties.PowerUpActive = false;
 				CarProperties.Speed = 30.0f;
 				print ("PowerUp Deactivated");
@@ -157,7 +171,9 @@ public class CarController : NetworkBehaviour
 			EnsureCarIsOnMap ();
 		} else if (isServer) {
 			// let the server authoratively update vital stats
+//			Debug.Log("GameHasStarted: " + GameHasStarted);
 			if ((HasBomb && _lifetime > 0.0f) && !PreparingGame) {
+				Debug.Log("PreparingGame: " + PreparingGame);
 				_lifetime -= Time.deltaTime;
 			}
 			if (_lifetime < 0.0f) {
@@ -212,7 +228,7 @@ public class CarController : NetworkBehaviour
 			_rigidbody.rotation = _lookAngle;
 
 			if (_joystick.IsDragging ()) {
-				_rigidbody.velocity = CarProperties.Speed * new Vector3 (_joystick.Horizontal (), 0, _joystick.Vertical ());
+				_rigidbody.velocity = CarProperties.Speed * transform.forward * joystickVector.magnitude;
 			}
 
 		}
@@ -260,15 +276,9 @@ public class CarController : NetworkBehaviour
 		}
 	}
 
-	public void CountDownFinishedStartPlaying(){
-		EnableControls (true);
-		CmdServerGameStarting ();
-		//Do something with time. 
-	}
-
-	[Command]
-	private void CmdServerGameStarting(){
-		Debug.LogError("Server Game stating ***");
+	[Server]
+	public void ServerGameStarting(){
+		Debug.Log("Server Game stating ***");
 		GameHasStarted = true;
 		PreparingGame = false;
 	}
@@ -283,6 +293,16 @@ public class CarController : NetworkBehaviour
 	public void DisableControls(int seconds){
 		ToggleControls();
 		Invoke("ToggleControls", seconds);
+	}
+
+	[ClientRpc]
+	public void RpcEnableALLControls(bool b) {
+		DebugConsole.Log ("Enabled");
+		if (b) {
+			_controlsDisabled = false;
+		} else {
+			_controlsDisabled = true;
+		}
 	}
 
 	public void ToggleControls(){

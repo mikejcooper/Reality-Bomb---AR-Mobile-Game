@@ -18,10 +18,10 @@ public class ServerSceneManager : MonoBehaviour
 	}
 
 	public delegate void StateChange (ProcessState state);
-	public delegate void OnAllPlayersGameLoaded();
+	public delegate void OnPlayerGameLoaded();
 
 	public event StateChange StateChangeEvent;
-	public event OnAllPlayersGameLoaded OnAllPlayersGameLoadedEvent;
+	public event OnPlayerGameLoaded OnPlayerGameLoadedEvent;
 
 	public MeshRetrievalState MeshRetrievalStatus = MeshRetrievalState.Idle;
 	public NetworkLobbyPlayer LobbyPlayerPrefab;
@@ -89,10 +89,10 @@ public class ServerSceneManager : MonoBehaviour
 		_networkLobbyManager.StartServer ();
 
 		// register listeners for when players connect / disconnect
-		_networkLobbyManager.OnLobbyServerConnectedEvent += OnPlayerConnected;
-		_networkLobbyManager.OnLobbyServerDisconnectedEvent += OnPlayerDisconnected;
-		_networkLobbyManager.OnLobbyClientReadyToBeginEvent += OnPlayerReady;
-		_networkLobbyManager.OnLobbyClientGameLoadedEvent += OnPlayerGameLoaded;
+		_networkLobbyManager.OnLobbyServerConnectedEvent += OnGamePlayerConnected;
+		_networkLobbyManager.OnLobbyServerDisconnectedEvent += OnGamePlayerDisconnected;
+		_networkLobbyManager.OnLobbyClientReadyToBeginEvent += OnGamePlayerReady;
+		_networkLobbyManager.OnLobbyClientGameLoadedEvent += OnGamePlayerGameLoaded;
 
 		_meshDiscoveryServer.MeshServerDiscoveredEvent += OnMeshServerFound;
 
@@ -144,7 +144,7 @@ public class ServerSceneManager : MonoBehaviour
 	}
 
 
-	private void OnPlayerConnected (UnityEngine.Networking.NetworkConnection conn)
+	private void OnGamePlayerConnected (UnityEngine.Networking.NetworkConnection conn)
 	{
 		DebugConsole.Log ("OnPlayerConnected");
 		ConnectedPlayerCount++;
@@ -159,30 +159,19 @@ public class ServerSceneManager : MonoBehaviour
 		}
 	}
 
-	private void OnPlayerReady () {
+	private void OnGamePlayerReady () {
 		OnStateUpdate ();
 	}
 
 
-	private void OnPlayerGameLoaded () {
-		Debug.LogError ("Some player has loaded the game");
-		if (AreAllPlayersGameLoaded () && OnAllPlayersGameLoadedEvent != null) {
-			Debug.LogError ("all players have finished loading the game and someone is subscribed to OnAllPlayersGameLoadedEvent");
-			OnAllPlayersGameLoadedEvent ();
+	private void OnGamePlayerGameLoaded () {
+		if (OnPlayerGameLoadedEvent != null) {
+			OnPlayerGameLoadedEvent ();
 		}
 		OnStateUpdate ();
 	}
 
-	public bool AreAllPlayersGameLoaded () {
-		foreach (var p in _networkLobbyManager.lobbySlots) {
-			if (p != null && !p.gameLoaded) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private void OnPlayerDisconnected ()
+	private void OnGamePlayerDisconnected ()
 	{
 		DebugConsole.Log ("OnPlayerDisconnected");
 		ConnectedPlayerCount--;

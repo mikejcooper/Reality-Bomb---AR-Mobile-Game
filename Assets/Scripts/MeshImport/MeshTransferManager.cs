@@ -23,11 +23,13 @@ public class MeshTransferManager {
 	private Vector3[] _normals;
 	private Vector2[] _uvs;
 	private int[] _triangles;
+	private bool _isPatternDataSaved = false;
+	private static string PATTERN_FILE_NAME = "markers.dat";
+	private static string PATTERN_FILE_PATH = System.IO.Path.Combine (Application.persistentDataPath, PATTERN_FILE_NAME);
 
-	public static void SetLayerRecursively(GameObject go, int layerNumber)
-	{
-		foreach (Transform trans in go.GetComponentsInChildren<Transform>(true))
-		{
+
+	private static void SetLayerRecursively (GameObject go, int layerNumber) {
+		foreach (Transform trans in go.GetComponentsInChildren<Transform>(true)) {
 			trans.gameObject.layer = layerNumber;
 		}
 	}
@@ -41,54 +43,55 @@ public class MeshTransferManager {
 			Debug.Log ("existing ws: " + _ws.Url.Host);
 			return;
 		}
-		Debug.Log("initing websocket");
+		Debug.Log ("initing websocket");
 		_ws = new WebSocket (url);
 
 		_ws.OnMessage += (sender, e) => {
 			if (e.IsText) {
-				Debug.Log("received message");
-
-				if (e.Data.StartsWith("mesh")) {
-					string data = e.Data.Substring(4);
-					Debug.Log("producing mesh");
-					FastObjImporter.Instance.ImportString(data, ref _vertices, ref _normals, ref _uvs, ref _triangles);
-					Debug.Log("produced mesh");
-					UnityThreadHelper.Dispatcher.Dispatch(() =>
-						{
-							if (OnMeshDataReceivedEvent != null)
-								OnMeshDataReceivedEvent ();
-						}
-					);
-				} else if (e.Data.StartsWith("markers")) {
-					//          handleMarkers(e.Data.Substring(7));
-				} else if (e.Data.StartsWith("triangles")) {
+				if (e.Data.StartsWith ("mesh")) {
+					string data = e.Data.Substring (4);
+					FastObjImporter.Instance.ImportString (data, ref _vertices, ref _normals, ref _uvs, ref _triangles);
+					TryToCallback ();
+				} else if (e.Data.StartsWith ("markers")) {
+					SaveMarkerData (e.Data.Substring (7));
+				} else if (e.Data.StartsWith ("triangles")) {
 					//          handleTrianglesMesh(e.Data.Substring(9));
 				} else {
-					Debug.Log("unknwon websocket event: "+e.Data);
+					Debug.Log ("unknwon websocket event: " + e.Data);
 				}
 				
 
 			}
-			_ws.Close();
 		};
 
 		_ws.OnClose += (object sender, CloseEventArgs e) => {
-			Debug.Log("websocket closed");
+			Debug.Log ("websocket closed");
 			//      Invoke("connectWebsocket", 5);
 		};
 
 		_ws.OnError += (object sender, WebSocketSharp.ErrorEventArgs e) => {
-			Debug.Log("websocket error");
-			Debug.LogError(e.Exception);
+			Debug.Log ("websocket error");
+			Debug.LogError (e.Exception);
 			//      Invoke("connectWebsocket", 5);
 		};
 
 //		UnityThreadHelper.Dispatcher.Dispatch (() => {
-			Debug.Log("connecting websocket");
-			_ws.Connect ();
+		Debug.Log ("connecting websocket");
+		_ws.Connect ();
 //		});
 	}
-		
+
+	private void TryToCallback () {
+		if (_isPatternDataSaved && _triangles.Length > 0) {
+			UnityThreadHelper.Dispatcher.Dispatch (() => {
+				if (OnMeshDataReceivedEvent != null)
+					OnMeshDataReceivedEvent ();
+			}
+			);
+			_ws.Close ();
+		}
+	}
+
 	public GameObject ProduceGameObject () {
 
 		Mesh mesh = new Mesh ();
@@ -102,21 +105,24 @@ public class MeshTransferManager {
 		// choose the material - we can get round to using a custom invisible
 		// shader at some point here, but for development purposes it's nice
 		// to be able to see the mesh
-		Material material = Resources.Load("Materials/MeshVisible", typeof(Material)) as Material;
-		PhysicMaterial physicMaterial = Resources.Load("Materials/BouncyMaterial", typeof(PhysicMaterial)) as PhysicMaterial;
+		Material material = Resources.Load ("Materials/MeshVisible", typeof(Material)) as Material;
+		PhysicMaterial physicMaterial = Resources.Load ("Materials/BouncyMaterial", typeof(PhysicMaterial)) as PhysicMaterial;
 
-		GameObject worldMeshObj = new GameObject("World Mesh");
+		GameObject worldMeshObj = new GameObject ("World Mesh");
 
 		MeshFilter filter = worldMeshObj.GetComponent<MeshFilter> ();
-		if (filter == null) filter = worldMeshObj.AddComponent<MeshFilter> ();
+		if (filter == null)
+			filter = worldMeshObj.AddComponent<MeshFilter> ();
 
 		filter.mesh = mesh;
 
 		MeshRenderer renderer = worldMeshObj.GetComponent<MeshRenderer> ();
-		if (renderer == null) renderer = worldMeshObj.AddComponent<MeshRenderer> ();
+		if (renderer == null)
+			renderer = worldMeshObj.AddComponent<MeshRenderer> ();
 
 		MeshCollider collider = worldMeshObj.GetComponent<MeshCollider> ();
-		if (collider == null) collider = worldMeshObj.AddComponent<MeshCollider> ();
+		if (collider == null)
+			collider = worldMeshObj.AddComponent<MeshCollider> ();
 
 		collider.sharedMesh = mesh;
 		collider.material = physicMaterial;
@@ -125,46 +131,51 @@ public class MeshTransferManager {
 		renderer.material = material;
 
 		// assign to correct layer for ArToolKit
-		SetLayerRecursively(worldMeshObj, 9);
+		SetLayerRecursively (worldMeshObj, 9);
 
 		return worldMeshObj;
 	}
 
 
-	//  void handleMarkers(string data) {
-	//    Debug.Log ("received markers");
-	//    UnityThreadHelper.Dispatcher.Dispatch(() =>
-	//      {
-	//        // find the path we'll store the marker file under
-	//        string filename = "markers.dat";
-	//        string filepath = System.IO.Path.Combine(Application.persistentDataPath, filename);
-	//
-	//        // save to the file, we can't pass the file by string to ARToolKit
-	//        // because ARToolKit calls a native method that processes the file
-	//        // based off a file path. So we must save to a file, to pass a path
-	//        using(TextWriter writer = new StreamWriter(filepath))
-	//        {
-	//          writer.Write(data);
-	//          writer.Close();
-	//        }
-	//
-	//        // find the ARToolKit object and associated marker component
-	//        GameObject toolkit = GameObject.Find("ARToolKit");
-	//        ARMarker marker = toolkit.GetComponent<ARMarker>();
-	//
-	//        // temporarily disable any existing instance
-	//        marker.enabled = false;
-	//
-	//        // use our custom field to avoid the file being loaded from
-	//        // StreamingAssets by ARToolKit
-	//        marker.MarkerType = MarkerType.Multimarker;
-	//        marker.MultiConfigFile = filename;
-	//        marker.MultiConfigNonStreamingFile = filepath;
-	//
-	//        // enable the marker so that ARToolKit knows params have changed
-	//        marker.enabled = true;
-	//      });
-	//  }
+	private void SaveMarkerData (string data) {
+		Debug.Log ("received markers");
+		UnityThreadHelper.Dispatcher.Dispatch (() => {
+			// find the path we'll store the marker file under
+
+
+
+			// save to the file, we can't pass the file by string to ARToolKit
+			// because ARToolKit calls a native method that processes the file
+			// based off a file path. So we must save to a file, to pass a path
+			using (TextWriter writer = new StreamWriter (PATTERN_FILE_PATH)) {
+				writer.Write (data);
+				writer.Close ();
+			}
+
+			_isPatternDataSaved = true;
+
+			TryToCallback ();
+
+	        
+		});
+	}
+
+	public static void ApplyMarkerData (ARMarker markerComponent) {
+
+		// temporarily disable any existing instance
+		markerComponent.enabled = false;
+
+		// use our custom field to avoid the file being loaded from
+		// StreamingAssets by ARToolKit
+		markerComponent.MarkerType = MarkerType.Multimarker;
+		markerComponent.MultiConfigFile = PATTERN_FILE_NAME;
+		markerComponent.MultiConfigNonStreamingFile = PATTERN_FILE_PATH;
+
+		// enable the marker so that ARToolKit knows params have changed
+		markerComponent.enabled = true;
+	}
+
+
 	//
 	//  //This function spawns the objects that will 'mask the markers in the scene. It will overlay the rigidbody over the markers
 	//  void handleTrianglesMesh(string data){

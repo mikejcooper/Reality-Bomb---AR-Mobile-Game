@@ -6,9 +6,13 @@ using UnityEngine.UI;
 public class OffscreenArrowRenderer : MonoBehaviour {
 
 	public Camera CameraObject;
-	public Sprite ArrowSprite;
+	public GameObject YouPointer;
+	public GameObject BombPointer;
 
 	private Quaternion ARROW2CANVAS_ROTATION = Quaternion.Euler (new Vector3(0, 0, 0));
+
+	private GameObject _instantiatedYouPointer;
+	private GameObject _instantiatedBombPointer;
 
 	// The distance over which we change arrow scale.
 	// If distance is greater than this value, it is
@@ -17,21 +21,20 @@ public class OffscreenArrowRenderer : MonoBehaviour {
 	private const float MIN_SCALE = 0.4f;
 
 
-
-	private Dictionary<CarProperties, GameObject> _sprites;
-
 	void Start () {
-		_sprites = new Dictionary<CarProperties, GameObject>();
+		_instantiatedYouPointer = CreatePointer (YouPointer);
+		_instantiatedBombPointer = CreatePointer (BombPointer);
 	}
 
 	void Update () {
 		foreach (var car in GameObject.FindObjectsOfType<CarProperties>()) {
-			GameObject sprite;
-			if (!_sprites.ContainsKey (car)) {
-				sprite = CreateSprite ();
-				_sprites[car] = sprite;
+			GameObject pointer;
+			if (car.gameObject.GetComponent<UnityEngine.Networking.NetworkIdentity> () == null || car.gameObject.GetComponent<UnityEngine.Networking.NetworkIdentity> ().hasAuthority) {
+				pointer = _instantiatedYouPointer;
+			} else if (car.gameObject.GetComponent<CarController> () != null && car.gameObject.GetComponent<CarController> ().HasBomb) {
+				pointer = _instantiatedBombPointer;
 			} else {
-				sprite = _sprites [car];
+				continue;
 			}
 
 			RectTransform canvasRect = GetComponent<RectTransform>();
@@ -70,31 +73,33 @@ public class OffscreenArrowRenderer : MonoBehaviour {
 
 				Quaternion rotation = ARROW2CANVAS_ROTATION * Quaternion.AngleAxis (Mathf.Rad2Deg * Mathf.Atan2 (centeredScreenCoords.y, centeredScreenCoords.x)-90, Vector3.forward);
 
-				sprite.GetComponent<RectTransform>().transform.localPosition = clampedCoords;
+				Transform labelTransform = pointer.transform.FindChild ("Label");
 
-				sprite.GetComponent<RectTransform>().transform.rotation = rotation;
+				pointer.GetComponent<RectTransform>().transform.localPosition = clampedCoords;
 
-				sprite.GetComponent<RectTransform> ().transform.localScale = scale * Vector3.one;
+				pointer.GetComponent<RectTransform>().transform.rotation = rotation;
 
-				sprite.SetActive (true);
+				pointer.GetComponent<RectTransform> ().transform.localScale = scale * Vector3.one;
+
+				labelTransform.rotation = Quaternion.identity;
+
+				pointer.SetActive (true);
 			} else {
 				// a value of 0 means the player is on-screen
-				sprite.SetActive (false);
+				pointer.SetActive (false);
 			}
 		
 		}
 	}
 
-	private GameObject CreateSprite () {
-		GameObject obj = new GameObject("OffscreenArrowRenderer");
+	private GameObject CreatePointer (GameObject prefab) {
+		GameObject obj = GameObject.Instantiate (prefab);
 
-		Image image = obj.AddComponent<Image> ();
+
 		RectTransform rectTransform = obj.GetComponent<RectTransform> ();
-
-		image.sprite = ArrowSprite;
-
+	
 		// we update the RectTransform's pivot because it doesn't seem to inherit from the sprite
-		rectTransform.pivot = new Vector2(ArrowSprite.pivot.x / ArrowSprite.rect.width, ArrowSprite.pivot.y / ArrowSprite.rect.height) ;
+		rectTransform.pivot = new Vector2(0.5f, 1.2f) ;
 
 		RectTransform canvasRect = GetComponent<RectTransform>();
 
@@ -104,6 +109,7 @@ public class OffscreenArrowRenderer : MonoBehaviour {
 		rectTransform.localScale = Vector3.one;
 		rectTransform.rotation = ARROW2CANVAS_ROTATION;
 
+		obj.SetActive (false);
 
 		return obj;
 	}

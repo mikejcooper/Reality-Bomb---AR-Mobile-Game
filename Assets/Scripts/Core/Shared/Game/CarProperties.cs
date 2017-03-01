@@ -8,6 +8,7 @@ public class CarProperties : MonoBehaviour
 
 	public float PowerUpEndTime;
 	public bool PowerUpActive;
+
 }
 
 
