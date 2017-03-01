@@ -20,6 +20,11 @@ public class CarController : NetworkBehaviour
 	// at some point to a better place.
 	public bool HasLoadedGame = false;
 
+	[SyncVar]
+	public int ServerId;
+
+	[SyncVar]
+	public float Lifetime;
 
 	private UIJoystick _joystick;
     private UIHealthBar _healthBar;
@@ -29,9 +34,8 @@ public class CarController : NetworkBehaviour
 	private Vector3 _direction;
 	private Quaternion _lookAngle = Quaternion.Euler(Vector3.forward);
 	private float _transferTime;
-	[SyncVar]
-	private float _lifetime;
-	private Text _lifetimeText;
+
+	private Text LifetimeText;
 	private bool _initialised;
 	private bool _controlsDisabled;
 	private bool _preparingGame;
@@ -50,6 +54,13 @@ public class CarController : NetworkBehaviour
 			if (GameObject.Find ("JoystickBack") != null) {
 				_joystick = GameObject.Find ("JoystickBack").gameObject.GetComponent<UIJoystick> ();
 			}
+			Transform nameText = transform.Find ("NameTag").Find ("NameText");
+			Text textComponent = nameText.gameObject.GetComponent<Text> ();
+			if (isServer) {
+				textComponent.text = ServerSceneManager.Instance.GetPlayerDataById (ServerId).Name;
+			} else {
+				textComponent.text = ClientSceneManager.Instance.GetPlayerDataById (ServerId).Name;
+			}
 //            if (GameObject.Find("BombImage") != null)
 //            {
 //                _bombImage = GameObject.Find("BombImage").gameObject.GetComponent<Image>();
@@ -61,7 +72,7 @@ public class CarController : NetworkBehaviour
             // The axes names are based on player number.
 
             _rigidbody = GetComponent<Rigidbody> ();
-			_lifetime = MaxLifetime;
+			Lifetime = MaxLifetime;
             _healthBar.MaxValue = MaxLifetime;
             _healthBar.MinValue = 0;
 			_transferTime = Time.time;
@@ -78,7 +89,7 @@ public class CarController : NetworkBehaviour
 
 			if (!isServer) {
 				CmdRequestColour ();
-				EnableControls (false);
+//				EnableControls (false);
 			} else {
 				_preparingGame = true;
 				// register
@@ -151,9 +162,7 @@ public class CarController : NetworkBehaviour
 			return;
 				
 		if ((isLocalPlayer || IsPlayingSolo)) {
-			DebugConsole.Log("Player: " + _preparingGame);
-
-            _healthBar.Value = _lifetime;
+            _healthBar.Value = Lifetime;
 
             if (CarProperties.PowerUpActive && Time.time > CarProperties.PowerUpEndTime) {
 				CarProperties.PowerUpActive = false;
@@ -163,11 +172,11 @@ public class CarController : NetworkBehaviour
 			EnsureCarIsOnMap ();
 		} else if (isServer) {	
 			// let the server authoratively update vital stats
-			if ((HasBomb && _lifetime > 0.0f) && !_preparingGame) {
+			if ((HasBomb && Lifetime > 0.0f) && !_preparingGame) {
 				Debug.Log("PreparingGame: " + _preparingGame);
-				_lifetime -= Time.deltaTime;
+				Lifetime -= Time.deltaTime;
 			}
-			if (_lifetime < 0.0f) {
+			if (Lifetime < 0.0f) {
 				Kill ();
 			}
 		}
@@ -176,9 +185,9 @@ public class CarController : NetworkBehaviour
 	[Server]
 	private void Kill () {
 		DebugConsole.Log ("player has run out of time");
-		_lifetime = 0.0f;
+		Lifetime = 0.0f;
 		Alive = false;
-		GameObject.FindObjectOfType<GameManager>().AllDevicesKillPlayer (this);
+		GameObject.FindObjectOfType<GameManager>().KillPlayer (this);
 	}
 
 	private void ChangeColour(Color colour)

@@ -12,11 +12,11 @@ public class ClientSceneManager : MonoBehaviour
 
 	public NetworkLobbyPlayer LobbyPlayerPrefab;
 	public GameObject GamePlayerPrefab;
-	public GameResults LastGameResults;
 	public GameObject WorldMesh { get { return _meshTransferManager.ProduceGameObject (); }}
 
 	private DiscoveryClient _discoveryClient;
 	private GameLobbyManager _networkLobbyManager;
+	private PlayerDataManager _playerDataManager;
     private MeshTransferManager _meshTransferManager;
 	private Process _innerProcess;
 	private string _currentScene = "Idle";
@@ -42,9 +42,9 @@ public class ClientSceneManager : MonoBehaviour
 		DontDestroyOnLoad (gameObject);
 		var ugly = UnityThreadHelper.Dispatcher;
 
-
 		_discoveryClient = transform.gameObject.AddComponent<DiscoveryClient> ();
 		_networkLobbyManager = transform.gameObject.AddComponent<GameLobbyManager> ();
+		_playerDataManager = new PlayerDataManager (_networkLobbyManager);
 		_meshTransferManager = new MeshTransferManager();
 
 		_networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Debug;
@@ -152,6 +152,10 @@ public class ClientSceneManager : MonoBehaviour
 		DebugConsole.Log ("OnUserRequestPlaySandbox");
 		_innerProcess.MoveNext (Command.PlaySandbox);
 		ensureCorrectScene ();
+	}
+
+	public PlayerDataManager.PlayerData GetPlayerDataById (int serverId) {
+		return _playerDataManager.getPlayerById (serverId);
 	}
 
 	public void OnUserRequestLeaveGame () {

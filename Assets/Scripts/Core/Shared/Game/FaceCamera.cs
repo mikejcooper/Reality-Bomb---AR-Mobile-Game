@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class FaceCamera : MonoBehaviour {
 
-	public Camera cameraObj;
-
 	void Update () {
-		transform.rotation = Quaternion.LookRotation(-cameraObj.transform.forward);
+		transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
 	}
+
 }

@@ -384,7 +384,7 @@ GameObject:
   - component: {fileID: 614231950}
   m_Layer: 11
   m_Name: ARCamera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1330,8 +1330,8 @@ MonoBehaviour:
   CameraObject: {fileID: 614231944}
   MarkerScene: {fileID: 188577963}
   CameraXPosition: 0
-  CameraYPosition: 400
+  CameraYPosition: 100
   CameraZPosition: 0
-  CameraXRotation: 90
+  CameraXRotation: 60
   CameraYRotation: 0
   CameraZRotation: 0

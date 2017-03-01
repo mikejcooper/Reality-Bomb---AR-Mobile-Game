@@ -26,7 +26,6 @@ public class ServerSceneManager : MonoBehaviour
 	public MeshRetrievalState MeshRetrievalStatus = MeshRetrievalState.Idle;
 	public NetworkLobbyPlayer LobbyPlayerPrefab;
 	public GameObject GamePlayerPrefab;
-	public GameResults LastGameResults;
 	public GameObject WorldMesh { get { return _meshTransferManager.ProduceGameObject (); }}
 	public int ConnectedPlayerCount { get; private set; }
 	public int ReadyPlayerCount { get { return _networkLobbyManager.ReadyPlayerCount (); }}
@@ -34,6 +33,7 @@ public class ServerSceneManager : MonoBehaviour
 	private GameLobbyManager _networkLobbyManager;
 	private MeshDiscoveryServer _meshDiscoveryServer;
 	private MeshTransferManager _meshTransferManager;
+	private PlayerDataManager _playerDataManager;
 	private Process _innerProcess;
 	private MeshServerLifecycle.Process _meshTransferProcess;
 	private string _currentScene = "Idle";
@@ -64,8 +64,10 @@ public class ServerSceneManager : MonoBehaviour
 
 		transform.gameObject.AddComponent<DiscoveryServer> ();
 		_networkLobbyManager = transform.gameObject.AddComponent<GameLobbyManager> ();
+
 		_meshDiscoveryServer = new MeshDiscoveryServer ();
 		_meshTransferManager = new MeshTransferManager ();
+		_playerDataManager = new PlayerDataManager (_networkLobbyManager);
 
 		_networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Debug;
 		_networkLobbyManager.showLobbyGUI = false;
@@ -149,6 +151,8 @@ public class ServerSceneManager : MonoBehaviour
 		DebugConsole.Log ("OnPlayerConnected");
 		ConnectedPlayerCount++;
 
+		_playerDataManager.AddPlayer (conn.connectionId, NameGenerator.GenerateName ());
+
 		if (ConnectedPlayerCount >= MIN_REQ_PLAYERS) {
 			_innerProcess.MoveNext (Command.EnoughPlayersJoined);
 		}
@@ -157,6 +161,8 @@ public class ServerSceneManager : MonoBehaviour
 		if (_meshTransferProcess.CurrentState == MeshServerLifecycle.ProcessState.HasMesh) {
 			_networkLobbyManager.ClientGetMesh (_meshServerAddress, _meshServerPort, conn.connectionId);
 		}
+
+		_networkLobbyManager.SendPlayerData (JsonUtility.ToJson (_playerDataManager.list), conn.connectionId);
 	}
 
 	private void OnGamePlayerReady () {
@@ -176,6 +182,8 @@ public class ServerSceneManager : MonoBehaviour
 		DebugConsole.Log ("OnPlayerDisconnected");
 		ConnectedPlayerCount--;
 
+		_playerDataManager.RemovePlayer (conn.connectionId);
+
 		if (ConnectedPlayerCount < MIN_REQ_PLAYERS) {
 			_innerProcess.MoveNext (Command.TooFewPlayersRemaining);
 		}
@@ -192,6 +200,18 @@ public class ServerSceneManager : MonoBehaviour
 		}
 	}
 
+	public void UpdatePlayerGameData (int serverId, int carsLeft, float lifetime) {
+		_playerDataManager.UpdatePlayerGameData (serverId, carsLeft, lifetime);
+	}
+
+	public PlayerDataManager.PlayerData[] GetPlayerData () {
+		return _playerDataManager.list.players;
+	}
+
+	public PlayerDataManager.PlayerData GetPlayerDataById (int serverId) {
+		return _playerDataManager.getPlayerById (serverId);
+	}
+
 	public void OnServerRequestGameEnd () {
 		DebugConsole.Log ("OnGameEnd");
 		_innerProcess.MoveNext (Command.GameEnd);
@@ -206,7 +226,7 @@ public class ServerSceneManager : MonoBehaviour
 		case ProcessState.AwaitingMesh:
 		case ProcessState.AwaitingPlayers:
 		case ProcessState.PreparingGame:
-			if (LastGameResults != null) {
+			if (_playerDataManager.HasGameData()) {
 				//				networkLobbyManager.ServerChangeScene ("Leaderboard");
 				if (_currentScene != "Leaderboard") {
 					Debug.LogError("sent a scene change: Leaderboard");
@@ -241,6 +261,7 @@ public class ServerSceneManager : MonoBehaviour
 
 				// this needs to be called before we change scene
 				if (_networkLobbyManager.IsReadyToBegin ()) {
+					_playerDataManager.ResetAllGameData ();
 					_networkLobbyManager.ServerChangeScene ("Game");
 				}
 			}

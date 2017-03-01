@@ -8,12 +8,13 @@ using NetworkCompat;
 public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 
 	public delegate void OnLobbyServerConnected (NetworkConnection conn);
-	public delegate void OnLobbyServerDisconnected ();
+	public delegate void OnLobbyServerDisconnected (NetworkConnection conn);
 	public delegate void OnLobbyClientConnected ();
 	public delegate void OnLobbyClientDisconnected ();
 	public delegate void OnLobbyClientReadyToBegin ();
 	public delegate void OnLobbyClientGameLoaded ();
     public delegate void OnMeshClearToDownloadCallback(string address, int port);
+	public delegate void OnUpdatePlayerDataCallback (string data);
 
     public event OnLobbyServerConnected OnLobbyServerConnectedEvent;
 	public event OnLobbyServerDisconnected OnLobbyServerDisconnectedEvent;
@@ -22,6 +23,7 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 	public event OnLobbyClientReadyToBegin OnLobbyClientReadyToBeginEvent;
 	public event OnLobbyClientGameLoaded OnLobbyClientGameLoadedEvent;
     public event OnMeshClearToDownloadCallback OnMeshClearToDownloadEvent;
+	public event OnUpdatePlayerDataCallback OnUpdatePlayerDataEvent;
 
 	public override void OnLobbyServerGameLoaded(NetworkConnection conn) {
 
@@ -35,6 +37,12 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 			OnLobbyClientGameLoadedEvent ();
 	}
 
+	public override GameObject OnLobbyServerCreateGamePlayer(NetworkConnection conn, short playerControllerId) {
+		var obj = (GameObject)Instantiate(gamePlayerPrefab, Vector3.zero, Quaternion.identity);
+		obj.GetComponent<CarController> ().ServerId = conn.connectionId;
+		return obj;
+	}
+
 	// sent from server to set all its clients to not ready and tell all clients they are not ready
 	public void SetAllClientsNotReady () {
 		foreach (var player in lobbySlots)
@@ -46,7 +54,7 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 				LobbyReadyToBeginMessage msg = new LobbyReadyToBeginMessage ();
 				msg.slotId = player.slot;
 				msg.readyState = false;
-				UnityEngine.Networking.NetworkServer.SendToReady(null, UnityEngine.Networking.MsgType.LobbyReadyToBegin, msg);
+				UnityEngine.Networking.NetworkServer.SendToReady(null, MsgType.LobbyReadyToBegin, msg);
 			}
 		}
 	}
@@ -82,7 +90,7 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 		ServerNetworking.SocketMessage msg = new ServerNetworking.SocketMessage();
 		msg.address = address;
 		msg.port = port;
-		UnityEngine.Networking.NetworkServer.SendToAll(NetworkConstants.MSG_GET_MESH, msg);
+		NetworkServer.SendToAll(NetworkConstants.MSG_GET_MESH, msg);
 	}
 
 	// sent from server to specific client to tell it to download a mesh
@@ -90,16 +98,30 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 		ServerNetworking.SocketMessage msg = new ServerNetworking.SocketMessage ();
 		msg.address = address;
 		msg.port = port;
-		UnityEngine.Networking.NetworkServer.SendToClient (connectionId, NetworkConstants.MSG_GET_MESH, msg);
+		NetworkServer.SendToClient (connectionId, NetworkConstants.MSG_GET_MESH, msg);
+	}
+
+	public void SendPlayerData (string data, int connectionId) {
+		var msg = new UnityEngine.Networking.NetworkSystem.StringMessage (data);
+
+		NetworkServer.SendToClient (connectionId, NetworkConstants.MSG_PLAYER_DATA_UPDATE, msg);
+	}
+
+	public void UpdatePlayerData (string data) {
+		foreach (var p in lobbySlots) {
+			if (p != null && p.playerControllerId >= 0) {
+				var msg = new UnityEngine.Networking.NetworkSystem.StringMessage (data);
+				NetworkServer.SendToAll (NetworkConstants.MSG_PLAYER_DATA_UPDATE, msg);
+			}
+		}
 	}
 
 	public override void OnLobbyServerConnect (NetworkConnection conn) {
 		OnLobbyServerConnectedEvent (conn);
-
 	}
 
 	public override void OnLobbyServerDisconnect (NetworkConnection conn) {
-		OnLobbyServerDisconnectedEvent ();
+		OnLobbyServerDisconnectedEvent (conn);
 	}
 
 	public override void OnLobbyClientDisconnect (NetworkConnection conn) {
@@ -128,8 +150,15 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
             DebugConsole.Log("OnClientConnect worked");
 			client.RegisterHandler(NetworkConstants.MSG_GET_MESH, OnClientClearToDownloadMesh);
 			client.RegisterHandler(NetworkConstants.MSG_GAME_LOADED, OnClientGameReady);
+			client.RegisterHandler(NetworkConstants.MSG_PLAYER_DATA_UPDATE, OnClientPlayerDataUpdate);
 		}
     }
+
+	public void OnClientPlayerDataUpdate (NetworkMessage netMsg) {
+		if (OnUpdatePlayerDataEvent != null) {
+			OnUpdatePlayerDataEvent(netMsg.reader.ReadString());
+		}
+	}
 
 	public void OnClientGameReady(NetworkMessage netMsg) {
 		Debug.Log ("OnClientGameReady");

@@ -25,13 +25,13 @@ EditorBuildSettings:
     path: Assets/_Scenes/Main_Warm_Up.unity
   - enabled: 0
     path: Assets/_Scenes/shared/Pass_The_Bomb.unity
-  - enabled: 1
+  - enabled: 0
     path: Assets/_Scenes/mobile/Idle.unity
   - enabled: 0
     path: Assets/_Scenes/mobile/MiniGame.unity
   - enabled: 0
     path: Assets/_Scenes/mobile/Game.unity
-  - enabled: 1
+  - enabled: 0
     path: Assets/_Scenes/mobile/Leaderboard.unity
   - enabled: 0
     path: Assets/_Scenes/mobile/Pass_The_Bomb.unity
@@ -47,3 +47,5 @@ EditorBuildSettings:
     path: Assets/_Scenes/tv/Leaderboard.unity
   - enabled: 1
     path: Assets/_Scenes/mobile/Sandbox.unity
+  - enabled: 0
+    path: Assets/_Scenes/shared/SharedIdle.unity
