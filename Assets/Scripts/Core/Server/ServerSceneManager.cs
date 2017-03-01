@@ -18,10 +18,10 @@ public class ServerSceneManager : MonoBehaviour
 	}
 
 	public delegate void StateChange (ProcessState state);
-	public delegate void OnAllPlayersGameLoaded();
+	public delegate void OnPlayerGameLoaded();
 
 	public event StateChange StateChangeEvent;
-	public event OnAllPlayersGameLoaded OnAllPlayersGameLoadedEvent;
+	public event OnPlayerGameLoaded OnPlayerGameLoadedEvent;
 
 	public MeshRetrievalState MeshRetrievalStatus = MeshRetrievalState.Idle;
 	public NetworkLobbyPlayer LobbyPlayerPrefab;
@@ -172,19 +172,10 @@ public class ServerSceneManager : MonoBehaviour
 
 
 	private void OnGamePlayerGameLoaded () {
-		if (AreAllPlayersGameLoaded () && OnAllPlayersGameLoadedEvent != null) {
-			OnAllPlayersGameLoadedEvent ();
+		if (OnPlayerGameLoadedEvent != null) {
+			OnPlayerGameLoadedEvent ();
 		}
 		OnStateUpdate ();
-	}
-
-	public bool AreAllPlayersGameLoaded () {
-		foreach (var p in _networkLobbyManager.lobbySlots) {
-			if (p != null && !p.gameLoaded) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	private void OnGamePlayerDisconnected (UnityEngine.Networking.NetworkConnection conn)
