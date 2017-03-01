@@ -177,7 +177,7 @@ public class ServerSceneManager : MonoBehaviour
 		OnStateUpdate ();
 	}
 
-	private void OnGamePlayerDisconnected ()
+	private void OnGamePlayerDisconnected (UnityEngine.Networking.NetworkConnection conn)
 	{
 		DebugConsole.Log ("OnPlayerDisconnected");
 		ConnectedPlayerCount--;
