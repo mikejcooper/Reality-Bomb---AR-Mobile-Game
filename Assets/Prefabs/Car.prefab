@@ -435,7 +435,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5090c8b5dabcd4814ae58d23310c3a3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 100
+  CurrentVelocity: {x: 0, y: 0, z: 0}
+  MaxSpeed: 100
+  Acceleration: 400
   PowerUpEndTime: 0
   PowerUpActive: 0
 --- !u!114 &114644974806958924
@@ -449,7 +451,7 @@ MonoBehaviour:
   m_Script: {fileID: -1768714887, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TransformSyncMode: 3
+  m_TransformSyncMode: 4
   m_SendInterval: 0.033333335
   m_SyncRotationAxis: 2
   m_RotationSyncCompression: 0
