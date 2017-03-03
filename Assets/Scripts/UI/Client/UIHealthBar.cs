@@ -6,12 +6,15 @@ class UIHealthBar : MonoBehaviour
 {
 
     private RectTransform _rt;
+    private RectTransform _sparks;
     private Text _txt;
 
     [HideInInspector]
     public float MinValue = 0;
     [HideInInspector]
     public float MaxValue = 15;
+    //private float _speed;
+    //private bool moving = false;
 
     private float _value;
     public float Value
@@ -43,15 +46,20 @@ class UIHealthBar : MonoBehaviour
 
     private void UpdateVisuals()
     {
-        Vector2 anchorMax = Vector2.one;
-        anchorMax[0] = NormalizedValue;
-        _rt.anchorMax = anchorMax;
+        //TODO: This is all a bit hacky...
+        
+        Vector3 pos = _rt.anchoredPosition;
+        pos.x = - _rt.rect.width * (1-NormalizedValue);
+        _rt.anchoredPosition = pos;
+        pos.x += _rt.rect.width / 2;
+        _sparks.anchoredPosition = pos;
 
         _txt.text = string.Format("{0:N2}", _value);
     }
 
     void Start()
     {
+        //_speed = _rt.rect.width / MaxValue;
         foreach (Transform child in transform)
         {
             if (child.gameObject.name == "Fill")
@@ -62,6 +70,20 @@ class UIHealthBar : MonoBehaviour
             {
                 _txt = child.GetComponent<Text>();
             }
+            if (child.gameObject.name == "Sparks")
+            {
+                _sparks = child.GetComponent<RectTransform>();
+            }
         }
     }
+    /*
+    void Update()
+    {
+        if (_moving)
+        {
+
+
+        }
+    }
+    */
 }
