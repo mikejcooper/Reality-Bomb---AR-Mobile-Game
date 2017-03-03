@@ -1091,7 +1091,7 @@ MonoBehaviour:
   AllowNonRGBVideo: 1
   QuitOnEscOrBack: 1
   AutoStartAR: 1
-  videoCParamName0: 
+  videoCParamName0: camera_para
   videoConfigurationWindows0: -showDialog -flipV
   videoConfigurationMacOSX0: -width=640 -height=480
   videoConfigurationiOS0: 
