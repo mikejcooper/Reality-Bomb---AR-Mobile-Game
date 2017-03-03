@@ -10,73 +10,38 @@ public class PreparingGame : MonoBehaviour
 	public delegate void CountDownFinished();
 	public event CountDownFinished CountDownFinishedEvent;  
 
-	public Sprite WaitingForPlayersToConnect;
-	public Sprite Three;
-	public Sprite Two;
-	public Sprite One;
-	public Sprite GO;
+	public GameObject LeaderboardEntryPrefab;
 
-	private GameObject _waitingForPlayersToConnectObj;
-	private GameObject _threeObj;
-	private GameObject _twoObj;
-	private GameObject _oneObj;
-	private GameObject _goObj;
-
-
+	private GameObject _entry;
 
 	void Start () {
-		_waitingForPlayersToConnectObj = CreateSprite (WaitingForPlayersToConnect);
-		_threeObj = CreateSprite (Three);
-		_twoObj = CreateSprite (Two);
-		_oneObj = CreateSprite (One);
-		_goObj = CreateSprite (GO);
-//		_waitingForPlayersToConnectObj.SetActive (true);
+		_entry = GameObject.Instantiate (LeaderboardEntryPrefab);
+		_entry.transform.Find ("Waiting").GetComponent<Text> ().text = "Waiting for players...";
+		_entry.transform.parent = transform;
+		StartCoroutine(StartCountDown ());
 	}
 
 	IEnumerator StartCountDown() {
-		float t1 = 0.3f; // time hide and show
-		float t2 = 0.8f; // time image is shown
-
+		float t1 = 1.0f; // time hide and show
 		yield return new WaitForSeconds (t1);
-		_threeObj.SetActive (true);
-		yield return new WaitForSeconds (t2);
-		_threeObj.SetActive (false);
+		_entry.transform.Find ("Waiting").GetComponent<Text> ().text = "";
+		_entry.transform.Find ("Numbers").GetComponent<Text> ().text = "3";
 		yield return new WaitForSeconds (t1);
-		_twoObj.SetActive (true);
-		yield return new WaitForSeconds (t2);
-		_twoObj.SetActive (false);
+		_entry.transform.Find ("Numbers").GetComponent<Text> ().text = "2";
 		yield return new WaitForSeconds (t1);
-		_oneObj.SetActive (true);
-		yield return new WaitForSeconds (t2);
-		_oneObj.SetActive (false);
-		yield return new WaitForSeconds (t1);		
-		_goObj.SetActive (true);
-		yield return new WaitForSeconds (t2);
-		_goObj.SetActive (false);
+		_entry.transform.Find ("Numbers").GetComponent<Text> ().text = "1";
+		yield return new WaitForSeconds (t1);
+		_entry.transform.Find ("Numbers").GetComponent<Text> ().text = "";
+		_entry.transform.Find ("Go").GetComponent<Text> ().text = "Go!";
+		yield return new WaitForSeconds (t1);
+		_entry.transform.Find ("Go").GetComponent<Text> ().text = "";
 		if(CountDownFinishedEvent != null)
 			CountDownFinishedEvent ();
 	}
 
 	public void StartGameCountDown(){
-		_waitingForPlayersToConnectObj.SetActive (false);
+		_entry.transform.Find ("Waiting").GetComponent<Text> ().text = "";
 		StartCoroutine(StartCountDown ());
-	}
-
-
-	private GameObject CreateSprite (Sprite sprite) {
-		GameObject obj = new GameObject();
-		Image image = obj.AddComponent<Image> ();
-		RectTransform rectTransform = obj.GetComponent<RectTransform> ();
-
-		image.sprite = sprite;
-
-		RectTransform canvasRect = GetComponent<RectTransform>();
-		rectTransform.parent = canvasRect.transform;
-		rectTransform.localPosition = Vector3.zero;
-		rectTransform.localScale = Vector3.one;
-
-		obj.SetActive (false);
-		return obj;
 	}
 
 	public void ShowArrowOnCurrentPlayer(){
