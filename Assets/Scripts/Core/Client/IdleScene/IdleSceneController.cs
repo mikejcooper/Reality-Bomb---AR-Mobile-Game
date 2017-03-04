@@ -3,24 +3,41 @@ using System.Collections;
 
 public class IdleSceneController : MonoBehaviour
 {
-	public Camera CameraObject;
-	public Vector3 ObjectsRotatePoint;
+	private Camera CameraObject;
 
-	public float PanSpeed = 8.0f;		// Speed of the camera when being panned
+	private Transform _lookAt;
+	private Vector3 _startPosition;
+
+	private float _speed = 0.2f;
+	private float _width = 3;
+	private float _height = 0.2f;
+	private float _z = 1;
+
 
 
 	void Start ()
 	{
-		foreach (var obj in GameObject.FindObjectsOfType<IdleSceneController>()) {
-			ObjectsRotatePoint = obj.transform.position;
-		}
 		CameraObject = Camera.main;
+		_startPosition = CameraObject.transform.position;
+		_lookAt = FindObjectOfType<IdleSceneController> ().transform;
 	}
-	
-	void Update ()
-	{
-		Vector3 axis = new Vector3 (0.1f, 1, 0);
-		CameraObject.transform.RotateAround(ObjectsRotatePoint, axis, PanSpeed * Time.deltaTime);
+//	
+//	void Update ()
+//	{
+//		Vector3 axis = new Vector3 (0, 1, 0);
+//		CameraObject.transform.RotateAround(ObjectsRotatePoint, axis, PanSpeed * Time.deltaTime);
+//	}
+//
+
+	float timeCounter = 0;
+
+	void Update () {
+		timeCounter += Time.deltaTime * _speed;
+		float x = Mathf.Cos (timeCounter) * _width;
+		float y = Mathf.Sin (timeCounter) * _height;
+		float z = Mathf.Sin (timeCounter) * _z;
+		CameraObject.transform.position = new Vector3 (x, y, z) + _startPosition;
+		CameraObject.transform.LookAt(_lookAt);
 	}
 }
 

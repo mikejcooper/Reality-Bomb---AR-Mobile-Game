@@ -216,7 +216,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76d92d6217e144b42b908d0507d43b45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LeaderboardEntryPrefab: {fileID: 1919387886165460, guid: ff7880fe0ad6c409b8e61ec13a2be224,
+  LeaderboardEntryPrefab: {fileID: 1919387886165460, guid: 329657b1f99884a668ebffd5f2849092,
     type: 2}
 --- !u!114 &178973366
 MonoBehaviour:

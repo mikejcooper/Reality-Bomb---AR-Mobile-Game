@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: New Material
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 4800000, guid: 88401ab7ebcfd4d0f84142ca80b179f4, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
@@ -74,6 +74,9 @@ Material:
         name: _BumpScale
       second: 1
     - first:
+        name: _ColorMask
+      second: 15
+    - first:
         name: _Cutoff
       second: 0.5
     - first:
@@ -104,6 +107,9 @@ Material:
         name: _Parallax
       second: 0.02
     - first:
+        name: _Scale
+      second: 0.1
+    - first:
         name: _SmoothnessTextureChannel
       second: 0
     - first:
@@ -113,6 +119,21 @@ Material:
         name: _SrcBlend
       second: 1
     - first:
+        name: _Stencil
+      second: 0
+    - first:
+        name: _StencilComp
+      second: 8
+    - first:
+        name: _StencilOp
+      second: 0
+    - first:
+        name: _StencilReadMask
+      second: 255
+    - first:
+        name: _StencilWriteMask
+      second: 255
+    - first:
         name: _UVSec
       second: 0
     - first:
@@ -121,7 +142,10 @@ Material:
     m_Colors:
     - first:
         name: _Color
-      second: {r: 1, g: 1, b: 1, a: 1}
+      second: {r: 0.875, g: 0.057904415, b: 0.057904415, a: 1}
+    - first:
+        name: _Color2
+      second: {r: 0.16911763, g: 0.1342993, b: 0.1342993, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
