@@ -300,7 +300,7 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: <size=+12>A</size>ugment <size=+12>B</size>omb<sup> <#50aaff>PRO!</color></sup>
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: c3263dec81762417bb89e64402c8da11, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 0e53a409b9ba44eada5cfabe67514225, type: 2}
   m_sharedMaterial: {fileID: 21388005783346704, guid: c3263dec81762417bb89e64402c8da11,
     type: 2}
   m_fontSharedMaterials: []
@@ -415,7 +415,7 @@ MeshRenderer:
   m_GameObject: {fileID: 420529823}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1

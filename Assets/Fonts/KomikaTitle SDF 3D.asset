@@ -9,7 +9,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -667331979, guid: 89f0137620f6af44b9ba852b4190e64e, type: 3}
-  m_Name: KomikaTitle SDF
+  m_Name: KomikaTitle SDF 3D
   m_EditorClassIdentifier: 
   hashCode: -13636453
   material: {fileID: 21388005783346704}
@@ -1010,7 +1010,7 @@ Material:
       second: 0.5
     - first:
         name: _Bevel
-      second: 0.894
+      second: 0.413
     - first:
         name: _BevelClamp
       second: 0
@@ -1037,7 +1037,7 @@ Material:
       second: 0.5
     - first:
         name: _FaceDilate
-      second: -0.012
+      second: -0.292
     - first:
         name: _FaceShininess
       second: 0
@@ -1085,7 +1085,7 @@ Material:
       second: 0
     - first:
         name: _OutlineWidth
-      second: 0.307
+      second: 0.29
     - first:
         name: _PerspectiveFilter
       second: 0.875
@@ -1097,7 +1097,7 @@ Material:
       second: 0.8333333
     - first:
         name: _ScaleRatioB
-      second: 0.7391667
+      second: 0.9725
     - first:
         name: _ScaleRatioC
       second: 1
@@ -1145,7 +1145,7 @@ Material:
       second: 0
     - first:
         name: _UnderlaySoftness
-      second: 0
+      second: 0.198
     - first:
         name: _VertexOffsetX
       second: 0
