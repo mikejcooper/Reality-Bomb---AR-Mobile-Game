@@ -12,6 +12,7 @@ namespace GlobalNetworking
 		public const int MSG_GET_MESH = 928;
 		public const int MSG_GAME_LOADED = 182;
 		public const int MSG_PLAYER_DATA_UPDATE = 891;
+		public const int MSG_PLAYER_DATA_ID = 892;
 	}
 }
 

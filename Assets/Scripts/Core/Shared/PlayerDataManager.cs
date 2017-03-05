@@ -28,26 +28,28 @@ public class PlayerDataManager {
 	public PlayerDataList list = new PlayerDataList();
 
 	private GameLobbyManager _networkManager;
-
+	private int _thisPlayerID;
 
 	public PlayerDataManager (GameLobbyManager networkManager) {
 		_networkManager = networkManager;
 		_networkManager.OnUpdatePlayerDataEvent += OnListUpdate;
+		_networkManager.OnPlayerIDEvent += OnPlayerID;
+	}
+
+	private void OnPlayerID (int playerID) {
+		_thisPlayerID = playerID;
 	}
 
 	private void OnListUpdate (string data) {
 		
 		list = JsonUtility.FromJson<PlayerDataList> (data);
-		Debug.LogError (string.Format("received OnListUpdate list length: {0}", list.players.Length));
 	}
 		
 	private void InvalidateList () {
-		Debug.LogError ("data has been invalidated");
 		_networkManager.UpdatePlayerData (JsonUtility.ToJson (list));
 	}
 		
 	public void AddPlayer (int serverId, string name) {
-		Debug.LogError (string.Format ("adding player: id: {0}, name: {1}", serverId, name));
 		// don't allow dupes
 		foreach (var player in list.players) {
 			if (player.ServerId == serverId)
@@ -71,7 +73,6 @@ public class PlayerDataManager {
 	}
 		
 	public void RemovePlayer (int serverId) {
-		Debug.LogError (string.Format ("removing player: id: {0}", serverId));
 		for (int i = 0; i < list.players.Length; i++) {
 			var player = list.players [i];
 			if (player.ServerId == serverId) {
@@ -84,8 +85,7 @@ public class PlayerDataManager {
 		}
 	}
 
-	public void UpdatePlayerGameData (int serverId, int finishPosition, float remainingTime) {
-		Debug.LogError (string.Format ("updating player game data: id: {0}, finishPosition: {1}, remainingTime: {2}", serverId, finishPosition, remainingTime));
+	public void UpdatePlayerGameData (int serverId, int finishPosition, float remainingTime) {		
 		for (int i=0; i<list.players.Length; i++) {
 			PlayerData player = list.players [i];
 			if (player.ServerId == serverId) {
@@ -103,7 +103,6 @@ public class PlayerDataManager {
 				return true;
 			}
 		}
-		Debug.LogError ("returning HasGameData: false");
 		return false;
 	}
 		
@@ -116,16 +115,17 @@ public class PlayerDataManager {
 		}
 	}
 
-	public PlayerData getPlayerById (int serverId) {
-		Debug.LogError (string.Format ("getting player with id: {0}, ", serverId));
+	public PlayerData GetPlayerById (int serverId) {
 		foreach (var player in list.players) {
 			if (player.ServerId == serverId) {
-				Debug.LogError (string.Format ("found player with id: {0}, ", serverId));
 				return player;
 			}
 		}
-		Debug.LogError (string.Format ("didn't find player with id: {0}, list size: {1}", serverId, list.players.Length));
-		return new PlayerData();
+		return null;
+	}
+
+	public PlayerData GetThisPlayer () {
+		return GetPlayerById (_thisPlayerID);	
 	}
 		
 }

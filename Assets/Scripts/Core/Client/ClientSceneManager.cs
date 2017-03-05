@@ -155,7 +155,11 @@ public class ClientSceneManager : MonoBehaviour
 	}
 
 	public PlayerDataManager.PlayerData GetPlayerDataById (int serverId) {
-		return _playerDataManager.getPlayerById (serverId);
+		return _playerDataManager.GetPlayerById (serverId);
+	}
+
+	public PlayerDataManager.PlayerData GetThisPlayerData () {
+		return _playerDataManager.GetThisPlayer();
 	}
 
 	public void OnUserRequestLeaveGame () {

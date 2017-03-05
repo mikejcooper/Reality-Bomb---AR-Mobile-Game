@@ -26,11 +26,15 @@ public class CarController : NetworkBehaviour
 	[SyncVar]
 	public float Lifetime;
 
+	private GameObject _ARCamera;
+
 	private UIJoystick _joystick;
     private UIHealthBar _healthBar;
 //    private Image _bombImage;
 	// Reference used to move the tank.
 	private Rigidbody _rigidbody;
+	// Reference used to move the tank.
+	private CharacterController _controller;
 	private Vector3 _direction;
 	private Quaternion _lookAngle = Quaternion.Euler(Vector3.forward);
 	private float _transferTime;
@@ -51,6 +55,10 @@ public class CarController : NetworkBehaviour
 	public void init () {
 
 		if (!_initialised) {
+			if (GameObject.Find ("ARCamera") != null) {
+				_ARCamera = GameObject.Find ("ARCamera");
+			}
+
 			if (GameObject.Find ("JoystickBack") != null) {
 				_joystick = GameObject.Find ("JoystickBack").gameObject.GetComponent<UIJoystick> ();
 			}
@@ -72,6 +80,7 @@ public class CarController : NetworkBehaviour
             // The axes names are based on player number.
 
             _rigidbody = GetComponent<Rigidbody> ();
+			_controller = GetComponent<CharacterController> ();
 			Lifetime = MaxLifetime;
             _healthBar.MaxValue = MaxLifetime;
             _healthBar.MinValue = 0;
@@ -81,7 +90,7 @@ public class CarController : NetworkBehaviour
 
 			// hide and freeze so we can correctly position
 			if (hasAuthority) {
-				_rigidbody.isKinematic = true;
+				//_rigidbody.isKinematic = true;
 				gameObject.SetActive (false);
 			}
 
@@ -166,7 +175,7 @@ public class CarController : NetworkBehaviour
 
             if (CarProperties.PowerUpActive && Time.time > CarProperties.PowerUpEndTime) {
 				CarProperties.PowerUpActive = false;
-				CarProperties.Speed = 30.0f;
+				CarProperties.MaxSpeed = 30.0f;
 				print ("PowerUp Deactivated");
 			}
 			EnsureCarIsOnMap ();
@@ -215,21 +224,36 @@ public class CarController : NetworkBehaviour
 
 		if (!_controlsDisabled) {
 			Vector3 joystickVector = new Vector3 (_joystick.Horizontal (), _joystick.Vertical (), 0);
-			GameObject ARCamera = GameObject.Find ("ARCamera");
-			Vector3 rotatedVector = ARCamera.transform.rotation * joystickVector;
+			Vector3 rotatedVector = _ARCamera.transform.rotation * joystickVector;
 
-			if (_joystick.IsDragging ()) {
+			if (_joystick.IsDragging ()) 
+			{
 				_lookAngle = Quaternion.FromToRotation (Vector3.forward, rotatedVector);
 				// think about combining z and y so that it moves away when close to 0 degrees
 				float combined = _lookAngle.eulerAngles.y;
-				_lookAngle.eulerAngles = new Vector3(0, combined, 0);
+				_lookAngle.eulerAngles = new Vector3 (0, combined, 0);
+
+				Vector3 joystickVector2 = new Vector3(_joystick.Horizontal(), 0.0f, _joystick.Vertical());
+
+				if (CarProperties.CurrentVelocity.magnitude < CarProperties.MaxSpeed * joystickVector2.magnitude)
+					CarProperties.CurrentVelocity += Time.deltaTime * CarProperties.Acceleration * joystickVector2;
+				else
+					CarProperties.CurrentVelocity -= Time.deltaTime * CarProperties.Acceleration * CarProperties.CurrentVelocity.normalized;
+			} 
+			else 
+			{
+				if (CarProperties.CurrentVelocity.magnitude > 2.0f)
+					CarProperties.CurrentVelocity -= Time.deltaTime * CarProperties.Acceleration * CarProperties.CurrentVelocity.normalized;
+				else
+					CarProperties.CurrentVelocity = Vector3.zero;
+
 			}
 
-			_rigidbody.rotation = _lookAngle;
+			transform.rotation = _lookAngle;
 
-			if (_joystick.IsDragging ()) {
-				_rigidbody.velocity = CarProperties.Speed * transform.forward * joystickVector.magnitude;
-			}
+			_controller.SimpleMove(CarProperties.CurrentVelocity);
+
+
 
 		}
 	}
@@ -258,8 +282,8 @@ public class CarController : NetworkBehaviour
 			Debug.Log ("Repositioning car");
 
 			//Set velocities to zero
-			_rigidbody.velocity = Vector3.zero;
-			_rigidbody.angularVelocity = Vector3.zero;
+			//_rigidbody.velocity = Vector3.zero;
+			//_rigidbody.angularVelocity = Vector3.zero;
 
 			Vector3 position = GameUtils.FindSpawnLocation (worldMesh);
 
@@ -268,9 +292,9 @@ public class CarController : NetworkBehaviour
 				// now unfreeze and show
 
 				gameObject.SetActive (true);
-				_rigidbody.isKinematic = false;
+				//_rigidbody.isKinematic = false;
 
-				_rigidbody.position = position;
+				transform.position = position;
 			}
 
 		}
@@ -289,7 +313,7 @@ public class CarController : NetworkBehaviour
 	}
 
 	public void EnsureCarIsOnMap(){
-		if(_rigidbody.position.y <= FallDistanceBeforeRespawn){
+		if(transform.position.y <= FallDistanceBeforeRespawn){
 			Reposition (GameObject.FindObjectOfType<GameManager> ().WorldMesh);
 			DisableControls (DisabledControlDurationSeconds);
 		}
