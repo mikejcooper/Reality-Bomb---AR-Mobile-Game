@@ -42,7 +42,7 @@ public class CarController : NetworkBehaviour
 	private Text LifetimeText;
 	private bool _initialised;
 	private bool _controlsDisabled;
-	private bool _preparingGame;
+	private bool _preparingGame = true;
 
 	private void Start ()
 	{
@@ -100,7 +100,7 @@ public class CarController : NetworkBehaviour
 				CmdRequestColour ();
 //				EnableControls (false);
 			} else {
-				_preparingGame = true;
+				//_preparingGame = true;
 				// register
 				DebugConsole.Log ("GameManager.Instance.AddCar (gameObject);");
 				GameObject.FindObjectOfType<GameManager> ().AddCar (gameObject);
@@ -147,7 +147,7 @@ public class CarController : NetworkBehaviour
 
 	private void processSetBombMessage(bool isBomb) {
 		DebugConsole.Log("isBomb: " + isBomb);
-		HasBomb = isBomb;
+        HasBomb = isBomb;
 		if (isBomb) {
 			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.parent = transform;
 			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localScale = 0.01f * Vector3.one;
@@ -171,7 +171,9 @@ public class CarController : NetworkBehaviour
 			return;
 				
 		if ((isLocalPlayer || IsPlayingSolo)) {
-            _healthBar.Value = Lifetime;
+            //_healthBar.Value = Lifetime;
+            if (!_preparingGame)
+                _healthBar.UpdateCountdown(Lifetime, HasBomb);
 
             if (CarProperties.PowerUpActive && Time.time > CarProperties.PowerUpEndTime) {
 				CarProperties.PowerUpActive = false;
@@ -302,14 +304,16 @@ public class CarController : NetworkBehaviour
 
 	[Server]
 	public void ServerGameStarting(){
-		DebugConsole.Log("Server: " + _preparingGame);
-		_preparingGame = false;
+        _preparingGame = false;
+        DebugConsole.Log("Server: " + _preparingGame);
 	}
 
 	[ClientRpc]
 	public void RpcPlayerGameStarting(){
+        _preparingGame = false;
 		DebugConsole.Log("Player: " + _preparingGame);
-		EnableControls (true);
+        _healthBar.UpdateCountdown(Lifetime, HasBomb);
+        EnableControls (true);
 	}
 
 	public void EnsureCarIsOnMap(){
