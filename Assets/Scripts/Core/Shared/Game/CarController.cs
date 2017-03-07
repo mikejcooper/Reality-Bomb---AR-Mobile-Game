@@ -299,34 +299,10 @@ public class CarController : NetworkBehaviour
 		}
 	}
 
-	public void KillAllControls(){
-		RpcKillAllControls ();
-	}
-
-	[ClientRpc]
-	public void RpcKillAllControls(){
-
-		if (hasAuthority) {
-			Texture tex = Resources.Load("DiedText.png") as Texture;
-			GUI.DrawTexture(new Rect(10, 10, 60, 60), tex, ScaleMode.ScaleToFit, true, 10.0F);
-		}
-
-
-		_controlsDisabled = true;
-	}
-
-	[Server]
-	public void ServerKillAllControls(){
-		_controlsDisabled = true;
-	}
-
-
 	public void DisableControls(int seconds){
 		ToggleControls();
 		Invoke("ToggleControls", seconds);
 	}
-
-
 
 	[ClientRpc]
 	public void RpcEnableALLControls(bool b) {
