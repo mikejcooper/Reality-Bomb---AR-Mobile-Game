@@ -23,9 +23,6 @@ public class ServerSceneManager : MonoBehaviour
 	public event StateChange StateChangeEvent;
 	public event OnPlayerGameLoaded OnPlayerGameLoadedEvent;
 
-	public delegate void OnPlayerDisconnect();
-	public event OnPlayerDisconnect OnPlayerDisconnectEvent;
-
 	public MeshRetrievalState MeshRetrievalStatus = MeshRetrievalState.Idle;
 	public NetworkLobbyPlayer LobbyPlayerPrefab;
 	public GameObject GamePlayerPrefab;
@@ -187,10 +184,6 @@ public class ServerSceneManager : MonoBehaviour
 		ConnectedPlayerCount--;
 
 		_playerDataManager.RemovePlayer (conn.connectionId);
-
-		if (OnPlayerDisconnectEvent != null) {
-			OnPlayerDisconnectEvent();
-		}
 
 		if (ConnectedPlayerCount < MIN_REQ_PLAYERS) {
 			_innerProcess.MoveNext (Command.TooFewPlayersRemaining);
