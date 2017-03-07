@@ -56,6 +56,7 @@ public class GameManager : NetworkBehaviour {
 
 		WorldMesh.transform.parent = MarkerScene.transform;
 
+		ServerSceneManager.Instance.OnPlayerDisconnectEvent += OnPlayerDisconnected;
 
 		if (OnWorldMeshAvailableEvent != null)
 			OnWorldMeshAvailableEvent (WorldMesh);
@@ -80,6 +81,7 @@ public class GameManager : NetworkBehaviour {
 		// so we have to check whether server is running instead.
 		if (NetworkServer.active) {
 			ServerSceneManager.Instance.OnPlayerGameLoadedEvent -= CheckAreAllPlayersGameLoaded;
+			ServerSceneManager.Instance.OnPlayerDisconnectEvent -= OnPlayerDisconnected;
 		}
 	}
 
@@ -93,6 +95,7 @@ public class GameManager : NetworkBehaviour {
 		_deathCounter++;
 		int carsLeft = _cars.Count - _deathCounter;
 		ServerSceneManager.Instance.UpdatePlayerGameData (car.ServerId, carsLeft, car.Lifetime);
+		car.KillAllControls ();
 		CheckForGameOver ();
 		PassBombRandomPlayer ();
 	}
@@ -163,8 +166,13 @@ public class GameManager : NetworkBehaviour {
 
 	private void PassBombRandomPlayer(){
 		Debug.Log ("Bomb is passed to new random player");
-		CarController randCar = _remainingCars[Random.Range(0,_remainingCars.Count)];
-		randCar.AllDevicesSetBomb (true);
+		foreach (CarController car in _cars) {
+			if (car.Alive && !car.HasBomb) {
+				car.AllDevicesSetBomb (true);
+				return;
+			}
+		}
+			
 	}
 
 	private void RemoveByName( List<CarController> list, string name){
@@ -184,7 +192,7 @@ public class GameManager : NetworkBehaviour {
 		CarController collisionCar = col.gameObject.GetComponent<CarController>();
 
 		if (col.gameObject.tag == "TankTag") {
-			if ( collisionCar.IsTransferTimeExpired() && collisionCar.HasBomb )
+			if ( collisionCar.IsTransferTimeExpired() && collisionCar.HasBomb && collisionCar.Alive && car.Alive)
 			{
 				collisionCar.AllDevicesSetBomb(false);
 				car.AllDevicesSetBomb (true);
@@ -195,6 +203,7 @@ public class GameManager : NetworkBehaviour {
 
 	[Server]
 	public void OnPlayerDisconnected(){
+		KillDisconnectedPlayer ();
 		if(!IsBombInGame()){
 			PassBombRandomPlayer ();
 		}
@@ -202,11 +211,25 @@ public class GameManager : NetworkBehaviour {
 
 	private bool IsBombInGame(){
 		foreach (CarController car in _cars) {
-			if (car.HasBomb) {
+			if (car.HasBomb && car.Alive) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	[Server]
+	private void KillDisconnectedPlayer(){
+		DebugConsole.Log ("Gamemanager Kill DisconnectedPlayer");
+		for(var i = _cars.Count - 1; i > -1; i--)
+		{
+			if (_cars[i].connectionToClient == null)
+				_cars.RemoveAt(i);
+		}
+		CheckForGameOver ();
+		if (!IsBombInGame ()) {
+			PassBombRandomPlayer ();
+		}
 	}
 
 	public void ServerMeshPlayerReady(){
