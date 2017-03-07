@@ -21,6 +21,7 @@ public class ClientSceneManager : MonoBehaviour
 	private Process _innerProcess;
 	private string _currentScene = "Idle";
 	private static ClientSceneManager _instance;
+	private int _defaultSleepTimeout;
 
 	public static ClientSceneManager Instance { get { return _instance; } }
 
@@ -52,6 +53,8 @@ public class ClientSceneManager : MonoBehaviour
 
 		_networkLobbyManager.lobbySlots = new NetworkLobbyPlayer[_networkLobbyManager.maxPlayers];
 
+		_defaultSleepTimeout = Screen.sleepTimeout;
+
 		List<string> lobbyScenes = new List<string> ();
 		lobbyScenes.Add ("Idle");
 		lobbyScenes.Add ("Leaderboard");
@@ -64,6 +67,7 @@ public class ClientSceneManager : MonoBehaviour
 
 		// register listeners for when players connect / disconnect
 		_networkLobbyManager.OnLobbyClientConnectedEvent += OnUserConnectedToGame;
+		_networkLobbyManager.OnLobbyClientDisconnectedEvent += OnUserDisconnectedToGame;
 		_networkLobbyManager.OnLobbyClientDisconnectedEvent += OnUserRequestLeaveGame;
 		_networkLobbyManager.OnMeshClearToDownloadEvent += _meshTransferManager.FetchData;
 
@@ -127,7 +131,14 @@ public class ClientSceneManager : MonoBehaviour
 	private void OnUserConnectedToGame () {
 		DebugConsole.Log ("OnUserConnectedToGame");
 		_innerProcess.MoveNext (Command.JoinedGame);
+		Screen.sleepTimeout = SleepTimeout.NeverSleep;
 		ensureCorrectScene ();
+	}
+
+	private void OnUserDisconnectedToGame () {
+		DebugConsole.Log ("OnUserDisconnectedToGame");
+		// we don't have a state change for this... yet
+		Screen.sleepTimeout = _defaultSleepTimeout;
 	}
 
 	private void OnServerGameReady () {
@@ -155,7 +166,11 @@ public class ClientSceneManager : MonoBehaviour
 	}
 
 	public PlayerDataManager.PlayerData GetPlayerDataById (int serverId) {
-		return _playerDataManager.getPlayerById (serverId);
+		return _playerDataManager.GetPlayerById (serverId);
+	}
+
+	public PlayerDataManager.PlayerData GetThisPlayerData () {
+		return _playerDataManager.GetThisPlayer();
 	}
 
 	public void OnUserRequestLeaveGame () {

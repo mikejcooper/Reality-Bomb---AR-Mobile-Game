@@ -18,10 +18,10 @@ public class ServerSceneManager : MonoBehaviour
 	}
 
 	public delegate void StateChange (ProcessState state);
-	public delegate void OnAllPlayersGameLoaded();
+	public delegate void OnPlayerGameLoaded();
 
 	public event StateChange StateChangeEvent;
-	public event OnAllPlayersGameLoaded OnAllPlayersGameLoadedEvent;
+	public event OnPlayerGameLoaded OnPlayerGameLoadedEvent;
 
 	public MeshRetrievalState MeshRetrievalStatus = MeshRetrievalState.Idle;
 	public NetworkLobbyPlayer LobbyPlayerPrefab;
@@ -162,6 +162,7 @@ public class ServerSceneManager : MonoBehaviour
 			_networkLobbyManager.ClientGetMesh (_meshServerAddress, _meshServerPort, conn.connectionId);
 		}
 
+		_networkLobbyManager.SendPlayerID (conn.connectionId);
 		_networkLobbyManager.SendPlayerData (JsonUtility.ToJson (_playerDataManager.list), conn.connectionId);
 	}
 
@@ -171,19 +172,10 @@ public class ServerSceneManager : MonoBehaviour
 
 
 	private void OnGamePlayerGameLoaded () {
-		if (AreAllPlayersGameLoaded () && OnAllPlayersGameLoadedEvent != null) {
-			OnAllPlayersGameLoadedEvent ();
+		if (OnPlayerGameLoadedEvent != null) {
+			OnPlayerGameLoadedEvent ();
 		}
 		OnStateUpdate ();
-	}
-
-	public bool AreAllPlayersGameLoaded () {
-		foreach (var p in _networkLobbyManager.lobbySlots) {
-			if (p != null && !p.gameLoaded) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	private void OnGamePlayerDisconnected (UnityEngine.Networking.NetworkConnection conn)
@@ -218,7 +210,7 @@ public class ServerSceneManager : MonoBehaviour
 	}
 
 	public PlayerDataManager.PlayerData GetPlayerDataById (int serverId) {
-		return _playerDataManager.getPlayerById (serverId);
+		return _playerDataManager.GetPlayerById (serverId);
 	}
 
 	public void OnServerRequestGameEnd () {
@@ -238,7 +230,6 @@ public class ServerSceneManager : MonoBehaviour
 			if (_playerDataManager.HasGameData()) {
 				//				networkLobbyManager.ServerChangeScene ("Leaderboard");
 				if (_currentScene != "Leaderboard") {
-					Debug.LogError("sent a scene change: Leaderboard");
 					_networkLobbyManager.ServerChangeScene("Leaderboard");
 					_currentScene = "Leaderboard"; // put this in some scene load callback
 					foreach (var lobbyPlayer in _networkLobbyManager.lobbySlots) {

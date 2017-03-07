@@ -12,7 +12,6 @@ public class LeaderboardDriver : MonoBehaviour {
 		List<PlayerDataManager.PlayerData> SortedList = new List<PlayerDataManager.PlayerData> (ServerSceneManager.Instance.GetPlayerData()).OrderBy(o=>o.FinishPosition).ToList();
 
 		foreach (var player in SortedList) {
-			Debug.LogError (string.Format ("got player game data: id: {0}, name: {1}, finishPosition: {2}, remainingTime: {3}", player.ServerId, player.Name, player.FinishPosition, player.RemainingTime));
 			var entry = GameObject.Instantiate (LeaderboardEntryPrefab);
 			entry.transform.Find ("place").GetComponent<Text> ().text = (player.FinishPosition + 1).ToString();
 			entry.transform.Find ("name").GetComponent<Text> ().text = player.Name;

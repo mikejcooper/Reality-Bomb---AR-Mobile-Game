@@ -285,7 +285,6 @@ namespace NetworkCompat {
 					continue;
 
 				player.readyToBegin = false;
-				player.gameLoaded = false;
 				player.OnClientEnterLobby();
 			}
 		}
@@ -426,8 +425,6 @@ namespace NetworkCompat {
 					s_LobbyReadyToBeginMessage.readyState = false;
 					NetworkServer.SendToReady(null, MsgType.LobbyReadyToBegin, s_LobbyReadyToBeginMessage);
 
-					p.GetComponent<NetworkLobbyPlayer> ().gameLoaded = false;
-
 					s_GameLoadedMessage.slotId = p.slot;
 					s_GameLoadedMessage.loadedState = false;
 					NetworkServer.SendToReady(null, GlobalNetworking.NetworkConstants.MSG_GAME_LOADED, s_GameLoadedMessage);
@@ -459,7 +456,6 @@ namespace NetworkCompat {
 					{
 						// re-add the lobby object
 						lobbyPlayer.GetComponent<NetworkLobbyPlayer>().readyToBegin = false;
-						lobbyPlayer.GetComponent<NetworkLobbyPlayer> ().gameLoaded = false;
 						NetworkServer.ReplacePlayerForConnection(uv.connectionToClient, lobbyPlayer.gameObject, uv.playerControllerId);
 					}
 				}
@@ -489,7 +485,9 @@ namespace NetworkCompat {
 			if (LogFilter.logDebug) { Debug.Log("GameLobbyManager OnServergameLoadedMessage"); }
 			netMsg.ReadMessage(s_GameLoadedMessage);
 
-			var lobbyPlayer = lobbySlots[s_GameLoadedMessage.slotId];
+//			UnityEngine.Networking.PlayerController lobbyController = NetworkCompat.Utils.GetPlayerController (s_ReadyToBeginMessage.slotId, netMsg.conn);
+
+//			var lobbyPlayer = lobbySlots[lobbyController.playerControllerId];
 //			if (lobbyPlayer == null || lobbyPlayer.gameObject == null)
 //			{
 //				if (LogFilter.logError) { Debug.LogError("NetworkLobbyManager OnClientReadyToBegin no player at lobby slot " + s_LobbyReadyToBeginMessage.slotId); }
@@ -505,11 +503,11 @@ namespace NetworkCompat {
 //
 //			// set this player ready
 //			var lobbyPlayer = lobbyController.gameObject.GetComponent<NetworkLobbyPlayer>();
-			lobbyPlayer.gameLoaded = s_GameLoadedMessage.loadedState;
+			// lobbyPlayer.gameLoaded = s_GameLoadedMessage.loadedState;
 
 			// tell every player that this player is ready
 			var outMsg = new GameLoadedMessage();
-			outMsg.slotId = lobbyPlayer.slot;
+			outMsg.slotId = s_GameLoadedMessage.slotId;
 			outMsg.loadedState = s_GameLoadedMessage.loadedState;
 			NetworkServer.SendToReady(null, GlobalNetworking.NetworkConstants.MSG_GAME_LOADED, outMsg);
 
