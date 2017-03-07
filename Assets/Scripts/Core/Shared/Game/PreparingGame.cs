@@ -20,30 +20,32 @@ public class PreparingGame : MonoBehaviour
 		_entry = GameObject.Instantiate (LeaderboardEntryPrefab);
 		_entry.transform.Find ("Waiting").GetComponent<TextMeshProUGUI> ().text = "Waiting for players...";
 		_entry.transform.parent = transform;
-		StartCoroutine(StartCountDown ());
+//		StartCoroutine(StartCountDown ());
 	}
 
 	IEnumerator StartCountDown() {
-		float t1 = 1.2f; // time hide and show
+		float t1 = 1.2f; // time shown
+		float t2 = 0.3f; // time between shown
 		yield return new WaitForSeconds (t1);
 		_entry.transform.Find ("Waiting").GetComponent<TextMeshProUGUI> ().text = "";
-		yield return new WaitForSeconds (t1);
-		_entry.transform.Find ("Numbers").GetComponent<TextMeshProUGUI> ().text = "3";
-		yield return new WaitForSeconds (t1);
-		_entry.transform.Find ("Numbers").GetComponent<TextMeshProUGUI> ().text = "2";
-		yield return new WaitForSeconds (t1);
-		_entry.transform.Find ("Numbers").GetComponent<TextMeshProUGUI> ().text = "1";
-		yield return new WaitForSeconds (t1);
-		_entry.transform.Find ("Numbers").GetComponent<TextMeshProUGUI> ().text = "";
-		_entry.transform.Find ("Go").GetComponent<TextMeshProUGUI> ().text = "Go!";
-		yield return new WaitForSeconds (t1);
-		_entry.transform.Find ("Go").GetComponent<TextMeshProUGUI> ().text = "";
+
+		yield return StartCoroutine(ShowHideText (t1, t2, "3", "Numbers"));
+		yield return StartCoroutine(ShowHideText (t1, t2, "2", "Numbers"));
+		yield return StartCoroutine(ShowHideText (t1, t2, "1", "Numbers"));
+		yield return StartCoroutine(ShowHideText (t1, t2, "Go!", "Go"));
 		if(CountDownFinishedEvent != null)
 			CountDownFinishedEvent ();
 	}
 
+	IEnumerator ShowHideText(float t1, float t2, string text, string component){
+		yield return new WaitForSeconds (t2);
+		_entry.transform.Find (component).GetComponent<TextMeshProUGUI> ().text = text;
+		yield return new WaitForSeconds (t1);
+		_entry.transform.Find (component).GetComponent<TextMeshProUGUI> ().text = "";
+	}
+
+
 	public void StartGameCountDown(){
-		_entry.transform.Find ("Waiting").GetComponent<TextMeshProUGUI> ().text = "";
 		StartCoroutine(StartCountDown ());
 	}
 

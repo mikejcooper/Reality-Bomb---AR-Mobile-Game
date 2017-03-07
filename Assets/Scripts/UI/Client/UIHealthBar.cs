@@ -13,8 +13,10 @@ class UIHealthBar : MonoBehaviour
     public float MinValue = 0;
     [HideInInspector]
     public float MaxValue = 15;
+    private Vector3 _start, _end;
     //private float _speed;
-    //private bool moving = false;
+    private bool _counting = false;
+    private float _time;
 
     private float _value;
     public float Value
@@ -26,7 +28,7 @@ class UIHealthBar : MonoBehaviour
         set
         {
             _value = value;
-            UpdateVisuals();
+            //UpdateVisuals();
         }
     }
 
@@ -44,22 +46,20 @@ class UIHealthBar : MonoBehaviour
         }
     }
 
-    private void UpdateVisuals()
+    public void UpdateCountdown(float value, bool counting)
     {
-        //TODO: This is all a bit hacky...
-        
-        Vector3 pos = _rt.anchoredPosition;
-        pos.x = - _rt.rect.width * (1-NormalizedValue);
-        _rt.anchoredPosition = pos;
-        pos.x += _rt.rect.width / 2;
-        _sparks.anchoredPosition = pos;
-
-        _txt.text = string.Format("{0:N2}", _value);
+        if (this._counting == counting)
+            return;
+        this._counting = counting;
+        this.Value = value;
+        if(counting)
+        {
+            _time = Time.time;
+        }
     }
 
     void Start()
     {
-        //_speed = _rt.rect.width / MaxValue;
         foreach (Transform child in transform)
         {
             if (child.gameObject.name == "Fill")
@@ -75,15 +75,28 @@ class UIHealthBar : MonoBehaviour
                 _sparks = child.GetComponent<RectTransform>();
             }
         }
+        _start = _rt.anchoredPosition;
+        _end = _start;
+        _end.x = _start.x - _rt.rect.width;
+        _time = Time.time;
     }
-    /*
+    
     void Update()
     {
-        if (_moving)
+        if (_counting)
         {
+            float t = Value - (Time.time - _time); //current time
+            if (t < 0)
+                t = 0;
+            Vector3 pos = _rt.anchoredPosition;
+            pos.x = -_rt.rect.width * (1 - t/MaxValue);
+            _rt.anchoredPosition = pos;
+            pos.x += _rt.rect.width / 2;
+            _sparks.anchoredPosition = pos;
 
+            _txt.text = string.Format("{0:N2}", t);
 
         }
     }
-    */
+    
 }

@@ -825,7 +825,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1454462478
+  randomSeed: -2146437195
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3590,7 +3590,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CameraObject: {fileID: 614231949}
-  YouPointer: {fileID: 1633965311520418, guid: 260c1f5cb2f5d42f289d51d52e7c40c8, type: 2}
+  YouPointer: {fileID: 1633965311520418, guid: 21546cf77090f4956a42de3ac3daddb8, type: 2}
   BombPointer: {fileID: 1796071199838278, guid: c1a7e5ed422cf4d14865040fbc2c49f3,
     type: 2}
 --- !u!1 &1486150240
@@ -3954,7 +3954,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1965431130}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe4ec33cee90c844ea1bcc2cd642033e, type: 3}
   m_Name: 
@@ -3963,7 +3963,7 @@ MonoBehaviour:
   AllowNonRGBVideo: 1
   QuitOnEscOrBack: 1
   AutoStartAR: 1
-  videoCParamName0: 
+  videoCParamName0: camera_para
   videoConfigurationWindows0: -showDialog -flipV
   videoConfigurationMacOSX0: -width=640 -height=480
   videoConfigurationiOS0: 

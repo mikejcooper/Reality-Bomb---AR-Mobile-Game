@@ -40,7 +40,7 @@ public class PowerUp : MonoBehaviour {
 
 		if (P_Type == 0) {	 			// Speed Boost
 			print ("Speed boost activated!");
-			_collidedObject.GetComponent<CarProperties> ().MaxSpeed *= 2.0f;
+			_collidedObject.GetComponent<CarProperties> ().Speed *= 2.0f;
 			powerUpDuration = 5;
 
 			_gui_Txt = _speed_Txt;
@@ -77,7 +77,7 @@ public class PowerUp : MonoBehaviour {
 		print ("PowerUp Deactivated");
 
 		if (P_Type == 0) {
-			_collidedObject.GetComponent<CarProperties> ().MaxSpeed *= 0.5f;
+			_collidedObject.GetComponent<CarProperties> ().Speed *= 0.5f;
 
 		} else if (P_Type == 1) {
 			Destroy (_splatterObject);

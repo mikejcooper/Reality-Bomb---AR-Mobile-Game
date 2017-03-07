@@ -11,7 +11,7 @@ public class GameManager : NetworkBehaviour {
 	public delegate void OnWorldMeshAvailable(GameObject worldMesh);
 
 
-	public event OnWorldMeshAvailable OnWorldMeshAvailableEvent;
+	public event OnWorldMeshAvailable OnWorldMeshAvailableEvent = delegate {};
 
 	public PreparingGame PreparingCanvas;
 	public GameObject MarkerScene;
@@ -76,7 +76,9 @@ public class GameManager : NetworkBehaviour {
 
 
 	void OnDestroy () {
-		if (isServer) {
+		// isServer is unset by NetworkIdentity before our OnDestroy
+		// so we have to check whether server is running instead.
+		if (NetworkServer.active) {
 			ServerSceneManager.Instance.OnPlayerGameLoadedEvent -= CheckAreAllPlayersGameLoaded;
 		}
 	}

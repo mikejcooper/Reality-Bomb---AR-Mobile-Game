@@ -120,6 +120,10 @@ public class MeshTransferManager {
 		if (renderer == null)
 			renderer = worldMeshObj.AddComponent<MeshRenderer> ();
 
+		if (Application.isMobilePlatform) {
+			renderer.enabled = false;
+		}
+
 		MeshCollider collider = worldMeshObj.GetComponent<MeshCollider> ();
 		if (collider == null)
 			collider = worldMeshObj.AddComponent<MeshCollider> ();
