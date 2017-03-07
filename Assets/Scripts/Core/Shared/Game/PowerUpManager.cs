@@ -64,9 +64,9 @@ public class PowerUpManager : MonoBehaviour
 
 
 		Vector3 position = GameUtils.FindSpawnLocation (PlaneObject);
-		position.y += (_yOffSet + 100.0f);
+		position.y += (_yOffSet + 10.0f);
 		powerUpObj.transform.position = position;
-		powerUpObj.transform.localScale = 10.0f * Vector3.one;
+		powerUpObj.transform.localScale = Vector3.one;
 
 		powerUp.SetPowerUpType (1);//GenPowerUpType ());
 		powerUp.PlayerCanvas = PlayerCanvas;

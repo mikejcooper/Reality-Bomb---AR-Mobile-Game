@@ -84,8 +84,6 @@ public class CarController : NetworkBehaviour
 				gameObject.SetActive (false);
 			}
 
-			CarProperties.PowerUpActive = false;
-
 			if (!isServer) {
 				CmdRequestColour ();
 //				EnableControls (false);
@@ -155,13 +153,9 @@ public class CarController : NetworkBehaviour
 				
 		if ((isLocalPlayer || IsPlayingSolo)) {
             _healthBar.UpdateCountdown(Lifetime, HasBomb && !_preparingGame);
-
-            if (CarProperties.PowerUpActive && Time.time > CarProperties.PowerUpEndTime) {
-				CarProperties.PowerUpActive = false;
-				CarProperties.Speed = 30.0f;
-				print ("PowerUp Deactivated");
-			}
 			EnsureCarIsOnMap ();
+
+			transform.rotation= Quaternion.Lerp (transform.rotation, _lookAngle , CarProperties.TurnRate * Time.deltaTime);
 		} else if (isServer) {	
 			// let the server authoratively update vital stats
 			if ((HasBomb && Lifetime > 0.0f) && !_preparingGame) {
@@ -217,10 +211,12 @@ public class CarController : NetworkBehaviour
 				_lookAngle.eulerAngles = new Vector3(0, combined, 0);
 			}
 
-			_rigidbody.rotation = _lookAngle;
-
 			if (_joystick.IsDragging ()) {
-				_rigidbody.velocity = CarProperties.Speed * transform.forward * joystickVector.magnitude;
+				_rigidbody.AddForce (transform.forward * joystickVector.magnitude * CarProperties.Acceleration);
+			}
+
+			if(_rigidbody.velocity.magnitude > CarProperties.MaxSpeed) {
+				_rigidbody.velocity = _rigidbody.velocity.normalized * CarProperties.MaxSpeed;
 			}
 
 		}
