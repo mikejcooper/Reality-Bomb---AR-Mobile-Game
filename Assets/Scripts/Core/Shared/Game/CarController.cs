@@ -74,7 +74,6 @@ public class CarController : NetworkBehaviour
             _rigidbody = GetComponent<Rigidbody> ();
 			Lifetime = MaxLifetime;
             _healthBar.MaxValue = MaxLifetime;
-            _healthBar.MinValue = 0;
 			_transferTime = Time.time;
 			_initialised = true;
 			_controlsDisabled = false;
@@ -144,15 +143,8 @@ public class CarController : NetworkBehaviour
 			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localScale = 0.01f * Vector3.one;
 			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localPosition = new Vector3 (0, 2.5f, 0);
 			GameObject.FindObjectOfType<GameManager> ().BombObject.SetActive (true);
-//			ChangeColour (Color.red);
-            
-		} else {
-//			ChangeColour (Color.blue);
-		}
-//        if (isLocalPlayer || IsPlayingSolo)
-//        {
-//            _bombImage.enabled = HasBomb;
-//        }
+           
+		} 
 	}
 
 
@@ -162,9 +154,7 @@ public class CarController : NetworkBehaviour
 			return;
 				
 		if ((isLocalPlayer || IsPlayingSolo)) {
-            //_healthBar.Value = Lifetime;
-            if (!_preparingGame)
-                _healthBar.UpdateCountdown(Lifetime, HasBomb);
+            _healthBar.UpdateCountdown(Lifetime, HasBomb && !_preparingGame);
 
             if (CarProperties.PowerUpActive && Time.time > CarProperties.PowerUpEndTime) {
 				CarProperties.PowerUpActive = false;
@@ -288,7 +278,10 @@ public class CarController : NetworkBehaviour
 	public void RpcPlayerGameStarting(){
         _preparingGame = false;
 		DebugConsole.Log("Player: " + _preparingGame);
-        _healthBar.UpdateCountdown(Lifetime, HasBomb);
+        if (isLocalPlayer)
+        {
+            _healthBar.UpdateCountdown(Lifetime, HasBomb);
+        }
         EnableControls (true);
 	}
 
