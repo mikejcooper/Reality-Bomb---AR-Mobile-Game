@@ -180,6 +180,11 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5d2cdaabf009c0f4380f9be121e8df39, type: 2}
   m_IsPrefabParent: 0
+--- !u!54 &396588690 stripped
+Rigidbody:
+  m_PrefabParentObject: {fileID: 54718780567473220, guid: 5d2cdaabf009c0f4380f9be121e8df39,
+    type: 2}
+  m_PrefabInternal: {fileID: 396588689}
 --- !u!1 &614231944
 GameObject:
   m_ObjectHideFlags: 0
@@ -359,6 +364,7 @@ GameObject:
   m_Component:
   - component: {fileID: 757163055}
   - component: {fileID: 757163056}
+  - component: {fileID: 757163054}
   m_Layer: 0
   m_Name: SandboxManager
   m_TagString: Untagged
@@ -366,6 +372,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &757163054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 757163053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8f828535bbc45f6a77bb41b093fc0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CarObject: {fileID: 396588690}
+  PlaneObject: {fileID: 2137931947}
 --- !u!4 &757163055
 Transform:
   m_ObjectHideFlags: 0

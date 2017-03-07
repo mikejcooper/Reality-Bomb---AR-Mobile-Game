@@ -11,6 +11,7 @@ public class PowerUpManager : MonoBehaviour
 	public Canvas PlayerCanvas;
 	public Texture SplatterTexture;
 
+	private bool _controlsDisabled;
 	private string _gui_Txt = "Welcome to the Tutorial!\nUse the joystick to drive around but don't fall off the map!\nSee if you can pickup some Power Ups along the way!";
 	private enum _powerUpList{
 		Speed,
@@ -20,6 +21,7 @@ public class PowerUpManager : MonoBehaviour
 
 	void Start () {
 		OnMeshReady ();
+		_controlsDisabled = false;
 		Invoke ("ClearGuiTxt", 10.0f);
 	}
 
@@ -83,7 +85,6 @@ public class PowerUpManager : MonoBehaviour
 	private void ClearGuiTxt(){
 		_gui_Txt = "";
 	}
-
 
 }
 
