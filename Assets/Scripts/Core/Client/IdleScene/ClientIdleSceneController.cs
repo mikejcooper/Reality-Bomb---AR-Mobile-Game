@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class IdleSceneController : MonoBehaviour
+public class ClientIdleSceneController : MonoBehaviour
 {
 	public GameObject Car;
 	public Transform RoatateAround;
