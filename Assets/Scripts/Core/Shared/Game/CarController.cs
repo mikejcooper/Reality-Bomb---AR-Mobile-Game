@@ -74,7 +74,6 @@ public class CarController : NetworkBehaviour
             _rigidbody = GetComponent<Rigidbody> ();
 			Lifetime = MaxLifetime;
             _healthBar.MaxValue = MaxLifetime;
-            _healthBar.MinValue = 0;
 			_transferTime = Time.time;
 			_initialised = true;
 			_controlsDisabled = false;
@@ -84,8 +83,6 @@ public class CarController : NetworkBehaviour
 				_rigidbody.isKinematic = true;
 				gameObject.SetActive (false);
 			}
-
-			CarProperties.PowerUpActive = false;
 
 			if (!isServer) {
 				CmdRequestColour ();
@@ -144,15 +141,8 @@ public class CarController : NetworkBehaviour
 			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localScale = 0.01f * Vector3.one;
 			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localPosition = new Vector3 (0, 2.5f, 0);
 			GameObject.FindObjectOfType<GameManager> ().BombObject.SetActive (true);
-//			ChangeColour (Color.red);
-            
-		} else {
-//			ChangeColour (Color.blue);
-		}
-//        if (isLocalPlayer || IsPlayingSolo)
-//        {
-//            _bombImage.enabled = HasBomb;
-//        }
+           
+		} 
 	}
 
 
@@ -162,16 +152,10 @@ public class CarController : NetworkBehaviour
 			return;
 				
 		if ((isLocalPlayer || IsPlayingSolo)) {
-            //_healthBar.Value = Lifetime;
-            if (!_preparingGame)
-                _healthBar.UpdateCountdown(Lifetime, HasBomb);
-
-            if (CarProperties.PowerUpActive && Time.time > CarProperties.PowerUpEndTime) {
-				CarProperties.PowerUpActive = false;
-				CarProperties.Speed = 30.0f;
-				print ("PowerUp Deactivated");
-			}
+            _healthBar.UpdateCountdown(Lifetime, HasBomb && !_preparingGame);
 			EnsureCarIsOnMap ();
+
+			transform.rotation= Quaternion.Lerp (transform.rotation, _lookAngle , CarProperties.TurnRate * Time.deltaTime);
 		} else if (isServer) {	
 			// let the server authoratively update vital stats
 			if ((HasBomb && Lifetime > 0.0f) && !_preparingGame) {
@@ -227,10 +211,12 @@ public class CarController : NetworkBehaviour
 				_lookAngle.eulerAngles = new Vector3(0, combined, 0);
 			}
 
-			_rigidbody.rotation = _lookAngle;
-
 			if (_joystick.IsDragging ()) {
-				_rigidbody.velocity = CarProperties.Speed * transform.forward * joystickVector.magnitude;
+				_rigidbody.AddForce (transform.forward * joystickVector.magnitude * CarProperties.Acceleration);
+			}
+
+			if(_rigidbody.velocity.magnitude > CarProperties.MaxSpeed) {
+				_rigidbody.velocity = _rigidbody.velocity.normalized * CarProperties.MaxSpeed;
 			}
 
 		}
@@ -288,7 +274,10 @@ public class CarController : NetworkBehaviour
 	public void RpcPlayerGameStarting(){
         _preparingGame = false;
 		DebugConsole.Log("Player: " + _preparingGame);
-        _healthBar.UpdateCountdown(Lifetime, HasBomb);
+        if (isLocalPlayer)
+        {
+            _healthBar.UpdateCountdown(Lifetime, HasBomb);
+        }
         EnableControls (true);
 	}
 

@@ -73,12 +73,11 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4145881121463690}
+  - component: {fileID: 54718780567473220}
   - component: {fileID: 65639883451884278}
   - component: {fileID: 114488155231273160}
   - component: {fileID: 114144511705592890}
-  - component: {fileID: 143742583844132074}
   - component: {fileID: 114253441781280340}
-  - component: {fileID: 54718780567473220}
   m_Layer: 9
   m_Name: CharacterControllerCar
   m_TagString: TankTag
@@ -329,23 +328,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8e26f6917b3547a2b44ff62abc22cbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!143 &143742583844132074
-CharacterController:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1879460411152624}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Height: 1.3
-  m_Radius: 0.65
-  m_SlopeLimit: 60
-  m_StepOffset: 0
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!223 &223333262450419810
 Canvas:
   m_ObjectHideFlags: 1

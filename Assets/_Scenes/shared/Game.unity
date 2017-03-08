@@ -439,8 +439,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4ed3580c8eef3e4c9129485467ee8f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MinValue: 0
-  MaxValue: 15
 --- !u!1 &614231944
 GameObject:
   m_ObjectHideFlags: 0
@@ -468,7 +466,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 614231944}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 400, z: -5}
+  m_LocalPosition: {x: 0, y: 20, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 943544713}
@@ -511,15 +509,15 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 100
-  far clip plane: 10000
+  near clip plane: 1
+  far clip plane: 100
   field of view: 60
   orthographic: 0
   orthographic size: 100
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 512
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -3981,8 +3979,8 @@ MonoBehaviour:
   videoConfigurationWindowsStore1: -device=WinMC -format=BGRA
   videoConfigurationLinux1: 
   BackgroundLayer1: 9
-  NearPlane: 100
-  FarPlane: 10000
+  NearPlane: 1
+  FarPlane: 100
   ContentRotate90: 0
   ContentFlipH: 0
   ContentFlipV: 0
@@ -4202,7 +4200,7 @@ MonoBehaviour:
   CameraObject: {fileID: 614231944}
   MarkerScene: {fileID: 188577963}
   CameraXPosition: 0
-  CameraYPosition: 400
+  CameraYPosition: 20
   CameraZPosition: 0
   CameraXRotation: 80
   CameraYRotation: 0
