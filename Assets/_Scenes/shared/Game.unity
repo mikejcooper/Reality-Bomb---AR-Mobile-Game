@@ -639,7 +639,7 @@ RectTransform:
   m_GameObject: {fileID: 765007402}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 0.2, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 839156223}
   m_Father: {fileID: 403973947}
@@ -648,7 +648,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 100, y: 0}
-  m_SizeDelta: {x: 700, y: 120}
+  m_SizeDelta: {x: 700, y: 40}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &765007404
 MonoBehaviour:
@@ -669,13 +669,13 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Texture: {fileID: 2800000, guid: d1c3106c6c0386d4ca155acfede80e76, type: 3}
+  m_Texture: {fileID: 2800000, guid: 89e58eb1e38f3494b9e11530ac357278, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 11.666667
-    height: 0.5
+    width: 8.75
+    height: 1
 --- !u!222 &765007405
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -725,10 +725,10 @@ RectTransform:
   m_Father: {fileID: 839156223}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &769625824
 MonoBehaviour:
@@ -861,12 +861,12 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 733453587
+  randomSeed: -1418706371
   InitialModule:
     serializedVersion: 3
     enabled: 1
     startLifetime:
-      scalar: 1
+      scalar: 0.8
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -905,7 +905,7 @@ ParticleSystem:
         m_RotationOrder: 4
       minMaxState: 0
     startSpeed:
-      scalar: 10
+      scalar: 80
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -1025,7 +1025,7 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       minMaxState: 2
     startSize:
-      scalar: 0.4
+      scalar: 2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -1043,7 +1043,7 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 2
           time: 0
-          value: 0.25
+          value: 0.5
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -1225,9 +1225,9 @@ ParticleSystem:
     randomizeRotationDirection: 0
     maxNumParticles: 1000
     size3D: 0
-    rotation3D: 0
+    rotation3D: 1
     gravityModifier:
-      scalar: -0.1
+      scalar: -10
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -1272,8 +1272,8 @@ ParticleSystem:
     radius: 0.02
     angle: 25
     length: 5
-    boxX: 1
-    boxY: 5
+    boxX: 10
+    boxY: 40
     boxZ: 1
     arc: 360
     placementMode: 0
@@ -1292,7 +1292,7 @@ ParticleSystem:
     enabled: 1
     serializedVersion: 3
     rateOverTime:
-      scalar: 60
+      scalar: 500
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -2873,7 +2873,7 @@ ParticleSystem:
       minColor: {r: 1, g: 1, b: 1, a: 1}
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       minMaxState: 1
-    range: {x: 0, y: 1}
+    range: {x: 0, y: 200}
   CollisionModule:
     enabled: 0
     serializedVersion: 3
@@ -3422,7 +3422,7 @@ RectTransform:
   m_GameObject: {fileID: 839156222}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5, y: 25, z: 5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 769625823}
   - {fileID: 1270159540}
@@ -3431,9 +3431,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -60}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -20}
+  m_SizeDelta: {x: 1, y: 0}
+  m_Pivot: {x: 0.5, y: 0}
 --- !u!199 &839156224
 ParticleSystemRenderer:
   serializedVersion: 2
@@ -3539,7 +3539,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -588580799
+  randomSeed: -656420814
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3715,7 +3715,7 @@ ParticleSystem:
       maxColor: {r: 1, g: 0.85882354, b: 0.4392157, a: 1}
       minMaxState: 0
     startSize:
-      scalar: 1
+      scalar: 10
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -3733,14 +3733,14 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 2
           time: 0
-          value: 0.5
+          value: 0.6666667
           inSlope: 0
           outSlope: 0
           tangentMode: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 0
-      minMaxState: 3
+      minMaxState: 0
     startSizeY:
       scalar: 1
       maxCurve:
@@ -3767,7 +3767,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 0
-      minMaxState: 3
+      minMaxState: 0
     startSizeZ:
       scalar: 1
       maxCurve:
@@ -3794,7 +3794,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 0
-      minMaxState: 3
+      minMaxState: 0
     startRotationX:
       scalar: 0
       maxCurve:
@@ -3913,7 +3913,7 @@ ParticleSystem:
         m_RotationOrder: 4
       minMaxState: 0
     randomizeRotationDirection: 0
-    maxNumParticles: 200
+    maxNumParticles: 1000
     size3D: 0
     rotation3D: 1
     gravityModifier:
@@ -3962,8 +3962,8 @@ ParticleSystem:
     radius: 0.01
     angle: 25
     length: 5
-    boxX: 1
-    boxY: 5
+    boxX: 10
+    boxY: 40
     boxZ: 1
     arc: 360
     placementMode: 0
@@ -3982,7 +3982,7 @@ ParticleSystem:
     enabled: 1
     serializedVersion: 3
     rateOverTime:
-      scalar: 200
+      scalar: 100
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -6190,7 +6190,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1270159541
 MonoBehaviour:
@@ -6323,7 +6323,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1374601908
+  randomSeed: -326416298
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -6499,7 +6499,7 @@ ParticleSystem:
       maxColor: {r: 0.11372549, g: 0.11372549, b: 0.11372549, a: 1}
       minMaxState: 0
     startSize:
-      scalar: 1
+      scalar: 10
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -6683,7 +6683,7 @@ ParticleSystem:
     size3D: 0
     rotation3D: 0
     gravityModifier:
-      scalar: -0.002
+      scalar: -1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -6728,8 +6728,8 @@ ParticleSystem:
     radius: 0.02
     angle: 25
     length: 5
-    boxX: 1
-    boxY: 5
+    boxX: 10
+    boxY: 40
     boxZ: 1
     arc: 360
     placementMode: 0
@@ -6748,7 +6748,7 @@ ParticleSystem:
     enabled: 1
     serializedVersion: 3
     rateOverTime:
-      scalar: 20
+      scalar: 1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -6841,7 +6841,7 @@ ParticleSystem:
   SizeModule:
     enabled: 1
     curve:
-      scalar: 1
+      scalar: 10
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -7067,7 +7067,7 @@ ParticleSystem:
       minMaxState: 2
     separateAxes: 0
   ColorModule:
-    enabled: 0
+    enabled: 1
     gradient:
       serializedVersion: 2
       maxGradient:
@@ -7096,24 +7096,24 @@ ParticleSystem:
           serializedVersion: 2
           rgba: 0
         ctime0: 0
-        ctime1: 65535
-        ctime2: 0
+        ctime1: 39850
+        ctime2: 65535
         ctime3: 0
         ctime4: 0
         ctime5: 0
         ctime6: 0
         ctime7: 0
         atime0: 0
-        atime1: 65535
-        atime2: 0
+        atime1: 57819
+        atime2: 65535
         atime3: 0
         atime4: 0
         atime5: 0
         atime6: 0
         atime7: 0
         m_Mode: 0
-        m_NumColorKeys: 2
-        m_NumAlphaKeys: 2
+        m_NumColorKeys: 3
+        m_NumAlphaKeys: 3
       minGradient:
         key0:
           serializedVersion: 2
@@ -9316,7 +9316,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1965431130}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe4ec33cee90c844ea1bcc2cd642033e, type: 3}
   m_Name: 

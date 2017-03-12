@@ -17,7 +17,7 @@ public class TextureSlider : MonoBehaviour
     void Update()
     {
         var width = _rt.sizeDelta.x;
-        var uvWidth = width / 60;
+        var uvWidth = width / 80;
         var rect = _img.uvRect;
         rect.width = uvWidth;
         _img.uvRect = rect;
