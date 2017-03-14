@@ -10,6 +10,8 @@ class UIHealthBar : MonoBehaviour
     private Text _txt;
     private ParticleSystem[] _psystems;
 
+    public  GameObject _expl_prefab;
+
     private float _maxWidth;
     private float _maxValue = 15;
     public float MaxValue
@@ -91,7 +93,15 @@ class UIHealthBar : MonoBehaviour
         {
             float t = _value - (Time.time - _time); //current time
             if (t < 0)
+            {
                 t = 0;
+                _counting = false;
+                GameObject explosion = Instantiate(_expl_prefab);
+                explosion.transform.parent = transform.parent;
+                explosion.GetComponent<RectTransform>().localPosition = Vector2.zero;
+                //Debug.Break();
+            }
+                
 
             //Slide fuse to the left
             _rt.sizeDelta = new Vector2(_maxWidth * t / MaxValue, _rt.rect.height);

@@ -39,13 +39,15 @@ EditorBuildSettings:
     path: Assets/_Scenes/mobile/Mini_Game.unity
   - enabled: 0
     path: Assets/_Scenes/mobile/Game.unity
-  - enabled: 1
+  - enabled: 0
     path: Assets/_Scenes/tv/Idle.unity
   - enabled: 1
     path: Assets/_Scenes/shared/Game.unity
-  - enabled: 1
+  - enabled: 0
     path: Assets/_Scenes/tv/Leaderboard.unity
   - enabled: 1
     path: Assets/_Scenes/mobile/Sandbox.unity
   - enabled: 0
     path: Assets/_Scenes/shared/SharedIdle.unity
+  - enabled: 1
+    path: Assets/_Scenes/mobile/Leaderboard.unity
