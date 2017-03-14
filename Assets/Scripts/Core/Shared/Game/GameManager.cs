@@ -26,11 +26,16 @@ public class GameManager : NetworkBehaviour {
 
 	public GameObject WorldMesh { get; private set; }
 
-
+	private GameObject Joystick;
 
 
 	void Start ()
 	{
+
+		if (GameObject.Find ("JoystickBack") != null) {
+			Joystick = GameObject.Find ("JoystickBack");
+		}
+
 		if (!isServer) {
 			WorldMesh = ClientSceneManager.Instance.WorldMesh;
 
@@ -49,6 +54,7 @@ public class GameManager : NetworkBehaviour {
 				ServerSceneManager.Instance.OnPlayerGameLoadedEvent += CheckAreAllPlayersGameLoaded;
 			}
 
+			DisablePlayerUI ();
 		}
 			
 		// use downloaded marker pattern
@@ -209,6 +215,12 @@ public class GameManager : NetworkBehaviour {
 		return false;
 	}
 
+	public void DisablePlayerUI() {
+		Joystick.SetActive (false);
+	}
 
-		
+	public void EnablePlayerUI() {
+		Joystick.SetActive (true);
+	}
+
 }

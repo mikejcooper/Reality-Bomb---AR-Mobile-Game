@@ -154,8 +154,12 @@ public class CarController : NetworkBehaviour
 		if ((isLocalPlayer || IsPlayingSolo)) {
             _healthBar.UpdateCountdown(Lifetime, HasBomb && !_preparingGame);
 			EnsureCarIsOnMap ();
-
 			transform.rotation= Quaternion.Lerp (transform.rotation, _lookAngle , CarProperties.TurnRate * Time.deltaTime);
+
+			if (Lifetime <= 0.0f) {
+				ToggleControls ();
+				GameObject.FindObjectOfType<GameManager> ().DisablePlayerUI ();
+			}
 		} else if (isServer) {	
 			// let the server authoratively update vital stats
 			if ((HasBomb && Lifetime > 0.0f) && !_preparingGame) {
