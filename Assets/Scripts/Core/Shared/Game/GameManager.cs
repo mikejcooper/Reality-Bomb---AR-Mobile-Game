@@ -209,14 +209,6 @@ public class GameManager : NetworkBehaviour {
 		return false;
 	}
 
-	public void ServerMeshPlayerReady(){
-		foreach (PreparingGame prep in gameObject.GetComponents<PreparingGame>()) {
-			prep.StartGameCountDown ();
-		}
-		foreach (CarController car in _cars) {
-			car.EnableControls (true);
-		}
-	}
 
 		
 }

@@ -36,14 +36,12 @@ public class OfflineCarController : MonoBehaviour
 
 		_rigidbody = GetComponent<Rigidbody> ();
 
-		CarProperties.PowerUpActive = false;
-
 	}
 
 
 	private void Update ()
 	{
-		
+		transform.rotation= Quaternion.Lerp (transform.rotation, _lookAngle , CarProperties.TurnRate * Time.deltaTime);
 	}
 
 	private void FixedUpdate ()
@@ -60,13 +58,12 @@ public class OfflineCarController : MonoBehaviour
 			_lookAngle.eulerAngles = new Vector3(0, combined, 0);
 		}
 
-		_rigidbody.rotation = _lookAngle;
-
-
 		if (_joystick.IsDragging ()) {
-			
-			_rigidbody.velocity = CarProperties.Speed * transform.forward * joystickVector.magnitude;
+			_rigidbody.AddForce (transform.forward * joystickVector.magnitude * CarProperties.Acceleration);
+		}
 
+		if(_rigidbody.velocity.magnitude > CarProperties.MaxSpeed) {
+			_rigidbody.velocity = _rigidbody.velocity.normalized * CarProperties.MaxSpeed;
 		}
 
 
