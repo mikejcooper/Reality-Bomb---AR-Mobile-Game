@@ -28,9 +28,18 @@ public class GameManager : NetworkBehaviour {
 
 
 
-
 	void Start ()
 	{
+
+		if (isServer) {
+			if (GameObject.Find ("JoystickBack") != null) {
+				GameObject.Find ("JoystickBack").SetActive (false);
+			}
+			if (GameObject.Find ("HealthBar") != null) {
+				GameObject.Find ("HealthBar").SetActive (false);
+			}
+		}
+
 		if (!isServer) {
 			WorldMesh = ClientSceneManager.Instance.WorldMesh;
 
@@ -48,7 +57,6 @@ public class GameManager : NetworkBehaviour {
 			} else {
 				ServerSceneManager.Instance.OnPlayerGameLoadedEvent += CheckAreAllPlayersGameLoaded;
 			}
-
 		}
 			
 		// use downloaded marker pattern
@@ -209,14 +217,4 @@ public class GameManager : NetworkBehaviour {
 		return false;
 	}
 
-	public void ServerMeshPlayerReady(){
-		foreach (PreparingGame prep in gameObject.GetComponents<PreparingGame>()) {
-			prep.StartGameCountDown ();
-		}
-		foreach (CarController car in _cars) {
-			car.EnableControls (true);
-		}
-	}
-
-		
 }

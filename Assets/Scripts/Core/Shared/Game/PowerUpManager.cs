@@ -11,7 +11,8 @@ public class PowerUpManager : MonoBehaviour
 	public Canvas PlayerCanvas;
 	public Texture SplatterTexture;
 
-	private string _gui_Txt = "Welcome to the Tutorial!\nUse the joystick to drive around but don't fall off the map!\nSee if you can pickup some Power Ups along the way!";
+//	private bool _controlsDisabled;
+
 	private enum _powerUpList{
 		Speed,
 		Ink,
@@ -20,12 +21,10 @@ public class PowerUpManager : MonoBehaviour
 
 	void Start () {
 		OnMeshReady ();
-		Invoke ("ClearGuiTxt", 10.0f);
+//		_controlsDisabled = false;
+
 	}
 
-	void OnGUI(){
-		GUI.Label(new Rect(Screen.width/2.0f - 150,Screen.height/40.0f, 800, 800), _gui_Txt);
-	}
 
 	// use coroutines rather than running on every update
 	IEnumerator TryToSpawn()
@@ -36,7 +35,7 @@ public class PowerUpManager : MonoBehaviour
 			int rand = Random.Range(0,5);
 
 			// If generater produces the predetermined number from the range above, spawn a power up
-			if (rand == 0/*|| rand == 1 || rand == 2*/) { 
+			if (rand == 0|| rand == 1 || rand == 2/**/) { 
 				GenPowerUp ();
 			}
 
@@ -72,7 +71,7 @@ public class PowerUpManager : MonoBehaviour
 		powerUp.PlayerCanvas = PlayerCanvas;
 		powerUp.SplatterTex = SplatterTexture;
 
-
+		powerUp.SetPowerUpManager (this);
 	}
 
 	//Generate a Random Type for a powerup when spawning 
@@ -80,11 +79,15 @@ public class PowerUpManager : MonoBehaviour
 		return Random.Range(0,3);
 	}
 
-	private void ClearGuiTxt(){
-		_gui_Txt = "";
-	}
+	public delegate void OnSplatterStart ();
+	public delegate void OnSplatterEnd ();
+	public delegate void OnSpeedUpStart ();
+	public delegate void OnSpeedUpEnd ();
 
-
+	public event OnSplatterStart OnSplatterStartEvent = delegate {};
+	public event OnSplatterEnd OnSplatterEndEvent = delegate {};
+	public event OnSpeedUpStart OnSpeedUpStartEvent = delegate {};
+	public event OnSpeedUpEnd OnSpeedUpEndEvent = delegate {};
 }
 
 

@@ -6,10 +6,13 @@ class UIHealthBar : MonoBehaviour
 {
 
     private RectTransform _rt;
-    private RectTransform _sparks;
+    private GameObject _sparks;
     private Text _txt;
-    
+    private ParticleSystem[] _psystems;
 
+    public  GameObject _expl_prefab;
+
+    private float _maxWidth;
     private float _maxValue = 15;
     public float MaxValue
     {
@@ -28,17 +31,34 @@ class UIHealthBar : MonoBehaviour
     private float _time;
     private float _value;
 
+    //Should only be called for local player
     public void UpdateCountdown(float value, bool counting)
     {
-        Debug.Log("UpdateCountdown: " + value + " isBomb: " + counting);
+        //Debug.Log("UpdateCountdown: " + value + " isBomb: " + counting);
         if (_counting == counting)
             return;
         _counting = counting;
-        _sparks.gameObject.SetActive(counting);
         _value = value;
         if(counting)
         {
+            Debug.Log("Playing");
+            //_sparks.GetComponent<ParticleSystem>().Play();
+            for (int i = 0; i < _psystems.Length; i++)
+            {
+                var em = _psystems[i].emission;
+                em.enabled = true;
+            }
             _time = Time.time;
+        }
+        else
+        {
+            Debug.Log("Pausing");
+            //_sparks.GetComponent<ParticleSystem>().Pause();
+            for (int i = 0; i < _psystems.Length; i++)
+            {
+                var em = _psystems[i].emission;
+                em.enabled = false;
+            }
         }
     }
 
@@ -49,18 +69,22 @@ class UIHealthBar : MonoBehaviour
             if (child.gameObject.name == "Fill")
             {
                 _rt = child.GetComponent<RectTransform>();
+                _sparks = child.GetChild(0).gameObject;
+                Debug.Log("Pausing");
+                _psystems = child.GetComponentsInChildren<ParticleSystem>();
+                for (int i=0; i<_psystems.Length; i++)
+                {
+                    var em = _psystems[i].emission;
+                    em.enabled = false;
+                }
             }
             if (child.gameObject.name == "Text")
             {
                 _txt = child.GetComponent<Text>();
             }
-            if (child.gameObject.name == "Sparks")
-            {
-                _sparks = child.GetComponent<RectTransform>();
-                _sparks.gameObject.SetActive(false);
-            }
         }
         _time = Time.time;
+        _maxWidth = _rt.rect.width;
     }
     
     void Update()
@@ -69,17 +93,20 @@ class UIHealthBar : MonoBehaviour
         {
             float t = _value - (Time.time - _time); //current time
             if (t < 0)
+            {
                 t = 0;
+                _counting = false;
+                GameObject explosion = Instantiate(_expl_prefab);
+                explosion.transform.parent = transform.parent;
+                explosion.GetComponent<RectTransform>().localPosition = Vector2.zero;
+                //Debug.Break();
+            }
+                
 
             //Slide fuse to the left
-            Vector3 pos = _rt.anchoredPosition;
-            pos.x = -_rt.rect.width * (1 - t/MaxValue);
-            _rt.anchoredPosition = pos;
-            pos.x += _rt.rect.width / 2;
-            _sparks.anchoredPosition = pos;
+            _rt.sizeDelta = new Vector2(_maxWidth * t / MaxValue, _rt.rect.height);
 
             _txt.text = string.Format("{0:N2}", t);
-
         }
     }
     
