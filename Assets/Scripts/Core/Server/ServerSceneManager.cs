@@ -230,7 +230,6 @@ public class ServerSceneManager : MonoBehaviour
 			if (_playerDataManager.HasGameData()) {
 				//				networkLobbyManager.ServerChangeScene ("Leaderboard");
 				if (_currentScene != "Leaderboard") {
-					Debug.LogError("sent a scene change: Leaderboard");
 					_networkLobbyManager.ServerChangeScene("Leaderboard");
 					_currentScene = "Leaderboard"; // put this in some scene load callback
 					foreach (var lobbyPlayer in _networkLobbyManager.lobbySlots) {

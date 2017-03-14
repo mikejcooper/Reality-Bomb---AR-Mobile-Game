@@ -31,19 +31,19 @@ EditorBuildSettings:
     path: Assets/_Scenes/mobile/MiniGame.unity
   - enabled: 0
     path: Assets/_Scenes/mobile/Game.unity
-  - enabled: 1
-    path: Assets/_Scenes/mobile/Leaderboard.unity
+  - enabled: 0
+    path: Assets/_Scenes/mobile/Leaderboard_org.unity
   - enabled: 0
     path: Assets/_Scenes/mobile/Pass_The_Bomb.unity
   - enabled: 0
     path: Assets/_Scenes/mobile/Mini_Game.unity
   - enabled: 0
     path: Assets/_Scenes/mobile/Game.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/_Scenes/tv/Idle.unity
   - enabled: 1
     path: Assets/_Scenes/shared/Game.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/_Scenes/tv/Leaderboard.unity
   - enabled: 1
     path: Assets/_Scenes/mobile/Sandbox.unity

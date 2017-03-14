@@ -89,7 +89,7 @@ public sealed class FastObjImporter
 
 					Vector3 vec = new Vector3(GetFloat(sb, ref splitStart, ref sbFloat),
 						GetFloat(sb, ref splitStart, ref sbFloat), GetFloat(sb, ref splitStart, ref sbFloat));
-					_normals.Add (new Vector3 (-vec.z, -vec.y, vec.x));
+					_normals.Add (new Vector3 (-vec.x, vec.y, vec.z));
 				}
 				else if (sb[0] == 'v' && sb[1] == ' ') // Vertices
 				{

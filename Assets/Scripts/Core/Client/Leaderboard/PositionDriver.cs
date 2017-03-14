@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class PositionDriver : MonoBehaviour {
 
-	public Text PositionText;
-	public Text OrdinalText;
+	public TextMeshProUGUI PositionText;
+	public TextMeshProUGUI OrdinalText;
 
 	void Start () {
 		if (ClientSceneManager.Instance == null || ClientSceneManager.Instance.GetThisPlayerData () == null) {
