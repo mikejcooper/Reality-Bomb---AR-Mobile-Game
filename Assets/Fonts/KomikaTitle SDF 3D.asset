@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: -667331979, guid: 89f0137620f6af44b9ba852b4190e64e, type: 3}
   m_Name: KomikaTitle SDF 3D
   m_EditorClassIdentifier: 
-  hashCode: -13636453
+  hashCode: -426976180
   material: {fileID: 21388005783346704}
   materialHashCode: -1563347920
   fontAssetType: 1
@@ -1154,7 +1154,7 @@ Material:
       second: 0
     - first:
         name: _WeightBold
-      second: 0.5
+      second: 0.75
     - first:
         name: _WeightNormal
       second: 0
