@@ -11,7 +11,7 @@ public class SandboxManager : MonoBehaviour
 
 	public GameObject CarObject;
 	public GameObject PlaneObject;
-	public PowerUpManager PowerUpManagerObject;
+//	public PowerUpManager PowerUpManagerObject;
 
 	private bool _controlsDisabled;
 	private string _gui_Txt = "Welcome to the Tutorial!\nUse the joystick to drive around but don't fall off the map!\nSee if you can pickup some Power Ups along the way!";
@@ -21,7 +21,7 @@ public class SandboxManager : MonoBehaviour
 	void Start(){
 		_controlsDisabled = false;
 		Invoke ("ClearGuiTxt", 10.0f);
-		PowerUpManagerObject.OnSplatterStartEvent += Splat;
+//		PowerUpManagerObject.OnSplatterStartEvent += Splat;
 	}
 
 	void Update(){
@@ -37,9 +37,9 @@ public class SandboxManager : MonoBehaviour
 		_gui_Txt = "";
 	}
 
-	private void Splat () {
-		DebugConsole.Log ("Splat!");
-	}
+//	private void Splat () {
+//		DebugConsole.Log ("Splat!");
+//	}
 
 	/*
 	public void EnsureCarIsOnMap(){
