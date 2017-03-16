@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using TMPro;
 
 public class CarController : NetworkBehaviour
 {
@@ -161,8 +162,7 @@ public class CarController : NetworkBehaviour
 			transform.rotation= Quaternion.Lerp (transform.rotation, _lookAngle , CarProperties.TurnRate * Time.deltaTime);
 
 			if (Lifetime <= 0.0f) {
-				ToggleControls ();
-				DisablePlayerUI ();
+				Spectate ();
 			}
 		} else if (isServer) {	
 			// let the server authoratively update vital stats
@@ -323,12 +323,13 @@ public class CarController : NetworkBehaviour
 		}
 	}
 
-	public void DisablePlayerUI() {
+	private void DisablePlayerUI() {
 		_joystickGameObject.SetActive (false);
 	}
 
-	public void EnablePlayerUI() {
-		_joystickGameObject.SetActive (true);
+	public void Spectate() {
+		ToggleControls ();
+		DisablePlayerUI ();
+		GameObject.Find ("SpectatingText").GetComponent<TextMeshProUGUI> ().text = "Spectating...";
 	}
-
 }

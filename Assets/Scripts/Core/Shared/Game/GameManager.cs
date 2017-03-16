@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using ServerLifecycle;
-
+using TMPro;
 
 
 public class GameManager : NetworkBehaviour {
@@ -37,6 +37,9 @@ public class GameManager : NetworkBehaviour {
 			}
 			if (GameObject.Find ("HealthBar") != null) {
 				GameObject.Find ("HealthBar").SetActive (false);
+			}
+			if (GameObject.Find ("SpectatingText") != null) {
+				GameObject.Find ("SpectatingText").GetComponent<TextMeshProUGUI>().text = "Spectating...";
 			}
 		}
 
