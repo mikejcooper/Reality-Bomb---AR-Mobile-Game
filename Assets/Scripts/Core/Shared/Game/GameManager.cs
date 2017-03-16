@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using ServerLifecycle;
-
+using TMPro;
 
 
 public class GameManager : NetworkBehaviour {
@@ -28,9 +28,21 @@ public class GameManager : NetworkBehaviour {
 
 
 
-
 	void Start ()
 	{
+
+		if (isServer) {
+			if (GameObject.Find ("JoystickBack") != null) {
+				GameObject.Find ("JoystickBack").SetActive (false);
+			}
+			if (GameObject.Find ("HealthBar") != null) {
+				GameObject.Find ("HealthBar").SetActive (false);
+			}
+			if (GameObject.Find ("SpectatingText") != null) {
+				GameObject.Find ("SpectatingText").GetComponent<TextMeshProUGUI>().text = "Spectating...";
+			}
+		}
+
 		if (!isServer) {
 			WorldMesh = ClientSceneManager.Instance.WorldMesh;
 
@@ -48,7 +60,6 @@ public class GameManager : NetworkBehaviour {
 			} else {
 				ServerSceneManager.Instance.OnPlayerGameLoadedEvent += CheckAreAllPlayersGameLoaded;
 			}
-
 		}
 			
 		// use downloaded marker pattern
@@ -209,6 +220,4 @@ public class GameManager : NetworkBehaviour {
 		return false;
 	}
 
-
-		
 }

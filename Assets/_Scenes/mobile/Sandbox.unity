@@ -316,8 +316,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 757163055}
-  - component: {fileID: 757163056}
   - component: {fileID: 757163054}
+  - component: {fileID: 757163057}
   m_Layer: 0
   m_Name: SandboxManager
   m_TagString: Untagged
@@ -338,7 +338,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CarObject: {fileID: 895805221}
   PlaneObject: {fileID: 2137931947}
-  PowerUpManagerObject: {fileID: 757163056}
 --- !u!4 &757163055
 Transform:
   m_ObjectHideFlags: 0
@@ -352,7 +351,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &757163056
+--- !u!114 &757163057
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
@@ -360,12 +359,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 757163053}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18e641c5ee95745239fc787b67dc3075, type: 3}
+  m_Script: {fileID: 11500000, guid: b854a488ddc6a4545b5dc022eb3176ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlaneObject: {fileID: 2137931947}
   PlayerCanvas: {fileID: 1343903778}
-  SplatterTexture: {fileID: 2800000, guid: 453cc8a4aa1ad41f39f54292f544af93, type: 3}
+  PlaneObject: {fileID: 2137931947}
+  SpeedProperties:
+    PowerupPrefab: {fileID: 1721211281845520, guid: d867da276c9d74b5f9cc2c859ef56541,
+      type: 2}
+    CanvasSplash: {fileID: 0}
+    Duration: 8
+  InkProperties:
+    PowerupPrefab: {fileID: 1376029131227572, guid: 8941b7ff91ab74effb98f6f1b9bbc899,
+      type: 2}
+    CanvasSplash: {fileID: 0}
+    Duration: 8
+    SplatterTexture: {fileID: 2800000, guid: 453cc8a4aa1ad41f39f54292f544af93, type: 3}
 --- !u!1001 &895805219
 Prefab:
   m_ObjectHideFlags: 0
@@ -379,7 +388,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4795215153235550, guid: 163dc956e03d24970a33861b40f5c803, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 6.6
+      value: 5.78
       objectReference: {fileID: 0}
     - target: {fileID: 4795215153235550, guid: 163dc956e03d24970a33861b40f5c803, type: 2}
       propertyPath: m_LocalPosition.z
@@ -404,6 +413,36 @@ Prefab:
     - target: {fileID: 4795215153235550, guid: 163dc956e03d24970a33861b40f5c803, type: 2}
       propertyPath: m_RootOrder
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 54059155998190078, guid: 163dc956e03d24970a33861b40f5c803,
+        type: 2}
+      propertyPath: m_Drag
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 54059155998190078, guid: 163dc956e03d24970a33861b40f5c803,
+        type: 2}
+      propertyPath: m_UseGravity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 54059155998190078, guid: 163dc956e03d24970a33861b40f5c803,
+        type: 2}
+      propertyPath: m_AngularDrag
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114366977620015038, guid: 163dc956e03d24970a33861b40f5c803,
+        type: 2}
+      propertyPath: MaxSpeed
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 114366977620015038, guid: 163dc956e03d24970a33861b40f5c803,
+        type: 2}
+      propertyPath: Acceleration
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 114366977620015038, guid: 163dc956e03d24970a33861b40f5c803,
+        type: 2}
+      propertyPath: TurnRate
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 163dc956e03d24970a33861b40f5c803, type: 2}

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using TMPro;
 
 public class CarController : NetworkBehaviour
 {
@@ -40,6 +41,8 @@ public class CarController : NetworkBehaviour
 	private bool _controlsDisabled;
 	private bool _preparingGame = true;
 
+	private GameObject _joystickGameObject;
+
 	private void Start ()
 	{
 		if (GameObject.FindObjectOfType<GameManager> () != null) {
@@ -52,6 +55,7 @@ public class CarController : NetworkBehaviour
 
 		if (!_initialised) {
 			if (GameObject.Find ("JoystickBack") != null) {
+				_joystickGameObject = GameObject.Find ("JoystickBack");
 				_joystick = GameObject.Find ("JoystickBack").gameObject.GetComponent<UIJoystick> ();
 			}
 			Transform nameText = transform.Find ("NameTag").Find ("NameText");
@@ -65,15 +69,16 @@ public class CarController : NetworkBehaviour
 //            {
 //                _bombImage = GameObject.Find("BombImage").gameObject.GetComponent<Image>();
 //            }
-            if (GameObject.Find("HealthBar") != null)
-            {
-                _healthBar = GameObject.Find("HealthBar").gameObject.GetComponent<UIHealthBar>();
-            }
+			if (!isServer) {
+				if (GameObject.Find ("HealthBar") != null) {
+					_healthBar = GameObject.Find ("HealthBar").gameObject.GetComponent<UIHealthBar> ();
+					_healthBar.MaxValue = MaxLifetime;
+				}
+			}
             // The axes names are based on player number.
 
             _rigidbody = GetComponent<Rigidbody> ();
 			Lifetime = MaxLifetime;
-            _healthBar.MaxValue = MaxLifetime;
 			_transferTime = Time.time;
 			_initialised = true;
 			_controlsDisabled = false;
@@ -158,8 +163,11 @@ public class CarController : NetworkBehaviour
 		if ((isLocalPlayer || IsPlayingSolo)) {
             _healthBar.UpdateCountdown(Lifetime, HasBomb && !_preparingGame);
 			EnsureCarIsOnMap ();
-
 			transform.rotation= Quaternion.Lerp (transform.rotation, _lookAngle , CarProperties.TurnRate * Time.deltaTime);
+
+			if (Lifetime <= 0.0f) {
+				Spectate ();
+			}
 		} else if (isServer) {	
 			// let the server authoratively update vital stats
 			if ((HasBomb && Lifetime > 0.0f) && !_preparingGame) {
@@ -317,5 +325,15 @@ public class CarController : NetworkBehaviour
 		} else {
 			_controlsDisabled = true;
 		}
+	}
+
+	private void DisablePlayerUI() {
+		_joystickGameObject.SetActive (false);
+	}
+
+	public void Spectate() {
+		ToggleControls ();
+		DisablePlayerUI ();
+		GameObject.Find ("SpectatingText").GetComponent<TextMeshProUGUI> ().text = "Spectating...";
 	}
 }
