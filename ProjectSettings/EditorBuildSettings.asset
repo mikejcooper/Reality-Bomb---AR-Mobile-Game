@@ -5,40 +5,8 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/_Scenes/Mesh_Test.unity
-  - enabled: 0
-    path: Assets/_Scenes/Test_Scene.unity
-  - enabled: 0
-    path: Assets/_Scenes/Mini_Game.unity
-  - enabled: 0
-    path: Assets/_Scenes/Main.unity
-  - enabled: 0
-    path: Assets/_Scenes/Lobby.unity
-  - enabled: 0
-    path: Assets/Complete/Scenes/CompleteMainScene.unity
-  - enabled: 0
-    path: Assets/_Scenes/Main (Working).unity
-  - enabled: 0
-    path: Assets/_Scenes/Main_AR_setup.unity
-  - enabled: 0
-    path: Assets/_Scenes/Main_Warm_Up.unity
-  - enabled: 0
-    path: Assets/_Scenes/shared/Pass_The_Bomb.unity
   - enabled: 1
     path: Assets/_Scenes/mobile/Idle.unity
-  - enabled: 0
-    path: Assets/_Scenes/mobile/MiniGame.unity
-  - enabled: 0
-    path: Assets/_Scenes/mobile/Game.unity
-  - enabled: 0
-    path: Assets/_Scenes/mobile/Leaderboard_org.unity
-  - enabled: 0
-    path: Assets/_Scenes/mobile/Pass_The_Bomb.unity
-  - enabled: 0
-    path: Assets/_Scenes/mobile/Mini_Game.unity
-  - enabled: 0
-    path: Assets/_Scenes/mobile/Game.unity
   - enabled: 0
     path: Assets/_Scenes/tv/Idle.unity
   - enabled: 1
@@ -47,7 +15,5 @@ EditorBuildSettings:
     path: Assets/_Scenes/tv/Leaderboard.unity
   - enabled: 1
     path: Assets/_Scenes/mobile/Sandbox.unity
-  - enabled: 0
-    path: Assets/_Scenes/shared/SharedIdle.unity
   - enabled: 1
     path: Assets/_Scenes/mobile/Leaderboard.unity

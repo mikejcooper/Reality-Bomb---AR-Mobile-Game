@@ -140,17 +140,16 @@ public class CarController : NetworkBehaviour
 
 	private void processSetBombMessage(bool isBomb) {
 		DebugConsole.Log("isBomb: " + isBomb);
+#if UNITY_ANDROID || UNITY_IPHONE
+        if (isLocalPlayer && HasBomb != isBomb)
+            Handheld.Vibrate();
+#endif
         HasBomb = isBomb;
 		if (isBomb) {
 			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.parent = transform;
 			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localScale = 0.01f * Vector3.one;
 			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localPosition = new Vector3 (0, 2.5f, 0);
 			GameObject.FindObjectOfType<GameManager> ().BombObject.SetActive (true);
-#if UNITY_ANDROID || UNITY_IPHONE
-            if (isLocalPlayer)
-                Handheld.Vibrate();
-#endif
-
         } 
 	}
 
