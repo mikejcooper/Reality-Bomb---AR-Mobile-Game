@@ -1,5 +1,12 @@
 fileFormatVersion: 2
-guid: d57d2aa9ab18549999785c16d58d47d8
+<<<<<<< HEAD:Assets/Fonts/KomikaTitle SDF 3D.asset.meta
+guid: 0e53a409b9ba44eada5cfabe67514225
+timeCreated: 1488577918
+=======
+guid: 5d2cdaabf009c0f4380f9be121e8df39
+timeCreated: 1488280991
+>>>>>>> master:Assets/Prefabs/OfflineCar.prefab.meta
+licenseType: Free
 NativeFormatImporter:
   userData: 
   assetBundleName: 
