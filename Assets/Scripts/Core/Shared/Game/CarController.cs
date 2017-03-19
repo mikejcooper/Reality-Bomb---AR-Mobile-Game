@@ -184,7 +184,20 @@ public class CarController : NetworkBehaviour
 		DebugConsole.Log ("player has run out of time");
 		Lifetime = 0.0f;
 		Alive = false;
+		this.gameObject.SetActive (false);
+		RpcSetActive (false);
+		RpcSetAlive (false);
 		GameObject.FindObjectOfType<GameManager>().KillPlayer (this);
+	}
+
+	[ClientRpc]
+	private void RpcSetAlive(bool active){
+		Alive = active;
+	}
+
+	[ClientRpc]
+	private void RpcSetActive(bool active){
+		this.gameObject.SetActive (active);
 	}
 
 	private void ChangeColour(Color colour)

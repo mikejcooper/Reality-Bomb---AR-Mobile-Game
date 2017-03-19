@@ -19,9 +19,7 @@ public class GameManager : NetworkBehaviour {
 	public GameObject BombObject;
 
 	private List<CarController> _cars = new List<CarController>();
-	private List<CarController> _remainingCars = new List<CarController>();
 
-	private int _deathCounter = 0;
 	public int _startingBombPlayerConnectionId;
 
 	public GameObject WorldMesh { get; private set; }
@@ -104,22 +102,15 @@ public class GameManager : NetworkBehaviour {
 
 	[Server]
 	public void KillPlayer (CarController car) {
-		_deathCounter++;
-		int carsLeft = _cars.Count - _deathCounter;
+		int carsLeft = getNumberAliveCars();
 		ServerSceneManager.Instance.UpdatePlayerGameData (car.ServerId, carsLeft, car.Lifetime);
 		CheckForGameOver ();
-		//NetworkServer.Destroy (car.gameObject);
-		//KillDisconnectedPlayer ();
-		PassBombRandomPlayer ();
-	}
-
-	private void ProcessKillPlayerMessage (string playerName) {
-		RemoveByName (_remainingCars, playerName);
+		PassBombRandomPlayer();
 	}
 
 	[Server]
 	private void CheckForGameOver () {
-		if (_deathCounter >= (_cars.Count - 1)) {
+		if (getNumberAliveCars() == 1) {
 			// update game data for survivor
 			foreach (var car in _cars) {
 				if (car.Alive) {
@@ -174,7 +165,6 @@ public class GameManager : NetworkBehaviour {
 	public void AddCar(GameObject gamePlayer)
 	{
 		_cars.Add(gamePlayer.GetComponent<CarController>());
-		_remainingCars.Add(gamePlayer.GetComponent<CarController>());
 	}
 
 	private void PassBombRandomPlayer(){
@@ -183,8 +173,8 @@ public class GameManager : NetworkBehaviour {
 			if (car.Alive && !car.HasBomb) {
 				car.AllDevicesSetBomb (true);
 				return;
-				}
 			}
+		}
 	}
 
 	private void RemoveByName( List<CarController> list, string name){
@@ -202,7 +192,6 @@ public class GameManager : NetworkBehaviour {
 	[Server]
 	public void CollisionEvent(CarController car, Collision col){
 		CarController collisionCar = col.gameObject.GetComponent<CarController>();
-
 		if (col.gameObject.tag == "TankTag") {
 			if ( collisionCar.IsTransferTimeExpired() && collisionCar.HasBomb )
 			{
@@ -215,30 +204,47 @@ public class GameManager : NetworkBehaviour {
 
 	[Server]
 	private void KillDisconnectedPlayer(){
-		DebugConsole.Log ("Gamemanager Kill DisconnectedPlayer");
+		Debug.Log ("Gamemanager Kill DisconnectedPlayer");
 		for(var i = _cars.Count - 1; i > -1; i--)
 		{
-			if (_cars[i].connectionToClient == null)_cars.RemoveAt(i);
+			Debug.Log ("car connection: " + _cars[i].connectionToClient);
+			if (_cars[i].connectionToClient == null) _cars.RemoveAt(i);
 		}
+		Debug.Log ("exited loop");
 		CheckForGameOver ();
+		Debug.Log ("checked game over");
 		if (!IsBombInGame ()) PassBombRandomPlayer ();
+		Debug.Log ("maybe passed bomb");
 	}
 
 	[Server]
 	public void OnPlayerDisconnected(){
 		KillDisconnectedPlayer ();
-		if(!IsBombInGame()){
-			PassBombRandomPlayer ();
-		}
+//		Debug.Log ("Player has been disconnectedconsole the log");
+//		if(!IsBombInGame()){
+////			Debug.Log ("Player has been disconnectedconsole the log");
+//			PassBombRandomPlayer ();
+//		}
 	}
 
 	private bool IsBombInGame(){
 		foreach (CarController car in _cars) {
-			if (car.HasBomb) {
+			Debug.Log ("car: " + car.connectionToClient + ", car.Alive: "  + car.Alive + ", car.HasBomb: " + car.HasBomb);
+			if (car.HasBomb && car.Alive ) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	private int getNumberAliveCars(){
+		int aliveCars = 0;
+		foreach (CarController car in _cars) {
+			if (car.Alive) {
+				aliveCars++;
+			}
+		}
+		return aliveCars;
 	}
 
 }
