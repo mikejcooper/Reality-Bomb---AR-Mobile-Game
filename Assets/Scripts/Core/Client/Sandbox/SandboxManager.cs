@@ -27,7 +27,6 @@ public class SandboxManager : MonoBehaviour
 		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _welcome_Txt;
 		Invoke ("ClearGuiTxt", 10);
 		_controlsDisabled = false;
-		CanvasMessage.DisplayPowerUpMessage ("GameManager");
 	}
 
 	void Update(){
@@ -78,11 +77,13 @@ public class SandboxManager : MonoBehaviour
 	}
 
 	public void SetSplatTxt(){
+		CanvasMessage.DisplayPowerUpMessage ("Ink Splatter");
 		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _splatter_Txt;
 		Invoke ("ClearGuiTxt", 10.0f);
 	}
 
 	public void SetSpeedTxt(){
+		CanvasMessage.DisplayPowerUpMessage ("Speed Boost");
 		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _speed_Txt; 
 		Invoke ("ClearGuiTxt", 10.0f);
 	}
@@ -91,11 +92,6 @@ public class SandboxManager : MonoBehaviour
 		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _respawn_Txt;
 		Invoke ("ClearGuiTxt", 10.0f);
 	}
-
-	private void showCanvasMessage(){
-		CanvasMessage.DisplayPowerUpMessage ("GameManager");
-	}
-		
 
 
 }
