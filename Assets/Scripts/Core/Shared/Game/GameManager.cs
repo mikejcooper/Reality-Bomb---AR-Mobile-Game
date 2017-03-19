@@ -59,6 +59,7 @@ public class GameManager : NetworkBehaviour {
 				AllPlayersReady ();
 			} else {
 				ServerSceneManager.Instance.OnPlayerGameLoadedEvent += CheckAreAllPlayersGameLoaded;
+				ServerSceneManager.Instance.OnPlayerDisconnectEvent += OnPlayerDisconnected;
 			}
 		}
 			
@@ -67,7 +68,7 @@ public class GameManager : NetworkBehaviour {
 
 		WorldMesh.transform.parent = MarkerScene.transform;
 
-//		ServerSceneManager.Instance.OnPlayerDisconnectEvent += OnPlayerDisconnected;
+
 
 		if (OnWorldMeshAvailableEvent != null)
 			OnWorldMeshAvailableEvent (WorldMesh);
@@ -91,7 +92,7 @@ public class GameManager : NetworkBehaviour {
 		// isServer is unset by NetworkIdentity before our OnDestroy
 		// so we have to check whether server is running instead.
 		if (NetworkServer.active) {
-//			ServerSceneManager.Instance.OnPlayerDisconnectEvent -= OnPlayerDisconnected;
+			ServerSceneManager.Instance.OnPlayerDisconnectEvent -= OnPlayerDisconnected;
 			ServerSceneManager.Instance.OnPlayerGameLoadedEvent -= CheckAreAllPlayersGameLoaded;
 		}
 	}
@@ -107,8 +108,8 @@ public class GameManager : NetworkBehaviour {
 		int carsLeft = _cars.Count - _deathCounter;
 		ServerSceneManager.Instance.UpdatePlayerGameData (car.ServerId, carsLeft, car.Lifetime);
 		CheckForGameOver ();
-//		NetworkServer.Destroy (car.gameObject);
-//		KillDisconnectedPlayer ();
+		NetworkServer.Destroy (car.gameObject);
+		KillDisconnectedPlayer ();
 		PassBombRandomPlayer ();
 	}
 
@@ -225,7 +226,7 @@ public class GameManager : NetworkBehaviour {
 
 	[Server]
 	public void OnPlayerDisconnected(){
-//		KillDisconnectedPlayer ();
+		KillDisconnectedPlayer ();
 		if(!IsBombInGame()){
 			PassBombRandomPlayer ();
 		}
