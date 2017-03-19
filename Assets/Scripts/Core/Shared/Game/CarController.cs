@@ -160,13 +160,18 @@ public class CarController : NetworkBehaviour
 			return;
 				
 		if ((isLocalPlayer || IsPlayingSolo)) {
-            _healthBar.UpdateCountdown(Lifetime, HasBomb && !_preparingGame);
+            
 			EnsureCarIsOnMap ();
 			transform.rotation= Quaternion.Lerp (transform.rotation, _lookAngle , CarProperties.TurnRate * Time.deltaTime);
 
 			if (Lifetime <= 0.0f) {
 				Spectate ();
-			}
+                _healthBar.UpdateCountdown(0.0f, false);
+            }
+            else
+            {
+                _healthBar.UpdateCountdown(Lifetime, HasBomb && !_preparingGame);
+            }
 		} else if (isServer) {	
 			// let the server authoratively update vital stats
 			if ((HasBomb && Lifetime > 0.0f) && !_preparingGame) {
@@ -328,6 +333,7 @@ public class CarController : NetworkBehaviour
 
 	private void DisablePlayerUI() {
 		_joystickGameObject.SetActive (false);
+        _healthBar.gameObject.SetActive(false);
 	}
 
 	public void Spectate() {
