@@ -15,6 +15,7 @@ namespace Powerups {
 			if (collision.collider.tag == "TankTag") {
 				var collidedObject = collision.gameObject;
 
+
 				if (PowerupDefinitionObj.Properties.GetType ().IsAssignableFrom (typeof(SpeedAbilityProperties))) {
 					SpeedAbility ability = (SpeedAbility)collidedObject.AddComponent (PowerupDefinitionObj.Ability);
 					ability.initialise (GetThisPlayerServerId (), (SpeedAbilityProperties)PowerupDefinitionObj.Properties, AbilityResources);
@@ -22,7 +23,7 @@ namespace Powerups {
 					SandboxInkAbility ability = (SandboxInkAbility)collidedObject.AddComponent (PowerupDefinitionObj.Ability);
 					ability.initialise (GetThisPlayerServerId (), (SandboxInkAbilityProperties)PowerupDefinitionObj.Properties, AbilityResources);
 				} else {
-					Debug.LogError ("unknwon type: " + PowerupDefinitionObj.Properties.GetType ().ToString ());
+					Debug.LogError ("unknown type: " + PowerupDefinitionObj.Properties.GetType ().ToString ());
 				}
 
 				Destroy (gameObject);

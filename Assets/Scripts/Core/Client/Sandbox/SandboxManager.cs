@@ -2,48 +2,43 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 
 public class SandboxManager : MonoBehaviour
 {
-	//The following code  has been taken from CarController
-	/********* TODO: Change the following references to _rigidbody to a reference of the car ******/
 
 	public GameObject CarObject;
 	public GameObject PlaneObject;
-//	public PowerUpManager PowerUpManagerObject;
+	public GameObject TxtObjectPrefab;
+
 
 	private bool _controlsDisabled;
-	private string _gui_Txt = "Welcome to the Tutorial!\nUse the joystick to drive around but don't fall off the map!\nSee if you can pickup some Power Ups along the way!";
-	private string _splatter_Txt = "You've Activated the Splatter Power Up!\nThis splatters ink on your opponents' screens\n as shown above making it harder for them to see!";
+	private string _welcome_Txt = "\tWelcome to the Tutorial!\nUse the joystick to drive around but don't fall off the map!\nSee if you can pickup some Power Ups along the way!";
+	private string _splatter_Txt = "You've Activated the Splatter Power Up!\nThis splatters ink on your opponents' screens\nas shown below making it harder for them to see!";
 	private string _speed_Txt = "You've Activated the Speed Boost Power Up!\nEnjoy double the speed but becareful not to lose control!";
+	private string _respawn_Txt = "Oops!! You fell off the map! Don't Worry, You will\nbe respawned but you wont be able to move for 5 secs.\nBecareful or become an easy target!";
+
+
+	private Rect TxtRect;
 
 	void Start(){
+		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _welcome_Txt;
 		_controlsDisabled = false;
-		Invoke ("ClearGuiTxt", 10.0f);
-//		PowerUpManagerObject.OnSplatterStartEvent += Splat;
 	}
 
 	void Update(){
-		//EnsureCarIsOnMap ();
-	}
-
-	void OnGUI(){
-		GUI.Label(new Rect(Screen.width/2.0f - 150,Screen.height/40.0f, 800, 800), _gui_Txt);
+		
+		EnsureCarIsOnMap ();
 	}
 
 
 	private void ClearGuiTxt(){
-		_gui_Txt = "";
+		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = "";
 	}
 
-//	private void Splat () {
-//		DebugConsole.Log ("Splat!");
-//	}
-
-	/*
 	public void EnsureCarIsOnMap(){
-		if(CarObject.position.y <= - 30.0f){
+		if(CarObject.transform.position.y <= - 10.0f){
 			Reposition (PlaneObject);
 			DisableControls (5);
 		}
@@ -60,28 +55,40 @@ public class SandboxManager : MonoBehaviour
 
 	public void Reposition(GameObject worldMesh)
 	{
-
 		Debug.Log ("Repositioning car");
-
+		SetRespawnTxt ();
+		var car_rigid = CarObject.GetComponent<Rigidbody> ();
 		//Set velocities to zero
-		CarObject.velocity = Vector3.zero;
-		CarObject.angularVelocity = Vector3.zero;
+		car_rigid.velocity = Vector3.zero;
+		car_rigid.angularVelocity = Vector3.zero;
 
 		Vector3 position = GameUtils.FindSpawnLocation (PlaneObject);
 
 		if (position != Vector3.zero) {
 			DebugConsole.Log ("unfreezing");
-			// now unfreeze and show
 
 			gameObject.SetActive (true);
-			CarObject.isKinematic = false;
-
-			CarObject.position = position;
+			car_rigid.isKinematic = false;
+			car_rigid.position = position;
 		}
 
 	}
-	*/
 
+	public void SetSplatTxt(){
+		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _splatter_Txt;
+		Invoke ("ClearGuiTxt", 10.0f);
+	}
+
+	public void SetSpeedTxt(){
+		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _speed_Txt; 
+		Invoke ("ClearGuiTxt", 10.0f);
+	}
+
+	public void SetRespawnTxt(){
+		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _respawn_Txt;
+		Invoke ("ClearGuiTxt", 10.0f);
+	}
+		
 
 
 }
