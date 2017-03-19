@@ -20,6 +20,8 @@ public class GameManager : NetworkBehaviour {
 
 	private CarList _cars = new CarList();
 
+	private bool _preparingGame = true;
+
 	public int _startingBombPlayerConnectionId;
 
 	public GameObject WorldMesh { get; private set; }
@@ -80,12 +82,24 @@ public class GameManager : NetworkBehaviour {
 			ClientSceneManager.Instance.OnGameLoaded ();
 		}
 	}
-
-	public bool IsStartingBomb (int connectionId) {
-		return connectionId == _startingBombPlayerConnectionId;
+		
+	private void Update ()
+	{
+		if (_preparingGame) {
+			return;
+		}
+		_cars.TickTime (Time.deltaTime);
+		if (isServer) {
+			foreach(CarController car in _cars.GetCarsOutOfTime()){
+				KillPlayer (car);
+			}
+			if (_cars.GetNumberOfBombsPresent() == 0) {
+				_cars.ClearAllDisconnectedPlayers ();
+				_cars.PassBombRandomPlayer ();
+			}
+		}
 	}
-
-
+		
 	void OnDestroy () {
 		// isServer is unset by NetworkIdentity before our OnDestroy
 		// so we have to check whether server is running instead.
@@ -96,9 +110,8 @@ public class GameManager : NetworkBehaviour {
 	}
 
 	[Server]
-	public void KillPlayer (CarController car) {
-		int carsLeft = _cars.GetNumberAliveCars();
-		ServerSceneManager.Instance.UpdatePlayerGameData (car.ServerId, carsLeft, car.Lifetime);
+	private void KillPlayer (CarController car) {
+		_cars.KillPlayer (car);
 		CheckForGameOver ();
 		_cars.PassBombRandomPlayer();
 	}
@@ -106,7 +119,7 @@ public class GameManager : NetworkBehaviour {
 	[Server]
 	private void CheckForGameOver () {
 		if (_cars.GetNumberAliveCars() == 1) {
-			_cars.UpdateGameData();
+			_cars.FinaliseGamePlayerData();
 			ServerSceneManager.Instance.OnServerRequestGameEnd ();
 		}
 	}
@@ -126,19 +139,17 @@ public class GameManager : NetworkBehaviour {
 		
 	[Server]
 	public void CountDownFinishedStartPlaying(){
-		foreach (CarController car in FindObjectsOfType<CarController>()) {
-			car.RpcPlayerGameStarting ();
-			car.ServerGameStarting ();
-		}
+		_preparingGame = false;
+		_cars.PassBombRandomPlayer ();
 	}
 
-	public void CheckAreAllPlayersGameLoaded () {
+	private void CheckAreAllPlayersGameLoaded () {
 		if (AreAllPlayersGameLoaded()) {
 			AllPlayersReady();
 		}
 	}
 
-	public bool AreAllPlayersGameLoaded () {
+	private bool AreAllPlayersGameLoaded () {
 		foreach (var car in GameObject.FindObjectsOfType<CarController>()) {
 			if (car != null && !car.HasLoadedGame) {
 				return false;
@@ -160,8 +171,8 @@ public class GameManager : NetworkBehaviour {
 		if (col.gameObject.tag == "TankTag") {
 			if ( collisionCar.IsTransferTimeExpired() && collisionCar.HasBomb )
 			{
-				collisionCar.AllDevicesSetBomb(false);
-				car.AllDevicesSetBomb (true);
+				collisionCar.setBombAllDevices(false);
+				car.setBombAllDevices (true);
 				car.UpdateTransferTime (1.0f);
 			} 
 		}

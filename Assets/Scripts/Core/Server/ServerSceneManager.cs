@@ -123,6 +123,7 @@ public class ServerSceneManager : MonoBehaviour
 		OnStateUpdate ();
 	}
 
+
 	private void OnMeshServerFound (string address, int port) {
 		DebugConsole.Log (string.Format("OnMeshServerFound, address: {0}", address));
 		_meshTransferProcess.MoveNext (MeshServerLifecycle.Command.Download);
@@ -224,7 +225,7 @@ public class ServerSceneManager : MonoBehaviour
 		DebugConsole.Log ("OnGameEnd");
 		_innerProcess.MoveNext (Command.GameEnd);
 		OnStateUpdate ();
-		// todo call correct things at game end
+//		 todo call correct things at game end
 	}
 
 	private void OnStateUpdate ()

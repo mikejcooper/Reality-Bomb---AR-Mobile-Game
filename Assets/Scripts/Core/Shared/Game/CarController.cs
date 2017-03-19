@@ -65,10 +65,6 @@ public class CarController : NetworkBehaviour
 			} else {
 				textComponent.text = ClientSceneManager.Instance.GetPlayerDataById (ServerId).Name;
 			}
-//            if (GameObject.Find("BombImage") != null)
-//            {
-//                _bombImage = GameObject.Find("BombImage").gameObject.GetComponent<Image>();
-//            }
 			if (!isServer) {
 				if (GameObject.Find ("HealthBar") != null) {
 					_healthBar = GameObject.Find ("HealthBar").gameObject.GetComponent<UIHealthBar> ();
@@ -90,7 +86,6 @@ public class CarController : NetworkBehaviour
 			}
 
 			if (!isServer) {
-				CmdRequestColour ();
 //				EnableControls (false);
 			} else {
 				//_preparingGame = true;
@@ -114,45 +109,56 @@ public class CarController : NetworkBehaviour
 	void OnDestroy () {
 		GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent -= Reposition;
 	}
-
-	[Command]
-	private void CmdRequestColour () {
-		DebugConsole.Log ("I am server and I choose bomb");
-		// set colour based off server's game manager
-
-		bool isBomb = GameObject.FindObjectOfType<GameManager>().IsStartingBomb(connectionToClient.connectionId) ;
-		AllDevicesSetBomb (isBomb);
-	}
-
-	public void AllDevicesSetBomb(bool isBomb) {
-		RpcSetBomb (isBomb);
-		ServerSetBomb (isBomb);
+		
+	public void setBombAllDevices(bool b){
+		RpcSetBomb (b);
+		ServerSetBomb (b);
 	}
 
 	[ClientRpc]
-	private void RpcSetBomb(bool isBomb) {
-		processSetBombMessage (isBomb);
+	private void RpcSetBomb(bool b){
+		setBomb (b);
 	}
 
-	private void ServerSetBomb(bool isBomb) {
-		processSetBombMessage (isBomb);
+	[Server]
+	private void ServerSetBomb(bool b){
+		setBomb (b);
 	}
 
-	private void processSetBombMessage(bool isBomb) {
-		DebugConsole.Log("isBomb: " + isBomb);
-#if UNITY_ANDROID || UNITY_IPHONE
-        if (isLocalPlayer && HasBomb != isBomb)
-            Handheld.Vibrate();
-#endif
-        HasBomb = isBomb;
-		if (isBomb) {
+	private void setBomb(bool b){
+		this.HasBomb = b;
+		#if UNITY_ANDROID || UNITY_IPHONE
+		if (isLocalPlayer && HasBomb != isBomb)
+		Handheld.Vibrate();
+		#endif
+		if (this.HasBomb) {
 			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.parent = transform;
 			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localScale = 0.01f * Vector3.one;
 			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localPosition = new Vector3 (0, 2.5f, 0);
 			GameObject.FindObjectOfType<GameManager> ().BombObject.SetActive (true);
-        } 
+		} 
+	}
+		
+	public void KillAllDevices(){
+		RpcKill ();
+		ServerKill ();
 	}
 
+	[ClientRpc]
+	private void RpcKill(){
+		Kill ();
+	}
+
+	[Server]
+	private void ServerKill(){
+		Kill ();
+	}
+
+	private void Kill(){
+		Lifetime = 0.0f;
+		Alive = false;
+		this.gameObject.SetActive (false);
+	}
 
 	private void Update ()
 	{
@@ -160,57 +166,14 @@ public class CarController : NetworkBehaviour
 			return;
 				
 		if ((isLocalPlayer || IsPlayingSolo)) {
-            _healthBar.UpdateCountdown(Lifetime, HasBomb && !_preparingGame);
+            _healthBar.UpdateCountdown(Lifetime, HasBomb);
 			EnsureCarIsOnMap ();
 			transform.rotation= Quaternion.Lerp (transform.rotation, _lookAngle , CarProperties.TurnRate * Time.deltaTime);
 
 			if (Lifetime <= 0.0f) {
 				Spectate ();
 			}
-		} else if (isServer) {	
-			// let the server authoratively update vital stats
-			if ((HasBomb && Lifetime > 0.0f) && !_preparingGame) {
-				Debug.Log("PreparingGame: " + _preparingGame);
-				Lifetime -= Time.deltaTime;
-			}
-			if (Lifetime < 0.0f) {
-				Kill ();
-			}
-		}
-	}
-		
-	[Server]
-	private void Kill () {
-		DebugConsole.Log ("player has run out of time");
-		Lifetime = 0.0f;
-		Alive = false;
-		this.gameObject.SetActive (false);
-		RpcSetActive (false);
-		RpcSetAlive (false);
-		GameObject.FindObjectOfType<GameManager>().KillPlayer (this);
-	}
-
-	[ClientRpc]
-	private void RpcSetAlive(bool active){
-		Alive = active;
-	}
-
-	[ClientRpc]
-	private void RpcSetActive(bool active){
-		this.gameObject.SetActive (active);
-	}
-
-	private void ChangeColour(Color colour)
-	{
-		Renderer[] renderers = GetComponentsInChildren<Renderer>();
-		foreach (Renderer r in renderers)
-		{
-			foreach (Material m in r.materials)
-			{
-				if (m.HasProperty("_Color"))
-					m.color = colour;
-			}
-		}
+		} 
 	}
 
 	private void FixedUpdate ()
@@ -287,56 +250,26 @@ public class CarController : NetworkBehaviour
 
 		}
 	}
-
-	[Server]
-	public void ServerGameStarting(){
-        _preparingGame = false;
-        DebugConsole.Log("Server: " + _preparingGame);
-	}
-
-	[ClientRpc]
-	public void RpcPlayerGameStarting(){
-        _preparingGame = false;
-		DebugConsole.Log("Player: " + _preparingGame);
-        if (isLocalPlayer)
-        {
-            _healthBar.UpdateCountdown(Lifetime, HasBomb);
-        }
-        EnableControls (true);
-	}
-
+		
 	public void EnsureCarIsOnMap(){
 		if(_rigidbody.position.y <= FallDistanceBeforeRespawn){
 			Reposition (GameObject.FindObjectOfType<GameManager> ().WorldMesh);
-			DisableControls (DisabledControlDurationSeconds);
+			DisableControlsTime (DisabledControlDurationSeconds);
 		}
 	}
 
-	public void DisableControls(int seconds){
-		ToggleControls();
-		Invoke("ToggleControls", seconds);
+	public void DisableControlsTime(int seconds){
+		DisableControls();
+		Invoke("EnableControls", seconds);
+	}
+		
+
+	public void EnableControls(){
+		_controlsDisabled = false;
 	}
 
-	[ClientRpc]
-	public void RpcEnableALLControls(bool b) {
-		DebugConsole.Log ("Enabled");
-		if (b) {
-			_controlsDisabled = false;
-		} else {
-			_controlsDisabled = true;
-		}
-	}
-
-	public void ToggleControls(){
-		_controlsDisabled = !_controlsDisabled;
-	}
-
-	public void EnableControls(bool b){
-		if (b) {
-			_controlsDisabled = false;
-		} else {
-			_controlsDisabled = true;
-		}
+	public void DisableControls(){
+		_controlsDisabled = false;
 	}
 
 	private void DisablePlayerUI() {
@@ -344,7 +277,7 @@ public class CarController : NetworkBehaviour
 	}
 
 	public void Spectate() {
-		ToggleControls ();
+		DisableControls ();
 		DisablePlayerUI ();
 		GameObject.Find ("SpectatingText").GetComponent<TextMeshProUGUI> ().text = "Spectating...";
 	}
