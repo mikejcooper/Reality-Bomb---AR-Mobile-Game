@@ -7,14 +7,14 @@ namespace Powerups {
 
 	public class GamePowerUpManager: BasePowerUpManager {
 
-		public GameObject PlaneObject;
 		public SpeedAbilityProperties SpeedProperties;
 		public SandboxInkAbilityProperties InkProperties;
 		public GameManager GameManager;
 
 		protected override void Start () {
 			base.Start ();
-			OnMeshReady (PlaneObject);	
+			// Need to pass scanned in world mesh to the function below
+//			OnMeshReady (PlaneObject);	
 		}
 
 		override protected PowerupDefinition[] GetAvailablePowerups () {
