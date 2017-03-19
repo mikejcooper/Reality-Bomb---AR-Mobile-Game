@@ -65,8 +65,16 @@ public class OfflineCarController : MonoBehaviour
 		if(_rigidbody.velocity.magnitude > CarProperties.MaxSpeed) {
 			_rigidbody.velocity = _rigidbody.velocity.normalized * CarProperties.MaxSpeed;
 		}
-
-
 	}
+
+	/*void OnCollisionEnter(Collision col) {
+		if (col.gameObject.tag == "TankTag") {
+			print (col.contacts [0].point.normalized);
+			Vector3 contact = col.contacts [0].point;
+			contact.y = 0;
+			_rigidbody.AddForce(-500.0f * contact.normalized);
+			col.rigidbody.AddForce (500.0f * contact.normalized);
+		}
+	}*/
 }
 
