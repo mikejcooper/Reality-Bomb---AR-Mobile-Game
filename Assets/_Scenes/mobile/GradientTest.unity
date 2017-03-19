@@ -282,7 +282,7 @@ GameObject:
   - component: {fileID: 535491074}
   - component: {fileID: 535491073}
   - component: {fileID: 535491072}
-  m_Layer: 9
+  m_Layer: 8
   m_Name: Cube (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -552,6 +552,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CarObject: {fileID: 0}
   PlaneObject: {fileID: 2137931947}
+  TxtObjectPrefab: {fileID: 0}
 --- !u!4 &757163055
 Transform:
   m_ObjectHideFlags: 0
@@ -589,6 +590,7 @@ MonoBehaviour:
     CanvasSplash: {fileID: 0}
     Duration: 8
     SplatterTexture: {fileID: 2800000, guid: 453cc8a4aa1ad41f39f54292f544af93, type: 3}
+  SB_Manager: {fileID: 0}
 --- !u!1 &943544711
 GameObject:
   m_ObjectHideFlags: 0
@@ -644,7 +646,7 @@ GameObject:
   - component: {fileID: 1315202048}
   - component: {fileID: 1315202047}
   - component: {fileID: 1315202046}
-  m_Layer: 9
+  m_Layer: 8
   m_Name: Cube (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -839,7 +841,7 @@ GameObject:
   - component: {fileID: 1369568219}
   - component: {fileID: 1369568218}
   - component: {fileID: 1369568217}
-  m_Layer: 9
+  m_Layer: 8
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1065,7 +1067,7 @@ GameObject:
   - component: {fileID: 1638542760}
   - component: {fileID: 1638542759}
   - component: {fileID: 1638542758}
-  m_Layer: 9
+  m_Layer: 8
   m_Name: Cube (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1193,7 +1195,7 @@ GameObject:
   - component: {fileID: 1894837326}
   - component: {fileID: 1894837325}
   - component: {fileID: 1894837324}
-  m_Layer: 9
+  m_Layer: 8
   m_Name: Cube (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
