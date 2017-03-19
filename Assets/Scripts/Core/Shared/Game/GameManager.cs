@@ -67,6 +67,7 @@ public class GameManager : NetworkBehaviour {
 
 		WorldMesh.transform.parent = MarkerScene.transform;
 
+		ServerSceneManager.Instance.OnPlayerDisconnectEvent += OnPlayerDisconnected;
 
 		if (OnWorldMeshAvailableEvent != null)
 			OnWorldMeshAvailableEvent (WorldMesh);
@@ -83,6 +84,7 @@ public class GameManager : NetworkBehaviour {
 
 	public bool IsStartingBomb (int connectionId) {
 		return connectionId == _startingBombPlayerConnectionId;
+		ServerSceneManager.Instance.OnPlayerDisconnectEvent -= OnPlayerDisconnected;
 	}
 
 
@@ -105,6 +107,8 @@ public class GameManager : NetworkBehaviour {
 		int carsLeft = _cars.Count - _deathCounter;
 		ServerSceneManager.Instance.UpdatePlayerGameData (car.ServerId, carsLeft, car.Lifetime);
 		CheckForGameOver ();
+		NetworkServer.Destroy (car.gameObject);
+		KillDisconnectedPlayer ();
 		PassBombRandomPlayer ();
 	}
 
@@ -174,8 +178,12 @@ public class GameManager : NetworkBehaviour {
 
 	private void PassBombRandomPlayer(){
 		Debug.Log ("Bomb is passed to new random player");
-		CarController randCar = _remainingCars[Random.Range(0,_remainingCars.Count)];
-		randCar.AllDevicesSetBomb (true);
+		foreach (CarController car in _cars) {
+			if (car.Alive && !car.HasBomb) {
+				car.AllDevicesSetBomb (true);
+				return;
+				}
+			}
 	}
 
 	private void RemoveByName( List<CarController> list, string name){
@@ -205,7 +213,19 @@ public class GameManager : NetworkBehaviour {
 	} 
 
 	[Server]
+	private void KillDisconnectedPlayer(){
+		DebugConsole.Log ("Gamemanager Kill DisconnectedPlayer");
+		for(var i = _cars.Count - 1; i > -1; i--)
+		{
+			if (_cars[i].connectionToClient == null)_cars.RemoveAt(i);
+		}
+		CheckForGameOver ();
+		if (!IsBombInGame ()) PassBombRandomPlayer ();
+	}
+
+	[Server]
 	public void OnPlayerDisconnected(){
+		KillDisconnectedPlayer ();
 		if(!IsBombInGame()){
 			PassBombRandomPlayer ();
 		}
