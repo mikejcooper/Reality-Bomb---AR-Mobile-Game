@@ -3907,7 +3907,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LobbyPlayerPrefab: {fileID: 114346451124435684, guid: 872aadcc45bbf274ea7e2a9999fb07af,
     type: 2}
-  GamePlayerPrefab: {fileID: 1888881374933336, guid: 4d80ee73587c25345b17359d127e5a8b,
+  GamePlayerPrefab: {fileID: 1888881374933336, guid: ad2b8fd4aacae4ea8867137b23409269,
     type: 2}
 --- !u!1 &1938374591
 GameObject:

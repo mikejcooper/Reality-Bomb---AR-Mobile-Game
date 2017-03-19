@@ -444,6 +444,11 @@ Prefab:
       propertyPath: TurnRate
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 224092679498919812, guid: 163dc956e03d24970a33861b40f5c803,
+        type: 2}
+      propertyPath: m_SizeDelta.x
+      value: 2.031579
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 163dc956e03d24970a33861b40f5c803, type: 2}
   m_IsPrefabParent: 0
