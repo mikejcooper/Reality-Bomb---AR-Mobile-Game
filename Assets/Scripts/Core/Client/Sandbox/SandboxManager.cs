@@ -11,6 +11,7 @@ public class SandboxManager : MonoBehaviour
 	public GameObject CarObject;
 	public GameObject PlaneObject;
 	public GameObject TxtObjectPrefab;
+	public CanvasMessages CanvasMessage;
 
 
 	private bool _controlsDisabled;
@@ -26,6 +27,7 @@ public class SandboxManager : MonoBehaviour
 		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _welcome_Txt;
 		Invoke ("ClearGuiTxt", 10);
 		_controlsDisabled = false;
+		CanvasMessage.DisplayPowerUpMessage ("GameManager");
 	}
 
 	void Update(){
@@ -88,6 +90,10 @@ public class SandboxManager : MonoBehaviour
 	public void SetRespawnTxt(){
 		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _respawn_Txt;
 		Invoke ("ClearGuiTxt", 10.0f);
+	}
+
+	private void showCanvasMessage(){
+		CanvasMessage.DisplayPowerUpMessage ("GameManager");
 	}
 		
 
