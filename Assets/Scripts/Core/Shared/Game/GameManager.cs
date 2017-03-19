@@ -39,7 +39,11 @@ public class GameManager : NetworkBehaviour {
 			if (GameObject.Find ("HealthBar") != null) {
 				GameObject.Find ("HealthBar").SetActive (false);
 			}
-			if (GameObject.Find ("SpectatingText") != null) {
+            if (GameObject.Find("MarkerAlert") != null)
+            {
+                GameObject.Find("MarkerAlert").SetActive(false);
+            }
+            if (GameObject.Find ("SpectatingText") != null) {
 				GameObject.Find ("SpectatingText").GetComponent<TextMeshProUGUI>().text = "Spectating...";
 			}
 		}
