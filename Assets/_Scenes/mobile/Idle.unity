@@ -912,8 +912,8 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: <size=+12>A</size>ugment <size=+12>B</size>omb
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 552b2cb6933264e608b7c874e97089d0, type: 2}
-  m_sharedMaterial: {fileID: 21388005783346704, guid: 552b2cb6933264e608b7c874e97089d0,
+  m_fontAsset: {fileID: 11400000, guid: d57d2aa9ab18549999785c16d58d47d8, type: 2}
+  m_sharedMaterial: {fileID: 21388005783346704, guid: d57d2aa9ab18549999785c16d58d47d8,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -953,7 +953,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_firstOverflowCharacterIndex: -1
@@ -1032,7 +1032,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 21388005783346704, guid: 552b2cb6933264e608b7c874e97089d0, type: 2}
+  - {fileID: 21388005783346704, guid: d57d2aa9ab18549999785c16d58d47d8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3907,7 +3907,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LobbyPlayerPrefab: {fileID: 114346451124435684, guid: 872aadcc45bbf274ea7e2a9999fb07af,
     type: 2}
-  GamePlayerPrefab: {fileID: 1888881374933336, guid: 4d80ee73587c25345b17359d127e5a8b,
+  GamePlayerPrefab: {fileID: 1888881374933336, guid: ad2b8fd4aacae4ea8867137b23409269,
     type: 2}
 --- !u!1 &1938374591
 GameObject:
