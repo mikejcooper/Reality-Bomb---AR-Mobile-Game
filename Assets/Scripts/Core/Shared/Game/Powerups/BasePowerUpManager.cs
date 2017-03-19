@@ -96,6 +96,7 @@ namespace Powerups {
 			var abilityTypeIndex = Random.Range(0,_availableAbilities.Length);
 
 			GameObject powerUpObj = GameObject.Instantiate (_availableAbilities [abilityTypeIndex].Properties.PowerupPrefab);
+			powerUpObj.transform.parent = GameObject.Find("Marker scene").transform;
 			powerUpObj.name = "powerup";
 
 			powerUpObj.AddComponent<Rigidbody> ();
