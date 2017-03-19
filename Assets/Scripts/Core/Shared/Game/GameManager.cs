@@ -108,8 +108,8 @@ public class GameManager : NetworkBehaviour {
 		int carsLeft = _cars.Count - _deathCounter;
 		ServerSceneManager.Instance.UpdatePlayerGameData (car.ServerId, carsLeft, car.Lifetime);
 		CheckForGameOver ();
-		NetworkServer.Destroy (car.gameObject);
-		KillDisconnectedPlayer ();
+		//NetworkServer.Destroy (car.gameObject);
+		//KillDisconnectedPlayer ();
 		PassBombRandomPlayer ();
 	}
 
