@@ -17,6 +17,7 @@ public class GameManager : NetworkBehaviour {
 	public GameObject MarkerScene;
 	public ARMarker MarkerComponent;
 	public GameObject BombObject;
+	public CanvasMessages CanvasMessage;
 
 	private List<CarController> _cars = new List<CarController>();
 	private List<CarController> _remainingCars = new List<CarController>();
@@ -239,6 +240,10 @@ public class GameManager : NetworkBehaviour {
 			}
 		}
 		return false;
+	}
+
+	private void showCanvasMessage(){
+		CanvasMessage.DisplayPowerUpMessage ("GameManager");
 	}
 
 }
