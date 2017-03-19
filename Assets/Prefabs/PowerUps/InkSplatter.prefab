@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33712945486890734}
   - component: {fileID: 135022154134512448}
   - component: {fileID: 23660872596542174}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: InkSplatter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
