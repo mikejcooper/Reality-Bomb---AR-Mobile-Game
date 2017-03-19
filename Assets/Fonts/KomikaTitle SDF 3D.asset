@@ -1097,7 +1097,7 @@ Material:
       second: 0.8333333
     - first:
         name: _ScaleRatioB
-      second: 0.9725
+      second: 0.92041665
     - first:
         name: _ScaleRatioC
       second: 1

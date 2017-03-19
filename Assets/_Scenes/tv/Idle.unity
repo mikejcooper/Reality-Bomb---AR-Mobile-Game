@@ -256,8 +256,8 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: <size=+12>A</size>ugment <size=+12>B</size>omb
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: c37638691c04042f6a990eda61e0a6a9, type: 2}
-  m_sharedMaterial: {fileID: 21388005783346704, guid: c37638691c04042f6a990eda61e0a6a9,
+  m_fontAsset: {fileID: 11400000, guid: 7a5cce823ded541ac91ecd84a166d620, type: 2}
+  m_sharedMaterial: {fileID: 21388005783346704, guid: 7a5cce823ded541ac91ecd84a166d620,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -297,7 +297,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 0
+  m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_firstOverflowCharacterIndex: -1
@@ -371,12 +371,12 @@ MeshRenderer:
   m_GameObject: {fileID: 420529823}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 21388005783346704, guid: c37638691c04042f6a990eda61e0a6a9, type: 2}
+  - {fileID: 21388005783346704, guid: 7a5cce823ded541ac91ecd84a166d620, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
