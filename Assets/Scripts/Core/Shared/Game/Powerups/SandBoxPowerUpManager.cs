@@ -10,6 +10,7 @@ namespace Powerups {
 		public GameObject PlaneObject;
 		public SpeedAbilityProperties SpeedProperties;
 		public SandboxInkAbilityProperties InkProperties;
+		public SandboxManager SB_Manager;
 
 		protected override void Start () {
 			base.Start ();
@@ -25,17 +26,19 @@ namespace Powerups {
 
 		public override void OnPowerUpStart<T> (BaseAbility<T> ability) {
 			if (ability.GetType ().IsAssignableFrom (typeof(SpeedAbility))) {
-				Debug.Log ("Speed boost activated");
+				Debug.Log ("'SBPUM': Speed boost activated");
+				SB_Manager.SetSpeedTxt ();
 			} else if (ability.GetType ().IsAssignableFrom (typeof(SandboxInkAbility))) {
-				Debug.Log ("Ink splatter activated");
+				SB_Manager.SetSplatTxt ();
+				Debug.Log ("'SBPUM':Ink splatter activated");
 			}
 		}
 
 		public override void OnPowerUpStop<T> (BaseAbility<T> ability) {
 			if (ability.GetType ().IsAssignableFrom (typeof(SpeedAbility))) {
-				Debug.Log ("Speed boost deactivated");
+				Debug.Log ("'SBPUM':Speed boost deactivated");
 			} else if (ability.GetType ().IsAssignableFrom (typeof(SandboxInkAbility))) {
-				Debug.Log ("Ink splatter deactivated");
+				Debug.Log ("'SBPUM':Ink splatter deactivated");
 			}
 		}
 	}
