@@ -124,7 +124,6 @@ MonoBehaviour:
   MarkerScene: {fileID: 188577963}
   MarkerComponent: {fileID: 1965431133}
   BombObject: {fileID: 1788072946}
-  CanvasMessage: {fileID: 1763481704}
   _startingBombPlayerConnectionId: 0
 --- !u!114 &30509391
 MonoBehaviour:
@@ -519,7 +518,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 8960
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
