@@ -24,6 +24,7 @@ public class SandboxManager : MonoBehaviour
 
 	void Start(){
 		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _welcome_Txt;
+		Invoke ("ClearGuiTxt", 10);
 		_controlsDisabled = false;
 	}
 

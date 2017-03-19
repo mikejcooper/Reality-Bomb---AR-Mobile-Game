@@ -216,7 +216,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 8960
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -390,7 +390,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4795215153235550, guid: 163dc956e03d24970a33861b40f5c803, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 5.78
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4795215153235550, guid: 163dc956e03d24970a33861b40f5c803, type: 2}
       propertyPath: m_LocalPosition.z
@@ -415,36 +415,6 @@ Prefab:
     - target: {fileID: 4795215153235550, guid: 163dc956e03d24970a33861b40f5c803, type: 2}
       propertyPath: m_RootOrder
       value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 54059155998190078, guid: 163dc956e03d24970a33861b40f5c803,
-        type: 2}
-      propertyPath: m_Drag
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 54059155998190078, guid: 163dc956e03d24970a33861b40f5c803,
-        type: 2}
-      propertyPath: m_UseGravity
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 54059155998190078, guid: 163dc956e03d24970a33861b40f5c803,
-        type: 2}
-      propertyPath: m_AngularDrag
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114366977620015038, guid: 163dc956e03d24970a33861b40f5c803,
-        type: 2}
-      propertyPath: MaxSpeed
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 114366977620015038, guid: 163dc956e03d24970a33861b40f5c803,
-        type: 2}
-      propertyPath: Acceleration
-      value: 40
-      objectReference: {fileID: 0}
-    - target: {fileID: 114366977620015038, guid: 163dc956e03d24970a33861b40f5c803,
-        type: 2}
-      propertyPath: TurnRate
-      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 163dc956e03d24970a33861b40f5c803, type: 2}
@@ -987,7 +957,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1965431130}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe4ec33cee90c844ea1bcc2cd642033e, type: 3}
   m_Name: 
