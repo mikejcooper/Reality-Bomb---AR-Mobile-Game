@@ -124,6 +124,7 @@ MonoBehaviour:
   MarkerScene: {fileID: 188577963}
   MarkerComponent: {fileID: 1965431133}
   BombObject: {fileID: 1788072946}
+  CanvasMessage: {fileID: 0}
   _startingBombPlayerConnectionId: 0
 --- !u!114 &30509391
 MonoBehaviour:
@@ -335,12 +336,12 @@ Prefab:
     - target: {fileID: 224101232209803450, guid: 379eacf8e567df642b3f4ef10237d665,
         type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 161
+      value: -133
       objectReference: {fileID: 0}
     - target: {fileID: 224101232209803450, guid: 379eacf8e567df642b3f4ef10237d665,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 133
+      value: 137
       objectReference: {fileID: 0}
     - target: {fileID: 224101232209803450, guid: 379eacf8e567df642b3f4ef10237d665,
         type: 2}
@@ -355,7 +356,7 @@ Prefab:
     - target: {fileID: 224101232209803450, guid: 379eacf8e567df642b3f4ef10237d665,
         type: 2}
       propertyPath: m_AnchorMin.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224101232209803450, guid: 379eacf8e567df642b3f4ef10237d665,
         type: 2}
@@ -365,7 +366,7 @@ Prefab:
     - target: {fileID: 224101232209803450, guid: 379eacf8e567df642b3f4ef10237d665,
         type: 2}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224101232209803450, guid: 379eacf8e567df642b3f4ef10237d665,
         type: 2}
