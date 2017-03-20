@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using ServerLifecycle;
 using TMPro;
+using Powerups;
 
 
 public class GameManager : NetworkBehaviour {
@@ -18,6 +19,8 @@ public class GameManager : NetworkBehaviour {
 	public ARMarker MarkerComponent;
 	public GameObject BombObject;
 	public CanvasMessages CanvasMessage;
+	public GamePowerUpManager PowerUpManager;
+
 
 	private List<CarController> _cars = new List<CarController>();
 	private List<CarController> _remainingCars = new List<CarController>();

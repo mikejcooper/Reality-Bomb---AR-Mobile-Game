@@ -124,7 +124,8 @@ MonoBehaviour:
   MarkerScene: {fileID: 188577963}
   MarkerComponent: {fileID: 1965431133}
   BombObject: {fileID: 1788072946}
-  CanvasMessage: {fileID: 0}
+  CanvasMessage: {fileID: 1763481704}
+  PowerUpManager: {fileID: 0}
   _startingBombPlayerConnectionId: 0
 --- !u!114 &30509391
 MonoBehaviour:
