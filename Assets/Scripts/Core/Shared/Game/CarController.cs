@@ -90,15 +90,15 @@ public class CarController : NetworkBehaviour
 			} else {
 				//_preparingGame = true;
 				// register
-				DebugConsole.Log ("GameManager.Instance.AddCar (gameObject);");
+				Debug.Log ("GameManager.Instance.AddCar (gameObject);");
 				GameObject.FindObjectOfType<GameManager> ().AddCar (gameObject);
 			}
 
 			if (GameObject.FindObjectOfType<GameManager> ().WorldMesh != null) {
-				DebugConsole.Log ("available");
+				Debug.Log ("available");
 				Reposition (GameObject.FindObjectOfType<GameManager> ().WorldMesh);
 			} else {
-				DebugConsole.Log ("unavailable");
+				Debug.Log ("unavailable");
 				GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += Reposition;
 			}
 				
@@ -225,9 +225,9 @@ public class CarController : NetworkBehaviour
 
 	public void Reposition(GameObject worldMesh)
 	{
-		DebugConsole.Log ("repositioning");
+		Debug.Log ("repositioning");
 		if (hasAuthority) {
-			DebugConsole.Log ("repositioning with authority");
+			Debug.Log ("repositioning with authority");
 
 			Debug.Log ("Repositioning car");
 
@@ -238,7 +238,7 @@ public class CarController : NetworkBehaviour
 			Vector3 position = GameUtils.FindSpawnLocation (worldMesh);
 
 			if (position != Vector3.zero) {
-				DebugConsole.Log ("unfreezing");
+				Debug.Log ("unfreezing");
 				// now unfreeze and show
 
 				gameObject.SetActive (true);

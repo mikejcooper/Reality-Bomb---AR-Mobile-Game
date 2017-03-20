@@ -73,7 +73,7 @@ public class SandboxManager : MonoBehaviour
 		Vector3 position = GameUtils.FindSpawnLocation (PlaneObject);
 
 		if (position != Vector3.zero) {
-			DebugConsole.Log ("unfreezing");
+			Debug.Log ("unfreezing");
 
 			gameObject.SetActive (true);
 			car_rigid.isKinematic = false;

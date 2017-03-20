@@ -99,7 +99,7 @@ public class ClientSceneManager : MonoBehaviour
 	}
 
 	public void OnUserRequestFindGame () {
-		DebugConsole.Log ("OnUserRequestFindGame");
+		Debug.Log ("OnUserRequestFindGame");
 		_innerProcess.MoveNext (Command.JoinGame);
 		ensureCorrectScene ();
 
@@ -109,7 +109,7 @@ public class ClientSceneManager : MonoBehaviour
 	}
 
 	private void OnServerDiscovered (string address) {
-		DebugConsole.Log ("OnServerDiscovered");
+		Debug.Log ("OnServerDiscovered");
 		_innerProcess.MoveNext (Command.ConnectGame);
 		ensureCorrectScene ();
 
@@ -129,20 +129,20 @@ public class ClientSceneManager : MonoBehaviour
 	}
 
 	private void OnUserConnectedToGame () {
-		DebugConsole.Log ("OnUserConnectedToGame");
+		Debug.Log ("OnUserConnectedToGame");
 		_innerProcess.MoveNext (Command.JoinedGame);
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
 		ensureCorrectScene ();
 	}
 
 	private void OnUserDisconnectedToGame () {
-		DebugConsole.Log ("OnUserDisconnectedToGame");
+		Debug.Log ("OnUserDisconnectedToGame");
 		// we don't have a state change for this... yet
 		Screen.sleepTimeout = _defaultSleepTimeout;
 	}
 
 	private void OnServerGameReady () {
-		DebugConsole.Log ("OnServerGameReady");
+		Debug.Log ("OnServerGameReady");
 		_innerProcess.MoveNext (Command.GameReady);
 		ensureCorrectScene ();
 	}
@@ -154,13 +154,13 @@ public class ClientSceneManager : MonoBehaviour
 	}
 
 	private void OnServerGameEnd () {
-		DebugConsole.Log ("OnServerGameEnd");
+		Debug.Log ("OnServerGameEnd");
 		_innerProcess.MoveNext (Command.GameEnd);
 		ensureCorrectScene ();
 	}
 
 	public void OnUserRequestPlaySandbox () {
-		DebugConsole.Log ("OnUserRequestPlaySandbox");
+		Debug.Log ("OnUserRequestPlaySandbox");
 		_innerProcess.MoveNext (Command.PlaySandbox);
 		ensureCorrectScene ();
 	}
@@ -174,7 +174,7 @@ public class ClientSceneManager : MonoBehaviour
 	}
 
 	public void OnUserRequestLeaveGame () {
-		DebugConsole.Log ("OnUserRequestLeaveGame");
+		Debug.Log ("OnUserRequestLeaveGame");
 		_innerProcess.MoveNext (Command.LeaveGame);
 
 		_networkLobbyManager.StopClient ();

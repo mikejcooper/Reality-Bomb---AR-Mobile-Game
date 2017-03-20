@@ -136,7 +136,7 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 	}
 
 	public override void OnClientError (NetworkConnection conn, int err) {
-		DebugConsole.Log ("error: " + err);
+		Debug.Log ("error: " + err);
 	}
 
 	public override void OnLobbyServerReadyToBegin(NetworkConnection conn) {
@@ -154,7 +154,7 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
         base.OnClientConnect(conn);
         if (client != null)
         {
-            DebugConsole.Log("OnClientConnect worked");
+            Debug.Log("OnClientConnect worked");
 			client.RegisterHandler(NetworkConstants.MSG_GET_MESH, OnClientClearToDownloadMesh);
 			client.RegisterHandler(NetworkConstants.MSG_GAME_LOADED, OnClientGameReady);
 			client.RegisterHandler(NetworkConstants.MSG_PLAYER_DATA_UPDATE, OnClientPlayerDataUpdate);

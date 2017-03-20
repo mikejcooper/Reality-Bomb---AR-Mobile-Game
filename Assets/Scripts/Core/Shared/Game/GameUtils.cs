@@ -14,7 +14,7 @@ public class GameUtils
 			}
 		}
 		int bombPlayerIndex = UnityEngine.Random.Range(0, activeConnectionIds.Count);
-		DebugConsole.Log (string.Format ("chose index {0} from connections size of {1}", bombPlayerIndex, activeConnectionIds.Count));
+		Debug.Log (string.Format ("chose index {0} from connections size of {1}", bombPlayerIndex, activeConnectionIds.Count));
 
 		return activeConnectionIds [bombPlayerIndex];
 	}

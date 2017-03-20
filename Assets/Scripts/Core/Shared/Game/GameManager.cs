@@ -40,7 +40,7 @@ public class GameManager : NetworkBehaviour {
 		} else if (isServer) {
 
 			_startingBombPlayerConnectionId = GameUtils.ChooseRandomPlayerConnectionId ();
-			DebugConsole.Log ("=> bombPlayerConnectionId: " + _startingBombPlayerConnectionId);
+			Debug.Log ("=> bombPlayerConnectionId: " + _startingBombPlayerConnectionId);
 
 			WorldMesh = ServerSceneManager.Instance.WorldMesh;
 
