@@ -2233,7 +2233,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f88649c4a30b2434384d387170308667, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Car: {fileID: 0}
+  Car: {fileID: 620529758}
   RoatateAround: {fileID: 1075428651}
 --- !u!4 &1000648819
 Transform:

@@ -134,8 +134,8 @@ public class MeshTransferManager {
 		// set mesh material
 		renderer.material = material;
 
-		// assign to correct layer for ArToolKit
-		SetLayerRecursively (worldMeshObj, 9);
+		// set the layer to ground
+		SetLayerRecursively (worldMeshObj, 8);
 
 		return worldMeshObj;
 	}

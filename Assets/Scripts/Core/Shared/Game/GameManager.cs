@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using ServerLifecycle;
 using TMPro;
+using Powerups;
 
 
 public class GameManager : NetworkBehaviour {
@@ -19,6 +20,8 @@ public class GameManager : NetworkBehaviour {
 	public ARMarker MarkerComponent;
 	public GameObject BombObject;
 	public CanvasMessages CanvasMessage;
+	public GamePowerUpManager PowerUpManager;
+
 
 	private CarList _cars = new CarList();
 
@@ -40,7 +43,11 @@ public class GameManager : NetworkBehaviour {
 			if (GameObject.Find ("HealthBar") != null) {
 				GameObject.Find ("HealthBar").SetActive (false);
 			}
-			if (GameObject.Find ("SpectatingText") != null) {
+            if (GameObject.Find("MarkerAlert") != null)
+            {
+                GameObject.Find("MarkerAlert").SetActive(false);
+            }
+            if (GameObject.Find ("SpectatingText") != null) {
 				GameObject.Find ("SpectatingText").GetComponent<TextMeshProUGUI>().text = "Spectating...";
 			}
 		}
@@ -66,7 +73,8 @@ public class GameManager : NetworkBehaviour {
 		}
 			
 		// use downloaded marker pattern
-		MeshTransferManager.ApplyMarkerData (MarkerComponent);
+        if (GlobalNetworking.NetworkConstants.SCANNED_MARKERS)
+		    MeshTransferManager.ApplyMarkerData (MarkerComponent);
 
 		WorldMesh.transform.parent = MarkerScene.transform;
 

@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+using Powerups;
+
 
 
 public class SandboxManager : MonoBehaviour
@@ -17,8 +19,8 @@ public class SandboxManager : MonoBehaviour
 	private bool _controlsDisabled;
 	private string _welcome_Txt = "\tWelcome to the Tutorial!\nUse the joystick to drive around but don't fall off the map!\nSee if you can pickup some Power Ups along the way!";
 	private string _splatter_Txt = "You've Activated the Splatter Power Up!\nThis splatters ink on your opponents' screens\nas shown below making it harder for them to see!";
-	private string _speed_Txt = "You've Activated the Speed Boost Power Up!\nEnjoy double the speed but becareful not to lose control!";
-	private string _respawn_Txt = "Oops!! You fell off the map! Don't Worry, You will\nbe respawned but you wont be able to move for 5 secs.\nBecareful or become an easy target!";
+	private string _speed_Txt = "You've Activated the Speed Boost Power Up!\nEnjoy double the speed but be careful not to lose control!";
+	private string _respawn_Txt = "Oops!! You fell off the map! Don't Worry, You will\nbe respawned but you wont be able to move for 5 secs.\nBe careful or become an easy target!";
 
 
 	private Rect TxtRect;
@@ -26,14 +28,19 @@ public class SandboxManager : MonoBehaviour
 	void Start(){
 		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _welcome_Txt;
 		_controlsDisabled = false;
+		SandBoxPowerUpManager.SpeedBoostActivatedEvent += SetSpeedTxt;
+		SandBoxPowerUpManager.InkSplatterActivatedEvent += SetSplatTxt;
+	}
+
+	void OnDestroy(){
+		SandBoxPowerUpManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
+		SandBoxPowerUpManager.InkSplatterActivatedEvent -= SetSplatTxt;
 	}
 
 	void Update(){
-		
 		EnsureCarIsOnMap ();
 	}
-
-
+		
 	private void ClearGuiTxt(){
 		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = "";
 	}
