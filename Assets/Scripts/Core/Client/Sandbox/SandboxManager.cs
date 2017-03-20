@@ -83,13 +83,11 @@ public class SandboxManager : MonoBehaviour
 	}
 
 	public void SetSplatTxt(){
-//		CanvasMessage.DisplayPowerUpMessage ("Ink Splatter");
 		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _splatter_Txt;
 		Invoke ("ClearGuiTxt", 10.0f);
 	}
 
 	public void SetSpeedTxt(){
-//		CanvasMessage.DisplayPowerUpMessage ("Speed Boost");
 		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _speed_Txt; 
 		Invoke ("ClearGuiTxt", 10.0f);
 	}
