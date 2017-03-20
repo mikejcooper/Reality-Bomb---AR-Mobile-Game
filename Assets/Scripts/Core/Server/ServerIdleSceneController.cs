@@ -3,7 +3,7 @@ using System.Collections;
 
 public class ServerIdleSceneController : MonoBehaviour
 {
-	public GameObject Car;
+	//public GameObject Car;
 	public Transform RoatateAround;
 
 	private Camera _cameraObject;
@@ -34,7 +34,7 @@ public class ServerIdleSceneController : MonoBehaviour
 		_cameraObject.transform.LookAt(RoatateAround);
 
 		// Car Movement
-		Car.transform.Rotate(Vector3.up * _timeCounter, 0.2f);
+		//Car.transform.Rotate(Vector3.up * _timeCounter, 0.2f);
 	}
 }
 
