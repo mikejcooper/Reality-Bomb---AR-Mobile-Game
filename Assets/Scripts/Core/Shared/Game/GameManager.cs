@@ -19,8 +19,6 @@ public class GameManager : NetworkBehaviour {
 	public GameObject MarkerScene;
 	public ARMarker MarkerComponent;
 	public GameObject BombObject;
-	public CanvasMessages CanvasMessage;
-	public GamePowerUpManager PowerUpManager;
 
 
 	private CarList _cars = new CarList();
@@ -35,23 +33,6 @@ public class GameManager : NetworkBehaviour {
 
 	void Start ()
 	{
-
-		if (isServer) {
-			if (GameObject.Find ("JoystickBack") != null) {
-				GameObject.Find ("JoystickBack").SetActive (false);
-			}
-			if (GameObject.Find ("HealthBar") != null) {
-				GameObject.Find ("HealthBar").SetActive (false);
-			}
-            if (GameObject.Find("MarkerAlert") != null)
-            {
-                GameObject.Find("MarkerAlert").SetActive(false);
-            }
-            if (GameObject.Find ("SpectatingText") != null) {
-				GameObject.Find ("SpectatingText").GetComponent<TextMeshProUGUI>().text = "Spectating...";
-			}
-		}
-
 		if (!isServer) {
 			WorldMesh = ClientSceneManager.Instance.WorldMesh;
 
@@ -147,9 +128,7 @@ public class GameManager : NetworkBehaviour {
 	public void CountDownFinishedStartPlaying(){
 		_preparingGame = false;
 		RpcCountDownFinishedStartPlaying ();
-		Debug.Log ("Server");
 		if (OnGameStartedEvent != null) {
-			Debug.Log ("ONGAMESTARTED NOT EMPTY SERVER");
 			OnGameStartedEvent();
 		}
 		_cars.PassBombRandomPlayer ();
@@ -157,9 +136,7 @@ public class GameManager : NetworkBehaviour {
 
 	[ClientRpc]
 	private void RpcCountDownFinishedStartPlaying(){
-		Debug.Log ("RpcCall");
 		if (OnGameStartedEvent != null) {
-			Debug.Log ("ONGAMESTARTED NOT EMPTY RPC");
 			OnGameStartedEvent();
 		}
 	}
@@ -210,8 +187,5 @@ public class GameManager : NetworkBehaviour {
 	}
 
 
-	private void showCanvasMessage(){
-		CanvasMessage.DisplayPowerUpMessage ("GameManager");
-	}
 
 }

@@ -102,6 +102,8 @@ GameObject:
   - component: {fileID: 30509392}
   - component: {fileID: 30509391}
   - component: {fileID: 30509390}
+  - component: {fileID: 30509394}
+  - component: {fileID: 30509393}
   m_Layer: 9
   m_Name: GameManager
   m_TagString: Untagged
@@ -124,8 +126,6 @@ MonoBehaviour:
   MarkerScene: {fileID: 188577963}
   MarkerComponent: {fileID: 1965431133}
   BombObject: {fileID: 1788072946}
-  CanvasMessage: {fileID: 1763481704}
-  PowerUpManager: {fileID: 0}
   _startingBombPlayerConnectionId: 0
 --- !u!114 &30509391
 MonoBehaviour:
@@ -172,6 +172,41 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &30509393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 30509389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9af1c5b0b80f147fabeead12e1688d65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PreparingCanvas: {fileID: 178973365}
+  CanvasMessage: {fileID: 1763481704}
+--- !u!114 &30509394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 30509389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64daef533587b4cd4bdbeea0b2310e95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerCanvas: {fileID: 1343903778}
+  PlaneObject: {fileID: 0}
+  SpeedProperties:
+    PowerupPrefab: {fileID: 0}
+    CanvasSplash: {fileID: 0}
+    Duration: 0
+  InkProperties:
+    PowerupPrefab: {fileID: 0}
+    CanvasSplash: {fileID: 0}
+    Duration: 0
+    SplatterTexture: {fileID: 0}
 --- !u!1 &178973363
 GameObject:
   m_ObjectHideFlags: 0
