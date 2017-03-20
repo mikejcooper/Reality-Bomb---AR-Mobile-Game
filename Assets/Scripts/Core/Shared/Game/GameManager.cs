@@ -18,8 +18,6 @@ public class GameManager : NetworkBehaviour {
 	public GameObject MarkerScene;
 	public ARMarker MarkerComponent;
 	public GameObject BombObject;
-	public CanvasMessages CanvasMessage;
-	public GamePowerUpManager PowerUpManager;
 
 
 	private List<CarController> _cars = new List<CarController>();
@@ -34,23 +32,6 @@ public class GameManager : NetworkBehaviour {
 
 	void Start ()
 	{
-
-		if (isServer) {
-			if (GameObject.Find ("JoystickBack") != null) {
-				GameObject.Find ("JoystickBack").SetActive (false);
-			}
-			if (GameObject.Find ("HealthBar") != null) {
-				GameObject.Find ("HealthBar").SetActive (false);
-			}
-            if (GameObject.Find("MarkerAlert") != null)
-            {
-                GameObject.Find("MarkerAlert").SetActive(false);
-            }
-            if (GameObject.Find ("SpectatingText") != null) {
-				GameObject.Find ("SpectatingText").GetComponent<TextMeshProUGUI>().text = "Spectating...";
-			}
-		}
-
 		if (!isServer) {
 			WorldMesh = ClientSceneManager.Instance.WorldMesh;
 
@@ -250,8 +231,5 @@ public class GameManager : NetworkBehaviour {
 		return false;
 	}
 
-	private void showCanvasMessage(){
-		CanvasMessage.DisplayPowerUpMessage ("GameManager");
-	}
 
 }

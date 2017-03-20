@@ -7,14 +7,19 @@ namespace Powerups {
 
 	public class GamePowerUpManager: BasePowerUpManager {
 
+		public GameObject PlaneObject;
 		public SpeedAbilityProperties SpeedProperties;
 		public SandboxInkAbilityProperties InkProperties;
-		public GameManager GameManager;
+
+		// Events
+		public delegate void OnSpeedBoostActivated ();
+		public delegate void OnInkSplatterActivated ();
+		public static event OnSpeedBoostActivated SpeedBoostActivatedEvent;		
+		public static event OnInkSplatterActivated InkSplatterActivatedEvent;
 
 		protected override void Start () {
 			base.Start ();
-			// Need to pass scanned in world mesh to the function below
-//			OnMeshReady (PlaneObject);	
+			GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += LoadMesh;
 		}
 
 		override protected PowerupDefinition[] GetAvailablePowerups () {
@@ -26,18 +31,24 @@ namespace Powerups {
 
 		public override void OnPowerUpStart<T> (BaseAbility<T> ability) {
 			if (ability.GetType ().IsAssignableFrom (typeof(SpeedAbility))) {
-				Debug.Log ("'Main Game PUM': Speed boost activated");
+				Debug.Log ("'SBPUM': Speed boost activated");
+				SpeedBoostActivatedEvent ();
 			} else if (ability.GetType ().IsAssignableFrom (typeof(SandboxInkAbility))) {
-				Debug.Log ("'Main Game PUM':Ink splatter activated");
+				InkSplatterActivatedEvent ();
+				Debug.Log ("'SBPUM':Ink splatter activated");
 			}
 		}
 
 		public override void OnPowerUpStop<T> (BaseAbility<T> ability) {
 			if (ability.GetType ().IsAssignableFrom (typeof(SpeedAbility))) {
-				Debug.Log ("'Main Game PUM':Speed boost deactivated");
+				Debug.Log ("'SBPUM':Speed boost deactivated");
 			} else if (ability.GetType ().IsAssignableFrom (typeof(SandboxInkAbility))) {
-				Debug.Log ("'Main Game PUM':Ink splatter deactivated");
+				Debug.Log ("'SBPUM':Ink splatter deactivated");
 			}
+		}
+
+		private void LoadMesh(GameObject worldMesh){
+			OnMeshReady (worldMesh);
 		}
 	}
 
