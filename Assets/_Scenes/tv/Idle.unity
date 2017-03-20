@@ -1515,7 +1515,7 @@ Transform:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 620529758}
-  m_LocalRotation: {x: -0.007408741, y: 0.9298501, z: -0.36738566, w: 0.018751591}
+  m_LocalRotation: {x: -0.0074087414, y: 0.92985016, z: -0.3673857, w: 0.018751593}
   m_LocalPosition: {x: -17.20012, y: -3.8061516, z: 18.300407}
   m_LocalScale: {x: 2.0813282, y: 2.081325, z: 2.0813267}
   m_Children:
@@ -2143,7 +2143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f88649c4a30b2434384d387170308667, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Car: {fileID: 0}
+  Car: {fileID: 620529758}
   RoatateAround: {fileID: 1075428651}
 --- !u!4 &1000648819
 Transform:
