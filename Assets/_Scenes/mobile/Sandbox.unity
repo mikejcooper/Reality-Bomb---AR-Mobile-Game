@@ -610,6 +610,7 @@ MonoBehaviour:
   PlaneObject: {fileID: 2137931947}
   TxtObjectPrefab: {fileID: 1345171809}
   CanvasMessage: {fileID: 1827361256}
+  PowerUpManager: {fileID: 0}
 --- !u!4 &757163055
 Transform:
   m_ObjectHideFlags: 0
