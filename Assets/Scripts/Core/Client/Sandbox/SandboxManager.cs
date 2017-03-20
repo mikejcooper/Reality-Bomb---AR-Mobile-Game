@@ -14,7 +14,6 @@ public class SandboxManager : MonoBehaviour
 	public GameObject PlaneObject;
 	public GameObject TxtObjectPrefab;
 	public CanvasMessages CanvasMessage;
-	public SandBoxPowerUpManager PowerUpManager;
 
 
 	private bool _controlsDisabled;
@@ -29,6 +28,13 @@ public class SandboxManager : MonoBehaviour
 	void Start(){
 		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _welcome_Txt;
 		_controlsDisabled = false;
+		SandBoxPowerUpManager.SpeedBoostActivatedEvent += SetSpeedTxt;
+		SandBoxPowerUpManager.InkSplatterActivatedEvent += SetSplatTxt;
+	}
+
+	void OnDestroy(){
+		SandBoxPowerUpManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
+		SandBoxPowerUpManager.InkSplatterActivatedEvent -= SetSplatTxt;
 	}
 
 	void Update(){
