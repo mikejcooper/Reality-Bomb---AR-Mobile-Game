@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+using Powerups;
+
 
 
 public class SandboxManager : MonoBehaviour
@@ -12,6 +14,7 @@ public class SandboxManager : MonoBehaviour
 	public GameObject PlaneObject;
 	public GameObject TxtObjectPrefab;
 	public CanvasMessages CanvasMessage;
+	public SandBoxPowerUpManager PowerUpManager;
 
 
 	private bool _controlsDisabled;

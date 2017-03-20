@@ -12,6 +12,9 @@ namespace Powerups {
 		public SandboxInkAbilityProperties InkProperties;
 		public SandboxManager SB_Manager;
 
+		public delegate void OnSpeedBoostActivated ();
+		public static event OnSpeedBoostActivated SpeedBoostActivated;
+
 		protected override void Start () {
 			base.Start ();
 			OnMeshReady (PlaneObject);	
@@ -28,6 +31,7 @@ namespace Powerups {
 			if (ability.GetType ().IsAssignableFrom (typeof(SpeedAbility))) {
 				Debug.Log ("'SBPUM': Speed boost activated");
 				SB_Manager.SetSpeedTxt ();
+				SpeedBoostActivated ();
 			} else if (ability.GetType ().IsAssignableFrom (typeof(SandboxInkAbility))) {
 				SB_Manager.SetSplatTxt ();
 				Debug.Log ("'SBPUM':Ink splatter activated");
