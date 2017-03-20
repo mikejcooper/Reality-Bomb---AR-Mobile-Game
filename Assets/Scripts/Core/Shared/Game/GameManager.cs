@@ -202,7 +202,9 @@ public class GameManager : NetworkBehaviour {
 	[Server]
 	public void OnPlayerDisconnected(){
 		Debug.Log ("Player Disconnected");
+		Debug.Log ("Players Left: " + _cars.GetCarsOutOfTime() + _cars.GetNumberAliveCars());
 		_cars.ClearAllDisconnectedPlayers ();
+		Debug.Log ("Players Left: " + _cars.GetCarsOutOfTime() + _cars.GetNumberAliveCars());
 		CheckForGameOver ();
 		if (_cars.GetNumberOfBombsPresent() < 1) _cars.PassBombRandomPlayer ();
 	}
