@@ -241,7 +241,7 @@ Light:
   serializedVersion: 7
   m_Type: 2
   m_Color: {r: 0.44852942, g: 0.90872204, b: 1, a: 1}
-  m_Intensity: 1.370351
+  m_Intensity: 2.04
   m_Range: 20
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -262,7 +262,7 @@ Light:
     m_Bits: 4294967295
   m_Lightmapping: 1
   m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 1
+  m_BounceIntensity: 0.85
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &192940404
@@ -272,7 +272,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 192940402}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.94, y: 2.7, z: -4.025842}
+  m_LocalPosition: {x: -0.94, y: 2.7, z: -4.33}
   m_LocalScale: {x: 0.78142875, y: 0.78142864, z: 0.78142864}
   m_Children: []
   m_Father: {fileID: 894417893}
@@ -702,7 +702,7 @@ Light:
   serializedVersion: 7
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0.48453492
+  m_Intensity: 0.66
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -1010,7 +1010,7 @@ Light:
   serializedVersion: 7
   m_Type: 2
   m_Color: {r: 0.44852942, g: 0.90872204, b: 1, a: 1}
-  m_Intensity: 1.370351
+  m_Intensity: 3.03
   m_Range: 20
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -1031,7 +1031,7 @@ Light:
     m_Bits: 4294967295
   m_Lightmapping: 1
   m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 1
+  m_BounceIntensity: 0.85
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &1379826990
@@ -1104,7 +1104,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1392961375}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7.494762, y: 5.24, z: -4.025842}
+  m_LocalPosition: {x: -0.97, y: 6.86, z: -10.67}
   m_LocalScale: {x: 0.78142875, y: 0.78142864, z: 0.78142864}
   m_Children: []
   m_Father: {fileID: 894417893}
@@ -1136,7 +1136,7 @@ Light:
   serializedVersion: 7
   m_Type: 2
   m_Color: {r: 0.44852942, g: 0.90872204, b: 1, a: 1}
-  m_Intensity: 0.99115664
+  m_Intensity: 1.84
   m_Range: 20
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -1157,7 +1157,7 @@ Light:
     m_Bits: 4294967295
   m_Lightmapping: 1
   m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 1
+  m_BounceIntensity: 0.85
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &1673674029

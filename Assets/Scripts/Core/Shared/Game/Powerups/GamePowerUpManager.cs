@@ -19,7 +19,9 @@ namespace Powerups {
 
 		protected override void Start () {
 			base.Start ();
-			GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += LoadMesh;
+			if (GameObject.FindObjectOfType<GameManager> () != null) {
+				GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += LoadMesh;
+			}
 		}
 
 		override protected PowerupDefinition[] GetAvailablePowerups () {
