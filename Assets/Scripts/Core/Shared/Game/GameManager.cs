@@ -9,14 +9,16 @@ using TMPro;
 public class GameManager : NetworkBehaviour {
 
 	public delegate void OnWorldMeshAvailable(GameObject worldMesh);
-
-
 	public event OnWorldMeshAvailable OnWorldMeshAvailableEvent = delegate {};
+
+	public delegate void OnGameStarted();
+	public event OnGameStarted OnGameStartedEvent = delegate {};
 
 	public PreparingGame PreparingCanvas;
 	public GameObject MarkerScene;
 	public ARMarker MarkerComponent;
 	public GameObject BombObject;
+	public CanvasMessages CanvasMessage;
 
 	private CarList _cars = new CarList();
 
@@ -93,10 +95,6 @@ public class GameManager : NetworkBehaviour {
 			foreach(CarController car in _cars.GetCarsOutOfTime()){
 				KillPlayer (car);
 			}
-			if (_cars.GetNumberOfBombsPresent() == 0) {
-				_cars.ClearAllDisconnectedPlayers ();
-				_cars.PassBombRandomPlayer ();
-			}
 		}
 	}
 		
@@ -140,7 +138,22 @@ public class GameManager : NetworkBehaviour {
 	[Server]
 	public void CountDownFinishedStartPlaying(){
 		_preparingGame = false;
+		RpcCountDownFinishedStartPlaying ();
+		Debug.Log ("Server");
+		if (OnGameStartedEvent != null) {
+			Debug.Log ("ONGAMESTARTED NOT EMPTY SERVER");
+			OnGameStartedEvent();
+		}
 		_cars.PassBombRandomPlayer ();
+	}
+
+	[ClientRpc]
+	private void RpcCountDownFinishedStartPlaying(){
+		Debug.Log ("RpcCall");
+		if (OnGameStartedEvent != null) {
+			Debug.Log ("ONGAMESTARTED NOT EMPTY RPC");
+			OnGameStartedEvent();
+		}
 	}
 
 	private void CheckAreAllPlayersGameLoaded () {
@@ -180,10 +193,15 @@ public class GameManager : NetworkBehaviour {
 		
 	[Server]
 	public void OnPlayerDisconnected(){
+		Debug.Log ("Player Disconnected");
 		_cars.ClearAllDisconnectedPlayers ();
 		CheckForGameOver ();
 		if (_cars.GetNumberOfBombsPresent() < 1) _cars.PassBombRandomPlayer ();
 	}
 
+
+	private void showCanvasMessage(){
+		CanvasMessage.DisplayPowerUpMessage ("GameManager");
+	}
 
 }

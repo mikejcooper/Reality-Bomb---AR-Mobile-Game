@@ -7,6 +7,7 @@ using Abilities;
 
 namespace Powerups {
 
+
 	public struct AbilityResources {
 		public Canvas PlayerCanvas;
 		public BasePowerUpManager manager;
@@ -96,7 +97,6 @@ namespace Powerups {
 
 			GameObject powerUpObj = GameObject.Instantiate (_availableAbilities [abilityTypeIndex].Properties.PowerupPrefab);
 			powerUpObj.name = "powerup";
-			powerUpObj.layer = 9;
 
 			powerUpObj.AddComponent<Rigidbody> ();
 			powerUpObj.GetComponent<SphereCollider> ();

@@ -169,12 +169,11 @@ public class CarController : NetworkBehaviour
             _healthBar.UpdateCountdown(Lifetime, HasBomb);
 			EnsureCarIsOnMap ();
 			transform.rotation= Quaternion.Lerp (transform.rotation, _lookAngle , CarProperties.TurnRate * Time.deltaTime);
-
 			if (Lifetime <= 0.0f) {
 				Spectate ();
 			}
-		} 
-	}
+		}
+	}		
 
 	private void FixedUpdate ()
 	{
@@ -274,6 +273,7 @@ public class CarController : NetworkBehaviour
 
 	private void DisablePlayerUI() {
 		_joystickGameObject.SetActive (false);
+        _healthBar.gameObject.SetActive(false);
 	}
 
 	public void Spectate() {

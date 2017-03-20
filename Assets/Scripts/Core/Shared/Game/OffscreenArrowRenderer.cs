@@ -99,7 +99,7 @@ public class OffscreenArrowRenderer : MonoBehaviour {
 		RectTransform rectTransform = obj.GetComponent<RectTransform> ();
 	
 		// we update the RectTransform's pivot because it doesn't seem to inherit from the sprite
-		rectTransform.pivot = new Vector2(0.5f, 1.2f) ;
+		rectTransform.pivot = new Vector2(0.5f, 1.2f);
 
 		RectTransform canvasRect = GetComponent<RectTransform>();
 
