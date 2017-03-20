@@ -20,6 +20,7 @@ namespace Abilities {
 		private int _thisPlayerServerId;
 		private CarProperties _ownCarProperties;
 		private AbilityResources _abilityResources;
+		private GameObject _splashObject;
 
 		protected T _abilityProperties;
 
@@ -55,6 +56,7 @@ namespace Abilities {
 		public void StartAbility () {
 			_abilityResources.manager.OnPowerUpStart (this);
 			if (_thisPlayerServerId == _calleeServerId) {
+				DisplaySplash ();
 				OnApplyAbilitySelf (_ownCarProperties, _abilityResources.PlayerCanvas);
 			} else {
 				OnApplyAbilityOther (_ownCarProperties, _abilityResources.PlayerCanvas);
@@ -69,6 +71,51 @@ namespace Abilities {
 				OnRemoveAbilityOther (_ownCarProperties, _abilityResources.PlayerCanvas);
 			}
 			Destroy (this);
+		}
+
+		private void DisplaySplash () {
+			if (_abilityProperties.CanvasSplash != null) {
+				
+				_splashObject = GameObject.Instantiate (_abilityProperties.CanvasSplash);
+				_splashObject.transform.parent = _abilityResources.PlayerCanvas.transform;
+				_splashObject.transform.localScale = Vector3.one;
+				_splashObject.transform.localPosition = Vector3.zero;
+				Animation anim = _splashObject.GetComponent<Animation> ();
+				if (anim != null) {
+					anim.Play ();
+					anim.wrapMode = WrapMode.Once;
+					StartCoroutine (CheckForAnimationEnd(anim));
+				} else {
+					int secondsDelay = 2;
+					Debug.LogWarning (string.Format ("No splash animation for {0}. Hiding in {1} seconds.", this.GetType ().Name));
+					Invoke ("HideSplash", secondsDelay);
+				}
+
+
+			} else {
+				Debug.LogWarning (string.Format ("No canvas splash for {0}", this.GetType ().Name));
+			}
+
+		}
+
+		private IEnumerator CheckForAnimationEnd(Animation anim) {
+			while (anim.isPlaying) {
+				yield return new WaitForSeconds (0.5f);	
+			} 
+
+			HideSplash ();	
+		}
+
+		private void HideSplash () {
+			Destroy (_splashObject);
+		}
+
+		private IEnumerator WaitForAnimation ( Animation animation )
+		{
+			do
+			{
+				yield return null;
+			} while ( animation.isPlaying );
 		}
 
 		private bool IsOwnCarProperties(CarProperties properties) {
