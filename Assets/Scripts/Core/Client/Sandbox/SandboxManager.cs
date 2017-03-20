@@ -38,11 +38,9 @@ public class SandboxManager : MonoBehaviour
 	}
 
 	void Update(){
-		
 		EnsureCarIsOnMap ();
 	}
-
-
+		
 	private void ClearGuiTxt(){
 		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = "";
 	}
