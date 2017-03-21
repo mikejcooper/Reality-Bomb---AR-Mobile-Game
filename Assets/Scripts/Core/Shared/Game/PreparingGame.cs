@@ -21,9 +21,6 @@ public class PreparingGame : MonoBehaviour
 		_entry.transform.Find ("Waiting").GetComponent<TextMeshProUGUI> ().text = "Waiting for players...";
 		_entry.transform.parent = transform;
 //		GameManager.StartGameCountDownEvent += StartGameCountDown ();
-
-
-		StartCoroutine(StartCountDown ());
 	}
 
 	IEnumerator StartCountDown() {
