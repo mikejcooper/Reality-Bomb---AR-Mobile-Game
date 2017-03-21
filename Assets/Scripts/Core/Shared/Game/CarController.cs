@@ -26,7 +26,7 @@ public class CarController : NetworkBehaviour
 	[SyncVar]
 	public float Lifetime;
 
-	private UIJoystick _joystick;
+	private Joystick _joystick;
     private UIHealthBar _healthBar;
 //    private Image _bombImage;
 	// Reference used to move the tank.
@@ -42,8 +42,6 @@ public class CarController : NetworkBehaviour
 	private bool _controlsDisabled;
 	private bool _preparingGame = true;
 
-	private GameObject _joystickGameObject;
-
 	private void Start ()
 	{
 		if (GameObject.FindObjectOfType<GameManager> () != null) {
@@ -55,10 +53,7 @@ public class CarController : NetworkBehaviour
 	public void init () {
 
 		if (!_initialised) {
-			if (GameObject.Find ("JoystickBack") != null) {
-				_joystickGameObject = GameObject.Find ("JoystickBack");
-				_joystick = GameObject.Find ("JoystickBack").gameObject.GetComponent<UIJoystick> ();
-			}
+			_joystick = GameObject.FindObjectOfType<Joystick> ();
 			Transform nameText = transform.Find ("NameTag").Find ("NameText");
 			Text textComponent = nameText.gameObject.GetComponent<Text> ();
 			if (isServer) {
@@ -191,18 +186,18 @@ public class CarController : NetworkBehaviour
 		}
 
 		if (!_controlsDisabled) {
-			Vector3 joystickVector = new Vector3 (_joystick.Horizontal (), _joystick.Vertical (), 0);
+			Vector3 joystickVector = new Vector3 (_joystick.NormalisedVector.x, _joystick.NormalisedVector.y, 0);
 			GameObject ARCamera = GameObject.Find ("ARCamera");
 			Vector3 rotatedVector = ARCamera.transform.rotation * joystickVector;
 
-			if (_joystick.IsDragging ()) {
+			if (_joystick.Active) {
 				_lookAngle = Quaternion.FromToRotation (Vector3.forward, rotatedVector);
 				// think about combining z and y so that it moves away when close to 0 degrees
 				float combined = _lookAngle.eulerAngles.y;
 				_lookAngle.eulerAngles = new Vector3(0, combined, 0);
 			}
 
-			if (_joystick.IsDragging ()) {
+			if (_joystick.Active) {
 				_rigidbody.AddForce (transform.forward * joystickVector.magnitude * CarProperties.Acceleration);
 			}
 
@@ -290,7 +285,7 @@ public class CarController : NetworkBehaviour
 	}
 
 	private void DisablePlayerUI() {
-		_joystickGameObject.SetActive (false);
+		_joystick.gameObject.SetActive (false);
         _healthBar.gameObject.SetActive(false);
 	}
 

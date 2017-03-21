@@ -17,8 +17,8 @@ public class GameMessageManager : NetworkBehaviour {
 	// Use this for initialization
 	void Start () {
 		if (isServer) {
-			if (GameObject.Find ("JoystickBack") != null) {
-				GameObject.Find ("JoystickBack").SetActive (false);
+			if (GameObject.FindObjectOfType<Joystick> ()) {
+				GameObject.FindObjectOfType<Joystick> ().gameObject.SetActive (false);
 			}
 			if (GameObject.Find ("HealthBar") != null) {
 				GameObject.Find ("HealthBar").SetActive (false);
