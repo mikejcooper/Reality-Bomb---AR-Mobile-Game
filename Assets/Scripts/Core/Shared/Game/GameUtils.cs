@@ -14,7 +14,7 @@ public class GameUtils
 			}
 		}
 		int bombPlayerIndex = UnityEngine.Random.Range(0, activeConnectionIds.Count);
-		DebugConsole.Log (string.Format ("chose index {0} from connections size of {1}", bombPlayerIndex, activeConnectionIds.Count));
+		Debug.Log (string.Format ("chose index {0} from connections size of {1}", bombPlayerIndex, activeConnectionIds.Count));
 
 		return activeConnectionIds [bombPlayerIndex];
 	}
@@ -33,7 +33,7 @@ public class GameUtils
 			if (Physics.Raycast (position, Vector3.down, out hit, bounds.size.y * 2)) {
 				position.y = hit.point.y;
 
-				return position;
+				return position + new Vector3(0.0f,1.0f,0.0f);
 			}
 		}
 		return Vector3.zero;

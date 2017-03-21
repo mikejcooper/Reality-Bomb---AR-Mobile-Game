@@ -7,12 +7,21 @@ using TMPro;
 using Powerups;
 
 
+/*
+* REMEMBER CANT USE CLIENTRPC ATTRIBUTE IN GAMEMANAGER
+* ClientRpcs can only be run on objects that have been spawned via NetworkServer.Spawn(). Do not run RPC from a static gameobject.
+*/
+
 public class GameManager : NetworkBehaviour {
 
 	public delegate void OnWorldMeshAvailable(GameObject worldMesh);
-
-
 	public event OnWorldMeshAvailable OnWorldMeshAvailableEvent = delegate {};
+
+	public delegate void StartGameCountDown();
+	public event StartGameCountDown StartGameCountDownEvent = delegate {};
+
+	public delegate void OnGameStarted();
+	public event OnGameStarted OnGameStartedEvent = delegate {};
 
 	public PreparingGame PreparingCanvas;
 	public GameObject MarkerScene;
@@ -20,10 +29,10 @@ public class GameManager : NetworkBehaviour {
 	public GameObject BombObject;
 
 
-	private List<CarController> _cars = new List<CarController>();
-	private List<CarController> _remainingCars = new List<CarController>();
+	private CarList _cars = new CarList();
 
-	private int _deathCounter = 0;
+	private bool _preparingGame = true;
+
 	public int _startingBombPlayerConnectionId;
 
 	public GameObject WorldMesh { get; private set; }
@@ -39,7 +48,7 @@ public class GameManager : NetworkBehaviour {
 		} else if (isServer) {
 
 			_startingBombPlayerConnectionId = GameUtils.ChooseRandomPlayerConnectionId ();
-			DebugConsole.Log ("=> bombPlayerConnectionId: " + _startingBombPlayerConnectionId);
+			Debug.Log ("=> bombPlayerConnectionId: " + _startingBombPlayerConnectionId);
 
 			WorldMesh = ServerSceneManager.Instance.WorldMesh;
 
@@ -72,12 +81,20 @@ public class GameManager : NetworkBehaviour {
 			ClientSceneManager.Instance.OnGameLoaded ();
 		}
 	}
-
-	public bool IsStartingBomb (int connectionId) {
-		return connectionId == _startingBombPlayerConnectionId;
+		
+	private void Update ()
+	{
+		if (_preparingGame) {
+			return;
+		}
+		_cars.TickTime (Time.deltaTime);
+		if (isServer) {
+			foreach(CarController car in _cars.GetCarsOutOfTime()){
+				KillPlayer (car);
+			}
+		}
 	}
-
-
+		
 	void OnDestroy () {
 		// isServer is unset by NetworkIdentity before our OnDestroy
 		// so we have to check whether server is running instead.
@@ -88,37 +105,16 @@ public class GameManager : NetworkBehaviour {
 	}
 
 	[Server]
-	private string GetPlayerName (CarController car) {
-		return string.Format ("player {0}", car.connectionToClient.connectionId);
-	}
-
-	[Server]
-	public void KillPlayer (CarController car) {
-		_deathCounter++;
-		int carsLeft = _cars.Count - _deathCounter;
-		ServerSceneManager.Instance.UpdatePlayerGameData (car.ServerId, carsLeft, car.Lifetime);
+	private void KillPlayer (CarController car) {
+		_cars.KillPlayer (car);
 		CheckForGameOver ();
-		//NetworkServer.Destroy (car.gameObject);
-		//KillDisconnectedPlayer ();
-		PassBombRandomPlayer ();
-	}
-
-	private void ProcessKillPlayerMessage (string playerName) {
-		RemoveByName (_remainingCars, playerName);
+		_cars.PassBombRandomPlayer();
 	}
 
 	[Server]
 	private void CheckForGameOver () {
-		if (_deathCounter >= (_cars.Count - 1)) {
-			// update game data for survivor
-			foreach (var car in _cars) {
-				if (car.Alive) {
-					ServerSceneManager.Instance.UpdatePlayerGameData (car.ServerId, 0, car.Lifetime);
-					break;
-				}
-			}
-
-
+		if (_cars.GetNumberAliveCars() == 1) {
+			_cars.FinaliseGamePlayerData();
 			ServerSceneManager.Instance.OnServerRequestGameEnd ();
 		}
 	}
@@ -126,31 +122,41 @@ public class GameManager : NetworkBehaviour {
 	[Server]
 	private void AllPlayersReady(){
 		Debug.Log ("Server: All player are ready, start game countdown");
-		RpcPlayerReady ();
+		if (OnGameStartedEvent != null) {
+			StartGameCountDownEvent();
+		}
+//		RpcAllPlayersReady ();
+
 		PreparingCanvas.StartGameCountDown ();
+		_cars.StartGameCountDown ();
+		Debug.Log ("SERVER GAME COUNT DOWN");
 	}
 
-	[ClientRpc] // All players ready (synced), start countdown 
-	public void RpcPlayerReady() {
-		Debug.Log ("Client: All player are ready, start game countdown ");
-		PreparingCanvas.StartGameCountDown ();
+	[ClientRpc]
+	private void RpcAllPlayersReady(){
+		if (OnGameStartedEvent != null) {
+			StartGameCountDownEvent();
+		}
 	}
 		
 	[Server]
 	public void CountDownFinishedStartPlaying(){
-		foreach (CarController car in FindObjectsOfType<CarController>()) {
-			car.RpcPlayerGameStarting ();
-			car.ServerGameStarting ();
+		_preparingGame = false;
+		Debug.Log ("COUNTDOWNFINISHED");
+		if (OnGameStartedEvent != null) {
+			OnGameStartedEvent();
 		}
+		_cars.enableAllControls();
+		_cars.PassBombRandomPlayer ();
 	}
 
-	public void CheckAreAllPlayersGameLoaded () {
+	private void CheckAreAllPlayersGameLoaded () {
 		if (AreAllPlayersGameLoaded()) {
 			AllPlayersReady();
 		}
 	}
 
-	public bool AreAllPlayersGameLoaded () {
+	private bool AreAllPlayersGameLoaded () {
 		foreach (var car in GameObject.FindObjectsOfType<CarController>()) {
 			if (car != null && !car.HasLoadedGame) {
 				return false;
@@ -163,73 +169,32 @@ public class GameManager : NetworkBehaviour {
 
 	public void AddCar(GameObject gamePlayer)
 	{
-		_cars.Add(gamePlayer.GetComponent<CarController>());
-		_remainingCars.Add(gamePlayer.GetComponent<CarController>());
+		_cars.AddCar(gamePlayer.GetComponent<CarController>());
 	}
-
-	private void PassBombRandomPlayer(){
-		Debug.Log ("Bomb is passed to new random player");
-		foreach (CarController car in _cars) {
-			if (car.Alive && !car.HasBomb) {
-				car.AllDevicesSetBomb (true);
-				return;
-				}
-			}
-	}
-
-	private void RemoveByName( List<CarController> list, string name){
-		CarController tempCar = null;
-		foreach (CarController car in list) {
-			if (GetPlayerName (car).Equals (name)) {
-				tempCar = car;
-			}
-		}
-		if (tempCar != null) {
-			list.Remove (tempCar);
-		}
-	}
-
+		
 	[Server]
 	public void CollisionEvent(CarController car, Collision col){
 		CarController collisionCar = col.gameObject.GetComponent<CarController>();
-
 		if (col.gameObject.tag == "TankTag") {
 			if ( collisionCar.IsTransferTimeExpired() && collisionCar.HasBomb )
 			{
-				collisionCar.AllDevicesSetBomb(false);
-				car.AllDevicesSetBomb (true);
+				collisionCar.setBombAllDevices(false);
+				car.setBombAllDevices (true);
 				car.UpdateTransferTime (1.0f);
 			} 
 		}
 	} 
-
-	[Server]
-	private void KillDisconnectedPlayer(){
-		DebugConsole.Log ("Gamemanager Kill DisconnectedPlayer");
-		for(var i = _cars.Count - 1; i > -1; i--)
-		{
-			if (_cars[i].connectionToClient == null)_cars.RemoveAt(i);
-		}
-		CheckForGameOver ();
-		if (!IsBombInGame ()) PassBombRandomPlayer ();
-	}
-
+		
 	[Server]
 	public void OnPlayerDisconnected(){
-		KillDisconnectedPlayer ();
-		if(!IsBombInGame()){
-			PassBombRandomPlayer ();
-		}
+		Debug.Log ("Player Disconnected");
+		Debug.Log ("Players Left: " + _cars.GetCarsOutOfTime() + _cars.GetNumberAliveCars());
+		_cars.ClearAllDisconnectedPlayers ();
+		Debug.Log ("Players Left: " + _cars.GetCarsOutOfTime() + _cars.GetNumberAliveCars());
+		CheckForGameOver ();
+		if (_cars.GetNumberOfBombsPresent() < 1) _cars.PassBombRandomPlayer ();
 	}
 
-	private bool IsBombInGame(){
-		foreach (CarController car in _cars) {
-			if (car.HasBomb) {
-				return true;
-			}
-		}
-		return false;
-	}
 
 
 }

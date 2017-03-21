@@ -342,7 +342,7 @@ namespace NetworkCompat {
 		public override void OnServerDisconnect(NetworkConnection conn)
 		{
 			base.OnServerDisconnect(conn);
-
+			Debug.Log("ONSERVERDISCONNECTCALLED");
 			// if lobbyplayer for this connection has not been destroyed by now, then destroy it here
 			for (int i = 0; i < lobbySlots.Length; i++)
 			{

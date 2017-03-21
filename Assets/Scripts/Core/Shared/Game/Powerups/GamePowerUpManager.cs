@@ -20,6 +20,7 @@ namespace Powerups {
 
 		protected override void Start () {
 			base.Start ();
+
 			if (IsAllowedToSpawn ()) {
 				if (GameObject.FindObjectOfType<GameManager> () != null) {
 					GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += LoadMesh;

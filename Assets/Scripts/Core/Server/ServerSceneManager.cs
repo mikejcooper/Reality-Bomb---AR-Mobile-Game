@@ -114,7 +114,7 @@ public class ServerSceneManager : MonoBehaviour
 
 
 	public void OnServerRequestLoadNewMesh () {
-		DebugConsole.Log ("OnRequestLoadNewMesh");
+		Debug.Log ("OnRequestLoadNewMesh");
 		_meshTransferProcess.MoveNext (MeshServerLifecycle.Command.FindServer);
 		_meshDiscoveryServer.StartSearching();
 
@@ -123,8 +123,9 @@ public class ServerSceneManager : MonoBehaviour
 		OnStateUpdate ();
 	}
 
+
 	private void OnMeshServerFound (string address, int port) {
-		DebugConsole.Log (string.Format("OnMeshServerFound, address: {0}", address));
+		Debug.Log (string.Format("OnMeshServerFound, address: {0}", address));
 		_meshTransferProcess.MoveNext (MeshServerLifecycle.Command.Download);
 
 		_meshDiscoveryServer.StopSearching();
@@ -137,7 +138,7 @@ public class ServerSceneManager : MonoBehaviour
 	}
 
 	private void OnMeshDataReceived () {
-		DebugConsole.Log ("OnMeshDataReceived");
+		Debug.Log ("OnMeshDataReceived");
 		_meshTransferProcess.MoveNext (MeshServerLifecycle.Command.DownloadFinished);
 
 		// now that we've gone and fetched the mesh, updating the websocket
@@ -151,7 +152,7 @@ public class ServerSceneManager : MonoBehaviour
 
 	private void OnGamePlayerConnected (UnityEngine.Networking.NetworkConnection conn)
 	{
-		DebugConsole.Log ("OnPlayerConnected");
+		Debug.Log ("OnPlayerConnected");
 		ConnectedPlayerCount++;
 
 		_playerDataManager.AddPlayer (conn.connectionId, NameGenerator.GenerateName ());
@@ -183,7 +184,7 @@ public class ServerSceneManager : MonoBehaviour
 
 	private void OnGamePlayerDisconnected (UnityEngine.Networking.NetworkConnection conn)
 	{
-		DebugConsole.Log ("OnPlayerDisconnected");
+		Debug.Log ("OnPlayerDisconnected");
 		ConnectedPlayerCount--;
 
 		_playerDataManager.RemovePlayer (conn.connectionId);
@@ -199,7 +200,7 @@ public class ServerSceneManager : MonoBehaviour
 	}
 
 	public void OnServerRequestGameReady () {
-		DebugConsole.Log ("OnGameIsReady");
+		Debug.Log ("OnGameIsReady");
 		if (_networkLobbyManager.IsReadyToBegin ()) {
 			_innerProcess.MoveNext (Command.GameReady);
 			OnStateUpdate ();
@@ -221,10 +222,10 @@ public class ServerSceneManager : MonoBehaviour
 	}
 
 	public void OnServerRequestGameEnd () {
-		DebugConsole.Log ("OnGameEnd");
+		Debug.Log ("OnGameEnd");
 		_innerProcess.MoveNext (Command.GameEnd);
 		OnStateUpdate ();
-		// todo call correct things at game end
+//		 todo call correct things at game end
 	}
 
 	private void OnStateUpdate ()

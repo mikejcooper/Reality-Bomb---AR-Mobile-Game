@@ -15,7 +15,6 @@ public class CarController : NetworkBehaviour
 	public float MaxLifetime = 60.0f;
 	public bool HasBomb = false;
 	public bool Alive = true;
-	public float FallDistanceBeforeRespawn = -150f;
 	public int DisabledControlDurationSeconds = 2;
 	// This is a server-only field that doesn't get updated on clients. I'll move this
 	// at some point to a better place.
@@ -35,6 +34,8 @@ public class CarController : NetworkBehaviour
 	private Vector3 _direction;
 	private Quaternion _lookAngle = Quaternion.Euler(Vector3.forward);
 	private float _transferTime;
+	private float _fallDistanceBeforeRespawn;
+
 
 	private Text LifetimeText;
 	private bool _initialised;
@@ -65,10 +66,6 @@ public class CarController : NetworkBehaviour
 			} else {
 				textComponent.text = ClientSceneManager.Instance.GetPlayerDataById (ServerId).Name;
 			}
-//            if (GameObject.Find("BombImage") != null)
-//            {
-//                _bombImage = GameObject.Find("BombImage").gameObject.GetComponent<Image>();
-//            }
 			if (!isServer) {
 				if (GameObject.Find ("HealthBar") != null) {
 					_healthBar = GameObject.Find ("HealthBar").gameObject.GetComponent<UIHealthBar> ();
@@ -81,7 +78,7 @@ public class CarController : NetworkBehaviour
 			Lifetime = MaxLifetime;
 			_transferTime = Time.time;
 			_initialised = true;
-			_controlsDisabled = false;
+			_controlsDisabled = true;
 
 			// hide and freeze so we can correctly position
 			if (hasAuthority) {
@@ -89,22 +86,20 @@ public class CarController : NetworkBehaviour
 				gameObject.SetActive (false);
 			}
 
-			if (!isServer) {
-				CmdRequestColour ();
-//				EnableControls (false);
-			} else {
+			if (isServer){
 				//_preparingGame = true;
 				// register
-				DebugConsole.Log ("GameManager.Instance.AddCar (gameObject);");
+				Debug.Log ("GameManager.Instance.AddCar (gameObject);");
 				GameObject.FindObjectOfType<GameManager> ().AddCar (gameObject);
 			}
 
 			if (GameObject.FindObjectOfType<GameManager> ().WorldMesh != null) {
-				DebugConsole.Log ("available");
+				Debug.Log ("available");
 				Reposition (GameObject.FindObjectOfType<GameManager> ().WorldMesh);
 			} else {
-				DebugConsole.Log ("unavailable");
+				Debug.Log ("unavailable");
 				GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += Reposition;
+				GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += SetFallDiatance;
 			}
 				
 		}
@@ -113,46 +108,60 @@ public class CarController : NetworkBehaviour
 
 	void OnDestroy () {
 		GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent -= Reposition;
+		GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent -= SetFallDiatance;
+
 	}
-
-	[Command]
-	private void CmdRequestColour () {
-		DebugConsole.Log ("I am server and I choose bomb");
-		// set colour based off server's game manager
-
-		bool isBomb = GameObject.FindObjectOfType<GameManager>().IsStartingBomb(connectionToClient.connectionId) ;
-		AllDevicesSetBomb (isBomb);
-	}
-
-	public void AllDevicesSetBomb(bool isBomb) {
-		RpcSetBomb (isBomb);
-		ServerSetBomb (isBomb);
+		
+	public void setBombAllDevices(bool b){
+		RpcSetBomb (b);
+		ServerSetBomb (b);
 	}
 
 	[ClientRpc]
-	private void RpcSetBomb(bool isBomb) {
-		processSetBombMessage (isBomb);
+	private void RpcSetBomb(bool b){
+		setBomb (b);
 	}
 
-	private void ServerSetBomb(bool isBomb) {
-		processSetBombMessage (isBomb);
+	[Server]
+	private void ServerSetBomb(bool b){
+		setBomb (b);
 	}
 
-	private void processSetBombMessage(bool isBomb) {
-		DebugConsole.Log("isBomb: " + isBomb);
-#if UNITY_ANDROID || UNITY_IPHONE
-        if (isLocalPlayer && HasBomb != isBomb)
-            Handheld.Vibrate();
-#endif
-        HasBomb = isBomb;
-		if (isBomb) {
+	private void setBomb(bool b){
+		this.HasBomb = b;
+//		#if UNITY_ANDROID || UNITY_IPHONE
+//		if (isLocalPlayer && HasBomb != isBomb){
+//			Handheld.Vibrate();
+//		}
+//		#endif
+		if (this.HasBomb) {
 			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.parent = transform;
 			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localScale = 0.01f * Vector3.one;
 			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localPosition = new Vector3 (0, 2.5f, 0);
 			GameObject.FindObjectOfType<GameManager> ().BombObject.SetActive (true);
-        } 
+		} 
+	}
+		
+	public void KillAllDevices(){
+		RpcKill ();
+		ServerKill ();
 	}
 
+	[ClientRpc]
+	private void RpcKill(){
+		Kill ();
+	}
+
+	[Server]
+	private void ServerKill(){
+		Kill ();
+	}
+
+	private void Kill(){
+		Lifetime = 0.0f;
+		Alive = false;
+		this.gameObject.SetActive (false);
+	}
 
 	private void Update ()
 	{
@@ -160,50 +169,14 @@ public class CarController : NetworkBehaviour
 			return;
 				
 		if ((isLocalPlayer || IsPlayingSolo)) {
-            
+            _healthBar.UpdateCountdown(Lifetime, HasBomb);
 			EnsureCarIsOnMap ();
 			transform.rotation= Quaternion.Lerp (transform.rotation, _lookAngle , CarProperties.TurnRate * Time.deltaTime);
-
 			if (Lifetime <= 0.0f) {
 				Spectate ();
-                _healthBar.UpdateCountdown(0.0f, false);
-            }
-            else
-            {
-                _healthBar.UpdateCountdown(Lifetime, HasBomb && !_preparingGame);
-            }
-		} else if (isServer) {	
-			// let the server authoratively update vital stats
-			if ((HasBomb && Lifetime > 0.0f) && !_preparingGame) {
-				Debug.Log("PreparingGame: " + _preparingGame);
-				Lifetime -= Time.deltaTime;
-			}
-			if (Lifetime < 0.0f) {
-				Kill ();
 			}
 		}
-	}
-		
-	[Server]
-	private void Kill () {
-		DebugConsole.Log ("player has run out of time");
-		Lifetime = 0.0f;
-		Alive = false;
-		GameObject.FindObjectOfType<GameManager>().KillPlayer (this);
-	}
-
-	private void ChangeColour(Color colour)
-	{
-		Renderer[] renderers = GetComponentsInChildren<Renderer>();
-		foreach (Renderer r in renderers)
-		{
-			foreach (Material m in r.materials)
-			{
-				if (m.HasProperty("_Color"))
-					m.color = colour;
-			}
-		}
-	}
+	}		
 
 	private void FixedUpdate ()
 	{
@@ -255,9 +228,9 @@ public class CarController : NetworkBehaviour
 
 	public void Reposition(GameObject worldMesh)
 	{
-		DebugConsole.Log ("repositioning");
+		Debug.Log ("repositioning");
 		if (hasAuthority) {
-			DebugConsole.Log ("repositioning with authority");
+			Debug.Log ("repositioning with authority");
 
 			Debug.Log ("Repositioning car");
 
@@ -268,7 +241,7 @@ public class CarController : NetworkBehaviour
 			Vector3 position = GameUtils.FindSpawnLocation (worldMesh);
 
 			if (position != Vector3.zero) {
-				DebugConsole.Log ("unfreezing");
+				Debug.Log ("unfreezing");
 				// now unfreeze and show
 
 				gameObject.SetActive (true);
@@ -279,56 +252,39 @@ public class CarController : NetworkBehaviour
 
 		}
 	}
-
-	[Server]
-	public void ServerGameStarting(){
-        _preparingGame = false;
-        DebugConsole.Log("Server: " + _preparingGame);
-	}
-
-	[ClientRpc]
-	public void RpcPlayerGameStarting(){
-        _preparingGame = false;
-		DebugConsole.Log("Player: " + _preparingGame);
-        if (isLocalPlayer)
-        {
-            _healthBar.UpdateCountdown(Lifetime, HasBomb);
-        }
-        EnableControls (true);
-	}
-
+		
 	public void EnsureCarIsOnMap(){
-		if(_rigidbody.position.y <= FallDistanceBeforeRespawn){
+		if(_rigidbody.position.y <= _fallDistanceBeforeRespawn){
 			Reposition (GameObject.FindObjectOfType<GameManager> ().WorldMesh);
-			DisableControls (DisabledControlDurationSeconds);
+			DisableControlsTime (DisabledControlDurationSeconds);
 		}
 	}
 
-	public void DisableControls(int seconds){
-		ToggleControls();
-		Invoke("ToggleControls", seconds);
+	public void DisableControlsTime(int seconds){
+		DisableControls();
+		Invoke("EnableControls", seconds);
+	}
+		
+
+	public void EnableControls(){
+		_controlsDisabled = false;
 	}
 
 	[ClientRpc]
-	public void RpcEnableALLControls(bool b) {
-		DebugConsole.Log ("Enabled");
-		if (b) {
-			_controlsDisabled = false;
-		} else {
-			_controlsDisabled = true;
-		}
+	public void RpcEnableControls(){
+		Debug.Log ("RPC CONTROLS");
+
+		_controlsDisabled = false;
 	}
 
-	public void ToggleControls(){
-		_controlsDisabled = !_controlsDisabled;
+	[ClientRpc]
+	public void RpcStartGameCountDown(){
+		Debug.Log ("RPC GAME COUNT DOWN");
+		GameObject.FindObjectOfType<PreparingGame>().StartGameCountDown ();
 	}
 
-	public void EnableControls(bool b){
-		if (b) {
-			_controlsDisabled = false;
-		} else {
-			_controlsDisabled = true;
-		}
+	public void DisableControls(){
+		_controlsDisabled = true;
 	}
 
 	private void DisablePlayerUI() {
@@ -337,8 +293,14 @@ public class CarController : NetworkBehaviour
 	}
 
 	public void Spectate() {
-		ToggleControls ();
+		DisableControls ();
 		DisablePlayerUI ();
 		GameObject.Find ("SpectatingText").GetComponent<TextMeshProUGUI> ().text = "Spectating...";
+	}
+
+	private void SetFallDiatance(GameObject _meshObj){
+		float meshHeight = _meshObj.transform.GetComponent<MeshRenderer> ().bounds.size.y;
+		float meshMinY = _meshObj.transform.GetComponent<MeshRenderer> ().bounds.min.y;
+		_fallDistanceBeforeRespawn = meshMinY - meshHeight*0.65f;
 	}
 }
