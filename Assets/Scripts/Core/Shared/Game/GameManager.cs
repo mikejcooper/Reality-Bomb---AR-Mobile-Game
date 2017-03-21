@@ -108,7 +108,7 @@ public class GameManager : NetworkBehaviour {
 	private void KillPlayer (CarController car) {
 		_cars.KillPlayer (car);
 		CheckForGameOver ();
-		_cars.PassBombRandomPlayer();
+		if(_cars.GetNumberOfBombsPresent() == 0) _cars.PassBombRandomPlayer();
 	}
 
 	[Server]
@@ -122,7 +122,7 @@ public class GameManager : NetworkBehaviour {
 	[Server]
 	private void AllPlayersReady(){
 		Debug.Log ("Server: All player are ready, start game countdown");
-		if (OnGameStartedEvent != null) {
+		if (StartGameCountDownEvent != null) {
 			StartGameCountDownEvent();
 		}
 //		RpcAllPlayersReady ();
@@ -134,7 +134,7 @@ public class GameManager : NetworkBehaviour {
 
 	[ClientRpc]
 	private void RpcAllPlayersReady(){
-		if (OnGameStartedEvent != null) {
+		if (StartGameCountDownEvent != null) {
 			StartGameCountDownEvent();
 		}
 	}
@@ -147,7 +147,7 @@ public class GameManager : NetworkBehaviour {
 			OnGameStartedEvent();
 		}
 		_cars.enableAllControls();
-		_cars.PassBombRandomPlayer ();
+        if(_cars.GetNumberOfBombsPresent() < 1) _cars.PassBombRandomPlayer ();
 	}
 
 	private void CheckAreAllPlayersGameLoaded () {

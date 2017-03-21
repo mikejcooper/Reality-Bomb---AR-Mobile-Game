@@ -96,18 +96,20 @@ class UIHealthBar : MonoBehaviour
             {
                 t = 0;
                 _counting = false;
-                GameObject explosion = Instantiate(_expl_prefab);
-                explosion.transform.parent = transform.parent;
-                explosion.GetComponent<RectTransform>().localPosition = Vector2.zero;
-                //Debug.Break();
             }
-                
 
             //Slide fuse to the left
             _rt.sizeDelta = new Vector2(_maxWidth * t / MaxValue, _rt.rect.height);
 
             _txt.text = string.Format("{0:N2}", t);
         }
+    }
+
+    public void Boom()
+    {
+        GameObject explosion = Instantiate(_expl_prefab);
+        explosion.transform.parent = transform.parent;
+        explosion.GetComponent<RectTransform>().localPosition = Vector2.zero;
     }
     
 }
