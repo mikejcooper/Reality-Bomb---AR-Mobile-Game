@@ -19,7 +19,9 @@ namespace Powerups {
 
 		protected override void Start () {
 			base.Start ();
-			OnMeshReady (PlaneObject);	
+			if (IsAllowedToSpawn ()) {
+				OnMeshReady (PlaneObject);	
+			}
 		}
 
 		override protected PowerupDefinition[] GetAvailablePowerups () {
@@ -45,6 +47,10 @@ namespace Powerups {
 			} else if (ability.GetType ().IsAssignableFrom (typeof(SandboxInkAbility))) {
 				Debug.Log ("'SBPUM':Ink splatter deactivated");
 			}
+		}
+
+		protected override bool IsAllowedToSpawn(){
+			return true;
 		}
 	}
 

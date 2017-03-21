@@ -929,6 +929,16 @@ Prefab:
       propertyPath: m_textInfo.spaceCount
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 224780783304984882, guid: e73d5d3e13327419689c1a23f625f527,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: -255
+      objectReference: {fileID: 0}
+    - target: {fileID: 224780783304984882, guid: e73d5d3e13327419689c1a23f625f527,
+        type: 2}
+      propertyPath: m_LocalScale.x
+      value: 0.9383328
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e73d5d3e13327419689c1a23f625f527, type: 2}
   m_IsPrefabParent: 0
