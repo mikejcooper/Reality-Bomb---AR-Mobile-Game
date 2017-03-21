@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.Networking;
 using Random = UnityEngine.Random;
 using Abilities;
 
@@ -61,6 +62,7 @@ namespace Powerups {
 
 		IEnumerator TryToSpawn()
 		{
+			Debug.Log ("Trying to spawn powerup");
 			while(true) 
 			{ 
 				// Adjust Range Size to adjust spawn frequency
@@ -76,11 +78,11 @@ namespace Powerups {
 		}
 
 		protected void OnMeshReady (GameObject mesh) {
-
 			if (mesh == null) {
 				Debug.LogError ("OnMeshReady: mesh is null!");
 				return;
 			}
+
 			_meshObj = mesh;
 			Debug.Log ("OnMeshReady");
 			Bounds bounds = _meshObj.transform.GetComponent<MeshRenderer> ().bounds;
@@ -92,9 +94,7 @@ namespace Powerups {
 
 		// Generate a powerup once the decision to spawn one has been made
 		private void GenPowerUp () {
-
 			var abilityTypeIndex = Random.Range(0,_availableAbilities.Length);
-
 			GameObject powerUpObj = GameObject.Instantiate (_availableAbilities [abilityTypeIndex].Properties.PowerupPrefab);
 			powerUpObj.transform.parent = GameObject.Find("Marker scene").transform;
 			powerUpObj.name = "powerup";
@@ -114,6 +114,7 @@ namespace Powerups {
 			OnPowerUpGenerated (powerUpObj);
 		}
 
+		protected virtual bool IsAllowedToSpawn () { return false; }
 		protected virtual void OnPowerUpGenerated(GameObject powerUpObj) {}
 
 		public virtual void OnPowerUpStart<T>(BaseAbility<T> ability) where T:BaseAbilityProperties {}

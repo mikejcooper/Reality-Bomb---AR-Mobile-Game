@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using Abilities;
 
 namespace Powerups {
@@ -19,7 +20,13 @@ namespace Powerups {
 
 		protected override void Start () {
 			base.Start ();
-			GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += LoadMesh;
+			if (IsAllowedToSpawn ()) {
+				if (GameObject.FindObjectOfType<GameManager> () != null) {
+					GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += LoadMesh;
+				} else {
+					Debug.LogError ("Game Manager in GamePowerUpMaager is Null");
+				}
+			}
 		}
 
 		override protected PowerupDefinition[] GetAvailablePowerups () {
@@ -46,6 +53,13 @@ namespace Powerups {
 				Debug.Log ("'SBPUM':Ink splatter deactivated");
 			}
 		}
+
+		protected override bool IsAllowedToSpawn(){
+			return UnityEngine.Networking.NetworkServer.active;
+		}
+//		public override void OnPowerUpGenerated(GameObject powerUpObj) {
+//			powerUpObj.AddComponent<NetworkIdentity> ();
+//		}
 
 		private void LoadMesh(GameObject worldMesh){
 			OnMeshReady (worldMesh);
