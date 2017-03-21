@@ -1588,6 +1588,13 @@ public class Reporter : MonoBehaviour
 	{
 		if (Application.platform == RuntimePlatform.Android ||
 			Application.platform == RuntimePlatform.IPhonePlayer) {
+
+			bool UpperScreenPortion = false;
+			float ScreenHeightBound = 0.7f ;
+			if (Screen.height * ScreenHeightBound < Input.touches[0].position.y){
+				UpperScreenPortion = true;
+			}
+
 			if (Input.touches.Length != 1) {
 				gestureDetector.Clear();
 				gestureCount = 0;
@@ -1597,12 +1604,18 @@ public class Reporter : MonoBehaviour
 					gestureDetector.Clear();
 				else if (Input.touches[0].phase == TouchPhase.Moved) {
 					Vector2 p = Input.touches[0].position;
-					if (gestureDetector.Count == 0 || (p - gestureDetector[gestureDetector.Count - 1]).magnitude > 10)
+					if ((gestureDetector.Count == 0 || (p - gestureDetector[gestureDetector.Count - 1]).magnitude > 10) && UpperScreenPortion)
 						gestureDetector.Add(p);
 				}
 			}
 		}
 		else {
+			bool UpperScreenPortion = false;
+			float ScreenHeightBound = 0.7f ;
+			if (Screen.height * ScreenHeightBound < Input.mousePosition.y){
+				UpperScreenPortion = true;
+			}
+
 			if (Input.GetMouseButtonUp(0)) {
 				gestureDetector.Clear();
 				gestureCount = 0;
@@ -1610,7 +1623,7 @@ public class Reporter : MonoBehaviour
 			else {
 				if (Input.GetMouseButton(0)) {
 					Vector2 p = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-					if (gestureDetector.Count == 0 || (p - gestureDetector[gestureDetector.Count - 1]).magnitude > 10)
+					if ((gestureDetector.Count == 0 || (p - gestureDetector[gestureDetector.Count - 1]).magnitude > 10) && UpperScreenPortion)
 						gestureDetector.Add(p);
 				}
 			}

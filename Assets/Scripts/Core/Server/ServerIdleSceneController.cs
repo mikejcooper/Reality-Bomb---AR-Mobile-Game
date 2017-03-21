@@ -3,7 +3,6 @@ using System.Collections;
 
 public class ServerIdleSceneController : MonoBehaviour
 {
-	//public GameObject Car;
 	public Transform RoatateAround;
 
 	private Camera _cameraObject;
@@ -32,9 +31,6 @@ public class ServerIdleSceneController : MonoBehaviour
 		float z = Mathf.Sin (0.5f*_timeCounter) * _z;
 		_cameraObject.transform.position = new Vector3 (x, y, z) + _cameraStartPosition;
 		_cameraObject.transform.LookAt(RoatateAround);
-
-		// Car Movement
-		//Car.transform.Rotate(Vector3.up * _timeCounter, 0.2f);
 	}
 }
 

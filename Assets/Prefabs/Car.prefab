@@ -131,7 +131,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1888881374933336}
-  m_LocalRotation: {x: -0, y: 0.9496317, z: -0, w: 0.31336835}
+  m_LocalRotation: {x: -0, y: -0.5690021, z: -0, w: 0.82233614}
   m_LocalPosition: {x: 3.37, y: 0.4, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
@@ -527,7 +527,6 @@ MonoBehaviour:
   MaxLifetime: 15
   HasBomb: 0
   Alive: 1
-  FallDistanceBeforeRespawn: -150
   DisabledControlDurationSeconds: 2
   HasLoadedGame: 0
   ServerId: 0
