@@ -131,8 +131,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1888881374933336}
-  m_LocalRotation: {x: -0, y: -0.5690021, z: -0, w: 0.82233614}
-  m_LocalPosition: {x: 3.37, y: 0.4, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.4, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
   - {fileID: 4395180477637996}
@@ -267,7 +267,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.5, y: 1, z: 2.5}
+  m_Size: {x: 1.8, y: 1, z: 3.5}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!95 &95838116891457444
 Animator:
@@ -442,6 +442,7 @@ MonoBehaviour:
   MaxSpeed: 6
   Acceleration: 40
   TurnRate: 5
+  BumpForce: 200
 --- !u!114 &114644974806958924
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -531,6 +532,7 @@ MonoBehaviour:
   HasLoadedGame: 0
   ServerId: 0
   Lifetime: 0
+  _rigidbody: {fileID: 0}
 --- !u!114 &114991474333972938
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -601,7 +603,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0.07999992, y: 0.00000071525574}
-  m_SizeDelta: {x: 2.031579, y: 0.5}
+  m_SizeDelta: {x: 0.8, y: 0.5}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!224 &224519226406610934
 RectTransform:

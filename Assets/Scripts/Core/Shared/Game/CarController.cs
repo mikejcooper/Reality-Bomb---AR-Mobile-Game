@@ -30,7 +30,7 @@ public class CarController : NetworkBehaviour
     private UIHealthBar _healthBar;
 //    private Image _bombImage;
 	// Reference used to move the tank.
-	private Rigidbody _rigidbody;
+	public Rigidbody _rigidbody;
 	private Vector3 _direction;
 	private Quaternion _lookAngle = Quaternion.Euler(Vector3.forward);
 	private float _transferTime;

@@ -181,7 +181,13 @@ public class GameManager : NetworkBehaviour {
 				collisionCar.setBombAllDevices(false);
 				car.setBombAllDevices (true);
 				car.UpdateTransferTime (1.0f);
-			} 
+			}
+
+			//Apply bumping force on collision
+			Vector3 dir = col.contacts[0].point - car.transform.position;
+			dir.y = 0;
+			dir = -dir.normalized;
+			car._rigidbody.AddForce(car.CarProperties.BumpForce * dir);
 		}
 	} 
 		
