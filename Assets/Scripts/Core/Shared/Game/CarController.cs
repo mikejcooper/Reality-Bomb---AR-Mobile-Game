@@ -130,8 +130,9 @@ public class CarController : NetworkBehaviour
 	private void setBomb(bool b){
 		this.HasBomb = b;
 		#if UNITY_ANDROID || UNITY_IPHONE
-		if (isLocalPlayer && HasBomb != isBomb)
-		Handheld.Vibrate();
+		if (isLocalPlayer && HasBomb != isBomb){
+			Handheld.Vibrate();
+		}
 		#endif
 		if (this.HasBomb) {
 			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.parent = transform;
@@ -279,7 +280,6 @@ public class CarController : NetworkBehaviour
 	[ClientRpc]
 	public void RpcStartGameCountDown(){
 		Debug.Log ("RPC GAME COUNT DOWN");
-
 		GameObject.FindObjectOfType<PreparingGame>().StartGameCountDown ();
 	}
 
