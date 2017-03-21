@@ -149,6 +149,8 @@ public class CarController : NetworkBehaviour
 
 	[ClientRpc]
 	private void RpcKill(){
+        if (hasAuthority)
+            _healthBar.Boom();
 		Kill ();
 	}
 
