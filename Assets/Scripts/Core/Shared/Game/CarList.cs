@@ -6,7 +6,7 @@ using System.Diagnostics;
 public class CarList
 {
 
-	private List<CarController> _cars = new List<CarController>();
+	public List<CarController> _cars = new List<CarController>();
 
 	public CarList ()
 	{
@@ -90,5 +90,16 @@ public class CarList
 		}
 	}
 
+	public void enableAllControls(){
+		foreach (CarController car in _cars) {
+			car.RpcEnableControls ();
+		}
+	}
+
+	public void StartGameCountDown (){
+		foreach (CarController car in _cars) {
+			car.RpcStartGameCountDown ();
+		}
+	}
 }
 

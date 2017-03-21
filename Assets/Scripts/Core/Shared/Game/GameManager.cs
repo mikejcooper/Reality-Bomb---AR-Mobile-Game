@@ -7,6 +7,10 @@ using TMPro;
 using Powerups;
 
 
+/*
+* REMEMBER CANT USE CLIENTRPC ATTRIBUTE IN GAMEMANAGER
+*/
+
 public class GameManager : NetworkBehaviour {
 
 	public delegate void OnWorldMeshAvailable(GameObject worldMesh);
@@ -114,31 +118,26 @@ public class GameManager : NetworkBehaviour {
 	[Server]
 	private void AllPlayersReady(){
 		Debug.Log ("Server: All player are ready, start game countdown");
-		RpcPlayerReady ();
+//		RpcPlayerReady ();
 		PreparingCanvas.StartGameCountDown ();
+		_cars.StartGameCountDown ();
 	}
 
 	[ClientRpc] // All players ready (synced), start countdown 
 	public void RpcPlayerReady() {
 		Debug.Log ("Client: All player are ready, start game countdown ");
-		PreparingCanvas.StartGameCountDown ();
+//		PreparingCanvas.StartGameCountDown ();
 	}
 		
 	[Server]
 	public void CountDownFinishedStartPlaying(){
 		_preparingGame = false;
-		RpcCountDownFinishedStartPlaying ();
+		Debug.Log ("COUNTDOWNFINISHED");
 		if (OnGameStartedEvent != null) {
 			OnGameStartedEvent();
 		}
+		_cars.enableAllControls();
 		_cars.PassBombRandomPlayer ();
-	}
-
-	[ClientRpc]
-	private void RpcCountDownFinishedStartPlaying(){
-		if (OnGameStartedEvent != null) {
-			OnGameStartedEvent();
-		}
 	}
 
 	private void CheckAreAllPlayersGameLoaded () {

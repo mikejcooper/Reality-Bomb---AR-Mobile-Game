@@ -15,7 +15,6 @@ public class CarController : NetworkBehaviour
 	public float MaxLifetime = 60.0f;
 	public bool HasBomb = false;
 	public bool Alive = true;
-	public float FallDistanceBeforeRespawn = -150f;
 	public int DisabledControlDurationSeconds = 2;
 	// This is a server-only field that doesn't get updated on clients. I'll move this
 	// at some point to a better place.
@@ -35,6 +34,8 @@ public class CarController : NetworkBehaviour
 	private Vector3 _direction;
 	private Quaternion _lookAngle = Quaternion.Euler(Vector3.forward);
 	private float _transferTime;
+	private float _fallDistanceBeforeRespawn;
+
 
 	private Text LifetimeText;
 	private bool _initialised;
@@ -77,7 +78,7 @@ public class CarController : NetworkBehaviour
 			Lifetime = MaxLifetime;
 			_transferTime = Time.time;
 			_initialised = true;
-			_controlsDisabled = false;
+			_controlsDisabled = true;
 
 			// hide and freeze so we can correctly position
 			if (hasAuthority) {
@@ -85,9 +86,7 @@ public class CarController : NetworkBehaviour
 				gameObject.SetActive (false);
 			}
 
-			if (!isServer) {
-//				EnableControls (false);
-			} else {
+			if (isServer){
 				//_preparingGame = true;
 				// register
 				DebugConsole.Log ("GameManager.Instance.AddCar (gameObject);");
@@ -100,6 +99,7 @@ public class CarController : NetworkBehaviour
 			} else {
 				DebugConsole.Log ("unavailable");
 				GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += Reposition;
+				GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += SetFallDiatance;
 			}
 				
 		}
@@ -108,6 +108,8 @@ public class CarController : NetworkBehaviour
 
 	void OnDestroy () {
 		GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent -= Reposition;
+		GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent -= SetFallDiatance;
+
 	}
 		
 	public void setBombAllDevices(bool b){
@@ -251,7 +253,7 @@ public class CarController : NetworkBehaviour
 	}
 		
 	public void EnsureCarIsOnMap(){
-		if(_rigidbody.position.y <= FallDistanceBeforeRespawn){
+		if(_rigidbody.position.y <= _fallDistanceBeforeRespawn){
 			Reposition (GameObject.FindObjectOfType<GameManager> ().WorldMesh);
 			DisableControlsTime (DisabledControlDurationSeconds);
 		}
@@ -267,8 +269,18 @@ public class CarController : NetworkBehaviour
 		_controlsDisabled = false;
 	}
 
-	public void DisableControls(){
+	[ClientRpc]
+	public void RpcEnableControls(){
 		_controlsDisabled = false;
+	}
+
+	[ClientRpc]
+	public void RpcStartGameCountDown(){
+		GameObject.FindObjectOfType<GameManager> ().PreparingCanvas.StartGameCountDown ();
+	}
+
+	public void DisableControls(){
+		_controlsDisabled = true;
 	}
 
 	private void DisablePlayerUI() {
@@ -280,5 +292,11 @@ public class CarController : NetworkBehaviour
 		DisableControls ();
 		DisablePlayerUI ();
 		GameObject.Find ("SpectatingText").GetComponent<TextMeshProUGUI> ().text = "Spectating...";
+	}
+
+	private void SetFallDiatance(GameObject _meshObj){
+		float meshHeight = _meshObj.transform.GetComponent<MeshRenderer> ().bounds.size.y;
+		float meshMinY = _meshObj.transform.GetComponent<MeshRenderer> ().bounds.min.y;
+		_fallDistanceBeforeRespawn = meshMinY - meshHeight;
 	}
 }
