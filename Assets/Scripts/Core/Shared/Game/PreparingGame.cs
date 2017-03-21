@@ -20,7 +20,10 @@ public class PreparingGame : MonoBehaviour
 		_entry = GameObject.Instantiate (LeaderboardEntryPrefab);
 		_entry.transform.Find ("Waiting").GetComponent<TextMeshProUGUI> ().text = "Waiting for players...";
 		_entry.transform.parent = transform;
-//		StartCoroutine(StartCountDown ());
+//		GameManager.StartGameCountDownEvent += StartGameCountDown ();
+
+
+		StartCoroutine(StartCountDown ());
 	}
 
 	IEnumerator StartCountDown() {
@@ -43,7 +46,7 @@ public class PreparingGame : MonoBehaviour
 		yield return new WaitForSeconds (t1);
 		_entry.transform.Find (component).GetComponent<TextMeshProUGUI> ().text = "";
 	}
-
+		
 
 	public void StartGameCountDown(){
 		StartCoroutine(StartCountDown ());

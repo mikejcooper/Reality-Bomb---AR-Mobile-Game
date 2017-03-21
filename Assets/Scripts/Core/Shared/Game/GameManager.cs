@@ -9,12 +9,16 @@ using Powerups;
 
 /*
 * REMEMBER CANT USE CLIENTRPC ATTRIBUTE IN GAMEMANAGER
+* ClientRpcs can only be run on objects that have been spawned via NetworkServer.Spawn(). Do not run RPC from a static gameobject.
 */
 
 public class GameManager : NetworkBehaviour {
 
 	public delegate void OnWorldMeshAvailable(GameObject worldMesh);
 	public event OnWorldMeshAvailable OnWorldMeshAvailableEvent = delegate {};
+
+	public delegate void StartGameCountDown();
+	public event StartGameCountDown StartGameCountDownEvent = delegate {};
 
 	public delegate void OnGameStarted();
 	public event OnGameStarted OnGameStartedEvent = delegate {};
@@ -44,7 +48,7 @@ public class GameManager : NetworkBehaviour {
 		} else if (isServer) {
 
 			_startingBombPlayerConnectionId = GameUtils.ChooseRandomPlayerConnectionId ();
-			DebugConsole.Log ("=> bombPlayerConnectionId: " + _startingBombPlayerConnectionId);
+			Debug.Log ("=> bombPlayerConnectionId: " + _startingBombPlayerConnectionId);
 
 			WorldMesh = ServerSceneManager.Instance.WorldMesh;
 
@@ -118,15 +122,21 @@ public class GameManager : NetworkBehaviour {
 	[Server]
 	private void AllPlayersReady(){
 		Debug.Log ("Server: All player are ready, start game countdown");
-//		RpcPlayerReady ();
+		if (OnGameStartedEvent != null) {
+			StartGameCountDownEvent();
+		}
+//		RpcAllPlayersReady ();
+
 		PreparingCanvas.StartGameCountDown ();
 		_cars.StartGameCountDown ();
+		Debug.Log ("SERVER GAME COUNT DOWN");
 	}
 
-	[ClientRpc] // All players ready (synced), start countdown 
-	public void RpcPlayerReady() {
-		Debug.Log ("Client: All player are ready, start game countdown ");
-//		PreparingCanvas.StartGameCountDown ();
+	[ClientRpc]
+	private void RpcAllPlayersReady(){
+		if (OnGameStartedEvent != null) {
+			StartGameCountDownEvent();
+		}
 	}
 		
 	[Server]

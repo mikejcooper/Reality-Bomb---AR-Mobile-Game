@@ -73,7 +73,7 @@ public class SandboxManager : MonoBehaviour
 		Vector3 position = GameUtils.FindSpawnLocation (PlaneObject);
 
 		if (position != Vector3.zero) {
-			DebugConsole.Log ("unfreezing");
+			Debug.Log ("unfreezing");
 
 			gameObject.SetActive (true);
 			car_rigid.isKinematic = false;
@@ -83,13 +83,11 @@ public class SandboxManager : MonoBehaviour
 	}
 
 	public void SetSplatTxt(){
-		CanvasMessage.DisplayPowerUpMessage ("Ink Splatter");
 		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _splatter_Txt;
 		Invoke ("ClearGuiTxt", 10.0f);
 	}
 
 	public void SetSpeedTxt(){
-		CanvasMessage.DisplayPowerUpMessage ("Speed Boost");
 		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _speed_Txt; 
 		Invoke ("ClearGuiTxt", 10.0f);
 	}
