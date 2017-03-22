@@ -393,8 +393,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "this is your chance to explore the controls of reality bomb. we\u2019ll
-    let you know once the game\u2019s ready to begin!"
+  m_Text: Here a few helpful hints to get the most out of reality bomb.
 --- !u!222 &222105035071915494
 CanvasRenderer:
   m_ObjectHideFlags: 1
