@@ -290,7 +290,7 @@ Prefab:
     - target: {fileID: 224347981531095164, guid: f0f1cff65393c8a41a4b9d3f15652ba4,
         type: 2}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224347981531095164, guid: f0f1cff65393c8a41a4b9d3f15652ba4,
         type: 2}
@@ -344,7 +344,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1240600611070466, guid: f0f1cff65393c8a41a4b9d3f15652ba4, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f0f1cff65393c8a41a4b9d3f15652ba4, type: 2}
@@ -453,7 +453,12 @@ MonoBehaviour:
   CarObject: {fileID: 905620704}
   PlaneObject: {fileID: 2137931947}
   TxtObjectPrefab: {fileID: 1345171809}
-  CanvasMessage: {fileID: 0}
+  CanvasObj: {fileID: 1343903778}
+  TutorialDialogPrefabs:
+  - {fileID: 1448817807955788, guid: 8e5b0be4c72724c6b9a2ffe939b7a306, type: 2}
+  - {fileID: 1902103098178736, guid: 939a0a7cd164b4ea1b98c9fb96904e43, type: 2}
+  - {fileID: 1373972860098090, guid: 250b3c9095e174c62a9af88ff0a29493, type: 2}
+  - {fileID: 1856141214214102, guid: 51708ac06fbd7405393c6fed4a1949e3, type: 2}
 --- !u!4 &757163055
 Transform:
   m_ObjectHideFlags: 0
@@ -538,7 +543,7 @@ Prefab:
     - target: {fileID: 224454758373818782, guid: 40a40999b6a7f4471b047d8cd063dcf8,
         type: 2}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 224454758373818782, guid: 40a40999b6a7f4471b047d8cd063dcf8,
         type: 2}
@@ -1043,6 +1048,10 @@ Prefab:
         type: 2}
       propertyPath: m_LocalScale.x
       value: 0.9383328
+      objectReference: {fileID: 0}
+    - target: {fileID: 1607650651545988, guid: e73d5d3e13327419689c1a23f625f527, type: 2}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e73d5d3e13327419689c1a23f625f527, type: 2}
