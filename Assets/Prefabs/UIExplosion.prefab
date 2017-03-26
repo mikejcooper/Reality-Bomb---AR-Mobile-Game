@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 222796246636218552}
   - component: {fileID: 114993158836667642}
   - component: {fileID: 114316229330236208}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: UIExplosion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71,7 +71,7 @@ ParticleSystem:
   serializedVersion: 5
   lengthInSec: 5
   speed: 1
-  looping: 0
+  looping: 1
   prewarm: 0
   playOnAwake: 1
   autoRandomSeed: 1

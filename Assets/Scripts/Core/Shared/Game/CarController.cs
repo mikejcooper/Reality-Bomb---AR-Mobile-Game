@@ -164,7 +164,7 @@ public class CarController : NetworkBehaviour
 	}
 
 	private void Boom(){
-		Instantiate(ExplosionAnimation,transform.parent);
+		GameObject explosion = Instantiate(ExplosionAnimation, transform.position, Quaternion.identity) as GameObject;
 	}
 
 	private void Update ()
