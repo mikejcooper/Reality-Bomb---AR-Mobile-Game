@@ -62,6 +62,8 @@ public class GameManager : NetworkBehaviour {
 				ServerSceneManager.Instance.OnPlayerGameLoadedEvent += CheckAreAllPlayersGameLoaded;
 				ServerSceneManager.Instance.OnPlayerDisconnectEvent += OnPlayerDisconnected;
 			}
+			//Play the game music on the server only
+			GameObject.FindObjectOfType<GameMusic>().StartMusic ();
 		}
 			
 		// use downloaded marker pattern
