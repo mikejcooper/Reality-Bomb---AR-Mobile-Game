@@ -61,13 +61,18 @@ namespace Powerups {
 		protected override bool IsAllowedToSpawn(){
 			return UnityEngine.Networking.NetworkServer.active;
 		}
-//		public override void OnPowerUpGenerated(GameObject powerUpObj) {
-//			powerUpObj.AddComponent<NetworkIdentity> ();
-//		}
+
+		protected override void OnPowerUpGenerated(GameObject powerUpObj) {
+			powerUpObj.AddComponent<NetworkIdentity> ();
+			powerUpObj.AddComponent<NetworkBehaviour> ();
+		}
 
 		private void LoadMesh(GameObject worldMesh){
 			OnMeshReady (worldMesh);
 		}
+
+
+
 	}
 
 }

@@ -199,13 +199,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerCanvas: {fileID: 1343903778}
   SpeedProperties:
-    PowerupPrefab: {fileID: 1721211281845520, guid: d867da276c9d74b5f9cc2c859ef56541,
+    PowerupPrefab: {fileID: 1376029131227572, guid: 8941b7ff91ab74effb98f6f1b9bbc899,
       type: 2}
     CanvasSplash: {fileID: 1451450378736652, guid: 7557938c78b244f9190155be4b522bab,
       type: 2}
     Duration: 8
   InkProperties:
-    PowerupPrefab: {fileID: 1376029131227572, guid: 8941b7ff91ab74effb98f6f1b9bbc899,
+    PowerupPrefab: {fileID: 1721211281845520, guid: d867da276c9d74b5f9cc2c859ef56541,
       type: 2}
     CanvasSplash: {fileID: 1328406001218798, guid: 605eaf91c133e4a738d8d94a9fbab530,
       type: 2}
@@ -9889,11 +9889,6 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f0f1cff65393c8a41a4b9d3f15652ba4, type: 2}
   m_IsPrefabParent: 0
---- !u!224 &1932886151 stripped
-RectTransform:
-  m_PrefabParentObject: {fileID: 224913390255818506, guid: f0f1cff65393c8a41a4b9d3f15652ba4,
-    type: 2}
-  m_PrefabInternal: {fileID: 1932886150}
 --- !u!1 &1932886152 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1482865946502450, guid: f0f1cff65393c8a41a4b9d3f15652ba4,
