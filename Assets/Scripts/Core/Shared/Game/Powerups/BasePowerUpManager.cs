@@ -24,7 +24,7 @@ namespace Powerups {
 		}
 	}
 
-	public abstract class BasePowerUpManager : MonoBehaviour {
+	public abstract class BasePowerUpManager : NetworkBehaviour {
 
 		public Canvas PlayerCanvas;
 
@@ -103,7 +103,6 @@ namespace Powerups {
 			GameObject powerUpObj = GameObject.Instantiate (_availableAbilities [abilityTypeIndex].Properties.PowerupPrefab) as GameObject;
 			powerUpObj.tag = "PowerUp";
 			powerUpObj.transform.parent = GameObject.Find("Marker scene").transform;
-			powerUpObj.AddComponent<Rigidbody> ();
 			powerUpObj.GetComponent<SphereCollider> ();
 
 			Vector3 position = GameUtils.FindSpawnLocation (_meshObj);
