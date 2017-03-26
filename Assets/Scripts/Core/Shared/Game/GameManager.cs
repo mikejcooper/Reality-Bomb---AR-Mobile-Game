@@ -17,11 +17,11 @@ public class GameManager : NetworkBehaviour {
 	public delegate void OnWorldMeshAvailable(GameObject worldMesh);
 	public event OnWorldMeshAvailable OnWorldMeshAvailableEvent = delegate {};
 
-	public delegate void StartGameCountDown();
-	public event StartGameCountDown StartGameCountDownEvent = delegate {};
+	//public delegate void StartGameCountDown();
+	//public event StartGameCountDown StartGameCountDownEvent = delegate {};
 
-	public delegate void OnGameStarted();
-	public event OnGameStarted OnGameStartedEvent = delegate {};
+	//public delegate void OnGameStarted();
+	//public event OnGameStarted OnGameStartedEvent = delegate {};
 
 	public PreparingGame PreparingCanvas;
 	public GameObject MarkerScene;
@@ -33,10 +33,7 @@ public class GameManager : NetworkBehaviour {
 
 	private bool _preparingGame = true;
 
-	public int _startingBombPlayerConnectionId;
-
 	public GameObject WorldMesh { get; private set; }
-
 
 
 	void Start ()
@@ -46,9 +43,6 @@ public class GameManager : NetworkBehaviour {
 
 
 		} else if (isServer) {
-
-			_startingBombPlayerConnectionId = GameUtils.ChooseRandomPlayerConnectionId ();
-			Debug.Log ("=> bombPlayerConnectionId: " + _startingBombPlayerConnectionId);
 
 			WorldMesh = ServerSceneManager.Instance.WorldMesh;
 
@@ -107,7 +101,7 @@ public class GameManager : NetworkBehaviour {
 	private void KillPlayer (CarController car) {
 		_cars.KillPlayer (car);
 		CheckForGameOver ();
-		if(_cars.GetNumberOfBombsPresent() == 0) _cars.PassBombRandomPlayer();
+		_cars.PassBombRandomPlayer();
 	}
 
 	[Server]
@@ -121,32 +115,38 @@ public class GameManager : NetworkBehaviour {
 	[Server]
 	private void AllPlayersReady(){
 		Debug.Log ("Server: All player are ready, start game countdown");
+        /*
 		if (StartGameCountDownEvent != null) {
 			StartGameCountDownEvent();
 		}
+        */
 //		RpcAllPlayersReady ();
 
-		PreparingCanvas.StartGameCountDown ();
-		_cars.StartGameCountDown ();
+		PreparingCanvas.StartGameCountDown (); //Starts countdown on server
+		_cars.StartGameCountDown (); //Starts countdown on clients using RPC
 		Debug.Log ("SERVER GAME COUNT DOWN");
 	}
 
+    /*
 	[ClientRpc]
 	private void RpcAllPlayersReady(){
 		if (StartGameCountDownEvent != null) {
 			StartGameCountDownEvent();
 		}
 	}
+    */
 		
 	[Server]
 	public void CountDownFinishedStartPlaying(){
 		_preparingGame = false;
 		Debug.Log ("COUNTDOWNFINISHED");
+        /*
 		if (OnGameStartedEvent != null) {
 			OnGameStartedEvent();
 		}
+        */
 		_cars.enableAllControls();
-        if(_cars.GetNumberOfBombsPresent() < 1) _cars.PassBombRandomPlayer ();
+        _cars.PassBombRandomPlayer ();
 	}
 
 	private void CheckAreAllPlayersGameLoaded () {
@@ -191,7 +191,7 @@ public class GameManager : NetworkBehaviour {
 		_cars.ClearAllDisconnectedPlayers ();
 		Debug.Log ("Players Left: " + _cars.GetCarsOutOfTime() + _cars.GetNumberAliveCars());
 		CheckForGameOver ();
-		if (_cars.GetNumberOfBombsPresent() < 1) _cars.PassBombRandomPlayer ();
+		_cars.PassBombRandomPlayer ();
 	}
 
 

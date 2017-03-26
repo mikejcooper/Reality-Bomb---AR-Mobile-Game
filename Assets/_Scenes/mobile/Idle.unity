@@ -492,7 +492,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: <size=+12>A</size>ugment <size=+12>B</size>omb
+  m_text: <size=+12>R</size>eality <size=+12>B</size>omb
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d57d2aa9ab18549999785c16d58d47d8, type: 2}
   m_sharedMaterial: {fileID: 21388005783346704, guid: d57d2aa9ab18549999785c16d58d47d8,
@@ -977,7 +977,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 061017c068bc04913a11d5d411489481, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Car: {fileID: 1888881374933336, guid: ad2b8fd4aacae4ea8867137b23409269, type: 2}
   RoatateAround: {fileID: 1075428651}
 --- !u!4 &1000648819
 Transform:

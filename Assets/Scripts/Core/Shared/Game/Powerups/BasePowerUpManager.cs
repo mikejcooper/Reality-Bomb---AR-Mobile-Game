@@ -66,10 +66,10 @@ namespace Powerups {
 			while(true) 
 			{ 
 				// Adjust Range Size to adjust spawn frequency
-				int rand = Random.Range(0,5);
+				int rand = Random.Range(0,3);
 
 				// If generater produces the predetermined number from the range above, spawn a power up
-				if (rand == 0|| rand == 1 || rand == 2/**/) { 
+				if (rand == 0) { 
 					GenPowerUp ();
 				}
 
@@ -78,6 +78,11 @@ namespace Powerups {
 		}
 
 		protected void OnMeshReady (GameObject mesh) {
+			if (!IsAllowedToSpawn ()) {
+				Debug.Log ("This PowerupManager is not allowed to spawn");
+				return;
+			}
+
 			if (mesh == null) {
 				Debug.LogError ("OnMeshReady: mesh is null!");
 				return;

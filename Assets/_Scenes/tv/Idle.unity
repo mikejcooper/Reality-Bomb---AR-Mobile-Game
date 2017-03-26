@@ -153,7 +153,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: <size=+12>A</size>ugment <size=+12>B</size>omb
+  m_text: <size=+12>R</size>eality <size=+12>B</size>omb
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d57d2aa9ab18549999785c16d58d47d8, type: 2}
   m_sharedMaterial: {fileID: 21388005783346704, guid: d57d2aa9ab18549999785c16d58d47d8,
@@ -229,11 +229,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 1
   m_renderer: {fileID: 215030102}

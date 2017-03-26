@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 using Powerups;
-
+using System.Collections.Generic;
 
 
 public class SandboxManager : MonoBehaviour
@@ -12,55 +12,66 @@ public class SandboxManager : MonoBehaviour
 
 	public GameObject CarObject;
 	public GameObject PlaneObject;
-	public GameObject TxtObjectPrefab;
-	public CanvasMessages CanvasMessage;
+	public Canvas CanvasObj;
+	public ToastManager ToastManagerObject;
+	public SandBoxPowerUpManager PowerupManager;
+	public List<GameObject> TutorialDialogPrefabs;
 
+	private int _currentTutorialStage = 0;
+	private GameObject _currentDialog;
 
-	private bool _controlsDisabled;
-	private string _welcome_Txt = "\tWelcome to the Tutorial!\nUse the joystick to drive around but don't fall off the map!\nSee if you can pickup some Power Ups along the way!";
-	private string _splatter_Txt = "You've Activated the Splatter Power Up!\nThis splatters ink on your opponents' screens\nas shown below making it harder for them to see!";
-	private string _speed_Txt = "You've Activated the Speed Boost Power Up!\nEnjoy double the speed but be careful not to lose control!";
-	private string _respawn_Txt = "Oops!! You fell off the map! Don't Worry, You will\nbe respawned but you wont be able to move for 5 secs.\nBe careful or become an easy target!";
+	private string _splatter_Txt = "You've Activated the Splatter Power Up! This splatters ink on your opponents' screens as shown below making it harder for them to see!";
+	private string _speed_Txt = "You've Activated the Speed Boost Power Up! Enjoy double the speed but be careful not to lose control!";
+	private string _respawn_Txt = "Oops!! You fell off the map! Don't Worry, You'll be respawned but you won't be able to move for 5s. Be careful or become an easy target!";
 
 
 	private Rect TxtRect;
 
 	void Start(){
-		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _welcome_Txt;
-		_controlsDisabled = false;
-		SandBoxPowerUpManager.SpeedBoostActivatedEvent += SetSpeedTxt;
-		SandBoxPowerUpManager.InkSplatterActivatedEvent += SetSplatTxt;
+		if (TutorialDialogPrefabs.Count > 0) {
+			SetCurrentDialog (0);
+			PowerupManager.enabled = false;
+		}
+			
+		PowerupManager.SpeedBoostActivatedEvent += SetSpeedTxt;
+		PowerupManager.InkSplatterActivatedEvent += SetSplatTxt;
 	}
 
 	void OnDestroy(){
-		SandBoxPowerUpManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
-		SandBoxPowerUpManager.InkSplatterActivatedEvent -= SetSplatTxt;
+		PowerupManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
+		PowerupManager.InkSplatterActivatedEvent -= SetSplatTxt;
+	}
+
+	private void SetCurrentDialog (int index) {
+		_currentTutorialStage = index;
+		_currentDialog = GameObject.Instantiate (TutorialDialogPrefabs [index]);
+		_currentDialog.transform.SetParent (CanvasObj.transform, false);
+		_currentDialog.gameObject.GetComponentInChildren<Button> ().onClick.AddListener (() => {
+			if (_currentTutorialStage + 1 < TutorialDialogPrefabs.Count) {
+				var oldDialog = _currentDialog;
+				SetCurrentDialog(_currentTutorialStage + 1);
+				Destroy(oldDialog);
+			} else {
+				Destroy(_currentDialog);
+				OnModalTutorialEnd();
+			}
+		});
+	}
+
+	private void OnModalTutorialEnd () {
+		PowerupManager.enabled = true;
 	}
 
 	void Update(){
 		EnsureCarIsOnMap ();
 	}
-		
-	private void ClearGuiTxt(){
-		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = "";
-	}
 
 	public void EnsureCarIsOnMap(){
 		if(CarObject.transform.position.y <= - 10.0f){
 			Reposition (PlaneObject);
-			DisableControls (5);
 		}
 	}
-
-	public void DisableControls(int seconds){
-		ToggleControls();
-		Invoke("ToggleControls", seconds);
-	}
-
-	public void ToggleControls(){
-		_controlsDisabled = !_controlsDisabled;
-	}
-
+		
 	public void Reposition(GameObject worldMesh)
 	{
 		Debug.Log ("Repositioning car");
@@ -83,18 +94,21 @@ public class SandboxManager : MonoBehaviour
 	}
 
 	public void SetSplatTxt(){
-		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _splatter_Txt;
-		Invoke ("ClearGuiTxt", 10.0f);
+//		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _splatter_Txt;
+		ToastManagerObject.ShowMessage(_splatter_Txt);
+//		Invoke ("ClearGuiTxt", 10.0f);
 	}
 
 	public void SetSpeedTxt(){
-		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _speed_Txt; 
-		Invoke ("ClearGuiTxt", 10.0f);
+		ToastManagerObject.ShowMessage(_speed_Txt);
+//		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _speed_Txt; 
+//		Invoke ("ClearGuiTxt", 10.0f);
 	}
 
 	public void SetRespawnTxt(){
-		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _respawn_Txt;
-		Invoke ("ClearGuiTxt", 10.0f);
+		ToastManagerObject.ShowMessage(_respawn_Txt);
+//		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _respawn_Txt;
+//		Invoke ("ClearGuiTxt", 10.0f);
 	}
 
 
