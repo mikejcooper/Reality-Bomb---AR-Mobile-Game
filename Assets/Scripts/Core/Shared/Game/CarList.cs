@@ -49,6 +49,12 @@ public class CarList
 	}
 
 	public void PassBombRandomPlayer(){
+        //We should only call this function when there are no bombs 
+        if (GetNumberOfBombsPresent() != 0)
+        {
+            UnityEngine.Debug.LogError("There is already at least one car with a bomb.");
+            return;
+        }
 		foreach (CarController car in _cars) {
 			if (car.Alive && !car.HasBomb) {
 				car.setBombAllDevices (true);
@@ -95,11 +101,13 @@ public class CarList
 			car.RpcEnableControls ();
 		}
 	}
+		
 
 	public void StartGameCountDown (){
 		foreach (CarController car in _cars) {
 			car.RpcStartGameCountDown ();
 		}
 	}
+
 }
 

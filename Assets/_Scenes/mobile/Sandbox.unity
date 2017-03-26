@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 257426189}
   m_Layer: 9
   m_Name: Walls
-  m_TagString: Untagged
+  m_TagString: WallsTag
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -943,7 +943,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1642378034909930, guid: 12129a35e79ae4994ac5b947c0e29437, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 12129a35e79ae4994ac5b947c0e29437, type: 2}
@@ -1335,6 +1335,57 @@ RectTransform:
   m_PrefabParentObject: {fileID: 224454758373818782, guid: 40a40999b6a7f4471b047d8cd063dcf8,
     type: 2}
   m_PrefabInternal: {fileID: 799032489}
+--- !u!1001 &1696025257
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4795215153235550, guid: c51f5792ef94ed34abaa1e0dec3873e2, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4795215153235550, guid: c51f5792ef94ed34abaa1e0dec3873e2, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4795215153235550, guid: c51f5792ef94ed34abaa1e0dec3873e2, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4795215153235550, guid: c51f5792ef94ed34abaa1e0dec3873e2, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4795215153235550, guid: c51f5792ef94ed34abaa1e0dec3873e2, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4795215153235550, guid: c51f5792ef94ed34abaa1e0dec3873e2, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4795215153235550, guid: c51f5792ef94ed34abaa1e0dec3873e2, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4795215153235550, guid: c51f5792ef94ed34abaa1e0dec3873e2, type: 2}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1723313529269556, guid: c51f5792ef94ed34abaa1e0dec3873e2, type: 2}
+      propertyPath: m_Name
+      value: OfflineCarTemp
+      objectReference: {fileID: 0}
+    - target: {fileID: 114029540458930660, guid: c51f5792ef94ed34abaa1e0dec3873e2,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: c51f5792ef94ed34abaa1e0dec3873e2, type: 2}
+  m_IsPrefabParent: 0
 --- !u!224 &1942541507 stripped
 RectTransform:
   m_PrefabParentObject: {fileID: 224094848890997796, guid: 057dbcd6ceef5467cbaa25c0a9328260,
@@ -1383,7 +1434,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1965431130}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe4ec33cee90c844ea1bcc2cd642033e, type: 3}
   m_Name: 
@@ -1630,6 +1681,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CameraObject: {fileID: 614231944}
   MarkerScene: {fileID: 188577963}
+  MarkerAlert: {fileID: 654815273}
   CameraXPosition: 0
   CameraYPosition: 40
   CameraZPosition: 0

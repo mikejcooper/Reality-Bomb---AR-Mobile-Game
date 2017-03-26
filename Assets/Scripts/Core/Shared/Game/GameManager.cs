@@ -27,6 +27,8 @@ public class GameManager : NetworkBehaviour {
 	public GameObject MarkerScene;
 	public ARMarker MarkerComponent;
 	public GameObject BombObject;
+	public GamePowerUpManager PowerUpManager;
+
 
 
 	private CarList _cars = new CarList();
@@ -41,6 +43,7 @@ public class GameManager : NetworkBehaviour {
 
 	void Start ()
 	{
+		PowerUpManager.enabled = false;
 		if (!isServer) {
 			WorldMesh = ClientSceneManager.Instance.WorldMesh;
 
@@ -146,8 +149,10 @@ public class GameManager : NetworkBehaviour {
 			OnGameStartedEvent();
 		}
 		_cars.enableAllControls();
+		PowerUpManager.enabled = true;
         if(_cars.GetNumberOfBombsPresent() < 1) _cars.PassBombRandomPlayer ();
 	}
+		
 
 	private void CheckAreAllPlayersGameLoaded () {
 		if (AreAllPlayersGameLoaded()) {
