@@ -324,7 +324,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d5afc8c4f61f4b379663782a78662ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  YouPointer: {fileID: 1988901391611034, guid: 769f8f7605e4548bc8b88e4645d0f87a, type: 2}
+  YouPointer: {fileID: 1151405325917586, guid: b3cb5b3b2fcc043239cb5668294e5f51, type: 2}
   isIndicaterOn: 1
 --- !u!114 &114206779485356330
 MonoBehaviour:

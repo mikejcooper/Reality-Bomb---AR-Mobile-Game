@@ -42,7 +42,7 @@ public class PlayerIndicationRenderer : MonoBehaviour
 	void Update(){
 		if (authority && isIndicaterOn) {
 			_initialisedYouPointer.transform.localPosition = new Vector3 (0.0f, 0.0f, 0.0f);
-			_initialisedYouPointer.transform.localScale = new Vector3(28.0f,120.0f,40.0f);
+			_initialisedYouPointer.transform.localScale = new Vector3(14.0f,60.0f,20.0f);
 			_initialisedYouPointer.transform.localRotation = Quaternion.identity * Quaternion.Euler(-90,0,0);
 			_initialisedYouPointer.transform.parent = transform;
 			_initialisedYouPointer.SetActive (true);
