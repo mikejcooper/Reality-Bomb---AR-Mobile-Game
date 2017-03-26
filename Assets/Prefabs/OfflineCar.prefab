@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 114375022952769342}
   - component: {fileID: 114366977620015038}
   - component: {fileID: 114029540458930660}
+  - component: {fileID: 114054108984307730}
   m_Layer: 9
   m_Name: OfflineCar
   m_TagString: TankTag
@@ -257,6 +258,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CarProperties: {fileID: 114366977620015038}
+--- !u!114 &114054108984307730
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1723313529269556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d5afc8c4f61f4b379663782a78662ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  YouPointer: {fileID: 1988901391611034, guid: 769f8f7605e4548bc8b88e4645d0f87a, type: 2}
+  BombObject: {fileID: 1151405325917586, guid: b3cb5b3b2fcc043239cb5668294e5f51, type: 2}
+  isMeIndicaterOn: 1
+  isBombIndicaterOn: 1
+  material1: {fileID: 2100000, guid: e94911b637f5c4afa93136ad9040a48f, type: 2}
+  material2: {fileID: 2100000, guid: 858b5bb4de83347d5b1489fc05d27d2f, type: 2}
 --- !u!114 &114366977620015038
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -5,6 +5,9 @@ using TMPro;
 
 public class CarController : NetworkBehaviour
 {
+	public delegate void OnSetBomb (bool bomb);
+	public event OnSetBomb OnSetBombEvent;
+
 	// temporary hack to allow tank prefab to be spawned and played without a network system
 	public bool IsPlayingSolo = false; 
 
@@ -19,6 +22,7 @@ public class CarController : NetworkBehaviour
 	// This is a server-only field that doesn't get updated on clients. I'll move this
 	// at some point to a better place.
 	public bool HasLoadedGame = false;
+	public GameObject ExplosionAnimation;
 
 	[SyncVar]
 	public int ServerId;
@@ -129,12 +133,10 @@ public class CarController : NetworkBehaviour
 //			Handheld.Vibrate();
 //		}
 //		#endif
-		if (this.HasBomb) {
-			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.parent = transform;
-			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localScale = 0.01f * Vector3.one;
-			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localPosition = new Vector3 (0, 2.5f, 0);
-			GameObject.FindObjectOfType<GameManager> ().BombObject.SetActive (true);
-		} 
+		if (OnSetBombEvent != null) {
+			OnSetBombEvent (b);
+		}
+				
 	}
 		
 	public void KillAllDevices(){
@@ -158,6 +160,11 @@ public class CarController : NetworkBehaviour
 		Lifetime = 0.0f;
 		Alive = false;
 		this.gameObject.SetActive (false);
+		Boom ();
+	}
+
+	private void Boom(){
+		GameObject explosion = Instantiate(ExplosionAnimation, transform.position, Quaternion.identity) as GameObject;
 	}
 
 	private void Update ()
@@ -173,6 +180,7 @@ public class CarController : NetworkBehaviour
 				Spectate ();
 			}
 		}
+
 	}		
 
 	private void FixedUpdate ()
@@ -318,6 +326,10 @@ public class CarController : NetworkBehaviour
 		float meshHeight = _meshObj.transform.GetComponent<MeshRenderer> ().bounds.size.y;
 		float meshMinY = _meshObj.transform.GetComponent<MeshRenderer> ().bounds.min.y;
 		_fallDistanceBeforeRespawn = meshMinY - meshHeight*0.65f;
+	}
+
+	public float getMaxHealth(){
+		return _healthBar.getMaxHealth();
 	}
 
 }
