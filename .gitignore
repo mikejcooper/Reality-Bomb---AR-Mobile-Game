@@ -40,6 +40,8 @@ ehthumbs.db
 
 ProjectSettings/ProjectVersion.txt
 
+Assets/StreamingAssets/build_info.txt
+
 /*.app
 /*.exe
 

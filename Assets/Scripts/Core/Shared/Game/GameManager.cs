@@ -56,8 +56,7 @@ public class GameManager : NetworkBehaviour {
 		}
 			
 		// use downloaded marker pattern
-        if (GlobalNetworking.NetworkConstants.SCANNED_MARKERS)
-		    MeshTransferManager.ApplyMarkerData (MarkerComponent);
+		MeshTransferManager.ApplyMarkerData (MarkerComponent);
 
 		WorldMesh.transform.parent = MarkerScene.transform;
 

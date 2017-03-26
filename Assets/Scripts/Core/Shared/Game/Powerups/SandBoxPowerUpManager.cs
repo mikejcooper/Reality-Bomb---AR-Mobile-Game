@@ -14,14 +14,12 @@ namespace Powerups {
 		// Events
 		public delegate void OnSpeedBoostActivated ();
 		public delegate void OnInkSplatterActivated ();
-		public static event OnSpeedBoostActivated SpeedBoostActivatedEvent;		
-		public static event OnInkSplatterActivated InkSplatterActivatedEvent;
+		public event OnSpeedBoostActivated SpeedBoostActivatedEvent;		
+		public event OnInkSplatterActivated InkSplatterActivatedEvent;
 
 		protected override void Start () {
 			base.Start ();
-			if (IsAllowedToSpawn ()) {
-				OnMeshReady (PlaneObject);	
-			}
+			OnMeshReady (PlaneObject);	
 		}
 
 		override protected PowerupDefinition[] GetAvailablePowerups () {

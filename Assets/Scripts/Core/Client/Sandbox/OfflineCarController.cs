@@ -7,7 +7,7 @@ public class OfflineCarController : MonoBehaviour
 {
 	public CarProperties CarProperties;
 
-	private UIJoystick _joystick;
+	private Joystick _joystick;
 	// Reference used to move the tank.
 	private Rigidbody _rigidbody;
 	private Quaternion _lookAngle = Quaternion.Euler(Vector3.forward);
@@ -29,10 +29,7 @@ public class OfflineCarController : MonoBehaviour
 
 	private void Awake ()
 	{
-		if (GameObject.Find("JoystickBack") != null) {
-			_joystick = GameObject.Find("JoystickBack").gameObject.GetComponent<UIJoystick>();
-		}
-
+		_joystick = GameObject.FindObjectOfType<Joystick> ();
 
 		_rigidbody = GetComponent<Rigidbody> ();
 
@@ -47,18 +44,18 @@ public class OfflineCarController : MonoBehaviour
 	private void FixedUpdate ()
 	{
 
-		Vector3 joystickVector = new Vector3 (_joystick.Horizontal (), _joystick.Vertical (), 0);
+		Vector3 joystickVector = new Vector3 (_joystick.NormalisedVector.x, _joystick.NormalisedVector.y, 0);
 		GameObject ARCamera = GameObject.Find ("ARCamera");
 		Vector3 rotatedVector = ARCamera.transform.rotation * joystickVector;
 
-		if (_joystick.IsDragging ()) {
+		if (_joystick.Active) {
 			_lookAngle = Quaternion.FromToRotation (Vector3.forward, rotatedVector);
 			// think about combining z and y so that it moves away when close to 0 degrees
 			float combined = _lookAngle.eulerAngles.y;
 			_lookAngle.eulerAngles = new Vector3(0, combined, 0);
 		}
 
-		if (_joystick.IsDragging ()) {
+		if (_joystick.Active) {
 			_rigidbody.AddForce (transform.forward * joystickVector.magnitude * CarProperties.Acceleration);
 		}
 
