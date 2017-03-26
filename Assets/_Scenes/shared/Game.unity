@@ -126,7 +126,6 @@ MonoBehaviour:
   MarkerScene: {fileID: 188577963}
   MarkerComponent: {fileID: 1965431133}
   BombObject: {fileID: 1788072946}
-  _startingBombPlayerConnectionId: 0
 --- !u!114 &30509391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -320,7 +319,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   secondsToRemainVisible: 5
-  eventReceiver: {fileID: 1932886152}
+  eventReceiver: {fileID: 0}
   _markerTag: marker0
 --- !u!1 &403973946
 GameObject:
@@ -9878,12 +9877,12 @@ Prefab:
   m_IsPrefabParent: 0
 --- !u!224 &1932886151 stripped
 RectTransform:
-  m_PrefabParentObject: {fileID: 224347981531095164, guid: f0f1cff65393c8a41a4b9d3f15652ba4,
+  m_PrefabParentObject: {fileID: 224913390255818506, guid: f0f1cff65393c8a41a4b9d3f15652ba4,
     type: 2}
   m_PrefabInternal: {fileID: 1932886150}
 --- !u!1 &1932886152 stripped
 GameObject:
-  m_PrefabParentObject: {fileID: 1240600611070466, guid: f0f1cff65393c8a41a4b9d3f15652ba4,
+  m_PrefabParentObject: {fileID: 1482865946502450, guid: f0f1cff65393c8a41a4b9d3f15652ba4,
     type: 2}
   m_PrefabInternal: {fileID: 1932886150}
 --- !u!1 &1965431130
@@ -10163,13 +10162,14 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1965431130}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 73c899522f94a4893a4ac0aecc1e5c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   CameraObject: {fileID: 614231944}
   MarkerScene: {fileID: 188577963}
+  MarkerAlert: {fileID: 1932886152}
   CameraXPosition: 0
   CameraYPosition: 20
   CameraZPosition: 0
