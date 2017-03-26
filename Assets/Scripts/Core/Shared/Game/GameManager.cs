@@ -149,14 +149,10 @@ public class GameManager : NetworkBehaviour {
 			OnGameStartedEvent();
 		}
 		_cars.enableAllControls();
-		EnablePowerUps ();
+		PowerUpManager.enabled = true;
         if(_cars.GetNumberOfBombsPresent() < 1) _cars.PassBombRandomPlayer ();
 	}
 		
-	private void EnablePowerUps(){
-		PowerUpManager.enabled = true;
-		Debug.Log ("Power ups Enabled");
-	}
 
 	private void CheckAreAllPlayersGameLoaded () {
 		if (AreAllPlayersGameLoaded()) {
