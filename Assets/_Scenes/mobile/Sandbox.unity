@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 257426189}
   m_Layer: 9
   m_Name: Walls
-  m_TagString: Untagged
+  m_TagString: WallsTag
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -943,7 +943,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1642378034909930, guid: 12129a35e79ae4994ac5b947c0e29437, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 12129a35e79ae4994ac5b947c0e29437, type: 2}
@@ -1681,6 +1681,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CameraObject: {fileID: 614231944}
   MarkerScene: {fileID: 188577963}
+  MarkerAlert: {fileID: 654815273}
   CameraXPosition: 0
   CameraYPosition: 40
   CameraZPosition: 0

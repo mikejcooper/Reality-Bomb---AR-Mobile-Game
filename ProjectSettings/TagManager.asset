@@ -13,6 +13,7 @@ TagManager:
   - TankTag
   - Splatter
   - WallsTag
+  - PowerUp
   layers:
   - Default
   - TransparentFX
