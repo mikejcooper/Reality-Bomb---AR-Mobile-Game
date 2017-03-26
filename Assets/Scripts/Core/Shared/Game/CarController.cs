@@ -216,20 +216,31 @@ public class CarController : NetworkBehaviour
 	public void UpdateTransferTime(float inc){
 		_transferTime = Time.time + inc;
 	}
+		
 
-	[ServerCallback]
 	void OnCollisionEnter(Collision col)
 	{
-		GameObject.FindObjectOfType<GameManager> ().CollisionEvent (this, col);
-		// If two players collide, calculate the angle of collision, reverse the direction and add a force in that direction
-//		if (col.gameObject.tag != "PowerUp") {
-//			var bounceForce = 350;
-//			Vector3 direction = col.contacts[0].point - transform.position;
-//			direction = -direction.normalized;
-//			direction.y = 0;
-//			GetComponent<Rigidbody>().AddForce(direction * bounceForce);
-//		}
+		if (isServer) {
+			GameObject.FindObjectOfType<GameManager> ().CollisionEvent (this, col);
+		} else {
+			if (col.gameObject.tag != "PowerUp") {
+/*
+ * Uncomment the following line to add bouncing between the players in the main game
+ * the current implementation is a bit laggy so has been left uncommented until this is fixed 
+ */
+//				Bounce (col);
+			}
+		}
 	}
+		
+	void Bounce(Collision col){
+		var bounceForce = 350;
+		Vector3 direction = col.contacts[0].point - transform.position;
+		direction = -direction.normalized;
+		direction.y = 0;
+		GetComponent<Rigidbody>().AddForce(direction * bounceForce);
+	}
+
 
 	public void Reposition(GameObject worldMesh)
 	{
