@@ -111,5 +111,9 @@ class UIHealthBar : MonoBehaviour
         explosion.transform.parent = transform.parent;
         explosion.GetComponent<RectTransform>().localPosition = Vector2.zero;
     }
+
+	public float getMaxHealth(){
+		return _maxValue;
+	}
     
 }

@@ -96,6 +96,9 @@ public class GameManager : NetworkBehaviour {
 			foreach(CarController car in _cars.GetCarsOutOfTime()){
 				KillPlayer (car);
 			}
+			if (_cars.GetNumberOfBombsPresent() == 0) {
+				_cars.PassBombRandomPlayer ();
+			}
 		}
 	}
 		
@@ -180,6 +183,8 @@ public class GameManager : NetworkBehaviour {
 		
 	[Server]
 	public void CollisionEvent(CarController car, Collision col){
+
+		//this is two cars colliding
 		CarController collisionCar = col.gameObject.GetComponent<CarController>();
 		if (col.gameObject.tag == "TankTag") {
 			if ( collisionCar.IsTransferTimeExpired() && collisionCar.HasBomb )
