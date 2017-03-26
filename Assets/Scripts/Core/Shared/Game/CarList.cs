@@ -81,16 +81,31 @@ public class CarList
 		}
 	}
 
+    private float GetSurvivalTime(CarController car)
+    {
+        //Get total number of cars
+        float total = _cars.Count;
+        //Find total game time
+        float total_time = total * car.MaxLifetime;
+
+        float life_sum = 0.0f;
+        foreach (CarController c in _cars)
+        {
+            life_sum += c.Lifetime;
+        }
+        return total_time - life_sum + car.Lifetime;
+    }
+
 	public void KillPlayer (CarController car) {
 		car.KillAllDevices ();
 		int carsLeft = GetNumberAliveCars();
-		ServerSceneManager.Instance.UpdatePlayerGameData (car.ServerId, carsLeft, car.Lifetime);
+		ServerSceneManager.Instance.UpdatePlayerGameData (car.ServerId, carsLeft, GetSurvivalTime(car));
 	}
 
 	public void FinaliseGamePlayerData(){
 		foreach (CarController car in _cars) {
 			if (car.Alive) {
-				ServerSceneManager.Instance.UpdatePlayerGameData (car.ServerId, 0, car.Lifetime);
+				ServerSceneManager.Instance.UpdatePlayerGameData (car.ServerId, 0, GetSurvivalTime(car));
 				return;
 			}
 		}
@@ -108,5 +123,6 @@ public class CarList
 			car.RpcStartGameCountDown ();
 		}
 	}
+
 }
 

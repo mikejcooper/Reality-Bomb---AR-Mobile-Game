@@ -31,7 +31,10 @@ namespace Powerups {
 					Debug.LogError ("Game Manager in GamePowerUpMaager is Null");
 				}
 			}
-		}
+
+            ClientScene.RegisterPrefab(SpeedProperties.PowerupPrefab);
+            ClientScene.RegisterPrefab(InkProperties.PowerupPrefab);
+        }
 
 		override protected PowerupDefinition[] GetAvailablePowerups () {
 			return new PowerupDefinition[] { 
@@ -42,32 +45,37 @@ namespace Powerups {
 
 		public override void OnPowerUpStart<T> (BaseAbility<T> ability) {
 			if (ability.GetType ().IsAssignableFrom (typeof(SpeedAbility))) {
-				Debug.Log ("'SBPUM': Speed boost activated");
+				Debug.Log ("'GPUM': Speed boost activated");
 				SpeedBoostActivatedEvent ();
 			} else if (ability.GetType ().IsAssignableFrom (typeof(SandboxInkAbility))) {
 				InkSplatterActivatedEvent ();
-				Debug.Log ("'SBPUM':Ink splatter activated");
+				Debug.Log ("'GPUM':Ink splatter activated");
 			}
 		}
 
 		public override void OnPowerUpStop<T> (BaseAbility<T> ability) {
 			if (ability.GetType ().IsAssignableFrom (typeof(SpeedAbility))) {
-				Debug.Log ("'SBPUM':Speed boost deactivated");
+				Debug.Log ("'GPUM':Speed boost deactivated");
 			} else if (ability.GetType ().IsAssignableFrom (typeof(SandboxInkAbility))) {
-				Debug.Log ("'SBPUM':Ink splatter deactivated");
+				Debug.Log ("'GPUM':Ink splatter deactivated");
 			}
 		}
 
 		protected override bool IsAllowedToSpawn(){
 			return UnityEngine.Networking.NetworkServer.active;
 		}
-//		public override void OnPowerUpGenerated(GameObject powerUpObj) {
-//			powerUpObj.AddComponent<NetworkIdentity> ();
-//		}
+
+		protected override void OnPowerUpGenerated(GameObject powerUpObj) {
+            if (isServer)
+                NetworkServer.Spawn(powerUpObj);
+		}
 
 		private void LoadMesh(GameObject worldMesh){
 			OnMeshReady (worldMesh);
 		}
+
+
+
 	}
 
 }

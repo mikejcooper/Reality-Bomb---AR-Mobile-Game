@@ -62,6 +62,8 @@ public class GameManager : NetworkBehaviour {
 				ServerSceneManager.Instance.OnPlayerGameLoadedEvent += CheckAreAllPlayersGameLoaded;
 				ServerSceneManager.Instance.OnPlayerDisconnectEvent += OnPlayerDisconnected;
 			}
+			//Play the game music on the server only
+			GameObject.FindObjectOfType<GameMusic>().StartMusic ();
 		}
 			
 		// use downloaded marker pattern
@@ -152,14 +154,10 @@ public class GameManager : NetworkBehaviour {
 			OnGameStartedEvent();
 		}
 		_cars.enableAllControls();
-		EnablePowerUps ();
+		PowerUpManager.enabled = true;
         if(_cars.GetNumberOfBombsPresent() < 1) _cars.PassBombRandomPlayer ();
 	}
 		
-	private void EnablePowerUps(){
-		PowerUpManager.enabled = true;
-		Debug.Log ("Power ups Enabled");
-	}
 
 	private void CheckAreAllPlayersGameLoaded () {
 		if (AreAllPlayersGameLoaded()) {
