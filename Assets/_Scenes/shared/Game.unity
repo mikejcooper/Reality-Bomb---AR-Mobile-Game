@@ -126,6 +126,8 @@ MonoBehaviour:
   MarkerScene: {fileID: 188577963}
   MarkerComponent: {fileID: 1965431133}
   BombObject: {fileID: 1788072946}
+  PowerUpManager: {fileID: 30509394}
+  _startingBombPlayerConnectionId: 0
 --- !u!114 &30509391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -196,16 +198,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerCanvas: {fileID: 1343903778}
-  PlaneObject: {fileID: 0}
   SpeedProperties:
-    PowerupPrefab: {fileID: 0}
-    CanvasSplash: {fileID: 0}
-    Duration: 0
+    PowerupPrefab: {fileID: 1721211281845520, guid: d867da276c9d74b5f9cc2c859ef56541,
+      type: 2}
+    CanvasSplash: {fileID: 1451450378736652, guid: 7557938c78b244f9190155be4b522bab,
+      type: 2}
+    Duration: 8
   InkProperties:
-    PowerupPrefab: {fileID: 0}
-    CanvasSplash: {fileID: 0}
-    Duration: 0
-    SplatterTexture: {fileID: 0}
+    PowerupPrefab: {fileID: 1376029131227572, guid: 8941b7ff91ab74effb98f6f1b9bbc899,
+      type: 2}
+    CanvasSplash: {fileID: 1328406001218798, guid: 605eaf91c133e4a738d8d94a9fbab530,
+      type: 2}
+    Duration: 8
+    SplatterTexture: {fileID: 2800000, guid: 453cc8a4aa1ad41f39f54292f544af93, type: 3}
 --- !u!1 &178973363
 GameObject:
   m_ObjectHideFlags: 0
@@ -6354,6 +6359,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!224 &1156023400 stripped
+RectTransform:
+  m_PrefabParentObject: {fileID: 224913390255818506, guid: f0f1cff65393c8a41a4b9d3f15652ba4,
+    type: 2}
+  m_PrefabInternal: {fileID: 1932886150}
 --- !u!1 &1270159539
 GameObject:
   m_ObjectHideFlags: 0
@@ -9199,7 +9209,7 @@ RectTransform:
   - {fileID: 403973947}
   - {fileID: 178973364}
   - {fileID: 1596234426}
-  - {fileID: 1932886151}
+  - {fileID: 1156023400}
   - {fileID: 607255310}
   m_Father: {fileID: 0}
   m_RootOrder: 1
@@ -9871,6 +9881,10 @@ Prefab:
     - target: {fileID: 1240600611070466, guid: f0f1cff65393c8a41a4b9d3f15652ba4, type: 2}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1482865946502450, guid: f0f1cff65393c8a41a4b9d3f15652ba4, type: 2}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f0f1cff65393c8a41a4b9d3f15652ba4, type: 2}

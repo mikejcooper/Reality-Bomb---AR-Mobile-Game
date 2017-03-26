@@ -67,8 +67,12 @@ public class ServerSceneManager : MonoBehaviour
 
 		transform.gameObject.AddComponent<DiscoveryServer> ();
 		_networkLobbyManager = transform.gameObject.AddComponent<GameLobbyManager> ();
+        if (NetworkConstants.FORCE_LOCALHOST)
+        {
+            _networkLobbyManager.networkAddress = "localhost";
+        }
 
-		_meshDiscoveryServer = new MeshDiscoveryServer ();
+        _meshDiscoveryServer = new MeshDiscoveryServer ();
 		_meshTransferManager = new MeshTransferManager ();
 		_playerDataManager = new PlayerDataManager (_networkLobbyManager);
 
