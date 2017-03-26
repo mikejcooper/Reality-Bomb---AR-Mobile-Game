@@ -9889,6 +9889,16 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f0f1cff65393c8a41a4b9d3f15652ba4, type: 2}
   m_IsPrefabParent: 0
+--- !u!224 &1932886151 stripped
+RectTransform:
+  m_PrefabParentObject: {fileID: 224913390255818506, guid: f0f1cff65393c8a41a4b9d3f15652ba4,
+    type: 2}
+  m_PrefabInternal: {fileID: 1932886150}
+--- !u!1 &1932886152 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1482865946502450, guid: f0f1cff65393c8a41a4b9d3f15652ba4,
+    type: 2}
+  m_PrefabInternal: {fileID: 1932886150}
 --- !u!1 &1965431130
 GameObject:
   m_ObjectHideFlags: 0
@@ -10173,6 +10183,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CameraObject: {fileID: 614231944}
   MarkerScene: {fileID: 188577963}
+  MarkerAlert: {fileID: 1932886152}
   CameraXPosition: 0
   CameraYPosition: 20
   CameraZPosition: 0

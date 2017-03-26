@@ -6,6 +6,7 @@ public class MarkerlessRunner : MonoBehaviour {
 
 	public GameObject CameraObject;
 	public GameObject MarkerScene;
+    public GameObject MarkerAlert;
 
 	public float CameraXPosition;
 	public float CameraYPosition;
@@ -18,6 +19,7 @@ public class MarkerlessRunner : MonoBehaviour {
 	void Start () {
 		if (Application.isEditor || !Application.isMobilePlatform) {
 			MarkerScene.GetComponent<ARTrackedObject> ().enabled = false;
+            MarkerAlert.SetActive(false);
 			foreach (Transform child in MarkerScene.transform) {
 				child.gameObject.SetActive (true);
 			}
