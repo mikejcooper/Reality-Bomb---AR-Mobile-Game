@@ -118,6 +118,8 @@ namespace Powerups {
 			OnPowerUpGenerated (powerUpObj);
 		}
 
+
+
 		protected virtual bool IsAllowedToSpawn () { return false; }
 		protected virtual void OnPowerUpGenerated(GameObject powerUpObj) {}
 
