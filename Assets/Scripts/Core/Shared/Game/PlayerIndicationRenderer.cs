@@ -68,7 +68,7 @@ public class PlayerIndicationRenderer : MonoBehaviour
 		}
 		if (isBombIndicaterOn) {
 			CarController car = this.GetComponentInParent<CarController> ();
-			double bombDangerLevel = Math.Ceiling((car.MaxLifetime - car.Lifetime) / (car.MaxLifetime/5));
+			double bombDangerLevel = (car.MaxLifetime - car.Lifetime) / (car.MaxLifetime/5);
 			_initialisedBomb.transform.parent = transform;
 			_initialisedBomb.transform.localScale = new Vector3 (80.0f,80.0f,80.0f);
 			_initialisedBomb.transform.localPosition = new Vector3 (0.0f,2.0f,0.0f);
