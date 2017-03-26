@@ -308,5 +308,4 @@ public class CarController : NetworkBehaviour
 		_fallDistanceBeforeRespawn = meshMinY - meshHeight*0.65f;
 	}
 
-
 }
