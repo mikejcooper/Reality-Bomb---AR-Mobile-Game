@@ -180,6 +180,7 @@ public class CarController : NetworkBehaviour
 				Spectate ();
 			}
 		}
+
 	}		
 
 	private void FixedUpdate ()
@@ -306,6 +307,10 @@ public class CarController : NetworkBehaviour
 		float meshHeight = _meshObj.transform.GetComponent<MeshRenderer> ().bounds.size.y;
 		float meshMinY = _meshObj.transform.GetComponent<MeshRenderer> ().bounds.min.y;
 		_fallDistanceBeforeRespawn = meshMinY - meshHeight*0.65f;
+	}
+
+	public float getMaxHealth(){
+		return _healthBar.getMaxHealth();
 	}
 
 }

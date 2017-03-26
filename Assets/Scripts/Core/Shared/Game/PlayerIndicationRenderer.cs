@@ -10,14 +10,14 @@ public class PlayerIndicationRenderer : MonoBehaviour
 
 	public bool isMeIndicaterOn = true;
 	public bool isBombIndicaterOn = true;
-
+	public Material material1;
+	public Material material2;
 
 	private bool authority = false;
 	private GameObject _initialisedYouPointer;
 	private GameObject _initialisedBomb;
 
 	void Start(){
-//		GameObject.FindObjectOfType<GameManager> ().OnGameStartedEvent += setIndicatorOff;
 		Debug.Log("Starting Player Indication");
 		if (this.GetComponentInParent<CarController> () != null) {
 			Debug.Log ("CarController found");
@@ -37,8 +37,7 @@ public class PlayerIndicationRenderer : MonoBehaviour
 	}
 
 	void OnDestroy() {
-//		GameObject.FindObjectOfType<GameManager> ().OnGameStartedEvent -= setIndicatorOff;
-//		this.GetComponentInParent<CarController>().OnSetBombEvent -= setBombIndicator;
+		this.GetComponentInParent<CarController>().OnSetBombEvent -= setBombIndicator;
 	}
 
 	void setMeIndicatorOff ()
@@ -68,12 +67,16 @@ public class PlayerIndicationRenderer : MonoBehaviour
 			_initialisedYouPointer.SetActive (true);
 		}
 		if (isBombIndicaterOn) {
+			CarController car = this.GetComponentInParent<CarController> ();
+			double bombDangerLevel = Math.Ceiling((car.MaxLifetime - car.Lifetime) / (car.MaxLifetime/5));
 			_initialisedBomb.transform.parent = transform;
 			_initialisedBomb.transform.localScale = new Vector3 (80.0f,80.0f,80.0f);
 			_initialisedBomb.transform.localPosition = new Vector3 (0.0f,2.0f,0.0f);
+			float lerp = Mathf.PingPong((float)bombDangerLevel * Time.time, 1.0f) / 1.0f;
+			_initialisedBomb.transform.GetChild (1).GetComponent<Renderer> ().material.Lerp(material1,material2,lerp);
 		}
 	}
-
+		
 	private GameObject CreatePointer (GameObject prefab) {
 		GameObject obj = GameObject.Instantiate(prefab);
 		obj.SetActive (false);
