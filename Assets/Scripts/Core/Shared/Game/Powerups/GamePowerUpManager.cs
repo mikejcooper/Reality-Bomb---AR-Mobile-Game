@@ -8,9 +8,9 @@ namespace Powerups {
 
 	public class GamePowerUpManager: BasePowerUpManager {
 
-		public GameObject PlaneObject;
 		public SpeedAbilityProperties SpeedProperties;
 		public SandboxInkAbilityProperties InkProperties;
+	
 
 		// Events
 		public delegate void OnSpeedBoostActivated ();
@@ -20,10 +20,13 @@ namespace Powerups {
 
 		protected override void Start () {
 			base.Start ();
-
 			if (IsAllowedToSpawn ()) {
 				if (GameObject.FindObjectOfType<GameManager> () != null) {
-					GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += LoadMesh;
+					if (GameObject.FindObjectOfType<GameManager> ().WorldMesh != null) {
+						LoadMesh (GameObject.FindObjectOfType<GameManager> ().WorldMesh);
+					} else {
+						GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += LoadMesh;
+					}
 				} else {
 					Debug.LogError ("Game Manager in GamePowerUpMaager is Null");
 				}

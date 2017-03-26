@@ -307,4 +307,6 @@ public class CarController : NetworkBehaviour
 		float meshMinY = _meshObj.transform.GetComponent<MeshRenderer> ().bounds.min.y;
 		_fallDistanceBeforeRespawn = meshMinY - meshHeight*0.65f;
 	}
+
+
 }

@@ -12,6 +12,7 @@ TagManager:
   - Target
   - TankTag
   - Splatter
+  - WallsTag
   layers:
   - Default
   - TransparentFX
