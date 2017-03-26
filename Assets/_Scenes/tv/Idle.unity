@@ -381,7 +381,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 8d40dfbe60ab4431089772c87e4e3c2b, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 5c6f6f45d366e024098aef57afff8ae3, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0
   m_Pitch: 1
@@ -476,7 +476,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d50e0d8cdecaf3f49948a5f92390b00a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FadeInTime: 3
+  FadeInTime: 1
   StartVolume: 0
   FinalVolume: 0.5
   FadeOutTime: 3
