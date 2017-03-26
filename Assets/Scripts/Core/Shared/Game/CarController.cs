@@ -5,6 +5,9 @@ using TMPro;
 
 public class CarController : NetworkBehaviour
 {
+	public delegate void OnSetBomb (bool bomb);
+	public event OnSetBomb OnSetBombEvent;
+
 	// temporary hack to allow tank prefab to be spawned and played without a network system
 	public bool IsPlayingSolo = false; 
 
@@ -129,12 +132,16 @@ public class CarController : NetworkBehaviour
 //			Handheld.Vibrate();
 //		}
 //		#endif
-		if (this.HasBomb) {
-			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.parent = transform;
-			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localScale = 0.01f * Vector3.one;
-			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localPosition = new Vector3 (0, 2.5f, 0);
-			GameObject.FindObjectOfType<GameManager> ().BombObject.SetActive (true);
-		} 
+//		if (this.HasBomb) {
+//			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.parent = transform;
+//			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localScale = 0.01f * Vector3.one;
+//			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localPosition = new Vector3 (0, 2.5f, 0);
+//			GameObject.FindObjectOfType<GameManager> ().BombObject.SetActive (true);
+//		} 
+		if (OnSetBombEvent != null) {
+			OnSetBombEvent (b);
+		}
+				
 	}
 		
 	public void KillAllDevices(){
