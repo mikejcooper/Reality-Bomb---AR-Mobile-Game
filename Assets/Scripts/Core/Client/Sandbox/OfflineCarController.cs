@@ -64,14 +64,15 @@ public class OfflineCarController : MonoBehaviour
 		}
 	}
 
-	/*void OnCollisionEnter(Collision col) {
-		if (col.gameObject.tag == "TankTag") {
-			print (col.contacts [0].point.normalized);
-			Vector3 contact = col.contacts [0].point;
-			contact.y = 0;
-			_rigidbody.AddForce(-500.0f * contact.normalized);
-			col.rigidbody.AddForce (500.0f * contact.normalized);
+	void OnCollisionEnter(Collision col) {
+		// If two players collide, calculate the angle of collision, reverse the direction and add a force in that direction
+		if (col.gameObject.tag != "PowerUp") {
+			var bounceForce = 350;
+			Vector3 direction = col.contacts[0].point - transform.position;
+			direction = -direction.normalized;
+			direction.y = 0;
+			GetComponent<Rigidbody>().AddForce(direction * bounceForce);
 		}
-	}*/
+	}
 }
 
