@@ -22,6 +22,7 @@ public class CarController : NetworkBehaviour
 	// This is a server-only field that doesn't get updated on clients. I'll move this
 	// at some point to a better place.
 	public bool HasLoadedGame = false;
+	public GameObject ExplosionAnimation;
 
 	[SyncVar]
 	public int ServerId;
@@ -132,12 +133,6 @@ public class CarController : NetworkBehaviour
 //			Handheld.Vibrate();
 //		}
 //		#endif
-//		if (this.HasBomb) {
-//			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.parent = transform;
-//			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localScale = 0.01f * Vector3.one;
-//			GameObject.FindObjectOfType<GameManager> ().BombObject.transform.localPosition = new Vector3 (0, 2.5f, 0);
-//			GameObject.FindObjectOfType<GameManager> ().BombObject.SetActive (true);
-//		} 
 		if (OnSetBombEvent != null) {
 			OnSetBombEvent (b);
 		}
@@ -165,6 +160,11 @@ public class CarController : NetworkBehaviour
 		Lifetime = 0.0f;
 		Alive = false;
 		this.gameObject.SetActive (false);
+		Boom ();
+	}
+
+	private void Boom(){
+		Instantiate(ExplosionAnimation,transform.parent);
 	}
 
 	private void Update ()

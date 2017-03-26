@@ -531,6 +531,8 @@ MonoBehaviour:
   Alive: 1
   DisabledControlDurationSeconds: 2
   HasLoadedGame: 0
+  ExplosionAnimation: {fileID: 1393482603391468, guid: 47cb602cd48b02b41b81a59cd7e6978b,
+    type: 2}
   ServerId: 0
   Lifetime: 0
 --- !u!114 &114991474333972938

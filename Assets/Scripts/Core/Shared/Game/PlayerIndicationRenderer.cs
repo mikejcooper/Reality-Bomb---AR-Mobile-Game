@@ -38,7 +38,7 @@ public class PlayerIndicationRenderer : MonoBehaviour
 
 	void OnDestroy() {
 //		GameObject.FindObjectOfType<GameManager> ().OnGameStartedEvent -= setIndicatorOff;
-		this.GetComponentInParent<CarController>().OnSetBombEvent -= setBombIndicator;
+//		this.GetComponentInParent<CarController>().OnSetBombEvent -= setBombIndicator;
 	}
 
 	void setMeIndicatorOff ()
