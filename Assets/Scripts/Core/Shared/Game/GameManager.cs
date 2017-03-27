@@ -96,6 +96,7 @@ public class GameManager : NetworkBehaviour {
 			foreach(CarController car in _cars.GetCarsOutOfTime()){
 				KillPlayer (car);
 			}
+			_cars.ClearAllDisconnectedPlayers ();
 			if (_cars.GetNumberOfBombsPresent() == 0) {
 				_cars.PassBombRandomPlayer ();
 			}
