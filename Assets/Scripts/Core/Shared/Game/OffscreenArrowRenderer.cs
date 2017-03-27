@@ -29,10 +29,13 @@ public class OffscreenArrowRenderer : MonoBehaviour {
 	void Update () {
 		foreach (var car in GameObject.FindObjectsOfType<CarProperties>()) {
 			GameObject pointer;
+			float scaleIncrease = 0.0f;
 			if (car.gameObject.GetComponent<UnityEngine.Networking.NetworkIdentity> () == null || car.gameObject.GetComponent<UnityEngine.Networking.NetworkIdentity> ().hasAuthority) {
 				pointer = _instantiatedYouPointer;
+				scaleIncrease = 1.1f;
 			} else if (car.gameObject.GetComponent<CarController> () != null && car.gameObject.GetComponent<CarController> ().HasBomb) {
 				pointer = _instantiatedBombPointer;
+				scaleIncrease = 0.3f;
 			} else {
 				continue;
 			}
@@ -79,7 +82,7 @@ public class OffscreenArrowRenderer : MonoBehaviour {
 
 				pointer.GetComponent<RectTransform>().transform.rotation = rotation;
 
-				pointer.GetComponent<RectTransform> ().transform.localScale = scale * Vector3.one;
+				pointer.GetComponent<RectTransform> ().transform.localScale = (scale + scaleIncrease) * Vector3.one;
 
 				labelTransform.rotation = Quaternion.identity;
 

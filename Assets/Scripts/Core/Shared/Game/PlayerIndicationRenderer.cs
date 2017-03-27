@@ -68,11 +68,11 @@ public class PlayerIndicationRenderer : MonoBehaviour
 		}
 		if (isBombIndicaterOn) {
 			CarController car = this.GetComponentInParent<CarController> ();
-			double bombDangerLevel = (car.MaxLifetime - car.Lifetime) / (car.MaxLifetime/5);
+			float bombDangerLevel = 2.0f * (car.getMaxHealth() - car.Lifetime) / (car.getMaxHealth());
 			_initialisedBomb.transform.parent = transform;
 			_initialisedBomb.transform.localScale = new Vector3 (80.0f,80.0f,80.0f);
 			_initialisedBomb.transform.localPosition = new Vector3 (0.0f,2.0f,0.0f);
-			float lerp = Mathf.PingPong((float)bombDangerLevel * Time.time, 1.0f) / 1.0f;
+			float lerp = Mathf.PingPong(bombDangerLevel * Time.time, 1.0f) / 1.0f;
 			_initialisedBomb.transform.GetChild (1).GetComponent<Renderer> ().material.Lerp(material1,material2,lerp);
 		}
 	}
