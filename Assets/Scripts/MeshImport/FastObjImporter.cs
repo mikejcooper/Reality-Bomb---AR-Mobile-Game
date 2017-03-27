@@ -108,11 +108,11 @@ public sealed class FastObjImporter
 					// Add faceData, a face can contain multiple triangles, facedata is stored in following order vert, uv, normal. If uv or normal are / set it to a 0
 					while (splitStart < sb.Length && char.IsDigit(sb[splitStart]))
 					{
-						Vector3Int item = new Vector3Int(GetInt(sb, ref splitStart, ref sbFloat),
-							GetInt(sb, ref splitStart, ref sbFloat), GetInt(sb, ref splitStart, ref sbFloat));
+//						Vector3Int item = new Vector3Int(GetInt(sb, ref splitStart, ref sbFloat),
+//							GetInt(sb, ref splitStart, ref sbFloat), GetInt(sb, ref splitStart, ref sbFloat));
 						j++;
 
-						_intArray.Add(item.x);
+						_intArray.Add (GetInt (sb, ref splitStart, ref sbFloat));//item.x);
 						faceDataCount++;
 					}
 
