@@ -15,10 +15,10 @@ public class GameMusic : MonoBehaviour {
 	void Start () {
 		_music = GetComponent<AudioSource> ();
 		_music.volume = StartVolume;
-		DontDestroyOnLoad (gameObject);
+		//DontDestroyOnLoad (gameObject);
 		//StartCoroutine (FadeInMusic ());
 		//GameObject.FindObjectOfType<GameManager> ().OnGameStartedEvent += StartMusic;
-		SceneManager.activeSceneChanged += EndMusic; //Subscribe to event
+		//SceneManager.activeSceneChanged += EndMusic; //Subscribe to event
 	}
 
 

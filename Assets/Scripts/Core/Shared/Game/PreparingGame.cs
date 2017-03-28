@@ -18,7 +18,7 @@ public class PreparingGame : MonoBehaviour
 
 	void Start () {
 		_entry = GameObject.Instantiate (LeaderboardEntryPrefab);
-		_entry.transform.Find ("Waiting").GetComponent<TextMeshProUGUI> ().text = "Waiting for players...";
+//		_entry.transform.Find ("Waiting").GetComponent<TextMeshProUGUI> ().text = "Waiting for players...";
 		_entry.transform.parent = transform;
 //		GameManager.StartGameCountDownEvent += StartGameCountDown ();
 	}
