@@ -323,7 +323,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   secondsToRemainVisible: 5
-  eventReceiver: {fileID: 0}
+  eventReceiver: {fileID: 1932886152}
   _markerTag: marker0
 --- !u!1 &403973946
 GameObject:
