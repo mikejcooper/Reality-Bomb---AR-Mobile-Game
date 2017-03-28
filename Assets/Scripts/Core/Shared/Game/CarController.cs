@@ -304,7 +304,7 @@ public class CarController : NetworkBehaviour
 	[ClientRpc]
 	public void RpcStartGameCountDown(){
 		Debug.Log ("RPC GAME COUNT DOWN");
-		GameObject.FindObjectOfType<PreparingGame>().StartGameCountDown ();
+		GameObject.FindObjectOfType<PreparingGame>().StartGameCountDown (false);
 	}
 
 	public void DisableControls(){

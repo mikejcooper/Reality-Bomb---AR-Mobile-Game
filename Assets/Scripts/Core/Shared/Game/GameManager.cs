@@ -135,8 +135,9 @@ public class GameManager : NetworkBehaviour {
 		}
 //		RpcAllPlayersReady ();
 
-		PreparingCanvas.StartGameCountDown ();
+		PreparingCanvas.StartGameCountDown (true);
 		_cars.StartGameCountDown ();
+
 		Debug.Log ("SERVER GAME COUNT DOWN");
 	}
 
