@@ -65,12 +65,15 @@ public class ServerSceneManager : MonoBehaviour
 		DontDestroyOnLoad (gameObject);
 		var ugly = UnityThreadHelper.Dispatcher;
 
-		transform.gameObject.AddComponent<DiscoveryServer> ();
+		var discoveryServer = transform.gameObject.AddComponent<DiscoveryServer> ();
+
+		// If clients will be looking at localhost anyway, don't
+		// pollute the network with broadcasts
+		if (!Flags.GAME_SERVER_IS_LOCALHOST) {
+			discoveryServer.BeginBroadcast ();
+		}
+
 		_networkLobbyManager = transform.gameObject.AddComponent<GameLobbyManager> ();
-        if (NetworkConstants.FORCE_LOCALHOST)
-        {
-            _networkLobbyManager.networkAddress = "localhost";
-        }
 
         _meshDiscoveryServer = new MeshDiscoveryServer ();
 		_meshTransferManager = new MeshTransferManager ();
@@ -120,11 +123,19 @@ public class ServerSceneManager : MonoBehaviour
 	public void OnServerRequestLoadNewMesh () {
 		Debug.Log ("OnRequestLoadNewMesh");
 		_meshTransferProcess.MoveNext (MeshServerLifecycle.Command.FindServer);
-		_meshDiscoveryServer.StartSearching();
+
+		if (Flags.MESH_SERVER_IS_LOCALHOST) {
+			_meshDiscoveryServer.StartSearching();
+		}
+
 
 		// set all clients to not-ready
 		_networkLobbyManager.SetAllClientsNotReady ();
 		OnStateUpdate ();
+
+		if (!Flags.MESH_SERVER_IS_LOCALHOST) {
+			OnMeshServerFound ("localhost", 3111);
+		}
 	}
 
 
@@ -132,7 +143,9 @@ public class ServerSceneManager : MonoBehaviour
 		Debug.Log (string.Format("OnMeshServerFound, address: {0}", address));
 		_meshTransferProcess.MoveNext (MeshServerLifecycle.Command.Download);
 
-		_meshDiscoveryServer.StopSearching();
+		if (Flags.MESH_SERVER_IS_LOCALHOST) {
+			_meshDiscoveryServer.StopSearching ();
+		}
 
 		_meshServerAddress = address;
 		_meshServerPort = port;

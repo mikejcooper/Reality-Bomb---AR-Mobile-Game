@@ -30,6 +30,9 @@ namespace ServerNetworking
 			Application.runInBackground = true;
 			broadcastKey = NetworkConstants.BROADCAST_KEY;
 			Initialize();
+		}
+
+		public void BeginBroadcast () {
 			StartAsServer();
 		}
 			
