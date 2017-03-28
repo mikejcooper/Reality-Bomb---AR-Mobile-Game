@@ -8,18 +8,24 @@ public class MarkerAlert : MonoBehaviour {
     void OnMarkerFound(ARMarker marker)
     {
         Debug.Log("Marker Found");
-        transform.GetChild(0).gameObject.SetActive(false);
+		foreach (Transform child in transform) {
+			child.gameObject.SetActive (false);
+		}
     } 
 
     void OnMarkerLost(ARMarker marker)
     {
         Debug.Log("Marker Lost");
-        transform.GetChild(0).gameObject.SetActive(true);
+		foreach (Transform child in transform) {
+			child.gameObject.SetActive (true);
+		}
     }
 
     void OnMarkerTracked(ARMarker marker)
     {
         Debug.Log("Marker Tracked");
-        transform.GetChild(0).gameObject.SetActive(false);
+		foreach (Transform child in transform) {
+			child.gameObject.SetActive (false);
+		}
     }
 }
