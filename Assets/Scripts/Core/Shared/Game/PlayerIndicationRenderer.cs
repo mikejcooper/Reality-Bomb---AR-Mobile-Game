@@ -37,7 +37,7 @@ public class PlayerIndicationRenderer : MonoBehaviour
 	}
 
 	void OnDestroy() {
-		this.GetComponentInParent<CarController>().OnSetBombEvent -= setBombIndicator;
+//		this.GetComponentInParent<CarController>().OnSetBombEvent -= setBombIndicator;
 	}
 
 	void setMeIndicatorOff ()
@@ -68,7 +68,7 @@ public class PlayerIndicationRenderer : MonoBehaviour
 		}
 		if (isBombIndicaterOn) {
 			CarController car = this.GetComponentInParent<CarController> ();
-			float bombDangerLevel = 2.0f * (car.getMaxHealth() - car.Lifetime) / (car.getMaxHealth());
+			float bombDangerLevel = 2.0f * ((15.0f) - car.Lifetime) / ((15.0f));
 			_initialisedBomb.transform.parent = transform;
 			_initialisedBomb.transform.localScale = new Vector3 (80.0f,80.0f,80.0f);
 			_initialisedBomb.transform.localPosition = new Vector3 (0.0f,2.0f,0.0f);

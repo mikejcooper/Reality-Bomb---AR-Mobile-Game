@@ -328,8 +328,8 @@ public class CarController : NetworkBehaviour
 		_fallDistanceBeforeRespawn = meshMinY - meshHeight*0.65f;
 	}
 
-	public float getMaxHealth(){
-		return _healthBar.getMaxHealth();
-	}
+//	public float getMaxHealth(){
+//		return _healthBar.getMaxHealth();
+//	}
 
 }
