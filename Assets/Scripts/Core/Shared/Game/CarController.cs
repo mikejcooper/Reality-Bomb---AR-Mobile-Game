@@ -329,7 +329,7 @@ public class CarController : NetworkBehaviour
 	}
 
 	public float getMaxHealth(){
-		return _healthBar.getMaxHealth();
+		return MaxLifetime;
 	}
 
 }
