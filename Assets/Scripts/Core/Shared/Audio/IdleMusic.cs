@@ -15,9 +15,9 @@ public class IdleMusic : MonoBehaviour {
 	void Start () {
 		_music = GetComponent<AudioSource> ();
 		_music.volume = StartVolume;
-		DontDestroyOnLoad (gameObject);
+		//DontDestroyOnLoad (gameObject);
 		StartCoroutine (FadeInMusic ());
-		SceneManager.activeSceneChanged += MyMethod; //Subscribe to event
+		//SceneManager.activeSceneChanged += MyMethod; //Subscribe to event
 	}
 
 	IEnumerator FadeInMusic() {

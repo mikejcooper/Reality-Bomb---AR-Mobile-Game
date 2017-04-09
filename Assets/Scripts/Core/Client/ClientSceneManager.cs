@@ -103,8 +103,12 @@ public class ClientSceneManager : MonoBehaviour
 		_innerProcess.MoveNext (Command.JoinGame);
 		ensureCorrectScene ();
 
-		// begin listening
-		_discoveryClient.ListenForServers ();
+		if (Flags.GAME_SERVER_IS_LOCALHOST) {
+			OnServerDiscovered ("localhost");
+		} else {
+			// begin listening
+			_discoveryClient.ListenForServers ();
+		}
 
 	}
 
@@ -114,11 +118,11 @@ public class ClientSceneManager : MonoBehaviour
 		ensureCorrectScene ();
 
 		// stop listening for broadcasts
-		if (_discoveryClient != null) {
+		if (_discoveryClient != null && !Flags.GAME_SERVER_IS_LOCALHOST) {
         	_discoveryClient.StopBroadcast();
         }
 
-		if (NetworkConstants.FORCE_LOCALHOST) {
+		if (Flags.GAME_SERVER_IS_LOCALHOST) {
 			_networkLobbyManager.networkAddress = "localhost";
 		} else {
 			_networkLobbyManager.networkAddress = address;
