@@ -56,12 +56,11 @@ public class GameManager : NetworkBehaviour {
 			WorldMesh = ServerSceneManager.Instance.WorldMesh;
 
 			PreparingCanvas.CountDownFinishedEvent += new PreparingGame.CountDownFinished (CountDownFinishedStartPlaying);
-			if (AreAllPlayersGameLoaded ()) {
-				AllPlayersReady ();
-			} else {
-				ServerSceneManager.Instance.OnPlayerGameLoadedEvent += CheckAreAllPlayersGameLoaded;
-				ServerSceneManager.Instance.OnPlayerDisconnectEvent += OnPlayerDisconnected;
-			}
+
+            //Triggered when last player loads game scene
+			ServerSceneManager.Instance.OnAllPlayersLoadedEvent += AllPlayersReady;
+			ServerSceneManager.Instance.OnPlayerDisconnectEvent += OnPlayerDisconnected;
+
 			//Play the game music on the server only
 			GameObject.FindObjectOfType<GameMusic>().StartMusic ();
 		}
@@ -108,7 +107,7 @@ public class GameManager : NetworkBehaviour {
 		// so we have to check whether server is running instead.
 		if (NetworkServer.active) {
 			ServerSceneManager.Instance.OnPlayerDisconnectEvent -= OnPlayerDisconnected;
-			ServerSceneManager.Instance.OnPlayerGameLoadedEvent -= CheckAreAllPlayersGameLoaded;
+			ServerSceneManager.Instance.OnAllPlayersLoadedEvent -= CheckAreAllPlayersGameLoaded;
 		}
 	}
 
@@ -130,21 +129,15 @@ public class GameManager : NetworkBehaviour {
 	[Server]
 	private void AllPlayersReady(){
 		Debug.Log ("Server: All player are ready, start game countdown");
+        /*
 		if (StartGameCountDownEvent != null) {
 			StartGameCountDownEvent();
 		}
-//		RpcAllPlayersReady ();
+        */
 
-		PreparingCanvas.StartGameCountDown ();
-		_cars.StartGameCountDown ();
+        _cars.StartGameCountDown();
+        PreparingCanvas.StartGameCountDown ();
 		Debug.Log ("SERVER GAME COUNT DOWN");
-	}
-
-	[ClientRpc]
-	private void RpcAllPlayersReady(){
-		if (StartGameCountDownEvent != null) {
-			StartGameCountDownEvent();
-		}
 	}
 		
 	[Server]
