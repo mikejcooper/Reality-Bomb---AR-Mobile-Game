@@ -107,8 +107,8 @@ public class GameManager : NetworkBehaviour {
 		// so we have to check whether server is running instead.
 		if (NetworkServer.active) {
 			ServerSceneManager.Instance.OnPlayerDisconnectEvent -= OnPlayerDisconnected;
-			ServerSceneManager.Instance.OnAllPlayersLoadedEvent -= CheckAreAllPlayersGameLoaded;
-		}
+            ServerSceneManager.Instance.OnAllPlayersLoadedEvent -= AllPlayersReady;
+        }
 	}
 
 	[Server]
@@ -130,6 +130,11 @@ public class GameManager : NetworkBehaviour {
 	private void AllPlayersReady(){
 		Debug.Log ("Server: All player are ready, start game countdown");
 
+        //Need to make sure _cars is populated at this point
+        foreach(CarController car in FindObjectsOfType<CarController>())
+        {
+            AddCar(car.gameObject);
+        }
         _cars.StartGameCountDown();
         PreparingCanvas.StartGameCountDown (true);
 
@@ -146,13 +151,6 @@ public class GameManager : NetworkBehaviour {
 		_cars.enableAllControls();
 		PowerUpManager.enabled = true;
         if(_cars.GetNumberOfBombsPresent() < 1) _cars.PassBombRandomPlayer ();
-	}
-		
-
-	private void CheckAreAllPlayersGameLoaded () {
-		if (AreAllPlayersGameLoaded()) {
-			AllPlayersReady();
-		}
 	}
 
 	private bool AreAllPlayersGameLoaded () {

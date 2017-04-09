@@ -13,7 +13,8 @@ public class CarList
 	}
 
 	public void AddCar(CarController car){
-		_cars.Add (car);
+        if(!_cars.Contains(car))
+		    _cars.Add (car);
 	}
 
 	public int GetNumberAliveCars(){
