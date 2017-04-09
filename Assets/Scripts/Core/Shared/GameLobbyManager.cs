@@ -22,21 +22,34 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 	public event OnLobbyClientConnected OnLobbyClientConnectedEvent;
 	public event OnLobbyClientDisconnected OnLobbyClientDisconnectedEvent;
 	public event OnLobbyClientReadyToBegin OnLobbyClientReadyToBeginEvent;
-	public event OnLobbyClientGameLoaded OnLobbyClientGameLoadedEvent;
+	public event OnLobbyClientGameLoaded OnLobbyAllClientGamesLoadedEvent;
     public event OnMeshClearToDownloadCallback OnMeshClearToDownloadEvent;
 	public event OnUpdatePlayerDataCallback OnUpdatePlayerDataEvent;
 	public event OnPlayerIDCallback OnPlayerIDEvent;
 
-	public override void OnLobbyServerGameLoaded(NetworkConnection conn) {
+    private int _totalNotReady = -10;
 
+	public override void OnLobbyServerGameLoaded(NetworkConnection conn) {
+        if (_totalNotReady == -10)
+        {
+            _totalNotReady = NetworkServer.connections.Count-1; //Minus 1 because this includes the server
+        }
+        _totalNotReady--;
 		UnityEngine.Networking.PlayerController lobbyController = NetworkCompat.Utils.GetPlayerController (0, conn);
 
 		if (lobbyController.gameObject.GetComponent<CarController> ()) {
 			lobbyController.gameObject.GetComponent<CarController> ().HasLoadedGame = true;
 		}
 
-		if (OnLobbyClientGameLoadedEvent != null)
-			OnLobbyClientGameLoadedEvent ();
+        if (_totalNotReady == 0)
+        {
+            //Trigger an event to start the countdown on all players
+            if (OnLobbyAllClientGamesLoadedEvent != null)
+                OnLobbyAllClientGamesLoadedEvent(); //Calls OnStateUpdate
+            _totalNotReady = -10; //Reset
+        }
+
+
 	}
 
 	public override GameObject OnLobbyServerCreateGamePlayer(NetworkConnection conn, short playerControllerId) {

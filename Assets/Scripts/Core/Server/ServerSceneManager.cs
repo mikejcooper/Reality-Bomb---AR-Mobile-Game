@@ -18,10 +18,10 @@ public class ServerSceneManager : MonoBehaviour
 	}
 
 	public delegate void StateChange (ProcessState state);
-	public delegate void OnPlayerGameLoaded();
+	public delegate void OnAllPlayersLoaded();
 
 	public event StateChange StateChangeEvent;
-	public event OnPlayerGameLoaded OnPlayerGameLoadedEvent;
+	public event OnAllPlayersLoaded OnAllPlayersLoadedEvent;
 
 	public delegate void OnPlayerDisconnect();
 	public event OnPlayerDisconnect OnPlayerDisconnectEvent;
@@ -104,7 +104,7 @@ public class ServerSceneManager : MonoBehaviour
 		_networkLobbyManager.OnLobbyServerConnectedEvent += OnGamePlayerConnected;
 		_networkLobbyManager.OnLobbyServerDisconnectedEvent += OnGamePlayerDisconnected;
 		_networkLobbyManager.OnLobbyClientReadyToBeginEvent += OnGamePlayerReady;
-		_networkLobbyManager.OnLobbyClientGameLoadedEvent += OnGamePlayerGameLoaded;
+		_networkLobbyManager.OnLobbyAllClientGamesLoadedEvent += OnGamePlayerAllLoaded;
 
 		_meshDiscoveryServer.MeshServerDiscoveredEvent += OnMeshServerFound;
 
@@ -192,9 +192,9 @@ public class ServerSceneManager : MonoBehaviour
 	}
 
 
-	private void OnGamePlayerGameLoaded () {
-		if (OnPlayerGameLoadedEvent != null) {
-			OnPlayerGameLoadedEvent ();
+	private void OnGamePlayerAllLoaded () {
+		if (OnAllPlayersLoadedEvent != null) {
+            OnAllPlayersLoadedEvent();
 		}
 		OnStateUpdate ();
 	}
