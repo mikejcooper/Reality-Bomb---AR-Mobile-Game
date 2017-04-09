@@ -21,7 +21,6 @@ public class CarController : NetworkBehaviour
 	public int DisabledControlDurationSeconds = 2;
 	// This is a server-only field that doesn't get updated on clients. I'll move this
 	// at some point to a better place.
-	public bool HasLoadedGame = false;
 	public GameObject ExplosionAnimation;
 
 	[SyncVar]
@@ -32,19 +31,16 @@ public class CarController : NetworkBehaviour
 
 	private Joystick _joystick;
     private UIHealthBar _healthBar;
-//    private Image _bombImage;
-	// Reference used to move the tank.
-	private Rigidbody _rigidbody;
-	private Vector3 _direction;
-	private Quaternion _lookAngle = Quaternion.Euler(Vector3.forward);
+    //    private Image _bombImage;
+    // Reference used to move the tank.
+    private Rigidbody _rigidbody;
+    private Quaternion _lookAngle = Quaternion.Euler(Vector3.forward);
 	private float _transferTime;
 	private float _fallDistanceBeforeRespawn;
 
 
-	private Text LifetimeText;
 	private bool _initialised;
 	private bool _controlsDisabled;
-	private bool _preparingGame = true;
 
 	private void Start ()
 	{
@@ -98,7 +94,7 @@ public class CarController : NetworkBehaviour
 			} else {
 				Debug.Log ("unavailable");
 				GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += Reposition;
-				GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += SetFallDiatance;
+				GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += SetFallDistance;
 			}
 				
 		}
@@ -107,7 +103,7 @@ public class CarController : NetworkBehaviour
 
 	void OnDestroy () {
 		GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent -= Reposition;
-		GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent -= SetFallDiatance;
+		GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent -= SetFallDistance;
 
 	}
 		
@@ -164,7 +160,7 @@ public class CarController : NetworkBehaviour
 	}
 
 	private void Boom(){
-		GameObject explosion = Instantiate(ExplosionAnimation, transform.position, Quaternion.identity) as GameObject;
+		Instantiate(ExplosionAnimation, transform.position, Quaternion.identity);
 	}
 
 	private void Update ()
@@ -322,14 +318,9 @@ public class CarController : NetworkBehaviour
 		GameObject.Find ("SpectatingText").GetComponent<TextMeshProUGUI> ().text = "Spectating...";
 	}
 
-	private void SetFallDiatance(GameObject _meshObj){
+	private void SetFallDistance(GameObject _meshObj){
 		float meshHeight = _meshObj.transform.GetComponent<MeshRenderer> ().bounds.size.y;
 		float meshMinY = _meshObj.transform.GetComponent<MeshRenderer> ().bounds.min.y;
 		_fallDistanceBeforeRespawn = meshMinY - meshHeight*0.65f;
 	}
-
-	public float getMaxHealth(){
-		return MaxLifetime;
-	}
-
 }

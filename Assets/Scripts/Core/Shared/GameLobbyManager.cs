@@ -27,29 +27,22 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 	public event OnUpdatePlayerDataCallback OnUpdatePlayerDataEvent;
 	public event OnPlayerIDCallback OnPlayerIDEvent;
 
-    private int _totalNotReady = -10;
+    private int _totalNotLoaded = -10;
 
 	public override void OnLobbyServerGameLoaded(NetworkConnection conn) {
-        if (_totalNotReady == -10)
+        if (_totalNotLoaded == -10)
         {
-            _totalNotReady = NetworkServer.connections.Count-1; //Minus 1 because this includes the server
+            _totalNotLoaded = NetworkServer.connections.Count - 1; //Minus 1 because this includes the server
         }
-        _totalNotReady--;
-		UnityEngine.Networking.PlayerController lobbyController = NetworkCompat.Utils.GetPlayerController (0, conn);
+        _totalNotLoaded--;
 
-		if (lobbyController.gameObject.GetComponent<CarController> ()) {
-			lobbyController.gameObject.GetComponent<CarController> ().HasLoadedGame = true;
-		}
-
-        if (_totalNotReady == 0)
+        if (_totalNotLoaded == 0)
         {
             //Trigger an event to start the countdown on all players
             if (OnLobbyAllClientGamesLoadedEvent != null)
                 OnLobbyAllClientGamesLoadedEvent(); //Calls OnStateUpdate
-            _totalNotReady = -10; //Reset
+            _totalNotLoaded = -10; //Reset
         }
-
-
 	}
 
 	public override GameObject OnLobbyServerCreateGamePlayer(NetworkConnection conn, short playerControllerId) {

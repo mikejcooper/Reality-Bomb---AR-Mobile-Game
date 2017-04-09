@@ -9,6 +9,7 @@ using NetworkCompat;
 
 public class ServerSceneManager : MonoBehaviour
 {
+    static bool DEBUG = false;
 
 	private const int MIN_REQ_PLAYERS = 1;
 
@@ -121,7 +122,7 @@ public class ServerSceneManager : MonoBehaviour
 
 
 	public void OnServerRequestLoadNewMesh () {
-		Debug.Log ("OnRequestLoadNewMesh");
+		if (DEBUG) Debug.Log ("OnRequestLoadNewMesh");
 		_meshTransferProcess.MoveNext (MeshServerLifecycle.Command.FindServer);
 
 		if (Flags.MESH_SERVER_IS_LOCALHOST) {
@@ -140,7 +141,7 @@ public class ServerSceneManager : MonoBehaviour
 
 
 	private void OnMeshServerFound (string address, int port) {
-		Debug.Log (string.Format("OnMeshServerFound, address: {0}", address));
+        if (DEBUG) Debug.Log (string.Format("OnMeshServerFound, address: {0}", address));
 		_meshTransferProcess.MoveNext (MeshServerLifecycle.Command.Download);
 
 		if (Flags.MESH_SERVER_IS_LOCALHOST) {
@@ -155,7 +156,7 @@ public class ServerSceneManager : MonoBehaviour
 	}
 
 	private void OnMeshDataReceived () {
-		Debug.Log ("OnMeshDataReceived");
+        if (DEBUG) Debug.Log ("OnMeshDataReceived");
 		_meshTransferProcess.MoveNext (MeshServerLifecycle.Command.DownloadFinished);
 
 		// now that we've gone and fetched the mesh, updating the websocket
@@ -169,7 +170,7 @@ public class ServerSceneManager : MonoBehaviour
 
 	private void OnGamePlayerConnected (UnityEngine.Networking.NetworkConnection conn)
 	{
-		Debug.Log ("OnPlayerConnected");
+        if (DEBUG) Debug.Log ("OnPlayerConnected");
 		ConnectedPlayerCount++;
 
 		_playerDataManager.AddPlayer (conn.connectionId, NameGenerator.GenerateName ());
@@ -201,7 +202,7 @@ public class ServerSceneManager : MonoBehaviour
 
 	private void OnGamePlayerDisconnected (UnityEngine.Networking.NetworkConnection conn)
 	{
-		Debug.Log ("OnPlayerDisconnected");
+        if (DEBUG) Debug.Log ("OnPlayerDisconnected");
 		ConnectedPlayerCount--;
 
 		_playerDataManager.RemovePlayer (conn.connectionId);
@@ -217,7 +218,7 @@ public class ServerSceneManager : MonoBehaviour
 	}
 
 	public void OnServerRequestGameReady () {
-		Debug.Log ("OnGameIsReady");
+        if (DEBUG) Debug.Log ("OnGameIsReady");
 		if (_networkLobbyManager.IsReadyToBegin ()) {
 			_innerProcess.MoveNext (Command.GameReady);
 			OnStateUpdate ();
@@ -239,7 +240,7 @@ public class ServerSceneManager : MonoBehaviour
 	}
 
 	public void OnServerRequestGameEnd () {
-		Debug.Log ("OnGameEnd");
+        if (DEBUG) Debug.Log ("OnGameEnd");
 		_innerProcess.MoveNext (Command.GameEnd);
 		OnStateUpdate ();
 //		 todo call correct things at game end
@@ -283,12 +284,8 @@ public class ServerSceneManager : MonoBehaviour
 			if (_currentScene != "Game") {
 				// put this in some scene load callback
 				_currentScene = "Game"; 
-
-				// this needs to be called before we change scene
-				if (_networkLobbyManager.IsReadyToBegin ()) {
-					_playerDataManager.ResetAllGameData ();
-					_networkLobbyManager.ServerChangeScene ("Game");
-				}
+				_playerDataManager.ResetAllGameData ();
+				_networkLobbyManager.ServerChangeScene ("Game");
 			}
 			break;
 		}

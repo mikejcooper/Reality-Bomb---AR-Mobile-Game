@@ -16,8 +16,7 @@ public class NameStickExpander : MonoBehaviour {
 		float totalLength = 0;
 
 		UnityEngine.UI.Text text = TextObject.GetComponent<UnityEngine.UI.Text> ();
-
-		Font myFont = text.font;  //chatText is my Text component
+        
 		CharacterInfo characterInfo = new CharacterInfo();
 
 		char[] arr = text.text.ToCharArray();

@@ -9,6 +9,7 @@ using NetworkCompat;
 
 public class ClientSceneManager : MonoBehaviour
 {
+    static bool DEBUG = false;
 
 	public NetworkLobbyPlayer LobbyPlayerPrefab;
 	public GameObject GamePlayerPrefab;
@@ -81,7 +82,7 @@ public class ClientSceneManager : MonoBehaviour
 
     private void OnMeshDataReceived()
     {
-		Debug.Log("OnMeshDataReceived");
+		if (DEBUG) Debug.Log("OnMeshDataReceived");
 
 		_networkLobbyManager.SetReady ();
 
@@ -99,7 +100,7 @@ public class ClientSceneManager : MonoBehaviour
 	}
 
 	public void OnUserRequestFindGame () {
-		Debug.Log ("OnUserRequestFindGame");
+		if (DEBUG) Debug.Log ("OnUserRequestFindGame");
 		_innerProcess.MoveNext (Command.JoinGame);
 		ensureCorrectScene ();
 
@@ -113,7 +114,7 @@ public class ClientSceneManager : MonoBehaviour
 	}
 
 	private void OnServerDiscovered (string address) {
-		Debug.Log ("OnServerDiscovered");
+        if (DEBUG) Debug.Log ("OnServerDiscovered");
 		_innerProcess.MoveNext (Command.ConnectGame);
 		ensureCorrectScene ();
 
@@ -133,38 +134,38 @@ public class ClientSceneManager : MonoBehaviour
 	}
 
 	private void OnUserConnectedToGame () {
-		Debug.Log ("OnUserConnectedToGame");
+        if (DEBUG) Debug.Log ("OnUserConnectedToGame");
 		_innerProcess.MoveNext (Command.JoinedGame);
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
 		ensureCorrectScene ();
 	}
 
 	private void OnUserDisconnectedToGame () {
-		Debug.Log ("OnUserDisconnectedToGame");
+        if (DEBUG) Debug.Log ("OnUserDisconnectedToGame");
 		// we don't have a state change for this... yet
 		Screen.sleepTimeout = _defaultSleepTimeout;
 	}
 
 	private void OnServerGameReady () {
-		Debug.Log ("OnServerGameReady");
+        if (DEBUG) Debug.Log ("OnServerGameReady");
 		_innerProcess.MoveNext (Command.GameReady);
 		ensureCorrectScene ();
 	}
 
 	//call at end of GameManager (client)
 	public void OnGameLoaded () {
-		Debug.Log ("Notifying server that we have finished loading game");
+        if (DEBUG) Debug.Log ("Notifying server that we have finished loading game");
 		_networkLobbyManager.SetGameLoaded ();
 	}
 
 	private void OnServerGameEnd () {
-		Debug.Log ("OnServerGameEnd");
+        if (DEBUG) Debug.Log ("OnServerGameEnd");
 		_innerProcess.MoveNext (Command.GameEnd);
 		ensureCorrectScene ();
 	}
 
 	public void OnUserRequestPlaySandbox () {
-		Debug.Log ("OnUserRequestPlaySandbox");
+        if (DEBUG) Debug.Log ("OnUserRequestPlaySandbox");
 		_innerProcess.MoveNext (Command.PlaySandbox);
 		ensureCorrectScene ();
 	}

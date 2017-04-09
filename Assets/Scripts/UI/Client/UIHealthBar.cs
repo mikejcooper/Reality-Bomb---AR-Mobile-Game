@@ -6,7 +6,6 @@ class UIHealthBar : MonoBehaviour
 {
 
     private RectTransform _rt;
-    private GameObject _sparks;
     private Text _txt;
     private ParticleSystem[] _psystems;
 
@@ -43,22 +42,14 @@ class UIHealthBar : MonoBehaviour
         {
             Debug.Log("Playing");
             //_sparks.GetComponent<ParticleSystem>().Play();
-            for (int i = 0; i < _psystems.Length; i++)
-            {
-                var em = _psystems[i].emission;
-                em.enabled = true;
-            }
+            ParticlesEnabled(true);
             _time = Time.time;
         }
         else
         {
             Debug.Log("Pausing");
             //_sparks.GetComponent<ParticleSystem>().Pause();
-            for (int i = 0; i < _psystems.Length; i++)
-            {
-                var em = _psystems[i].emission;
-                em.enabled = false;
-            }
+            ParticlesEnabled(false);
         }
     }
 
@@ -69,14 +60,9 @@ class UIHealthBar : MonoBehaviour
             if (child.gameObject.name == "Fill")
             {
                 _rt = child.GetComponent<RectTransform>();
-                _sparks = child.GetChild(0).gameObject;
                 Debug.Log("Pausing");
                 _psystems = child.GetComponentsInChildren<ParticleSystem>();
-                for (int i=0; i<_psystems.Length; i++)
-                {
-                    var em = _psystems[i].emission;
-                    em.enabled = false;
-                }
+                ParticlesEnabled(false);
             }
             if (child.gameObject.name == "Text")
             {
@@ -110,10 +96,16 @@ class UIHealthBar : MonoBehaviour
         GameObject explosion = Instantiate(_expl_prefab);
         explosion.transform.parent = transform.parent;
         explosion.GetComponent<RectTransform>().localPosition = Vector2.zero;
+        ParticlesEnabled(false);
     }
 
-	public float getMaxHealth(){
-		return _maxValue;
-	}
+    private void ParticlesEnabled(bool state)
+    {
+        for (int i = 0; i < _psystems.Length; i++)
+        {
+            var em = _psystems[i].emission;
+            em.enabled = state;
+        }
+    }
     
 }

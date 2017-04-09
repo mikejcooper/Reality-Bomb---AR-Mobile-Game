@@ -153,17 +153,6 @@ public class GameManager : NetworkBehaviour {
         if(_cars.GetNumberOfBombsPresent() < 1) _cars.PassBombRandomPlayer ();
 	}
 
-	private bool AreAllPlayersGameLoaded () {
-		foreach (var car in GameObject.FindObjectsOfType<CarController>()) {
-			if (car != null && !car.HasLoadedGame) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-
-
 	public void AddCar(GameObject gamePlayer)
 	{
 		_cars.AddCar(gamePlayer.GetComponent<CarController>());

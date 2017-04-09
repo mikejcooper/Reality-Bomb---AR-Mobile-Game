@@ -24,9 +24,6 @@ public class SandboxManager : MonoBehaviour
 	private string _speed_Txt = "You've Activated the Speed Boost Power Up! Enjoy double the speed but be careful not to lose control!";
 	private string _respawn_Txt = "Oops!! You fell off the map! Don't Worry, You'll be respawned but you won't be able to move for 5s. Be careful or become an easy target!";
 
-
-	private Rect TxtRect;
-
 	void Start(){
 		if (TutorialDialogPrefabs.Count > 0) {
 			SetCurrentDialog (0);
@@ -68,11 +65,11 @@ public class SandboxManager : MonoBehaviour
 
 	public void EnsureCarIsOnMap(){
 		if(CarObject.transform.position.y <= - 10.0f){
-			Reposition (PlaneObject);
+			Reposition();
 		}
 	}
 		
-	public void Reposition(GameObject worldMesh)
+	public void Reposition()
 	{
 		Debug.Log ("Repositioning car");
 		SetRespawnTxt ();
