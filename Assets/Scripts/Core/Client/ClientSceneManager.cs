@@ -90,8 +90,8 @@ public class ClientSceneManager : MonoBehaviour
 	private void InitialisePlayerCar (GameObject GamePlayerPrefab){
 
 		List<List<Color>> CarColours = new List<List<Color>>();
-		// Blades inner, Side glow, Spoiler, Winscreen, Body, Blades
-		CarColours.Add( new List<Color> { new Color(128, 128, 128), new Color(6, 167, 170), Color.black, Color.black, new Color(96, 0, 0),  new Color(128, 128, 128)} );
+		// Spoiler, Side glow, Blades, Body, Blades Inner, Winscreen
+		CarColours.Add( new List<Color> { Color.black, new Color(6, 167, 170), new Color(128, 128, 128), new Color(96, 0, 0),  new Color(6, 167, 170), Color.black} );
 
 		List<Color> colours = CarColours[0];
 
@@ -104,7 +104,6 @@ public class ClientSceneManager : MonoBehaviour
 		materials [4].color = colours [4];
 		materials [5].color = colours [5];
 	}
-
 
     private void OnMeshDataReceived()
     {
