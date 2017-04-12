@@ -35,21 +35,16 @@ public class SandboxManager : MonoBehaviour
 			
 		PowerupManager.SpeedBoostActivatedEvent += SetSpeedTxt;
 		PowerupManager.InkSplatterActivatedEvent += SetSplatTxt;
-<<<<<<< HEAD
 		PowerupManager.ShieldActivatedEvent += SetShieldTxt;
-=======
 
-		ClientSceneManager.Instance.OnCountDownTimeUpdateEvent += OnCountDownTimeUpdate;
-		ClientSceneManager.Instance.OnCountDownCanceledEvent += OnCountDownCanceled;
->>>>>>> 25d16b7f319564b3f3aa090c2b288e1b33848119
+//		ClientSceneManager.Instance.OnCountDownTimeUpdateEvent += OnCountDownTimeUpdate;
+//		ClientSceneManager.Instance.OnCountDownCanceledEvent += OnCountDownCanceled;
 	}
 
 	void OnDestroy(){
 		PowerupManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
 		PowerupManager.InkSplatterActivatedEvent -= SetSplatTxt;
-<<<<<<< HEAD
 		PowerupManager.ShieldActivatedEvent -= SetShieldTxt;
-=======
 
 		ClientSceneManager.Instance.OnCountDownTimeUpdateEvent -= OnCountDownTimeUpdate;
 		ClientSceneManager.Instance.OnCountDownCanceledEvent -= OnCountDownCanceled;
@@ -68,7 +63,6 @@ public class SandboxManager : MonoBehaviour
 			Destroy (_countdownDialog);
 			_countdownDialog = null;
 		}
->>>>>>> 25d16b7f319564b3f3aa090c2b288e1b33848119
 	}
 
 	private void SetCurrentDialog (int index) {
