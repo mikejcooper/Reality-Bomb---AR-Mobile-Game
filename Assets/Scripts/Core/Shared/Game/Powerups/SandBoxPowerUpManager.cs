@@ -10,15 +10,12 @@ namespace Powerups {
 		public GameObject PlaneObject;
 		public SpeedAbilityProperties SpeedProperties;
 		public SandboxInkAbilityProperties InkProperties;
-		public ShieldAbilityProperties ShieldProperties;
 
 		// Events
 		public delegate void OnSpeedBoostActivated ();
 		public delegate void OnInkSplatterActivated ();
-		public delegate void OnShieldActivated ();
-		public event OnSpeedBoostActivated SpeedBoostActivatedEvent = delegate {};
-		public event OnInkSplatterActivated InkSplatterActivatedEvent = delegate {};
-		public event OnShieldActivated ShieldActivatedEvent = delegate {};
+		public event OnSpeedBoostActivated SpeedBoostActivatedEvent;		
+		public event OnInkSplatterActivated InkSplatterActivatedEvent;
 
 		protected override void Start () {
 			base.Start ();
@@ -28,8 +25,7 @@ namespace Powerups {
 		override protected PowerupDefinition[] GetAvailablePowerups () {
 			return new PowerupDefinition[] { 
 				new PowerupDefinition (typeof(SpeedAbility), SpeedProperties),
-				new PowerupDefinition (typeof(SandboxInkAbility), InkProperties),
-				new PowerupDefinition (typeof(ShieldAbility), ShieldProperties)
+				new PowerupDefinition (typeof(SandboxInkAbility), InkProperties)
 			};
 		}
 
@@ -40,9 +36,6 @@ namespace Powerups {
 			} else if (ability.GetType ().IsAssignableFrom (typeof(SandboxInkAbility))) {
 				InkSplatterActivatedEvent ();
 				Debug.Log ("'SBPUM':Ink splatter activated");
-			} else if (ability.GetType ().IsAssignableFrom (typeof(ShieldAbility))) {
-				ShieldActivatedEvent ();
-				Debug.Log ("'SBPUM':Shield activated");
 			}
 		}
 
@@ -51,8 +44,6 @@ namespace Powerups {
 				Debug.Log ("'SBPUM':Speed boost deactivated");
 			} else if (ability.GetType ().IsAssignableFrom (typeof(SandboxInkAbility))) {
 				Debug.Log ("'SBPUM':Ink splatter deactivated");
-			} else if (ability.GetType ().IsAssignableFrom (typeof(ShieldAbility))) {
-				Debug.Log ("'SBPUM':Shield deactivated");
 			}
 		}
 

@@ -22,9 +22,6 @@ namespace Powerups {
 					SandboxInkAbility ability = (SandboxInkAbility)collidedObject.AddComponent (PowerupDefinitionObj.Ability);
 //					ability.initialise (ClientSceneManager.Instance.GetThisPlayerData ().ServerId, (SandboxInkAbilityProperties)PowerupDefinitionObj.Properties, AbilityResources);
 					ability.initialise (GetThisPlayerServerId (), (SandboxInkAbilityProperties)PowerupDefinitionObj.Properties, AbilityResources);
-				} else if (PowerupDefinitionObj.Properties.GetType ().IsAssignableFrom (typeof(ShieldAbilityProperties))) {
-					ShieldAbility ability = (ShieldAbility)collidedObject.AddComponent (PowerupDefinitionObj.Ability);
-					ability.initialise (GetThisPlayerServerId (), (ShieldAbilityProperties)PowerupDefinitionObj.Properties, AbilityResources);
 				} else {
 					Debug.LogError ("unknown type: " + PowerupDefinitionObj.Properties.GetType ().ToString ());
 				}
