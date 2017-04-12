@@ -24,6 +24,7 @@ public class LeaderboardManager : MonoBehaviour
 		if (_countdownDialog == null) {
 			_countdownDialog = GameObject.Instantiate (GameCountdownDialogPrefab);
 			_countdownDialog.transform.SetParent (CanvasObj.transform, false);
+			_countdownDialog.GetComponentInChildren<AlarmTextDriver> ().OnCountDownTimeUpdate (remainingTime);
 		}
 	}
 
