@@ -62,6 +62,8 @@ public class ClientSceneManager : MonoBehaviour
 
 		_networkLobbyManager.playScene = "Game";
 
+		InitialisePlayerCar (GamePlayerPrefab);
+
 		_networkLobbyManager.lobbyPlayerPrefab = LobbyPlayerPrefab;
 		_networkLobbyManager.gamePlayerPrefab = GamePlayerPrefab;
 
@@ -78,6 +80,41 @@ public class ClientSceneManager : MonoBehaviour
 
 		SceneManager.sceneLoaded += OnSceneLoaded;
 	}
+
+
+
+
+
+
+
+	private void InitialisePlayerCar (GameObject GamePlayerPrefab){
+
+		List<List<Color>> CarColours = new List<List<Color>>();
+		CarColours.Add(new List<Color> { Color.white, Color.red, Color.blue });
+
+		List<Color> colours = CarColours[0];
+
+
+
+//		Material[] materials = GamePlayerPrefab.transform.FindChild("Car_Model").GetComponent<MeshRenderer> ().sharedMaterials;
+//		materials [1].color = colours[0];
+//		materials [2].color = colours [1];
+//		materials [3].color = colours [2];
+
+//		Material[] materials = rend.materials;
+
+//		foreach (Material m in materials) {
+//			
+//		}
+
+//		Shader shader1 = Shader.Find("Car_body");
+
+//		_initialisedBomb.transform.GetChild (1).GetComponent<Renderer> ().material
+		
+
+
+	}
+
 
     private void OnMeshDataReceived()
     {
