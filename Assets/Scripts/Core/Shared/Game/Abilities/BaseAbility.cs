@@ -55,6 +55,8 @@ namespace Abilities {
 
 		public void StartAbility () {
 			_abilityResources.manager.OnPowerUpStart (this);
+			Debug.Log (_thisPlayerServerId);
+			Debug.Log (_calleeServerId);
 			if (_thisPlayerServerId == _calleeServerId) {
 				DisplaySplash ();
 				OnApplyAbilitySelf (_ownCarProperties, _abilityResources.PlayerCanvas);
