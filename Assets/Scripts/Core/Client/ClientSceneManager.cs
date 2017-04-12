@@ -89,20 +89,16 @@ public class ClientSceneManager : MonoBehaviour
 
 	private void InitialisePlayerCar (GameObject GamePlayerPrefab){
 
-		List<List<Color>> CarColours = new List<List<Color>>();
-		// Spoiler, Side glow, Blades, Body, Blades Inner, Winscreen
-		CarColours.Add( new List<Color> { Color.black, new Color(6, 167, 170), new Color(128, 128, 128), new Color(96, 0, 0),  new Color(6, 167, 170), Color.black} );
-
-		List<Color> colours = CarColours[0];
-
 		Material[] materials = GamePlayerPrefab.transform.FindChild("Car_Model").GetComponent<MeshRenderer> ().sharedMaterials;
 
-		materials [0].color = colours [0];
-		materials [1].color = colours [1];
-		materials [2].color = colours [2];
-		materials [3].color = colours [3];
-		materials [4].color = colours [4];
-		materials [5].color = colours [5];
+		int ran = Random.Range (0, 360);
+
+		materials [0].color = Color.black; // Spoiler
+		materials [1].color = Color.HSVToRGB(ran/360f, 0.96f, 0.67f); // Side glow
+		materials [2].color = Color.HSVToRGB(ran/360f, 0.96f, 0.67f); // Blades
+		materials [3].color = Color.HSVToRGB (ran / 360f, 1f, 0.38f); // Body
+		materials [4].color = Color.gray; // Blades Inner
+		materials [5].color = Color.black; // Winscreen
 	}
 
     private void OnMeshDataReceived()

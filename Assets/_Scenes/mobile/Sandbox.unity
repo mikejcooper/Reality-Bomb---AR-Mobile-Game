@@ -393,6 +393,11 @@ Light:
   m_BounceIntensity: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!1 &743192673 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1723313529269556, guid: 63f4bbc07eaf94c9fa0215cac553e5bb,
+    type: 2}
+  m_PrefabInternal: {fileID: 211514492}
 --- !u!1 &757163053
 GameObject:
   m_ObjectHideFlags: 0
@@ -421,7 +426,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e8f828535bbc45f6a77bb41b093fc0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CarObject: {fileID: 0}
+  CarObject: {fileID: 743192673}
   PlaneObject: {fileID: 2137931947}
   CanvasObj: {fileID: 1343903778}
   ToastManagerObject: {fileID: 1942541510}
