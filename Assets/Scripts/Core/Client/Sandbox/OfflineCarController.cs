@@ -66,7 +66,7 @@ public class OfflineCarController : MonoBehaviour
 
 	void OnCollisionEnter(Collision col) {
 		// If two players collide, calculate the angle of collision, reverse the direction and add a force in that direction
-		if (col.gameObject.tag != "PowerUp") {
+		if (!col.gameObject.tag.Contains("PowerUp")) {
 			var bounceForce = 350;
 			Vector3 direction = col.contacts[0].point - transform.position;
 			direction = -direction.normalized;

@@ -55,21 +55,12 @@ namespace Abilities {
 
 		public void StartAbility () {
 			_abilityResources.manager.OnPowerUpStart (this);
-			if (_thisPlayerServerId == _calleeServerId) {
-				DisplaySplash ();
-				OnApplyAbilitySelf (_ownCarProperties, _abilityResources.PlayerCanvas);
-			} else {
-				OnApplyAbilityOther (_ownCarProperties, _abilityResources.PlayerCanvas);
-			}
+            OnApplyAbility(_ownCarProperties, _abilityResources.PlayerCanvas);
 		}
 
 		public void StopAbility () {
 			_abilityResources.manager.OnPowerUpStop (this);
-			if (_thisPlayerServerId == _calleeServerId) {
-				OnRemoveAbilitySelf (_ownCarProperties, _abilityResources.PlayerCanvas);
-			} else {
-				OnRemoveAbilityOther (_ownCarProperties, _abilityResources.PlayerCanvas);
-			}
+            OnRemoveAbility(_ownCarProperties, _abilityResources.PlayerCanvas);
 			Destroy (this);
 		}
 
@@ -127,17 +118,9 @@ namespace Abilities {
 		// Called on client that triggered this ability.
 		// Apply things that should affect the car that triggered the event,
 		// like speed boost.
-		protected virtual void OnApplyAbilitySelf(CarProperties properties, Canvas canvas) {}
-
-		// Called on individual clients that didn't trigger this ability
-		// Apply things that should affect all clients that didn't trigger,
-		// the event, like an ink splatter.
-		protected virtual void OnApplyAbilityOther(CarProperties properties, Canvas canvas) {}
+		protected virtual void OnApplyAbility(CarProperties properties, Canvas canvas) {}
 
 		// Called on client that triggered this ability
-		protected virtual void OnRemoveAbilitySelf(CarProperties properties, Canvas canvas) {}
-
-		// Called on individual clients that didn't trigger this ability
-		protected virtual void OnRemoveAbilityOther(CarProperties properties, Canvas canvas) {}
+		protected virtual void OnRemoveAbility(CarProperties properties, Canvas canvas) {}
 	}
 }

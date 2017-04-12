@@ -9,7 +9,7 @@ namespace Powerups {
 	public class GamePowerUpManager: BasePowerUpManager {
 
 		public SpeedAbilityProperties SpeedProperties;
-		public SandboxInkAbilityProperties InkProperties;
+		public InkAbilityProperties InkProperties;
 	
 
 		// Events
@@ -39,7 +39,7 @@ namespace Powerups {
 		override protected PowerupDefinition[] GetAvailablePowerups () {
 			return new PowerupDefinition[] { 
 				new PowerupDefinition (typeof(SpeedAbility), SpeedProperties),
-				new PowerupDefinition (typeof(SandboxInkAbility), InkProperties)
+				new PowerupDefinition (typeof(InkAbility), InkProperties)
 			};
 		}
 
@@ -47,7 +47,7 @@ namespace Powerups {
 			if (ability.GetType ().IsAssignableFrom (typeof(SpeedAbility))) {
 				Debug.Log ("'GPUM': Speed boost activated");
 				SpeedBoostActivatedEvent ();
-			} else if (ability.GetType ().IsAssignableFrom (typeof(SandboxInkAbility))) {
+			} else if (ability.GetType ().IsAssignableFrom (typeof(InkAbility))) {
 				InkSplatterActivatedEvent ();
 				Debug.Log ("'GPUM':Ink splatter activated");
 			}
@@ -56,7 +56,7 @@ namespace Powerups {
 		public override void OnPowerUpStop<T> (BaseAbility<T> ability) {
 			if (ability.GetType ().IsAssignableFrom (typeof(SpeedAbility))) {
 				Debug.Log ("'GPUM':Speed boost deactivated");
-			} else if (ability.GetType ().IsAssignableFrom (typeof(SandboxInkAbility))) {
+			} else if (ability.GetType ().IsAssignableFrom (typeof(InkAbility))) {
 				Debug.Log ("'GPUM':Ink splatter deactivated");
 			}
 		}

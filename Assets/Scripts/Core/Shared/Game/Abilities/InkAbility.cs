@@ -6,16 +6,16 @@ using UnityEngine.UI;
 namespace Abilities {
 		
 	[System.Serializable]
-	public class SandboxInkAbilityProperties : BaseAbilityProperties {
+	public class InkAbilityProperties : BaseAbilityProperties {
 		public Texture SplatterTexture;
 	}
+    
+	public class InkAbility : BaseAbility<InkAbilityProperties> {
 
-	// Like normal Ink, but applies to self for demonstration purposes
-	public class SandboxInkAbility : BaseAbility<SandboxInkAbilityProperties> {
-
-		private GameObject _splatterObject;
-
-		override protected void OnApplyAbilitySelf (CarProperties properties, Canvas canvas) {
+		protected GameObject _splatterObject;
+        
+        override protected void OnApplyAbility(CarProperties properties, Canvas canvas) {
+            
 			_splatterObject = new GameObject ("Splatter");
 
 			_splatterObject.transform.parent = canvas.transform;
@@ -28,11 +28,12 @@ namespace Abilities {
 			// The following lines fade out the splatter effect over time
 			splatterImage.GetComponent<CanvasRenderer>().SetAlpha(1.0f);
 			splatterImage.CrossFadeAlpha(0.0f,8.0f,false);
+            
+            Debug.Log("Inking");
 		}
-
-		override protected void OnRemoveAbilitySelf (CarProperties properties, Canvas canvas) {
+        
+		override protected void OnRemoveAbility(CarProperties properties, Canvas canvas) {
 			Destroy (_splatterObject);
-		}
+		}     
 	}
-
 }

@@ -2,6 +2,8 @@
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using TMPro;
+using Abilities;
+using Powerups;
 
 public class CarController : NetworkBehaviour
 {
@@ -220,14 +222,49 @@ public class CarController : NetworkBehaviour
 	public void UpdateTransferTime(float inc){
 		_transferTime = Time.time + inc;
 	}
-		
 
-	void OnCollisionEnter(Collision col)
+    [ClientRpc]
+    public void RpcInkPowerUp()
+    {
+        if(!isLocalPlayer)
+        {
+            Debug.Log("******** INKED! ********");
+            //Add Ink ability component to object
+            GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
+            PowerupDefinition powerupdfn = new PowerupDefinition(typeof(InkAbility), gpm.InkProperties);
+
+            InkAbility ability = (InkAbility)gameObject.AddComponent(typeof(InkAbility));
+            AbilityResources _abilityResources;
+            _abilityResources.PlayerCanvas = gpm.PlayerCanvas;
+            _abilityResources.manager = gpm;
+            ability.initialise(0, gpm.InkProperties, _abilityResources);
+        }
+            
+    }
+
+    [ClientRpc]
+    public void RpcSpeedPowerUp()
+    {
+        if (isLocalPlayer)
+        {
+            Debug.Log("******** Speed Power Up! ********");
+            GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
+            PowerupDefinition powerupdfn = new PowerupDefinition(typeof(SpeedAbility), gpm.SpeedProperties);
+
+            SpeedAbility ability = (SpeedAbility)gameObject.AddComponent(typeof(SpeedAbility));
+            AbilityResources _abilityResources;
+            _abilityResources.PlayerCanvas = gpm.PlayerCanvas;
+            _abilityResources.manager = gpm;
+            ability.initialise(0, gpm.SpeedProperties, _abilityResources);
+        }
+    }
+
+    void OnCollisionEnter(Collision col)
 	{
 		if (isServer) {
 			GameObject.FindObjectOfType<GameManager> ().CollisionEvent (this, col);
 		} else {
-			if (col.gameObject.tag != "PowerUp") {
+			if (!col.gameObject.tag.Contains("PowerUp")) {
 /*
  * Uncomment the following line to add bouncing between the players in the main game
  * the current implementation is a bit laggy so has been left uncommented until this is fixed 

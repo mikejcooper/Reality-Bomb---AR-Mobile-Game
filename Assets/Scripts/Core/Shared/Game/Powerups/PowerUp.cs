@@ -1,31 +1,44 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using System;
 using Abilities;
 
 namespace Powerups {
 
-	public class PowerUp : MonoBehaviour {
+	public class PowerUp : NetworkBehaviour {
 
 		public PowerupDefinition PowerupDefinitionObj;
 		public AbilityResources AbilityResources;
 
 		void OnCollisionEnter (Collision collision) {
 			if (collision.collider.tag == "TankTag") {
-				var collidedObject = collision.gameObject;
+                Debug.Log("COLLIDED WITH TANK");
 
-				if (PowerupDefinitionObj.Properties.GetType ().IsAssignableFrom (typeof(SpeedAbilityProperties))) {
-					SpeedAbility ability = (SpeedAbility)collidedObject.AddComponent (PowerupDefinitionObj.Ability);
-					ability.initialise (GetThisPlayerServerId (), (SpeedAbilityProperties)PowerupDefinitionObj.Properties, AbilityResources);
-				} else if (PowerupDefinitionObj.Properties.GetType ().IsAssignableFrom (typeof(SandboxInkAbilityProperties))) {
-					SandboxInkAbility ability = (SandboxInkAbility)collidedObject.AddComponent (PowerupDefinitionObj.Ability);
-					ability.initialise (ClientSceneManager.Instance.GetThisPlayerData ().ServerId, (SandboxInkAbilityProperties)PowerupDefinitionObj.Properties, AbilityResources);
-				} else {
-					Debug.LogError ("unknown type: " + PowerupDefinitionObj.Properties.GetType ().ToString ());
-				}
+                if(!UnityEngine.Networking.NetworkServer.active) //Check we are in the sandbox
+                {
+                    var collidedObject = collision.gameObject;
 
-				Destroy (gameObject);
+                    if (PowerupDefinitionObj.Properties.GetType().IsAssignableFrom(typeof(SpeedAbilityProperties)))
+                    {
+                        SpeedAbility ability = (SpeedAbility)collidedObject.AddComponent(PowerupDefinitionObj.Ability);
+                        ability.initialise(GetThisPlayerServerId(), (SpeedAbilityProperties)PowerupDefinitionObj.Properties, AbilityResources);
+                    }
+                    else if (PowerupDefinitionObj.Properties.GetType().IsAssignableFrom(typeof(InkAbilityProperties)))
+                    {
+                        Debug.Log("INK ABILITY");
+                        InkAbility ability = (InkAbility)collidedObject.AddComponent(PowerupDefinitionObj.Ability);
+                        //ability.initialise(ClientSceneManager.Instance.GetThisPlayerData().ServerId, (InkAbilityProperties)PowerupDefinitionObj.Properties, AbilityResources);
+                        ability.initialise(GetThisPlayerServerId(), (InkAbilityProperties)PowerupDefinitionObj.Properties, AbilityResources);
+                    }
+                    else
+                    {
+                        Debug.LogError("unknown type: " + PowerupDefinitionObj.Properties.GetType().ToString());
+                    }
+
+                    Destroy(gameObject);
+                }				
 			}
 		}
 

@@ -66,12 +66,12 @@ namespace Powerups {
 			while(true) 
 			{ 
 				// Adjust Range Size to adjust spawn frequency
-				int rand = Random.Range(0,3);
+				//int rand = Random.Range(0,3);
 
 				// If generater produces the predetermined number from the range above, spawn a power up
-				if (rand == 0) { 
+				//if (rand == 0) { 
 					GenPowerUp ();
-				}
+				//}
 
 				yield return new WaitForSeconds(5);
 			}
@@ -99,20 +99,24 @@ namespace Powerups {
 
 		// Generate a powerup once the decision to spawn one has been made
 		private void GenPowerUp () {
-			var abilityTypeIndex = Random.Range(0,_availableAbilities.Length);
-			GameObject powerUpObj = GameObject.Instantiate (_availableAbilities [abilityTypeIndex].Properties.PowerupPrefab) as GameObject;
-			powerUpObj.tag = "PowerUp";
+            var abilityTypeIndex = Random.Range(0,_availableAbilities.Length);
+            //var abilityTypeIndex = 0;
+            GameObject powerUpObj = GameObject.Instantiate (_availableAbilities [abilityTypeIndex].Properties.PowerupPrefab) as GameObject;
+			//powerUpObj.tag = "PowerUp";
 			powerUpObj.transform.parent = GameObject.Find("Marker scene").transform;
 			powerUpObj.GetComponent<SphereCollider> ();
 
-			Vector3 position = GameUtils.FindSpawnLocation (_meshObj);
+            //Vector3 position = GameUtils.FindSpawnLocation (_meshObj);
+            Vector3 position = Vector3.zero;
 			position.y += (_yOffSet + 10.0f);
 			powerUpObj.transform.position = position;
 			powerUpObj.transform.localScale = Vector3.one;
 
+            /*
 			PowerUp powerUp = powerUpObj.AddComponent<PowerUp> ();
 			powerUp.PowerupDefinitionObj = _availableAbilities [abilityTypeIndex];
 			powerUp.AbilityResources = _abilityResources;
+            */
 
 
 			OnPowerUpGenerated (powerUpObj);

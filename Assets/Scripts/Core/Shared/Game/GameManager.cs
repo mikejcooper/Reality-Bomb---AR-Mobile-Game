@@ -157,21 +157,34 @@ public class GameManager : NetworkBehaviour {
 	{
 		_cars.AddCar(gamePlayer.GetComponent<CarController>());
 	}
-		
-	[Server]
-	public void CollisionEvent(CarController car, Collision col){
 
-		//this is two cars colliding
-		CarController collisionCar = col.gameObject.GetComponent<CarController>();
-		if (col.gameObject.tag == "TankTag") {
-			if ( collisionCar.IsTransferTimeExpired() && collisionCar.HasBomb )
-			{
-				collisionCar.setBombAllDevices(false);
-				car.setBombAllDevices (true);
-				car.UpdateTransferTime (1.0f);
-			} 
-		}
-	} 
+    [Server]
+    public void CollisionEvent(CarController car, Collision col)
+    {
+
+        //this is two cars colliding
+        CarController collisionCar = col.gameObject.GetComponent<CarController>();
+        if (col.gameObject.tag == "TankTag")
+        {
+            if (collisionCar.IsTransferTimeExpired() && collisionCar.HasBomb)
+            {
+                collisionCar.setBombAllDevices(false);
+                car.setBombAllDevices(true);
+                car.UpdateTransferTime(1.0f);
+            }
+        }
+        if (col.gameObject.tag == "InkPowerUp")
+        {
+            car.RpcInkPowerUp();
+            Destroy(col.gameObject);
+
+        }
+        if (col.gameObject.tag == "SpeedPowerUp")
+        {
+            car.RpcSpeedPowerUp();
+            Destroy(col.gameObject);
+        }
+    }
 		
 	[Server]
 	public void OnPlayerDisconnected(){
