@@ -1,27 +1,15 @@
 fileFormatVersion: 2
-guid: 55ff5c3c8dc7346f29e2f46e91c7210b
-timeCreated: 1492006618
+guid: 19bc0e2a6917b4669b55c91d24582b89
+timeCreated: 1492016878
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: Car
-    100002: Car1
-    100004: //RootNode
-    100006: cube1_default
-    100008: front1
-    100010: transform1
-    100012: transform2
-    400000: Car
-    400002: Car1
-    400004: //RootNode
-    400006: cube1_default
-    400008: front1
-    400010: transform1
-    400012: transform2
-    2300000: Car
-    3300000: Car
-    4300000: Car
+    100000: //RootNode
+    400000: //RootNode
+    2300000: //RootNode
+    3300000: //RootNode
+    4300000: Car_Model
     9500000: //RootNode
   materials:
     importMaterials: 1
