@@ -1439,6 +1439,9 @@ MonoBehaviour:
   startGameButton: {fileID: 80}
   instantStartGameButton: {fileID: 1863950199}
   loadMeshButton: {fileID: 76}
+  canvas: {fileID: 5}
+  buttonPrefab: {fileID: 1810755449097852, guid: c70280e3da345460faaff0b6cd7457ed,
+    type: 2}
 --- !u!114 &74
 MonoBehaviour:
   m_ObjectHideFlags: 0

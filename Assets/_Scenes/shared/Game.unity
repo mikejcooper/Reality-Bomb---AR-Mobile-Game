@@ -127,6 +127,9 @@ MonoBehaviour:
   MarkerComponent: {fileID: 1965431133}
   BombObject: {fileID: 0}
   PowerUpManager: {fileID: 30509394}
+  ButtonPrefab: {fileID: 1810755449097852, guid: c70280e3da345460faaff0b6cd7457ed,
+    type: 2}
+  Canvas: {fileID: 1343903775}
   _startingBombPlayerConnectionId: 0
 --- !u!114 &30509391
 MonoBehaviour:

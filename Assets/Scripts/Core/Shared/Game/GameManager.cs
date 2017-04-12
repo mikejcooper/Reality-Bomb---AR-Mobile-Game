@@ -28,11 +28,15 @@ public class GameManager : NetworkBehaviour {
 	public ARMarker MarkerComponent;
 	public GameObject BombObject;
 	public GamePowerUpManager PowerUpManager;
+	// todo: get rid of this once we transition to keyboard shortcuts
+	public GameObject ButtonPrefab;
+	public GameObject Canvas;
 
 
-
+	private UnityEngine.UI.Button _serverStartButton;
 	private CarList _cars = new CarList();
 
+	private bool _allPlayersReady = false;
 	private bool _preparingGame = true;
 
 	public int _startingBombPlayerConnectionId;
@@ -63,6 +67,8 @@ public class GameManager : NetworkBehaviour {
 
 			//Play the game music on the server only
 			GameObject.FindObjectOfType<GameMusic>().StartMusic ();
+
+			SetServerUI ();
 		}
 			
 		// use downloaded marker pattern
@@ -84,7 +90,50 @@ public class GameManager : NetworkBehaviour {
 			ClientSceneManager.Instance.OnGameLoaded ();
 		}
 	}
-		
+
+	[Server]
+	private void SetServerUI () {
+
+		var joystick = GameObject.FindObjectOfType<Joystick> ();
+		if (joystick != null) {
+			joystick.gameObject.SetActive (false);
+		} else {
+			Debug.LogWarning ("Could not find joystick. Check this!");
+		}
+
+		var healthbar = GameObject.Find ("HealthBar");
+		if (healthbar != null) {
+			healthbar.SetActive (false);
+		} else {
+			Debug.LogWarning ("Could not find health bar. Check this!");
+		}
+
+		var markerAlert = GameObject.Find ("MarkerAlert");
+		if (markerAlert != null) {
+			markerAlert.SetActive (false);
+		} else {
+			Debug.LogWarning ("Could not find marker alert. Check this!");
+		}
+
+		// this is pretty hacky dev stuff
+		GameObject button = GameObject.Instantiate (ButtonPrefab);
+
+		button.transform.parent = Canvas.transform;
+
+		button.GetComponentInChildren<UnityEngine.UI.Text> ().text = "Start";
+		_serverStartButton = button.GetComponent<UnityEngine.UI.Button> ();
+		_serverStartButton.enabled = false;
+		_serverStartButton.onClick.AddListener (() => {
+			Debug.Log("click");
+			Destroy(button);
+			_serverStartButton = null;
+			StartCountdown();
+		});
+		button.GetComponent<RectTransform> ().anchoredPosition = Vector2.zero;
+
+
+	}
+
 	private void Update ()
 	{
 		if (_preparingGame) {
@@ -128,15 +177,20 @@ public class GameManager : NetworkBehaviour {
 		
 	[Server]
 	private void AllPlayersReady(){
-		Debug.Log ("Server: All player are ready, start game countdown");
+		
+		_allPlayersReady = true;
+		_serverStartButton.enabled = true;
+	}
 
-        //Need to make sure _cars is populated at this point
-        foreach(CarController car in FindObjectsOfType<CarController>())
-        {
-            AddCar(car.gameObject);
-        }
-        _cars.StartGameCountDown();
-        PreparingCanvas.StartGameCountDown (true);
+	[Server]
+	private void StartCountdown () {
+		//Need to make sure _cars is populated at this point
+		foreach(CarController car in FindObjectsOfType<CarController>())
+		{
+			AddCar(car.gameObject);
+		}
+		_cars.StartGameCountDown();
+		PreparingCanvas.StartGameCountDown (true);
 
 		Debug.Log ("SERVER GAME COUNT DOWN");
 	}
