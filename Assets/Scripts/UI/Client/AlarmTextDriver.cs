@@ -8,11 +8,15 @@ public class AlarmTextDriver : MonoBehaviour {
 	public Text text;
 
 	void Start(){
-		ClientSceneManager.Instance.OnCountDownTimeUpdateEvent += OnCountDownTimeUpdate;
+		if (ClientSceneManager.Instance != null) {
+			ClientSceneManager.Instance.OnCountDownTimeUpdateEvent += OnCountDownTimeUpdate;
+		}
 	}
 
 	void OnDestroy(){
-		ClientSceneManager.Instance.OnCountDownTimeUpdateEvent -= OnCountDownTimeUpdate;
+		if (ClientSceneManager.Instance != null) {
+			ClientSceneManager.Instance.OnCountDownTimeUpdateEvent -= OnCountDownTimeUpdate;
+		}
 	}
 
 	private void OnCountDownTimeUpdate (int remainingTime) {

@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 using ServerLifecycle;
 using TMPro;
 using Powerups;
-
+using UnityEngine.UI;
 
 /*
 * REMEMBER CANT USE CLIENTRPC ATTRIBUTE IN GAMEMANAGER
@@ -28,18 +28,23 @@ public class GameManager : NetworkBehaviour {
 	public ARMarker MarkerComponent;
 	public GameObject BombObject;
 	public GamePowerUpManager PowerUpManager;
+	public GameObject GameExplanationDialogPrefab;
+	public GameObject GameStartingDialogObj;
+
 	// todo: get rid of this once we transition to keyboard shortcuts
 	public GameObject ButtonPrefab;
 	public GameObject Canvas;
 
+	private const int EXPLANATION_DIALOG_DELAY = 2;
 
-	private UnityEngine.UI.Button _serverStartButton;
+	private Button _serverStartButton;
 	private CarList _cars = new CarList();
 
 	private bool _allPlayersReady = false;
 	private bool _preparingGame = true;
 
 	public int _startingBombPlayerConnectionId;
+	private GameObject _clientExplanationDialog;
 
 	public GameObject WorldMesh { get; private set; }
 
@@ -51,7 +56,8 @@ public class GameManager : NetworkBehaviour {
 		if (!isServer) {
 			WorldMesh = ClientSceneManager.Instance.WorldMesh;
 
-
+			Invoke ("ShowExplanationDialog", EXPLANATION_DIALOG_DELAY);
+			 
 		} else if (isServer) {
 
 			_startingBombPlayerConnectionId = GameUtils.ChooseRandomPlayerConnectionId ();
@@ -91,6 +97,17 @@ public class GameManager : NetworkBehaviour {
 		}
 	}
 
+	private void ShowExplanationDialog () {
+		Destroy (GameStartingDialogObj);
+		GameStartingDialogObj = null;
+
+		_clientExplanationDialog = GameObject.Instantiate (GameExplanationDialogPrefab);
+		_clientExplanationDialog.transform.SetParent (Canvas.transform, false);
+		_clientExplanationDialog.gameObject.GetComponentInChildren<Button> ().onClick.AddListener (() => {
+			Destroy(_clientExplanationDialog);
+		});
+	}
+
 	[Server]
 	private void SetServerUI () {
 
@@ -114,6 +131,9 @@ public class GameManager : NetworkBehaviour {
 		} else {
 			Debug.LogWarning ("Could not find marker alert. Check this!");
 		}
+
+		Destroy (GameStartingDialogObj);
+		GameStartingDialogObj = null;
 
 		// this is pretty hacky dev stuff
 		GameObject button = GameObject.Instantiate (ButtonPrefab);
@@ -190,9 +210,17 @@ public class GameManager : NetworkBehaviour {
 			AddCar(car.gameObject);
 		}
 		_cars.StartGameCountDown();
+		RpcEnsureExplanationDialogDismissed ();
 		PreparingCanvas.StartGameCountDown (true);
 
 		Debug.Log ("SERVER GAME COUNT DOWN");
+	}
+
+	[ClientRpc]
+	public void RpcEnsureExplanationDialogDismissed () {
+		if (_clientExplanationDialog != null) {
+			Destroy (_clientExplanationDialog);
+		}
 	}
 		
 	[Server]
