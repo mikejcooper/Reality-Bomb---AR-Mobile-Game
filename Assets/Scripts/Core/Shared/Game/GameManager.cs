@@ -71,9 +71,6 @@ public class GameManager : NetworkBehaviour {
 			ServerSceneManager.Instance.OnAllPlayersLoadedEvent += AllPlayersReady;
 			ServerSceneManager.Instance.OnPlayerDisconnectEvent += OnPlayerDisconnected;
 
-			//Play the game music on the server only
-			GameObject.FindObjectOfType<GameMusic>().StartMusic ();
-
 			SetServerUI ();
 		}
 			
@@ -233,6 +230,9 @@ public class GameManager : NetworkBehaviour {
 		_cars.enableAllControls();
 		PowerUpManager.enabled = true;
         if(_cars.GetNumberOfBombsPresent() < 1) _cars.PassBombRandomPlayer ();
+
+		//Play the game music on the server only
+		GameObject.FindObjectOfType<GameMusic>().StartMusic ();
 	}
 
 	public void AddCar(GameObject gamePlayer)
