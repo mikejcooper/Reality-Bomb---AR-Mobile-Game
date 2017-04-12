@@ -16,9 +16,11 @@ public class SandboxManager : MonoBehaviour
 	public ToastManager ToastManagerObject;
 	public SandBoxPowerUpManager PowerupManager;
 	public List<GameObject> TutorialDialogPrefabs;
+	public GameObject GameCountdownDialogPrefab;
 
 	private int _currentTutorialStage = 0;
-	private GameObject _currentDialog;
+	private GameObject _currentTutorialDialog;
+	private GameObject _countdownDialog;
 
 	private string _splatter_Txt = "You've Activated the Splatter Power Up! This splatters ink on your opponents' screens as shown below making it harder for them to see!";
 	private string _speed_Txt = "You've Activated the Speed Boost Power Up! Enjoy double the speed but be careful not to lose control!";
@@ -32,24 +34,44 @@ public class SandboxManager : MonoBehaviour
 			
 		PowerupManager.SpeedBoostActivatedEvent += SetSpeedTxt;
 		PowerupManager.InkSplatterActivatedEvent += SetSplatTxt;
+
+		ClientSceneManager.Instance.OnCountDownTimeUpdateEvent += OnCountDownTimeUpdate;
+		ClientSceneManager.Instance.OnCountDownCanceledEvent += OnCountDownCanceled;
 	}
 
 	void OnDestroy(){
 		PowerupManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
 		PowerupManager.InkSplatterActivatedEvent -= SetSplatTxt;
+
+		ClientSceneManager.Instance.OnCountDownTimeUpdateEvent -= OnCountDownTimeUpdate;
+		ClientSceneManager.Instance.OnCountDownCanceledEvent -= OnCountDownCanceled;
+	}
+
+	private void OnCountDownTimeUpdate (int remainingTime) {
+		if (_countdownDialog == null) {
+			_countdownDialog = GameObject.Instantiate (GameCountdownDialogPrefab);
+			_countdownDialog.transform.SetParent (CanvasObj.transform, false);
+		}
+	}
+
+	private void OnCountDownCanceled (string reason) {
+		if (_countdownDialog != null) {
+			Destroy (_countdownDialog);
+			_countdownDialog = null;
+		}
 	}
 
 	private void SetCurrentDialog (int index) {
 		_currentTutorialStage = index;
-		_currentDialog = GameObject.Instantiate (TutorialDialogPrefabs [index]);
-		_currentDialog.transform.SetParent (CanvasObj.transform, false);
-		_currentDialog.gameObject.GetComponentInChildren<Button> ().onClick.AddListener (() => {
+		_currentTutorialDialog = GameObject.Instantiate (TutorialDialogPrefabs [index]);
+		_currentTutorialDialog.transform.SetParent (CanvasObj.transform, false);
+		_currentTutorialDialog.gameObject.GetComponentInChildren<Button> ().onClick.AddListener (() => {
 			if (_currentTutorialStage + 1 < TutorialDialogPrefabs.Count) {
-				var oldDialog = _currentDialog;
+				var oldDialog = _currentTutorialDialog;
 				SetCurrentDialog(_currentTutorialStage + 1);
 				Destroy(oldDialog);
 			} else {
-				Destroy(_currentDialog);
+				Destroy(_currentTutorialDialog);
 				OnModalTutorialEnd();
 			}
 		});

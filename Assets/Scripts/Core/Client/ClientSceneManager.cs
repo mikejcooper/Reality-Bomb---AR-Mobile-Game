@@ -11,6 +11,11 @@ public class ClientSceneManager : MonoBehaviour
 {
     static bool DEBUG = false;
 
+	public delegate void OnCountDownTimeUpdateCallback (int remainingTime);
+	public delegate void OnCountDownCanceledCallback (string reason);
+
+	public OnCountDownTimeUpdateCallback OnCountDownTimeUpdateEvent = delegate {};
+	public OnCountDownCanceledCallback OnCountDownCanceledEvent = delegate {};
 	public NetworkLobbyPlayer LobbyPlayerPrefab;
 	public GameObject GamePlayerPrefab;
 	public GameObject WorldMesh { get { return _meshTransferManager.ProduceGameObject (); }}
@@ -23,6 +28,7 @@ public class ClientSceneManager : MonoBehaviour
 	private string _currentScene = "Idle";
 	private static ClientSceneManager _instance;
 	private int _defaultSleepTimeout;
+	private Coroutine _countdownCoroutine;
 
 	public static ClientSceneManager Instance { get { return _instance; } }
 
@@ -71,6 +77,8 @@ public class ClientSceneManager : MonoBehaviour
 		_networkLobbyManager.OnLobbyClientDisconnectedEvent += OnUserDisconnectedToGame;
 		_networkLobbyManager.OnLobbyClientDisconnectedEvent += OnUserRequestLeaveGame;
 		_networkLobbyManager.OnMeshClearToDownloadEvent += _meshTransferManager.FetchData;
+		_networkLobbyManager.OnStartGameCountdownEvent += OnStartGameCountdown;
+		_networkLobbyManager.OnCancelGameCountdownEvent += OnCancelGameCountdown;
 
         //Listener for when the we have finished downloading the mesh
 		_meshTransferManager.OnMeshDataReceivedEvent += OnMeshDataReceived;
@@ -111,6 +119,27 @@ public class ClientSceneManager : MonoBehaviour
 			_discoveryClient.ListenForServers ();
 		}
 
+	}
+
+	private void OnStartGameCountdown (int delay) {
+		Debug.Log (string.Format ("Starting game countdown. Game will start in {0} seconds", delay));
+		_countdownCoroutine = StartCoroutine(Countdown(delay, 1f));
+	}
+
+	IEnumerator Countdown(int remainingTime, float delayTime)
+	{
+		OnCountDownTimeUpdateEvent (remainingTime);
+		yield return new WaitForSeconds(delayTime);
+		int newRemaining = (int) Mathf.Round(remainingTime - delayTime);
+		if (newRemaining > 0) {
+			_countdownCoroutine = StartCoroutine(Countdown(newRemaining, delayTime));
+		}
+	}
+
+	private void OnCancelGameCountdown (string reason) {
+		Debug.Log (string.Format ("Cancelling game countodwn because '{0}'", reason));
+		StopCoroutine (_countdownCoroutine);
+		OnCountDownCanceledEvent (reason);
 	}
 
 	private void OnServerDiscovered (string address) {

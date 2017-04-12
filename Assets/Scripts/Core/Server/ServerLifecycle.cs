@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 
 namespace ServerLifecycle {
-	public enum ProcessState {AwaitingData, AwaitingPlayers, AwaitingMesh, PreparingGame, PlayingGame };
+	public enum ProcessState {AwaitingData, AwaitingPlayers, AwaitingMesh, PreparingGame, CountingDown, PlayingGame };
 
-	public enum Command {EnoughPlayersJoined, TooFewPlayersRemaining, MeshReceived, GameReady, GameEnd };
+	public enum Command {EnoughPlayersJoined, TooFewPlayersRemaining, MeshReceived, CountdownStart, CountdownCancel, GameStart, GameEnd };
 
 	public class Process
 	{
@@ -51,7 +51,11 @@ namespace ServerLifecycle {
 
 				{ new StateTransition(ProcessState.PreparingGame, Command.EnoughPlayersJoined), ProcessState.PreparingGame },
 				{ new StateTransition(ProcessState.PreparingGame, Command.MeshReceived), ProcessState.PreparingGame },
-				{ new StateTransition(ProcessState.PreparingGame, Command.GameReady), ProcessState.PlayingGame },
+				{ new StateTransition(ProcessState.PreparingGame, Command.CountdownStart), ProcessState.CountingDown },
+
+				{ new StateTransition(ProcessState.CountingDown, Command.GameStart), ProcessState.PlayingGame },
+				{ new StateTransition(ProcessState.CountingDown, Command.TooFewPlayersRemaining), ProcessState.AwaitingPlayers },
+				{ new StateTransition(ProcessState.CountingDown, Command.CountdownCancel), ProcessState.PreparingGame },
 
 				{ new StateTransition(ProcessState.PlayingGame, Command.TooFewPlayersRemaining), ProcessState.AwaitingPlayers },
 				{ new StateTransition(ProcessState.PreparingGame, Command.TooFewPlayersRemaining), ProcessState.AwaitingPlayers },
