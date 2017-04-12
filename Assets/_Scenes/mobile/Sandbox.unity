@@ -416,7 +416,7 @@ MonoBehaviour:
   PlayerCanvas: {fileID: 1343903778}
   PlaneObject: {fileID: 2137931947}
   SpeedProperties:
-    PowerupPrefab: {fileID: 1721211281845520, guid: d867da276c9d74b5f9cc2c859ef56541,
+    PowerupPrefab: {fileID: 1721211281845520, guid: 279f7e04798a541b18c91952045192ac,
       type: 2}
     CanvasSplash: {fileID: 1451450378736652, guid: 7557938c78b244f9190155be4b522bab,
       type: 2}
