@@ -90,29 +90,19 @@ public class ClientSceneManager : MonoBehaviour
 	private void InitialisePlayerCar (GameObject GamePlayerPrefab){
 
 		List<List<Color>> CarColours = new List<List<Color>>();
-		CarColours.Add(new List<Color> { Color.white, Color.red, Color.blue });
+		// Blades inner, Side glow, Spoiler, Winscreen, Body, Blades
+		CarColours.Add( new List<Color> { new Color(128, 128, 128), new Color(6, 167, 170), Color.black, Color.black, new Color(96, 0, 0),  new Color(128, 128, 128)} );
 
 		List<Color> colours = CarColours[0];
 
+		Material[] materials = GamePlayerPrefab.transform.FindChild("Car_Model").GetComponent<MeshRenderer> ().sharedMaterials;
 
-
-//		Material[] materials = GamePlayerPrefab.transform.FindChild("Car_Model").GetComponent<MeshRenderer> ().sharedMaterials;
-//		materials [1].color = colours[0];
-//		materials [2].color = colours [1];
-//		materials [3].color = colours [2];
-
-//		Material[] materials = rend.materials;
-
-//		foreach (Material m in materials) {
-//			
-//		}
-
-//		Shader shader1 = Shader.Find("Car_body");
-
-//		_initialisedBomb.transform.GetChild (1).GetComponent<Renderer> ().material
-		
-
-
+		materials [0].color = colours [0];
+		materials [1].color = colours [1];
+		materials [2].color = colours [2];
+		materials [3].color = colours [3];
+		materials [4].color = colours [4];
+		materials [5].color = colours [5];
 	}
 
 
