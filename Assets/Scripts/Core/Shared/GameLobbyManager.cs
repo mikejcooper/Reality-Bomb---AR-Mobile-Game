@@ -16,6 +16,8 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
     public delegate void OnMeshClearToDownloadCallback(string address, int port);
 	public delegate void OnUpdatePlayerDataCallback (string data);
 	public delegate void OnPlayerIDCallback (int playerID);
+	public delegate void OnStartGameCountdownCallback (int delay);
+	public delegate void OnCancelGameCountdownCallback (string reason);
 
     public event OnLobbyServerConnected OnLobbyServerConnectedEvent;
 	public event OnLobbyServerDisconnected OnLobbyServerDisconnectedEvent;
@@ -26,6 +28,8 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
     public event OnMeshClearToDownloadCallback OnMeshClearToDownloadEvent;
 	public event OnUpdatePlayerDataCallback OnUpdatePlayerDataEvent;
 	public event OnPlayerIDCallback OnPlayerIDEvent;
+	public event OnStartGameCountdownCallback OnStartGameCountdownEvent;
+	public event OnCancelGameCountdownCallback OnCancelGameCountdownEvent;
 
     private int _totalNotLoaded = -10;
 
@@ -109,6 +113,18 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 		NetworkServer.SendToClient (connectionId, NetworkConstants.MSG_GET_MESH, msg);
 	}
 
+	public void AllClientsStartGameCountdown (int delay) {
+		ServerNetworking.StartGameCountdownMessage msg = new ServerNetworking.StartGameCountdownMessage();
+		msg.delay = delay;
+		NetworkServer.SendToAll(NetworkConstants.MSG_START_GAME_COUNTDOWN, msg);
+	}
+
+	public void AllClientsCancelGameCountdown (string reason) {
+		ServerNetworking.CancelGameCountdownMessage msg = new ServerNetworking.CancelGameCountdownMessage();
+		msg.reason = reason;
+		NetworkServer.SendToAll(NetworkConstants.MSG_CANCEL_GAME_COUNTDOWN, msg);
+	}
+
 	public void SendPlayerData (string data, int connectionId) {
 		var msg = new UnityEngine.Networking.NetworkSystem.StringMessage (data);
 
@@ -165,8 +181,24 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 			client.RegisterHandler(NetworkConstants.MSG_GAME_LOADED, OnClientGameReady);
 			client.RegisterHandler(NetworkConstants.MSG_PLAYER_DATA_UPDATE, OnClientPlayerDataUpdate);
 			client.RegisterHandler(NetworkConstants.MSG_PLAYER_DATA_ID, OnClientPlayerID);
+			client.RegisterHandler(NetworkConstants.MSG_START_GAME_COUNTDOWN, OnStartGameCountdown);
+			client.RegisterHandler(NetworkConstants.MSG_CANCEL_GAME_COUNTDOWN, OnCancelGameCountdown);
 		}
     }
+
+	public void OnStartGameCountdown (NetworkMessage netMsg) {
+		ServerNetworking.StartGameCountdownMessage msg = netMsg.ReadMessage<ServerNetworking.StartGameCountdownMessage> ();
+		if (OnStartGameCountdownEvent != null) {
+			OnStartGameCountdownEvent (msg.delay);
+		}
+	}
+
+	public void OnCancelGameCountdown (NetworkMessage netMsg) {
+		ServerNetworking.CancelGameCountdownMessage msg = netMsg.ReadMessage<ServerNetworking.CancelGameCountdownMessage> ();
+		if (OnCancelGameCountdownEvent != null) {
+			OnCancelGameCountdownEvent (msg.reason);
+		}
+	}
 
 	public void OnClientPlayerID (NetworkMessage netMsg) {
 		if (OnPlayerIDEvent != null) {
