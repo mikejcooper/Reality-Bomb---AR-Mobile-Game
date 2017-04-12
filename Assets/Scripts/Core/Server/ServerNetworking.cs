@@ -22,6 +22,16 @@ namespace ServerNetworking
         public int port;
     }
 
+	public class StartGameCountdownMessage : MessageBase
+	{
+		public int delay;
+	}
+
+	public class CancelGameCountdownMessage : MessageBase
+	{
+		public string reason;
+	}
+
     public class DiscoveryServer : NetworkDiscovery {
 	
 		void Start()

@@ -232,7 +232,7 @@ public class CarController : NetworkBehaviour
  * Uncomment the following line to add bouncing between the players in the main game
  * the current implementation is a bit laggy so has been left uncommented until this is fixed 
  */
-//				Bounce (col);
+				Bounce (col);
 			}
 		}
 	}

@@ -389,6 +389,8 @@ MonoBehaviour:
   - {fileID: 1902103098178736, guid: 939a0a7cd164b4ea1b98c9fb96904e43, type: 2}
   - {fileID: 1373972860098090, guid: 250b3c9095e174c62a9af88ff0a29493, type: 2}
   - {fileID: 1856141214214102, guid: 51708ac06fbd7405393c6fed4a1949e3, type: 2}
+  GameCountdownDialogPrefab: {fileID: 1008171167274622, guid: c83a596ff5ed74353924fcc2c7e833fe,
+    type: 2}
 --- !u!4 &757163055
 Transform:
   m_ObjectHideFlags: 0
@@ -1623,7 +1625,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1965431130}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 73c899522f94a4893a4ac0aecc1e5c22, type: 3}
   m_Name: 
