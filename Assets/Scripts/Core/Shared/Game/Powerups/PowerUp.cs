@@ -20,7 +20,8 @@ namespace Powerups {
 					ability.initialise (GetThisPlayerServerId (), (SpeedAbilityProperties)PowerupDefinitionObj.Properties, AbilityResources);
 				} else if (PowerupDefinitionObj.Properties.GetType ().IsAssignableFrom (typeof(SandboxInkAbilityProperties))) {
 					SandboxInkAbility ability = (SandboxInkAbility)collidedObject.AddComponent (PowerupDefinitionObj.Ability);
-					ability.initialise (ClientSceneManager.Instance.GetThisPlayerData ().ServerId, (SandboxInkAbilityProperties)PowerupDefinitionObj.Properties, AbilityResources);
+//					ability.initialise (ClientSceneManager.Instance.GetThisPlayerData ().ServerId, (SandboxInkAbilityProperties)PowerupDefinitionObj.Properties, AbilityResources);
+					ability.initialise (GetThisPlayerServerId (), (SandboxInkAbilityProperties)PowerupDefinitionObj.Properties, AbilityResources);
 				} else {
 					Debug.LogError ("unknown type: " + PowerupDefinitionObj.Properties.GetType ().ToString ());
 				}

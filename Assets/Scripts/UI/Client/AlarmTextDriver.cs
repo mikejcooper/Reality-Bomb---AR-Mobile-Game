@@ -19,7 +19,7 @@ public class AlarmTextDriver : MonoBehaviour {
 		}
 	}
 
-	private void OnCountDownTimeUpdate (int remainingTime) {
+	public void OnCountDownTimeUpdate (int remainingTime) {
 		Debug.Log (string.Format ("{0}s remaining until game start", remainingTime));
 		text.text = string.Format ("00:{0}", remainingTime.ToString ("00"));
 	}
