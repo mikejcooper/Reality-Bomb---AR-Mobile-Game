@@ -66,7 +66,7 @@ namespace Powerups {
 			while(true) 
 			{ 
 				// Adjust Range Size to adjust spawn frequency
-				int rand = Random.Range(0,3);
+				int rand = Random.Range(0,1);
 
 				// If generater produces the predetermined number from the range above, spawn a power up
 				if (rand == 0) { 

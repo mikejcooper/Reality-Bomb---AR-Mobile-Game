@@ -23,6 +23,7 @@ public class SandboxManager : MonoBehaviour
 	private string _splatter_Txt = "You've Activated the Splatter Power Up! This splatters ink on your opponents' screens as shown below making it harder for them to see!";
 	private string _speed_Txt = "You've Activated the Speed Boost Power Up! Enjoy double the speed but be careful not to lose control!";
 	private string _respawn_Txt = "Oops!! You fell off the map! Don't Worry, You'll be respawned but you won't be able to move for 5s. Be careful or become an easy target!";
+	private string _shield_Txt = "You've Activated the Shield Power Up! You're Invincible! No one can touch you for the next 5s. (Only players without the bomb can pick this up)";
 
 	void Start(){
 		if (TutorialDialogPrefabs.Count > 0) {
@@ -32,11 +33,13 @@ public class SandboxManager : MonoBehaviour
 			
 		PowerupManager.SpeedBoostActivatedEvent += SetSpeedTxt;
 		PowerupManager.InkSplatterActivatedEvent += SetSplatTxt;
+		PowerupManager.ShieldActivatedEvent += SetShieldTxt;
 	}
 
 	void OnDestroy(){
 		PowerupManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
 		PowerupManager.InkSplatterActivatedEvent -= SetSplatTxt;
+		PowerupManager.ShieldActivatedEvent -= SetShieldTxt;
 	}
 
 	private void SetCurrentDialog (int index) {
@@ -91,21 +94,19 @@ public class SandboxManager : MonoBehaviour
 	}
 
 	public void SetSplatTxt(){
-//		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _splatter_Txt;
 		ToastManagerObject.ShowMessage(_splatter_Txt);
-//		Invoke ("ClearGuiTxt", 10.0f);
 	}
 
 	public void SetSpeedTxt(){
 		ToastManagerObject.ShowMessage(_speed_Txt);
-//		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _speed_Txt; 
-//		Invoke ("ClearGuiTxt", 10.0f);
 	}
 
 	public void SetRespawnTxt(){
 		ToastManagerObject.ShowMessage(_respawn_Txt);
-//		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _respawn_Txt;
-//		Invoke ("ClearGuiTxt", 10.0f);
+	}
+
+	public void SetShieldTxt(){
+		ToastManagerObject.ShowMessage (_shield_Txt);
 	}
 
 

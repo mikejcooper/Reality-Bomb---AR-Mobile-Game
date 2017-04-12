@@ -71,7 +71,7 @@ public class OfflineCarController : MonoBehaviour
 			Vector3 direction = col.contacts[0].point - transform.position;
 			direction = -direction.normalized;
 			direction.y = 0;
-			GetComponent<Rigidbody>().AddForce(direction * bounceForce);
+			col.rigidbody.AddForce(direction * bounceForce);
 		}
 	}
 }
