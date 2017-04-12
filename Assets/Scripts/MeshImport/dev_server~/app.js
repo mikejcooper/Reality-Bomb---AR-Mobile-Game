@@ -10,33 +10,33 @@ var UDP_PAYLOAD = "RealityBomb";
 var B_START = "\033[1m"
 var B_END = "\033[0m"
 
-var meshFile, triangleMeshFile, transformsFile;
-var meshStr, triangleStr, transformsStr;
+var meshFile, verticesFile, transformsFile;
+var meshStr, verticesStr, transformsStr;
 
 if (process.argv.length != 2 && process.argv.length != 5) {
   console.log(
-`usage: node app.js [mesh markers_mesh marker_transforms]
+`usage: node app.js [mesh vertices marker_transforms]
        ${B_START}mesh${B_END}: the mesh obj file
-       ${B_START}markers_mesh${B_END}: the mesh obj file that represents marker positions
+       ${B_START}vertices${B_END}: the mesh obj file that represents marker positions
        ${B_START}marker_transforms${B_END}: the multimarker config file`)
   return;
 } else if (process.argv.length == 2) {
   meshFile = "example_data/debug_mesh.obj"
-  triangleMeshFile = "example_data/debug_triangles_mesh.obj"
+  verticesFile = "example_data/debug_vertices.txt"
   transformsFile = "example_data/debug_transforms.dat"
 } else if (process.argv.length == 5) {
   meshFile = process.argv[2];
-  triangleMeshFile = process.argv[3];
+  verticesFile = process.argv[3];
   transformsFile = process.argv[4];
 }
 
 fsp.readFile(meshFile)
   .then(function(data){
     meshStr = data
-    return fsp.readFile(triangleMeshFile)
+    return fsp.readFile(verticesFile)
   })
   .then(function(data){
-    triangleStr = data
+    verticesStr = data
     return fsp.readFile(transformsFile)
   })
   .then(function(data){
@@ -64,7 +64,7 @@ var openServer = function () {
     console.log("new connection")
     conn.sendText(`mesh${meshStr}`)
     conn.sendText(`markers${transformsStr}`)
-    conn.sendText(`triangles${triangleStr}`)
+    conn.sendText(`vertices${verticesStr}`)
   }).listen(TRANSFER_PORT)
 
   console.log('server running')
