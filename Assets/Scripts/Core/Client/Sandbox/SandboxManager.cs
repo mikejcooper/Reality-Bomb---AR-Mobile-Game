@@ -25,6 +25,7 @@ public class SandboxManager : MonoBehaviour
 	private string _splatter_Txt = "You've Activated the Splatter Power Up! This splatters ink on your opponents' screens as shown below making it harder for them to see!";
 	private string _speed_Txt = "You've Activated the Speed Boost Power Up! Enjoy double the speed but be careful not to lose control!";
 	private string _respawn_Txt = "Oops!! You fell off the map! Don't Worry, You'll be respawned but you won't be able to move for 5s. Be careful or become an easy target!";
+	private string _shield_Txt = "Shield Txt";
 
 	void Start(){
 		if (TutorialDialogPrefabs.Count > 0) {
@@ -34,17 +35,23 @@ public class SandboxManager : MonoBehaviour
 			
 		PowerupManager.SpeedBoostActivatedEvent += SetSpeedTxt;
 		PowerupManager.InkSplatterActivatedEvent += SetSplatTxt;
+		PowerupManager.ShieldActivatedEvent += SetShieldTxt;
 
-		ClientSceneManager.Instance.OnCountDownTimeUpdateEvent += OnCountDownTimeUpdate;
-		ClientSceneManager.Instance.OnCountDownCanceledEvent += OnCountDownCanceled;
+		if(ClientSceneManager.Instance != null){
+			ClientSceneManager.Instance.OnCountDownTimeUpdateEvent += OnCountDownTimeUpdate;
+			ClientSceneManager.Instance.OnCountDownCanceledEvent += OnCountDownCanceled;
+		}
 	}
 
 	void OnDestroy(){
 		PowerupManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
 		PowerupManager.InkSplatterActivatedEvent -= SetSplatTxt;
+		PowerupManager.ShieldActivatedEvent -= SetShieldTxt;
 
-		ClientSceneManager.Instance.OnCountDownTimeUpdateEvent -= OnCountDownTimeUpdate;
-		ClientSceneManager.Instance.OnCountDownCanceledEvent -= OnCountDownCanceled;
+		if (ClientSceneManager.Instance != null) {
+			ClientSceneManager.Instance.OnCountDownTimeUpdateEvent -= OnCountDownTimeUpdate;
+			ClientSceneManager.Instance.OnCountDownCanceledEvent -= OnCountDownCanceled;
+		}
 	}
 
 	private void OnCountDownTimeUpdate (int remainingTime) {
@@ -114,21 +121,19 @@ public class SandboxManager : MonoBehaviour
 	}
 
 	public void SetSplatTxt(){
-//		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _splatter_Txt;
 		ToastManagerObject.ShowMessage(_splatter_Txt);
-//		Invoke ("ClearGuiTxt", 10.0f);
 	}
 
 	public void SetSpeedTxt(){
 		ToastManagerObject.ShowMessage(_speed_Txt);
-//		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _speed_Txt; 
-//		Invoke ("ClearGuiTxt", 10.0f);
 	}
 
 	public void SetRespawnTxt(){
 		ToastManagerObject.ShowMessage(_respawn_Txt);
-//		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _respawn_Txt;
-//		Invoke ("ClearGuiTxt", 10.0f);
+	}
+
+	public void SetShieldTxt(){
+		ToastManagerObject.ShowMessage(_shield_Txt);
 	}
 
 
