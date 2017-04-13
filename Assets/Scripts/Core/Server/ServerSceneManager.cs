@@ -180,7 +180,7 @@ public class ServerSceneManager : MonoBehaviour
 		}
 		OnStateUpdate ();
 
-		if (_meshTransferProcess.CurrentState == MeshServerLifecycle.ProcessState.HasMesh) {
+		if (_meshTransferProcess.CurrentState.Equals(MeshServerLifecycle.ProcessState.HasMesh)) {
 			_networkLobbyManager.ClientGetMesh (_meshServerAddress, _meshServerPort, conn.connectionId);
 		}
 
@@ -211,20 +211,44 @@ public class ServerSceneManager : MonoBehaviour
 			OnPlayerDisconnectEvent();
 		}
 
+		if (CurrentState().Equals(ServerLifecycle.ProcessState.CountingDown)) {
+			_networkLobbyManager.AllClientsCancelGameCountdown ("not enough players");
+			CancelInvoke ();
+		}
+
 		if (ConnectedPlayerCount < MIN_REQ_PLAYERS) {
 			_innerProcess.MoveNext (Command.TooFewPlayersRemaining);
 		}
 		OnStateUpdate ();
 	}
 
-	public void OnServerRequestGameReady () {
+	public void OnServerRequestCancelGameStart () {
+		_innerProcess.MoveNext (Command.CountdownCancel);
+		_networkLobbyManager.AllClientsCancelGameCountdown ("server cancelled");
+		CancelInvoke ();
+		OnStateUpdate ();
+	}
+
+	public void OnServerRequestGameStart (int delay) {
         if (DEBUG) Debug.Log ("OnGameIsReady");
 		if (_networkLobbyManager.IsReadyToBegin ()) {
-			_innerProcess.MoveNext (Command.GameReady);
+			// begin countdown
+			_innerProcess.MoveNext (Command.CountdownStart);
 			OnStateUpdate ();
+			if (delay > 0) {
+				_networkLobbyManager.AllClientsStartGameCountdown (delay);
+				Invoke("BeginGame", delay);
+			} else {
+				BeginGame ();
+			}
 		} else {
 			Debug.LogError ("Not all clients are ready. This means they haven't all loaded a mesh. try clicking 'load mesh' to force a reload");
 		}
+	}
+
+	private void BeginGame () {
+		_innerProcess.MoveNext (Command.GameStart);
+		OnStateUpdate ();
 	}
 
 	public void UpdatePlayerGameData (int serverId, int carsLeft, float lifetime) {
@@ -253,6 +277,7 @@ public class ServerSceneManager : MonoBehaviour
 		case ProcessState.AwaitingMesh:
 		case ProcessState.AwaitingPlayers:
 		case ProcessState.PreparingGame:
+		case ProcessState.CountingDown:
 			if (_playerDataManager.HasGameData()) {
 				//				networkLobbyManager.ServerChangeScene ("Leaderboard");
 				if (_currentScene != "Leaderboard") {

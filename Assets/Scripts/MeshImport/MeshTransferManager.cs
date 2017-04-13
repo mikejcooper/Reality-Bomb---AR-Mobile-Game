@@ -23,10 +23,15 @@ public class MeshTransferManager {
 	private Vector3[] _normals;
 	private Vector2[] _uvs;
 	private int[] _triangles;
+	private static List<Vector3> _markerVertices;
 	private bool _isPatternDataSaved = false;
 	private static string PATTERN_FILE_NAME = "markers.dat";
 	private static string PATTERN_FILE_PATH = System.IO.Path.Combine (Application.persistentDataPath, PATTERN_FILE_NAME);
 
+	public static List<Vector3> MarkerVertices
+	{
+		get { return _markerVertices; }
+	}
 
 	private static void SetLayerRecursively (GameObject go, int layerNumber) {
 		foreach (Transform trans in go.GetComponentsInChildren<Transform>(true)) {
@@ -49,15 +54,15 @@ public class MeshTransferManager {
 		_ws.OnMessage += (sender, e) => {
 			if (e.IsText) {
 				if (e.Data.StartsWith ("mesh")) {
-					string data = e.Data.Substring (4);
+					string data = e.Data.Substring ("mesh".Length);
 					FastObjImporter.Instance.ImportString (data, ref _vertices, ref _normals, ref _uvs, ref _triangles);
 					TryToCallback ();
 				} else if (e.Data.StartsWith ("markers")) {
-					SaveMarkerData (e.Data.Substring (7));
-				} else if (e.Data.StartsWith ("triangles")) {
-					//          handleTrianglesMesh(e.Data.Substring(9));
+					SaveMarkerData (e.Data.Substring ("markers".Length));
+				} else if (e.Data.StartsWith ("vertices")) {
+					handleMarkerCoords(e.Data.Substring("vertices".Length));
 				} else {
-					Debug.Log ("unknwon websocket event: " + e.Data);
+					Debug.Log ("unknown websocket event: " + e.Data);
 				}
 				
 
@@ -82,7 +87,7 @@ public class MeshTransferManager {
 	}
 
 	private void TryToCallback () {
-		if (_isPatternDataSaved && _triangles.Length > 0) {
+		if (_isPatternDataSaved && _triangles.Length > 0 && _markerVertices.Count > 0) {
 			UnityThreadHelper.Dispatcher.Dispatch (() => {
 				if (OnMeshDataReceivedEvent != null)
 					OnMeshDataReceivedEvent ();
@@ -179,70 +184,20 @@ public class MeshTransferManager {
 		markerComponent.enabled = true;
 	}
 
+	void handleMarkerCoords (string data) {
+		string[] lines = data.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+		_markerVertices = new List<Vector3> ();
+		foreach (string vertex in lines) {
+			
+			if (vertex.Trim ().Length == 0)
+				continue;
+			
+			string[] values = vertex.Split(',');
+			var vec = new Vector3 (Convert.ToSingle(values [0]), Convert.ToSingle(values [1]), Convert.ToSingle(values [2]));
+			_markerVertices.Add (vec);
+		}
 
-	//
-	//  //This function spawns the objects that will 'mask the markers in the scene. It will overlay the rigidbody over the markers
-	//  void handleTrianglesMesh(string data){
-	//    UnityThreadHelper.Dispatcher.Dispatch(() =>
-	//      {
-	//        Mesh mesh = MarkerFileParser.Instance.ImportString(data);
-	//        List<Transform> transforms = getTransformOfTriangles (mesh);
-	//        List<float> markerSizes = getMarkerSizes (mesh);
-	//        int numberOfMarkers = transforms.Count;
-	//        for (int i = 0; i < numberOfMarkers; i++){
-	//          GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-	//          cube.transform.position = transforms[i].transform.position;
-	//          cube.transform.rotation = transforms[i].transform.rotation;
-	//
-	//          cube.transform.position = new Vector3(transforms[i].transform.position.x, transforms[i].transform.position.y-markerSizes[i]/2.5f, transforms[i].transform.position.z);
-	//
-	//          cube.transform.localScale = new Vector3 (markerSizes[i],markerSizes[i],markerSizes[i]);
-	//
-	//
-	//          cube.AddComponent<Obscurable>();
-	//          //
-	//          SetLayerRecursively(cube, 9);
-	//
-	//        }
-	//      });
-	//  }
-	//
-	//  List<Transform> getTransformOfTriangles(Mesh mesh) {
-	//    List<Transform> markerLocations = new List<Transform> ();
-	//    Debug.Log (mesh.triangles.Length);
-	//    for (int i = 0; i < mesh.triangles.Length; i += 3)
-	//    {
-	//      Vector3 p1 = mesh.vertices[mesh.triangles[i + 0]];
-	//      Vector3 p2 = mesh.vertices[mesh.triangles[i + 1]];
-	//      Vector3 p3 = mesh.vertices[mesh.triangles[i + 2]];
-	//
-	//      GameObject gameObject = new GameObject ();
-	//      gameObject.transform.position = new Vector3 ((p1.x + p3.x) / 2, (p1.y + p3.y) / 2, (p1.z + p3.z) / 2);
-	//      gameObject.transform.rotation = Quaternion.LookRotation(Vector3.Cross (p2 - p1, p2 - p3).normalized, p2-p3);
-	//      markerLocations.Add (gameObject.transform);
-	//    }
-	//    return markerLocations;
-	//  }
-	//
-	//  List<float> getMarkerSizes(Mesh mesh) {
-	//    List<float> sizes = new List<float> ();
-	//    for (int i = 0; i < mesh.triangles.Length; i += 3)
-	//    {
-	//      Vector3 p1 = mesh.vertices[mesh.triangles[i + 0]];
-	//      Vector3 p2 = mesh.vertices[mesh.triangles[i + 1]];
-	//      sizes.Add (Vector3.Distance (p1,p2));
-	//    }
-	//    return sizes;
-	//  }
-	//
-	//  void onApplicationQuit () {
-	//    ws.Close ();
-	//  }
-	//
-	//
-	//  // Update is called once per frame
-	//  void Update () {
-	//
-	//  }
+		TryToCallback ();
+	}
 
 }

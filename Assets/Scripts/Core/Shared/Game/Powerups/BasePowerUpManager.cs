@@ -32,8 +32,10 @@ namespace Powerups {
         // Events
         public delegate void OnSpeedBoostActivated();
         public delegate void OnInkSplatterActivated();
+        public delegate void OnShieldActivated();
         public static event OnSpeedBoostActivated SpeedBoostActivatedEvent;
         public static event OnInkSplatterActivated InkSplatterActivatedEvent;
+        public static event OnShieldActivated ShieldActivatedEvent;
 
         protected virtual void Start () {
 			_availableAbilities = GetAvailablePowerups ();
@@ -129,6 +131,11 @@ namespace Powerups {
                 InkSplatterActivatedEvent();
                 Debug.Log("'PUM':Ink splatter activated");
             }
+            else if (ability.GetType().IsAssignableFrom(typeof(ShieldAbility)))
+            {
+                ShieldActivatedEvent();
+                Debug.Log("'PUM': Shield activated");
+            }
         }
 
         public static void OnPowerUpStop<T>(BaseAbility<T> ability) where T : BaseAbilityProperties
@@ -141,15 +148,16 @@ namespace Powerups {
             {
                 Debug.Log("'PUM':Ink splatter deactivated");
             }
+            else if (ability.GetType().IsAssignableFrom(typeof(ShieldAbility)))
+            {
+                Debug.Log("'PUM': Shield deactivated");
+            }
         }
 
 
 
         protected virtual bool IsAllowedToSpawn () { return false; }
 		protected virtual void OnPowerUpGenerated(GameObject powerUpObj) {}
-
-		//public virtual void OnPowerUpStart<T>(BaseAbility<T> ability) where T:BaseAbilityProperties {}
-		//public virtual void OnPowerUpStop<T>(BaseAbility<T> ability) where T:BaseAbilityProperties {}
 
 	}
 

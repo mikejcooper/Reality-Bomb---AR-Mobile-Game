@@ -21,8 +21,6 @@ public class NameStickExpander : MonoBehaviour {
 
 		char[] arr = text.text.ToCharArray();
 
-		Debug.Log (text.text);
-
 		foreach(char c in arr)
 		{
 			text.font.GetCharacterInfo(c, out characterInfo, text.fontSize, text.fontStyle);  

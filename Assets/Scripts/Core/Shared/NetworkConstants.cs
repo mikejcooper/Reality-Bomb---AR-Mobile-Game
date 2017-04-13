@@ -13,6 +13,8 @@ namespace GlobalNetworking
 		public static short MSG_GAME_LOADED = 182;
 		public static short MSG_PLAYER_DATA_UPDATE = 891;
 		public static short MSG_PLAYER_DATA_ID = 892;
+		public static short MSG_START_GAME_COUNTDOWN = 981;
+		public static short MSG_CANCEL_GAME_COUNTDOWN = 982;
 	}
 }
 

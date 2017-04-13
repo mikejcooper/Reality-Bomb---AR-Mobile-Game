@@ -16,13 +16,16 @@ public class SandboxManager : MonoBehaviour
 	public ToastManager ToastManagerObject;
 	public SandBoxPowerUpManager PowerUpManager;
 	public List<GameObject> TutorialDialogPrefabs;
+	public GameObject GameCountdownDialogPrefab;
 
 	private int _currentTutorialStage = 0;
-	private GameObject _currentDialog;
+	private GameObject _currentTutorialDialog;
+	private GameObject _countdownDialog;
 
 	private string _splatter_Txt = "You've Activated the Splatter Power Up! This splatters ink on your opponents' screens as shown below making it harder for them to see!";
 	private string _speed_Txt = "You've Activated the Speed Boost Power Up! Enjoy double the speed but be careful not to lose control!";
 	private string _respawn_Txt = "Oops!! You fell off the map! Don't Worry, You'll be respawned but you won't be able to move for 5s. Be careful or become an easy target!";
+	private string _shield_Txt = "Shield Txt";
 
 	void Start(){
 		if (TutorialDialogPrefabs.Count > 0) {
@@ -32,24 +35,52 @@ public class SandboxManager : MonoBehaviour
 			
 		BasePowerUpManager.SpeedBoostActivatedEvent += SetSpeedTxt;
 		BasePowerUpManager.InkSplatterActivatedEvent += SetSplatTxt;
+		BasePowerUpManager.ShieldActivatedEvent += SetShieldTxt;
+
+		if(ClientSceneManager.Instance != null){
+			ClientSceneManager.Instance.OnCountDownTimeUpdateEvent += OnCountDownTimeUpdate;
+			ClientSceneManager.Instance.OnCountDownCanceledEvent += OnCountDownCanceled;
+		}
+
 	}
 
 	void OnDestroy(){
-		BasePowerUpManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
-		BasePowerUpManager.InkSplatterActivatedEvent -= SetSplatTxt;
+        BasePowerUpManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
+        BasePowerUpManager.InkSplatterActivatedEvent -= SetSplatTxt;
+		BasePowerUpManager.ShieldActivatedEvent -= SetShieldTxt;
+
+		if (ClientSceneManager.Instance != null) {
+			ClientSceneManager.Instance.OnCountDownTimeUpdateEvent -= OnCountDownTimeUpdate;
+			ClientSceneManager.Instance.OnCountDownCanceledEvent -= OnCountDownCanceled;
+		}
+	}
+
+	private void OnCountDownTimeUpdate (int remainingTime) {
+		if (_countdownDialog == null) {
+			_countdownDialog = GameObject.Instantiate (GameCountdownDialogPrefab);
+			_countdownDialog.transform.SetParent (CanvasObj.transform, false);
+			_countdownDialog.GetComponentInChildren<AlarmTextDriver> ().OnCountDownTimeUpdate (remainingTime);
+		}
+	}
+
+	private void OnCountDownCanceled (string reason) {
+		if (_countdownDialog != null) {
+			Destroy (_countdownDialog);
+			_countdownDialog = null;
+		}
 	}
 
 	private void SetCurrentDialog (int index) {
 		_currentTutorialStage = index;
-		_currentDialog = GameObject.Instantiate (TutorialDialogPrefabs [index]);
-		_currentDialog.transform.SetParent (CanvasObj.transform, false);
-		_currentDialog.gameObject.GetComponentInChildren<Button> ().onClick.AddListener (() => {
+		_currentTutorialDialog = GameObject.Instantiate (TutorialDialogPrefabs [index]);
+		_currentTutorialDialog.transform.SetParent (CanvasObj.transform, false);
+		_currentTutorialDialog.gameObject.GetComponentInChildren<Button> ().onClick.AddListener (() => {
 			if (_currentTutorialStage + 1 < TutorialDialogPrefabs.Count) {
-				var oldDialog = _currentDialog;
+				var oldDialog = _currentTutorialDialog;
 				SetCurrentDialog(_currentTutorialStage + 1);
 				Destroy(oldDialog);
 			} else {
-				Destroy(_currentDialog);
+				Destroy(_currentTutorialDialog);
 				OnModalTutorialEnd();
 			}
 		});
@@ -91,21 +122,19 @@ public class SandboxManager : MonoBehaviour
 	}
 
 	public void SetSplatTxt(){
-//		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _splatter_Txt;
 		ToastManagerObject.ShowMessage(_splatter_Txt);
-//		Invoke ("ClearGuiTxt", 10.0f);
 	}
 
 	public void SetSpeedTxt(){
 		ToastManagerObject.ShowMessage(_speed_Txt);
-//		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _speed_Txt; 
-//		Invoke ("ClearGuiTxt", 10.0f);
 	}
 
 	public void SetRespawnTxt(){
 		ToastManagerObject.ShowMessage(_respawn_Txt);
-//		TxtObjectPrefab.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = _respawn_Txt;
-//		Invoke ("ClearGuiTxt", 10.0f);
+	}
+
+	public void SetShieldTxt(){
+		ToastManagerObject.ShowMessage(_shield_Txt);
 	}
 
 
