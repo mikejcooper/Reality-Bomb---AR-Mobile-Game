@@ -16,25 +16,24 @@ namespace Abilities {
 
 	public abstract class BaseAbility<T> : MonoBehaviour where T:BaseAbilityProperties {
 		
-		private int _calleeServerId;
-		private int _thisPlayerServerId;
-		private CarProperties _ownCarProperties;
+		private CarController _ownCar;
 		private AbilityResources _abilityResources;
 		private GameObject _splashObject;
 
 		protected T _abilityProperties;
 
-		public void initialise(int calleeServerId, T properties, AbilityResources abilityResources) {
-			_calleeServerId = calleeServerId;
-			_abilityProperties = properties;
+		public void initialise(CarController car, T properties, AbilityResources abilityResources) {
 			_abilityResources = abilityResources;
+            _abilityProperties = properties;
+            /*
 			if (!UnityEngine.Networking.NetworkServer.active) {
-				_thisPlayerServerId = GetThisPlayerServerId();
 				var ownCarPropertiesArray = GameObject.FindObjectsOfType<CarProperties> ().Where (IsOwnCarProperties);
 				Debug.Assert (ownCarPropertiesArray.Count() > 0, "there should be a CarProperties this client owns");
 				Debug.Assert (ownCarPropertiesArray.Count() == 1, "there should only be one CarProperties this client owns");
 				_ownCarProperties = ownCarPropertiesArray.First ();
 			}
+            */
+            _ownCar = car;
 
 		}
 
@@ -55,12 +54,12 @@ namespace Abilities {
 
 		public void StartAbility () {
 			_abilityResources.manager.OnPowerUpStart (this);
-            OnApplyAbility(_ownCarProperties, _abilityResources.PlayerCanvas);
+            OnApplyAbility(_ownCar, _abilityResources.PlayerCanvas);
 		}
 
 		public void StopAbility () {
 			_abilityResources.manager.OnPowerUpStop (this);
-            OnRemoveAbility(_ownCarProperties, _abilityResources.PlayerCanvas);
+            OnRemoveAbility(_ownCar, _abilityResources.PlayerCanvas);
 			Destroy (this);
 		}
 
@@ -109,18 +108,20 @@ namespace Abilities {
 			} while ( animation.isPlaying );
 		}
 
+        /*
 		private bool IsOwnCarProperties(CarProperties properties) {
 			var identity = properties.GetComponentInParent<NetworkIdentity> ();
 			return identity == null || identity.clientAuthorityOwner == null || identity.hasAuthority;
 
 		}
+        */
 
 		// Called on client that triggered this ability.
 		// Apply things that should affect the car that triggered the event,
 		// like speed boost.
-		protected virtual void OnApplyAbility(CarProperties properties, Canvas canvas) {}
+		protected virtual void OnApplyAbility(CarController car, Canvas canvas) {}
 
 		// Called on client that triggered this ability
-		protected virtual void OnRemoveAbility(CarProperties properties, Canvas canvas) {}
+		protected virtual void OnRemoveAbility(CarController car, Canvas canvas) {}
 	}
 }

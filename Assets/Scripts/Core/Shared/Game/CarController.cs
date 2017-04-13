@@ -231,13 +231,12 @@ public class CarController : NetworkBehaviour
             Debug.Log("******** INKED! ********");
             //Add Ink ability component to object
             GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
-            PowerupDefinition powerupdfn = new PowerupDefinition(typeof(InkAbility), gpm.InkProperties);
 
             InkAbility ability = (InkAbility)gameObject.AddComponent(typeof(InkAbility));
             AbilityResources _abilityResources;
             _abilityResources.PlayerCanvas = gpm.PlayerCanvas;
             _abilityResources.manager = gpm;
-            ability.initialise(0, gpm.InkProperties, _abilityResources);
+            ability.initialise(this, gpm.InkProperties, _abilityResources);
         }
             
     }
@@ -249,13 +248,12 @@ public class CarController : NetworkBehaviour
         {
             Debug.Log("******** Speed Power Up! ********");
             GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
-            PowerupDefinition powerupdfn = new PowerupDefinition(typeof(SpeedAbility), gpm.SpeedProperties);
 
             SpeedAbility ability = (SpeedAbility)gameObject.AddComponent(typeof(SpeedAbility));
             AbilityResources _abilityResources;
             _abilityResources.PlayerCanvas = gpm.PlayerCanvas;
             _abilityResources.manager = gpm;
-            ability.initialise(0, gpm.SpeedProperties, _abilityResources);
+            ability.initialise(this, gpm.SpeedProperties, _abilityResources);
         }
     }
 

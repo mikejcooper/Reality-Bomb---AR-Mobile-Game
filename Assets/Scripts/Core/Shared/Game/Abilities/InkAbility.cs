@@ -14,7 +14,7 @@ namespace Abilities {
 
 		protected GameObject _splatterObject;
         
-        override protected void OnApplyAbility(CarProperties properties, Canvas canvas) {
+        override protected void OnApplyAbility(CarController car, Canvas canvas) {
             
 			_splatterObject = new GameObject ("Splatter");
 
@@ -32,7 +32,7 @@ namespace Abilities {
             Debug.Log("Inking");
 		}
         
-		override protected void OnRemoveAbility(CarProperties properties, Canvas canvas) {
+		override protected void OnRemoveAbility(CarController car, Canvas canvas) {
 			Destroy (_splatterObject);
 		}     
 	}

@@ -16,6 +16,7 @@ namespace Powerups {
 			if (collision.collider.tag == "TankTag") {
                 Debug.Log("COLLIDED WITH TANK");
 
+                /*
                 if(!UnityEngine.Networking.NetworkServer.active) //Check we are in the sandbox
                 {
                     var collidedObject = collision.gameObject;
@@ -38,7 +39,8 @@ namespace Powerups {
                     }
 
                     Destroy(gameObject);
-                }				
+                }
+                */				
 			}
 		}
 
