@@ -69,6 +69,8 @@ public class ClientSceneManager : MonoBehaviour
 
 		_networkLobbyManager.playScene = "Game";
 
+		InitialisePlayerCar (GamePlayerPrefab);
+
 		_networkLobbyManager.lobbyPlayerPrefab = LobbyPlayerPrefab;
 		_networkLobbyManager.gamePlayerPrefab = GamePlayerPrefab;
 
@@ -88,6 +90,19 @@ public class ClientSceneManager : MonoBehaviour
 		SceneManager.sceneLoaded += OnSceneLoaded;
 	}
 
+	private void InitialisePlayerCar (GameObject GamePlayerPrefab)
+	{
+		int ran = Random.Range (0, 360);
+		Material[] materials = GamePlayerPrefab.transform.FindChild("Car_Model").GetComponent<MeshRenderer> ().sharedMaterials;
+
+		materials [0].color = Color.black; // Spoiler
+		materials [1].color = Color.HSVToRGB(ran/360f, 0.96f, 0.67f); // Side glow
+		materials [2].color = Color.HSVToRGB(ran/360f, 0.96f, 0.67f); // Blades
+		materials [3].color = Color.HSVToRGB (ran / 360f, 1f, 0.38f); // Body
+		materials [4].color = Color.gray; // Blades Inner
+		materials [5].color = Color.black; // Winscreen
+	}
+		
     private void OnMeshDataReceived()
     {
 		if (DEBUG) Debug.Log("OnMeshDataReceived");
