@@ -16,9 +16,9 @@ namespace Powerups {
 		public delegate void OnSpeedBoostActivated ();
 		public delegate void OnInkSplatterActivated ();
 		public delegate void OnShieldActivated ();
-		public event OnSpeedBoostActivated SpeedBoostActivatedEvent = delegate {};
-		public event OnInkSplatterActivated InkSplatterActivatedEvent = delegate {};
-		public event OnShieldActivated ShieldActivatedEvent = delegate {};
+		public event OnSpeedBoostActivated SpeedBoostActivatedEvent;		
+		public event OnInkSplatterActivated InkSplatterActivatedEvent;
+		public event OnShieldActivated ShieldActivatedEvent;
 
 		protected override void Start () {
 			base.Start ();
@@ -42,7 +42,7 @@ namespace Powerups {
 				Debug.Log ("'SBPUM':Ink splatter activated");
 			} else if (ability.GetType ().IsAssignableFrom (typeof(ShieldAbility))) {
 				ShieldActivatedEvent ();
-				Debug.Log ("'SBPUM':Shield activated");
+				Debug.Log ("'SBPUM': Shield activated");
 			}
 		}
 
@@ -51,8 +51,8 @@ namespace Powerups {
 				Debug.Log ("'SBPUM':Speed boost deactivated");
 			} else if (ability.GetType ().IsAssignableFrom (typeof(SandboxInkAbility))) {
 				Debug.Log ("'SBPUM':Ink splatter deactivated");
-			} else if (ability.GetType ().IsAssignableFrom (typeof(ShieldAbility))) {
-				Debug.Log ("'SBPUM':Shield deactivated");
+			}  else if (ability.GetType ().IsAssignableFrom (typeof(ShieldAbility))) {
+				Debug.Log ("'SBPUM': Shield deactivated");
 			}
 		}
 

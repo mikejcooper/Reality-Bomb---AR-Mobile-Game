@@ -25,7 +25,7 @@ public class SandboxManager : MonoBehaviour
 	private string _splatter_Txt = "You've Activated the Splatter Power Up! This splatters ink on your opponents' screens as shown below making it harder for them to see!";
 	private string _speed_Txt = "You've Activated the Speed Boost Power Up! Enjoy double the speed but be careful not to lose control!";
 	private string _respawn_Txt = "Oops!! You fell off the map! Don't Worry, You'll be respawned but you won't be able to move for 5s. Be careful or become an easy target!";
-	private string _shield_Txt = "You've Activated the Shield Power Up! You're Invincible! No one can touch you for the next 5s. (Only players without the bomb can pick this up)";
+	private string _shield_Txt = "Shield Txt";
 
 	void Start(){
 		if (TutorialDialogPrefabs.Count > 0) {
@@ -37,8 +37,11 @@ public class SandboxManager : MonoBehaviour
 		PowerupManager.InkSplatterActivatedEvent += SetSplatTxt;
 		PowerupManager.ShieldActivatedEvent += SetShieldTxt;
 
-//		ClientSceneManager.Instance.OnCountDownTimeUpdateEvent += OnCountDownTimeUpdate;
-//		ClientSceneManager.Instance.OnCountDownCanceledEvent += OnCountDownCanceled;
+		if(ClientSceneManager.Instance != null){
+			ClientSceneManager.Instance.OnCountDownTimeUpdateEvent += OnCountDownTimeUpdate;
+			ClientSceneManager.Instance.OnCountDownCanceledEvent += OnCountDownCanceled;
+		}
+
 	}
 
 	void OnDestroy(){
@@ -46,8 +49,10 @@ public class SandboxManager : MonoBehaviour
 		PowerupManager.InkSplatterActivatedEvent -= SetSplatTxt;
 		PowerupManager.ShieldActivatedEvent -= SetShieldTxt;
 
-		ClientSceneManager.Instance.OnCountDownTimeUpdateEvent -= OnCountDownTimeUpdate;
-		ClientSceneManager.Instance.OnCountDownCanceledEvent -= OnCountDownCanceled;
+		if (ClientSceneManager.Instance != null) {
+			ClientSceneManager.Instance.OnCountDownTimeUpdateEvent -= OnCountDownTimeUpdate;
+			ClientSceneManager.Instance.OnCountDownCanceledEvent -= OnCountDownCanceled;
+		}
 	}
 
 	private void OnCountDownTimeUpdate (int remainingTime) {
@@ -129,7 +134,7 @@ public class SandboxManager : MonoBehaviour
 	}
 
 	public void SetShieldTxt(){
-		ToastManagerObject.ShowMessage (_shield_Txt);
+		ToastManagerObject.ShowMessage(_shield_Txt);
 	}
 
 

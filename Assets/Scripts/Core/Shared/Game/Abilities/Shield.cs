@@ -27,12 +27,6 @@ public class Shield  : MonoBehaviour {
 	void OnTriggerEnter(Collider other) {
 		if (other.tag != "PowerUp") {
 			var force = 600;
-//			Vector3 direction = other.contacts[0].point - transform.position;
-//			direction = -direction.normalized;
-//			direction.y = 0;
-//			GetComponent<Rigidbody>().AddForce(direction * bounceForce);
-		
-//			other.rigidbody.AddExplosionForce(force, entities[i].transform.position, collider.radius, 0, ForceMode.Acceleration);
 			Vector3 explosionPos = transform.position;
 			Rigidbody rb = other.GetComponent<Rigidbody>();
 			if (rb != null)
