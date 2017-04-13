@@ -41,6 +41,7 @@ public class SandboxManager : MonoBehaviour
 			ClientSceneManager.Instance.OnCountDownTimeUpdateEvent += OnCountDownTimeUpdate;
 			ClientSceneManager.Instance.OnCountDownCanceledEvent += OnCountDownCanceled;
 		}
+
 	}
 
 	void OnDestroy(){
