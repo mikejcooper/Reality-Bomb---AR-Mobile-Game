@@ -14,7 +14,7 @@ public class SandboxManager : MonoBehaviour
 	public GameObject PlaneObject;
 	public Canvas CanvasObj;
 	public ToastManager ToastManagerObject;
-	public SandBoxPowerUpManager PowerupManager;
+	public SandBoxPowerUpManager PowerUpManager;
 	public List<GameObject> TutorialDialogPrefabs;
 
 	private int _currentTutorialStage = 0;
@@ -27,16 +27,16 @@ public class SandboxManager : MonoBehaviour
 	void Start(){
 		if (TutorialDialogPrefabs.Count > 0) {
 			SetCurrentDialog (0);
-			PowerupManager.enabled = false;
+			PowerUpManager.enabled = false;
 		}
 			
-		PowerupManager.SpeedBoostActivatedEvent += SetSpeedTxt;
-		PowerupManager.InkSplatterActivatedEvent += SetSplatTxt;
+		PowerUpManager.SpeedBoostActivatedEvent += SetSpeedTxt;
+		PowerUpManager.InkSplatterActivatedEvent += SetSplatTxt;
 	}
 
 	void OnDestroy(){
-		PowerupManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
-		PowerupManager.InkSplatterActivatedEvent -= SetSplatTxt;
+		PowerUpManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
+		PowerUpManager.InkSplatterActivatedEvent -= SetSplatTxt;
 	}
 
 	private void SetCurrentDialog (int index) {
@@ -56,7 +56,7 @@ public class SandboxManager : MonoBehaviour
 	}
 
 	private void OnModalTutorialEnd () {
-		PowerupManager.enabled = true;
+		PowerUpManager.enabled = true;
 	}
 
 	void Update(){

@@ -79,7 +79,7 @@ namespace Powerups {
 
 		protected void OnMeshReady (GameObject mesh) {
 			if (!IsAllowedToSpawn ()) {
-				Debug.Log ("This PowerupManager is not allowed to spawn");
+				Debug.Log ("This PowerUpManager is not allowed to spawn");
 				return;
 			}
 

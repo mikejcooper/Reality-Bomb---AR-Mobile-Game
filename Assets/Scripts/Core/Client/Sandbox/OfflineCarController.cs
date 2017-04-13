@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Abilities;
+using Powerups;
+using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
@@ -73,6 +75,31 @@ public class OfflineCarController : MonoBehaviour
 			direction.y = 0;
 			GetComponent<Rigidbody>().AddForce(direction * bounceForce);
 		}
-	}
+        else if (col.gameObject.tag == "InkPowerUp")
+        {
+            Debug.Log("******** INKED! ********");
+            //Add Ink ability component to object
+            SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager>();
+
+            InkAbility ability = (InkAbility)gameObject.AddComponent(typeof(InkAbility));
+            AbilityResources _abilityResources;
+            _abilityResources.PlayerCanvas = spm.PlayerCanvas;
+            _abilityResources.manager = spm;
+            ability.initialise(CarProperties, spm.InkProperties, _abilityResources);
+            Destroy(col.gameObject);
+        }
+        else if (col.gameObject.tag == "SpeedPowerUp")
+        {
+            Debug.Log("******** Speed Power Up! ********");
+            SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager>();
+
+            SpeedAbility ability = (SpeedAbility)gameObject.AddComponent(typeof(SpeedAbility));
+            AbilityResources _abilityResources;
+            _abilityResources.PlayerCanvas = spm.PlayerCanvas;
+            _abilityResources.manager = spm;
+            ability.initialise(CarProperties, spm.SpeedProperties, _abilityResources);
+            Destroy(col.gameObject);
+        }
+    }
 }
 

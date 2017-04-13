@@ -14,24 +14,26 @@ namespace Powerups {
 
 		void OnCollisionEnter (Collision collision) {
 			if (collision.collider.tag == "TankTag") {
-                Debug.Log("COLLIDED WITH TANK");
-
+                Debug.Log("COLLIDED WITH CAR");
+                
                 /*
                 if(!UnityEngine.Networking.NetworkServer.active) //Check we are in the sandbox
                 {
-                    var collidedObject = collision.gameObject;
+                    GameObject collidedObject = collision.gameObject;
+                    CarController car = collidedObject.GetComponent<CarController>();
+                    Debug.Assert(null == car, "There is no CarController component on this GameObject.");
 
                     if (PowerupDefinitionObj.Properties.GetType().IsAssignableFrom(typeof(SpeedAbilityProperties)))
                     {
                         SpeedAbility ability = (SpeedAbility)collidedObject.AddComponent(PowerupDefinitionObj.Ability);
-                        ability.initialise(GetThisPlayerServerId(), (SpeedAbilityProperties)PowerupDefinitionObj.Properties, AbilityResources);
+                        ability.initialise(car, (SpeedAbilityProperties)PowerupDefinitionObj.Properties, AbilityResources);
                     }
                     else if (PowerupDefinitionObj.Properties.GetType().IsAssignableFrom(typeof(InkAbilityProperties)))
                     {
                         Debug.Log("INK ABILITY");
                         InkAbility ability = (InkAbility)collidedObject.AddComponent(PowerupDefinitionObj.Ability);
                         //ability.initialise(ClientSceneManager.Instance.GetThisPlayerData().ServerId, (InkAbilityProperties)PowerupDefinitionObj.Properties, AbilityResources);
-                        ability.initialise(GetThisPlayerServerId(), (InkAbilityProperties)PowerupDefinitionObj.Properties, AbilityResources);
+                        ability.initialise(car, (InkAbilityProperties)PowerupDefinitionObj.Properties, AbilityResources);
                     }
                     else
                     {
@@ -40,7 +42,7 @@ namespace Powerups {
 
                     Destroy(gameObject);
                 }
-                */				
+                */
 			}
 		}
 

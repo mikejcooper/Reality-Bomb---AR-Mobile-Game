@@ -16,15 +16,17 @@ namespace Abilities {
 
 	public abstract class BaseAbility<T> : MonoBehaviour where T:BaseAbilityProperties {
 		
-		private CarController _ownCar;
+		private CarProperties _ownCarProperties;
 		private AbilityResources _abilityResources;
 		private GameObject _splashObject;
 
 		protected T _abilityProperties;
 
-		public void initialise(CarController car, T properties, AbilityResources abilityResources) {
+		public void initialise(CarProperties carProp, T abilityProp, AbilityResources abilityResources) {
 			_abilityResources = abilityResources;
-            _abilityProperties = properties;
+            _ownCarProperties = carProp;
+            _abilityProperties = abilityProp;
+
             /*
 			if (!UnityEngine.Networking.NetworkServer.active) {
 				var ownCarPropertiesArray = GameObject.FindObjectsOfType<CarProperties> ().Where (IsOwnCarProperties);
@@ -33,7 +35,6 @@ namespace Abilities {
 				_ownCarProperties = ownCarPropertiesArray.First ();
 			}
             */
-            _ownCar = car;
 
 		}
 
@@ -54,12 +55,12 @@ namespace Abilities {
 
 		public void StartAbility () {
 			_abilityResources.manager.OnPowerUpStart (this);
-            OnApplyAbility(_ownCar, _abilityResources.PlayerCanvas);
+            OnApplyAbility(_ownCarProperties, _abilityResources.PlayerCanvas);
 		}
 
 		public void StopAbility () {
 			_abilityResources.manager.OnPowerUpStop (this);
-            OnRemoveAbility(_ownCar, _abilityResources.PlayerCanvas);
+            OnRemoveAbility(_ownCarProperties, _abilityResources.PlayerCanvas);
 			Destroy (this);
 		}
 
@@ -119,9 +120,9 @@ namespace Abilities {
 		// Called on client that triggered this ability.
 		// Apply things that should affect the car that triggered the event,
 		// like speed boost.
-		protected virtual void OnApplyAbility(CarController car, Canvas canvas) {}
+		protected virtual void OnApplyAbility(CarProperties properties, Canvas canvas) {}
 
 		// Called on client that triggered this ability
-		protected virtual void OnRemoveAbility(CarController car, Canvas canvas) {}
+		protected virtual void OnRemoveAbility(CarProperties properties, Canvas canvas) {}
 	}
 }

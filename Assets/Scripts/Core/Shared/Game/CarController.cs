@@ -236,7 +236,7 @@ public class CarController : NetworkBehaviour
             AbilityResources _abilityResources;
             _abilityResources.PlayerCanvas = gpm.PlayerCanvas;
             _abilityResources.manager = gpm;
-            ability.initialise(this, gpm.InkProperties, _abilityResources);
+            ability.initialise(CarProperties, gpm.InkProperties, _abilityResources);
         }
             
     }
@@ -253,7 +253,7 @@ public class CarController : NetworkBehaviour
             AbilityResources _abilityResources;
             _abilityResources.PlayerCanvas = gpm.PlayerCanvas;
             _abilityResources.manager = gpm;
-            ability.initialise(this, gpm.SpeedProperties, _abilityResources);
+            ability.initialise(CarProperties, gpm.SpeedProperties, _abilityResources);
         }
     }
 
