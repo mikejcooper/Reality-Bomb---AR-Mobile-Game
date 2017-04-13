@@ -173,15 +173,11 @@ public class GameManager : NetworkBehaviour {
                 car.UpdateTransferTime(1.0f);
             }
         }
-        if (col.gameObject.tag == "InkPowerUp")
+        else if (col.gameObject.tag.Contains("PowerUp"))
         {
-            car.RpcInkPowerUp();
-            Destroy(col.gameObject);
-
-        }
-        if (col.gameObject.tag == "SpeedPowerUp")
-        {
-            car.RpcSpeedPowerUp();
+            //Handle powerups on the CarController clients
+            car.RpcPowerUp(col.gameObject.tag);
+            //Destroy the gameobject we collided with (because it's a powerup)
             Destroy(col.gameObject);
         }
     }

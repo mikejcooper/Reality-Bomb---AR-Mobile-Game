@@ -30,13 +30,13 @@ public class SandboxManager : MonoBehaviour
 			PowerUpManager.enabled = false;
 		}
 			
-		PowerUpManager.SpeedBoostActivatedEvent += SetSpeedTxt;
-		PowerUpManager.InkSplatterActivatedEvent += SetSplatTxt;
+		BasePowerUpManager.SpeedBoostActivatedEvent += SetSpeedTxt;
+		BasePowerUpManager.InkSplatterActivatedEvent += SetSplatTxt;
 	}
 
 	void OnDestroy(){
-		PowerUpManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
-		PowerUpManager.InkSplatterActivatedEvent -= SetSplatTxt;
+		BasePowerUpManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
+		BasePowerUpManager.InkSplatterActivatedEvent -= SetSplatTxt;
 	}
 
 	private void SetCurrentDialog (int index) {

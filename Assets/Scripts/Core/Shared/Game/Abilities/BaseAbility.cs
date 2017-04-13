@@ -17,25 +17,15 @@ namespace Abilities {
 	public abstract class BaseAbility<T> : MonoBehaviour where T:BaseAbilityProperties {
 		
 		private CarProperties _ownCarProperties;
-		private AbilityResources _abilityResources;
+		private Canvas _playerCanvas;
 		private GameObject _splashObject;
 
 		protected T _abilityProperties;
 
-		public void initialise(CarProperties carProp, T abilityProp, AbilityResources abilityResources) {
-			_abilityResources = abilityResources;
+		public void initialise(CarProperties carProp, T abilityProp, Canvas canvas) {
             _ownCarProperties = carProp;
             _abilityProperties = abilityProp;
-
-            /*
-			if (!UnityEngine.Networking.NetworkServer.active) {
-				var ownCarPropertiesArray = GameObject.FindObjectsOfType<CarProperties> ().Where (IsOwnCarProperties);
-				Debug.Assert (ownCarPropertiesArray.Count() > 0, "there should be a CarProperties this client owns");
-				Debug.Assert (ownCarPropertiesArray.Count() == 1, "there should only be one CarProperties this client owns");
-				_ownCarProperties = ownCarPropertiesArray.First ();
-			}
-            */
-
+            _playerCanvas = canvas;
 		}
 
 		private int GetThisPlayerServerId () {
@@ -54,21 +44,21 @@ namespace Abilities {
 		}
 
 		public void StartAbility () {
-			_abilityResources.manager.OnPowerUpStart (this);
-            OnApplyAbility(_ownCarProperties, _abilityResources.PlayerCanvas);
+			BasePowerUpManager.OnPowerUpStart (this); //Triggers an event that displays text on canvas
+            OnApplyAbility(_ownCarProperties, _playerCanvas); //Carries out the ability
 		}
 
 		public void StopAbility () {
-			_abilityResources.manager.OnPowerUpStop (this);
-            OnRemoveAbility(_ownCarProperties, _abilityResources.PlayerCanvas);
-			Destroy (this);
+			BasePowerUpManager.OnPowerUpStop (this);
+            OnRemoveAbility(_ownCarProperties, _playerCanvas);
+            Destroy (this);
 		}
 
 		private void DisplaySplash () {
 			if (_abilityProperties.CanvasSplash != null) {
 				
 				_splashObject = GameObject.Instantiate (_abilityProperties.CanvasSplash);
-				_splashObject.transform.parent = _abilityResources.PlayerCanvas.transform;
+				_splashObject.transform.parent = _playerCanvas.transform;
 				_splashObject.transform.localScale = Vector3.one;
 				_splashObject.transform.localPosition = Vector3.zero;
 				Animation anim = _splashObject.GetComponent<Animation> ();
@@ -108,14 +98,6 @@ namespace Abilities {
 				yield return null;
 			} while ( animation.isPlaying );
 		}
-
-        /*
-		private bool IsOwnCarProperties(CarProperties properties) {
-			var identity = properties.GetComponentInParent<NetworkIdentity> ();
-			return identity == null || identity.clientAuthorityOwner == null || identity.hasAuthority;
-
-		}
-        */
 
 		// Called on client that triggered this ability.
 		// Apply things that should affect the car that triggered the event,

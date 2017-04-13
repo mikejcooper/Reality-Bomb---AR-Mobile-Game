@@ -223,37 +223,28 @@ public class CarController : NetworkBehaviour
 		_transferTime = Time.time + inc;
 	}
 
+    /*
+     * Handling the PowerUp RPCs in the CarController because it makes it simpler to 
+     * pass the relevant data to the right places (CarProperties).
+     */
     [ClientRpc]
-    public void RpcInkPowerUp()
+    public void RpcPowerUp(string tag)
     {
-        if(!isLocalPlayer)
+        GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
+
+        if (tag == "InkPowerUp" && !isLocalPlayer) //Will only appear on opponents' screens
         {
             Debug.Log("******** INKED! ********");
-            //Add Ink ability component to object
-            GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
-
+            //Add ink ability component to object
             InkAbility ability = (InkAbility)gameObject.AddComponent(typeof(InkAbility));
-            AbilityResources _abilityResources;
-            _abilityResources.PlayerCanvas = gpm.PlayerCanvas;
-            _abilityResources.manager = gpm;
-            ability.initialise(CarProperties, gpm.InkProperties, _abilityResources);
+            ability.initialise(CarProperties, gpm.InkProperties, gpm.PlayerCanvas);
         }
-            
-    }
-
-    [ClientRpc]
-    public void RpcSpeedPowerUp()
-    {
-        if (isLocalPlayer)
+        else if (tag == "SpeedPowerUp" && isLocalPlayer)
         {
             Debug.Log("******** Speed Power Up! ********");
-            GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
-
+            //Add speed ability component to object
             SpeedAbility ability = (SpeedAbility)gameObject.AddComponent(typeof(SpeedAbility));
-            AbilityResources _abilityResources;
-            _abilityResources.PlayerCanvas = gpm.PlayerCanvas;
-            _abilityResources.manager = gpm;
-            ability.initialise(CarProperties, gpm.SpeedProperties, _abilityResources);
+            ability.initialise(CarProperties, gpm.SpeedProperties, gpm.PlayerCanvas);
         }
     }
 

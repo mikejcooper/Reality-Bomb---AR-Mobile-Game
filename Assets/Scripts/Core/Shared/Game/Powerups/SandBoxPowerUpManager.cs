@@ -8,43 +8,10 @@ namespace Powerups {
 	public class SandBoxPowerUpManager : BasePowerUpManager {
 
 		public GameObject PlaneObject;
-		public SpeedAbilityProperties SpeedProperties;
-		public InkAbilityProperties InkProperties;
-
-		// Events
-		public delegate void OnSpeedBoostActivated ();
-		public delegate void OnInkSplatterActivated ();
-		public event OnSpeedBoostActivated SpeedBoostActivatedEvent;		
-		public event OnInkSplatterActivated InkSplatterActivatedEvent;
 
 		protected override void Start () {
 			base.Start ();
 			OnMeshReady (PlaneObject);	
-		}
-
-		override protected PowerupDefinition[] GetAvailablePowerups () {
-			return new PowerupDefinition[] { 
-				new PowerupDefinition (typeof(SpeedAbility), SpeedProperties),
-				new PowerupDefinition (typeof(InkAbility), InkProperties)
-			};
-		}
-
-		public override void OnPowerUpStart<T> (BaseAbility<T> ability) {
-			if (ability.GetType ().IsAssignableFrom (typeof(SpeedAbility))) {
-				Debug.Log ("'SBPUM': Speed boost activated");
-				SpeedBoostActivatedEvent ();
-			} else if (ability.GetType ().IsAssignableFrom (typeof(InkAbility))) {
-				InkSplatterActivatedEvent ();
-				Debug.Log ("'SBPUM':Ink splatter activated");
-			}
-		}
-
-		public override void OnPowerUpStop<T> (BaseAbility<T> ability) {
-			if (ability.GetType ().IsAssignableFrom (typeof(SpeedAbility))) {
-				Debug.Log ("'SBPUM':Speed boost deactivated");
-			} else if (ability.GetType ().IsAssignableFrom (typeof(InkAbility))) {
-				Debug.Log ("'SBPUM':Ink splatter deactivated");
-			}
 		}
 
 		protected override bool IsAllowedToSpawn(){

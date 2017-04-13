@@ -6,13 +6,7 @@ using UnityEngine.Networking;
 using Random = UnityEngine.Random;
 using Abilities;
 
-namespace Powerups {
-
-
-	public struct AbilityResources {
-		public Canvas PlayerCanvas;
-		public BasePowerUpManager manager;
-	}
+namespace Powerups { 
 
 	public class PowerupDefinition {
 		public Type Ability;
@@ -27,21 +21,33 @@ namespace Powerups {
 	public abstract class BasePowerUpManager : NetworkBehaviour {
 
 		public Canvas PlayerCanvas;
+        public SpeedAbilityProperties SpeedProperties;
+        public InkAbilityProperties InkProperties;
 
-		private GameObject _meshObj;
-
+        private GameObject _meshObj;
 		private float _yOffSet;
-		private AbilityResources _abilityResources;
 
 		PowerupDefinition[] _availableAbilities;
 
-		protected virtual void Start () {
+        // Events
+        public delegate void OnSpeedBoostActivated();
+        public delegate void OnInkSplatterActivated();
+        public static event OnSpeedBoostActivated SpeedBoostActivatedEvent;
+        public static event OnInkSplatterActivated InkSplatterActivatedEvent;
+
+        protected virtual void Start () {
 			_availableAbilities = GetAvailablePowerups ();
-			_abilityResources.PlayerCanvas = PlayerCanvas;
-			_abilityResources.manager = this;
 		}
 
-		private void ValidateAbilities () {
+        protected PowerupDefinition[] GetAvailablePowerups()
+        {
+            return new PowerupDefinition[] {
+                new PowerupDefinition (typeof(SpeedAbility), SpeedProperties),
+                new PowerupDefinition (typeof(InkAbility), InkProperties)
+            };
+        }
+
+        private void ValidateAbilities () {
 			foreach (PowerupDefinition def in _availableAbilities) {
 				if (def.Properties.CanvasSplash == null) {
 					Debug.LogError ("CanvasSplash is undefined for some powerups");
@@ -57,8 +63,7 @@ namespace Powerups {
 			}
 			Debug.Log(string.Format("{0} powerups ready to spawn", _availableAbilities.Length));
 		}
-
-		protected abstract PowerupDefinition[] GetAvailablePowerups ();
+        
 
 		IEnumerator TryToSpawn()
 		{
@@ -66,12 +71,12 @@ namespace Powerups {
 			while(true) 
 			{ 
 				// Adjust Range Size to adjust spawn frequency
-				//int rand = Random.Range(0,3);
+				int rand = Random.Range(0,3);
 
 				// If generater produces the predetermined number from the range above, spawn a power up
-				//if (rand == 0) { 
+				if (rand == 0) { 
 					GenPowerUp ();
-				//}
+				}
 
 				yield return new WaitForSeconds(5);
 			}
@@ -100,35 +105,51 @@ namespace Powerups {
 		// Generate a powerup once the decision to spawn one has been made
 		private void GenPowerUp () {
             var abilityTypeIndex = Random.Range(0,_availableAbilities.Length);
-            //var abilityTypeIndex = 0;
             GameObject powerUpObj = GameObject.Instantiate (_availableAbilities [abilityTypeIndex].Properties.PowerupPrefab) as GameObject;
-			//powerUpObj.tag = "PowerUp";
 			powerUpObj.transform.parent = GameObject.Find("Marker scene").transform;
 			powerUpObj.GetComponent<SphereCollider> ();
 
-            //Vector3 position = GameUtils.FindSpawnLocation (_meshObj);
-            Vector3 position = Vector3.zero;
+            Vector3 position = GameUtils.FindSpawnLocation (_meshObj);
 			position.y += (_yOffSet + 10.0f);
 			powerUpObj.transform.position = position;
 			powerUpObj.transform.localScale = Vector3.one;
 
-            /*
-			PowerUp powerUp = powerUpObj.AddComponent<PowerUp> ();
-			powerUp.PowerupDefinitionObj = _availableAbilities [abilityTypeIndex];
-			powerUp.AbilityResources = _abilityResources;
-            */
-
-
 			OnPowerUpGenerated (powerUpObj);
 		}
 
+        public static void OnPowerUpStart<T>(BaseAbility<T> ability) where T : BaseAbilityProperties
+        {
+            if (ability.GetType().IsAssignableFrom(typeof(SpeedAbility)))
+            {
+                Debug.Log("'PUM': Speed boost activated");
+                SpeedBoostActivatedEvent();
+            }
+            else if (ability.GetType().IsAssignableFrom(typeof(InkAbility)))
+            {
+                InkSplatterActivatedEvent();
+                Debug.Log("'PUM':Ink splatter activated");
+            }
+        }
+
+        public static void OnPowerUpStop<T>(BaseAbility<T> ability) where T : BaseAbilityProperties
+        {
+            if (ability.GetType().IsAssignableFrom(typeof(SpeedAbility)))
+            {
+                Debug.Log("'PUM':Speed boost deactivated");
+            }
+            else if (ability.GetType().IsAssignableFrom(typeof(InkAbility)))
+            {
+                Debug.Log("'PUM':Ink splatter deactivated");
+            }
+        }
 
 
-		protected virtual bool IsAllowedToSpawn () { return false; }
+
+        protected virtual bool IsAllowedToSpawn () { return false; }
 		protected virtual void OnPowerUpGenerated(GameObject powerUpObj) {}
 
-		public virtual void OnPowerUpStart<T>(BaseAbility<T> ability) where T:BaseAbilityProperties {}
-		public virtual void OnPowerUpStop<T>(BaseAbility<T> ability) where T:BaseAbilityProperties {}
+		//public virtual void OnPowerUpStart<T>(BaseAbility<T> ability) where T:BaseAbilityProperties {}
+		//public virtual void OnPowerUpStop<T>(BaseAbility<T> ability) where T:BaseAbilityProperties {}
 
 	}
 

@@ -82,10 +82,7 @@ public class OfflineCarController : MonoBehaviour
             SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager>();
 
             InkAbility ability = (InkAbility)gameObject.AddComponent(typeof(InkAbility));
-            AbilityResources _abilityResources;
-            _abilityResources.PlayerCanvas = spm.PlayerCanvas;
-            _abilityResources.manager = spm;
-            ability.initialise(CarProperties, spm.InkProperties, _abilityResources);
+            ability.initialise(CarProperties, spm.InkProperties, spm.PlayerCanvas);
             Destroy(col.gameObject);
         }
         else if (col.gameObject.tag == "SpeedPowerUp")
@@ -94,10 +91,7 @@ public class OfflineCarController : MonoBehaviour
             SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager>();
 
             SpeedAbility ability = (SpeedAbility)gameObject.AddComponent(typeof(SpeedAbility));
-            AbilityResources _abilityResources;
-            _abilityResources.PlayerCanvas = spm.PlayerCanvas;
-            _abilityResources.manager = spm;
-            ability.initialise(CarProperties, spm.SpeedProperties, _abilityResources);
+            ability.initialise(CarProperties, spm.SpeedProperties, spm.PlayerCanvas);
             Destroy(col.gameObject);
         }
     }
