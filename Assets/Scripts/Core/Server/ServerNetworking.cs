@@ -43,6 +43,9 @@ namespace ServerNetworking
 		}
 
 		public void BeginBroadcast () {
+			Application.runInBackground = true;
+			broadcastKey = NetworkConstants.BROADCAST_KEY;
+			Initialize();
 			StartAsServer();
 		}
 			
