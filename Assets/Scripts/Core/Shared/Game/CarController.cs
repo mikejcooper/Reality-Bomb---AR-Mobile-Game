@@ -124,11 +124,12 @@ public class CarController : NetworkBehaviour
 
 	private void setBomb(bool b){
 		this.HasBomb = b;
-//		#if UNITY_ANDROID || UNITY_IPHONE
-//		if (isLocalPlayer && HasBomb != isBomb){
-//			Handheld.Vibrate();
-//		}
-//		#endif
+		#if UNITY_ANDROID || UNITY_IPHONE
+		// vibrate on exchange
+		if (isLocalPlayer){
+			Handheld.Vibrate();
+		}
+		#endif
 		if (OnSetBombEvent != null) {
 			OnSetBombEvent (b);
 		}
