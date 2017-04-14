@@ -138,7 +138,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   secondsToRemainVisible: 5
   eventReceiver: {fileID: 654815273}
-  _markerTag: marker0
+  _markerTag: root
 --- !u!1 &257426188
 GameObject:
   m_ObjectHideFlags: 0
@@ -1418,7 +1418,7 @@ MonoBehaviour:
   videoConfigurationLinux1: 
   BackgroundLayer1: 9
   NearPlane: 1
-  FarPlane: 100
+  FarPlane: 1000
   ContentRotate90: 0
   ContentFlipH: 0
   ContentFlipV: 0
@@ -1449,7 +1449,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MarkerType: 2
-  Tag: marker0
+  Tag: root
   PatternFilenameIndex: 0
   PatternFilename: patt.hiro
   PatternContents: " 234 235 240 233 240 234 240 235 240 237 240 238 240 240 240 232\n
@@ -1630,7 +1630,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1965431130}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 73c899522f94a4893a4ac0aecc1e5c22, type: 3}
   m_Name: 
