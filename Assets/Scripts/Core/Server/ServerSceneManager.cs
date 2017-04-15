@@ -49,6 +49,8 @@ public class ServerSceneManager : MonoBehaviour
 	private string _meshServerAddress;
 	private int _meshServerPort;
 
+	public bool StartMuted;
+
 	private void Awake()
 	{
 		if (_instance != null && _instance != this)
@@ -112,6 +114,10 @@ public class ServerSceneManager : MonoBehaviour
 		_meshTransferManager.OnMeshDataReceivedEvent += OnMeshDataReceived;
 
 		OnServerRequestLoadNewMesh ();
+
+		if (StartMuted) {
+			AudioListener.volume = 0.0f;
+		}
 	}
 
 
