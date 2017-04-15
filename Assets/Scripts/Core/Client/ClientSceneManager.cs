@@ -30,6 +30,10 @@ public class ClientSceneManager : MonoBehaviour
 	private int _defaultSleepTimeout;
 	private Coroutine _countdownCoroutine;
 
+	public ProcessState CurrentState () {
+		return _innerProcess.CurrentState;
+	}
+
 	public static ClientSceneManager Instance { get { return _instance; } }
 
 
@@ -227,6 +231,7 @@ public class ClientSceneManager : MonoBehaviour
 		_innerProcess.MoveNext (Command.LeaveGame);
 
 		_networkLobbyManager.StopClient ();
+		_discoveryClient.StopBroadcast ();
 
 
 		ensureCorrectScene ();

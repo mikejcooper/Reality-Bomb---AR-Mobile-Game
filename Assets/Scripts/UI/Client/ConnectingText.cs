@@ -18,6 +18,14 @@ public class ConnectingText : MonoBehaviour {
 	public void StartBlinking() {
 		InvokeRepeating ("Blink", 0.0f, 1 / _blinkRate);
 	}
+
+	public void StopBlinking () {
+		CancelInvoke ();
+		if (_textComponent != null) {
+			_textComponent.text = "";
+		}
+		_numberOfDots = 0;
+	}
 	
 	public void Blink() {
 		string newText = "connecting";
