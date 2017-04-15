@@ -16,26 +16,16 @@ namespace Abilities {
 
 	public abstract class BaseAbility<T> : MonoBehaviour where T:BaseAbilityProperties {
 		
-		private int _calleeServerId;
-		private int _thisPlayerServerId;
 		private CarProperties _ownCarProperties;
-		private AbilityResources _abilityResources;
+		private Canvas _playerCanvas;
 		private GameObject _splashObject;
 
 		protected T _abilityProperties;
 
-		public void initialise(int calleeServerId, T properties, AbilityResources abilityResources) {
-			_calleeServerId = calleeServerId;
-			_abilityProperties = properties;
-			_abilityResources = abilityResources;
-			if (!UnityEngine.Networking.NetworkServer.active) {
-				_thisPlayerServerId = GetThisPlayerServerId();
-				var ownCarPropertiesArray = GameObject.FindObjectsOfType<CarProperties> ().Where (IsOwnCarProperties);
-				Debug.Assert (ownCarPropertiesArray.Count() > 0, "there should be a CarProperties this client owns");
-				Debug.Assert (ownCarPropertiesArray.Count() == 1, "there should only be one CarProperties this client owns");
-				_ownCarProperties = ownCarPropertiesArray.First ();
-			}
-
+		public void initialise(CarProperties carProp, T abilityProp, Canvas canvas) {
+            _ownCarProperties = carProp;
+            _abilityProperties = abilityProp;
+            _playerCanvas = canvas;
 		}
 
 		private int GetThisPlayerServerId () {
@@ -54,30 +44,21 @@ namespace Abilities {
 		}
 
 		public void StartAbility () {
-			_abilityResources.manager.OnPowerUpStart (this);
-			if (_thisPlayerServerId == _calleeServerId) {
-				DisplaySplash ();
-				OnApplyAbilitySelf (_ownCarProperties, _abilityResources.PlayerCanvas);
-			} else {
-				OnApplyAbilityOther (_ownCarProperties, _abilityResources.PlayerCanvas);
-			}
+			BasePowerUpManager.OnPowerUpStart (this); //Triggers an event that displays text on canvas
+            OnApplyAbility(_ownCarProperties, _playerCanvas); //Carries out the ability
 		}
 
 		public void StopAbility () {
-			_abilityResources.manager.OnPowerUpStop (this);
-			if (_thisPlayerServerId == _calleeServerId) {
-				OnRemoveAbilitySelf (_ownCarProperties, _abilityResources.PlayerCanvas);
-			} else {
-				OnRemoveAbilityOther (_ownCarProperties, _abilityResources.PlayerCanvas);
-			}
-			Destroy (this);
+			BasePowerUpManager.OnPowerUpStop (this);
+            OnRemoveAbility(_ownCarProperties, _playerCanvas);
+            Destroy (this);
 		}
 
 		private void DisplaySplash () {
 			if (_abilityProperties.CanvasSplash != null) {
 				
 				_splashObject = GameObject.Instantiate (_abilityProperties.CanvasSplash);
-				_splashObject.transform.parent = _abilityResources.PlayerCanvas.transform;
+				_splashObject.transform.parent = _playerCanvas.transform;
 				_splashObject.transform.localScale = Vector3.one;
 				_splashObject.transform.localPosition = Vector3.zero;
 				Animation anim = _splashObject.GetComponent<Animation> ();
@@ -118,26 +99,12 @@ namespace Abilities {
 			} while ( animation.isPlaying );
 		}
 
-		private bool IsOwnCarProperties(CarProperties properties) {
-			var identity = properties.GetComponentInParent<NetworkIdentity> ();
-			return identity == null || identity.clientAuthorityOwner == null || identity.hasAuthority;
-
-		}
-
 		// Called on client that triggered this ability.
 		// Apply things that should affect the car that triggered the event,
 		// like speed boost.
-		protected virtual void OnApplyAbilitySelf(CarProperties properties, Canvas canvas) {}
-
-		// Called on individual clients that didn't trigger this ability
-		// Apply things that should affect all clients that didn't trigger,
-		// the event, like an ink splatter.
-		protected virtual void OnApplyAbilityOther(CarProperties properties, Canvas canvas) {}
+		protected virtual void OnApplyAbility(CarProperties properties, Canvas canvas) {}
 
 		// Called on client that triggered this ability
-		protected virtual void OnRemoveAbilitySelf(CarProperties properties, Canvas canvas) {}
-
-		// Called on individual clients that didn't trigger this ability
-		protected virtual void OnRemoveAbilityOther(CarProperties properties, Canvas canvas) {}
+		protected virtual void OnRemoveAbility(CarProperties properties, Canvas canvas) {}
 	}
 }

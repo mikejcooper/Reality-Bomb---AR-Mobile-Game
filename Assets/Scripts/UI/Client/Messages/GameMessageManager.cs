@@ -10,10 +10,6 @@ public class GameMessageManager : NetworkBehaviour {
 	public PreparingGame PreparingCanvas;
 	public CanvasMessages CanvasMessage;
 
-
-
-
-
 	// Use this for initialization
 	void Start () {
 		if (isServer) {
@@ -31,14 +27,16 @@ public class GameMessageManager : NetworkBehaviour {
 				GameObject.Find ("SpectatingText").GetComponent<TextMeshProUGUI>().text = "Spectating...";
 			}
 		}
-		GamePowerUpManager.SpeedBoostActivatedEvent += SetSpeedTxt;
-		GamePowerUpManager.InkSplatterActivatedEvent += SetSplatTxt;
-	}
+		BasePowerUpManager.SpeedBoostActivatedEvent += SetSpeedTxt;
+		BasePowerUpManager.InkSplatterActivatedEvent += SetSplatTxt;
+        BasePowerUpManager.ShieldActivatedEvent += SetShieldTxt;
+    }
 
 	void OnDestroy(){
-		GamePowerUpManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
-		GamePowerUpManager.InkSplatterActivatedEvent -= SetSplatTxt;
-	}
+		BasePowerUpManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
+		BasePowerUpManager.InkSplatterActivatedEvent -= SetSplatTxt;
+        BasePowerUpManager.ShieldActivatedEvent -= SetShieldTxt;
+    }
 
 	public void SetSplatTxt(){
 		CanvasMessage.DisplayPowerUpMessage ("Ink Splatter");
@@ -48,7 +46,12 @@ public class GameMessageManager : NetworkBehaviour {
 		CanvasMessage.DisplayPowerUpMessage ("Speed Boost");
 	}
 
-	public void SetRespawnTxt(){
+    public void SetShieldTxt()
+    {
+        CanvasMessage.DisplayPowerUpMessage("Shield");
+    }
+
+    public void SetRespawnTxt(){
 	}
 		
 }

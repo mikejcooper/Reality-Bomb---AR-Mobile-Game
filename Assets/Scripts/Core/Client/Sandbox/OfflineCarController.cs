@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Abilities;
+using Powerups;
+using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
@@ -66,13 +68,32 @@ public class OfflineCarController : MonoBehaviour
 
 	void OnCollisionEnter(Collision col) {
 		// If two players collide, calculate the angle of collision, reverse the direction and add a force in that direction
-		if (col.gameObject.tag != "PowerUp") {
+		if (!col.gameObject.tag.Contains("PowerUp")) {
 			var bounceForce = 350;
 			Vector3 direction = col.contacts[0].point - transform.position;
 			direction = -direction.normalized;
 			direction.y = 0;
 			GetComponent<Rigidbody>().AddForce(direction * bounceForce);
 		}
-	}
+        else if (col.gameObject.tag == "InkPowerUp")
+        {
+            Debug.Log("******** INKED! ********");
+            //Add Ink ability component to object
+            SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager>();
+
+            InkAbility ability = (InkAbility)gameObject.AddComponent(typeof(InkAbility));
+            ability.initialise(CarProperties, spm.InkProperties, spm.PlayerCanvas);
+            Destroy(col.gameObject);
+        }
+        else if (col.gameObject.tag == "SpeedPowerUp")
+        {
+            Debug.Log("******** Speed Power Up! ********");
+            SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager>();
+
+            SpeedAbility ability = (SpeedAbility)gameObject.AddComponent(typeof(SpeedAbility));
+            ability.initialise(CarProperties, spm.SpeedProperties, spm.PlayerCanvas);
+            Destroy(col.gameObject);
+        }
+    }
 }
 

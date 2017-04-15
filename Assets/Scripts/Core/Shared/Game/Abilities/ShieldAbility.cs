@@ -15,17 +15,16 @@ namespace Abilities {
 
 		private Shield _component;
 
-		override protected void OnApplyAbilitySelf (CarProperties properties, Canvas canvas) {
+		override protected void OnApplyAbility (CarProperties properties, Canvas canvas) {
 
 			_component = properties.gameObject.AddComponent<Shield> ();
 			_component.ShieldPrefab = _abilityProperties.ShieldPrefab;
 
 		}
 
-		override protected void OnRemoveAbilitySelf (CarProperties properties, Canvas canvas) {
+		override protected void OnRemoveAbility (CarProperties properties, Canvas canvas) {
 			_component.Destroy ();
 			Destroy (_component);
 		}
 	}
-
 }

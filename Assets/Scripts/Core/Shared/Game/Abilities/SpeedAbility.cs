@@ -9,12 +9,12 @@ namespace Abilities {
 
 	public class SpeedAbility : BaseAbility<SpeedAbilityProperties> {
 
-		override protected void OnApplyAbilitySelf (CarProperties properties, Canvas canvas) {
+		override protected void OnApplyAbility (CarProperties properties, Canvas canvas) {
 			properties.MaxSpeed *= 2.0f;
 			properties.Acceleration *= 2.0f;
 		}
 
-		override protected void OnRemoveAbilitySelf (CarProperties properties, Canvas canvas) {
+		override protected void OnRemoveAbility (CarProperties properties, Canvas canvas) {
 			properties.MaxSpeed /= 2.0f;
 			properties.Acceleration /= 2.0f;
 		}

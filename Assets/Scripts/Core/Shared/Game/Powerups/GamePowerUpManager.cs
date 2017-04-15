@@ -8,16 +8,6 @@ namespace Powerups {
 
 	public class GamePowerUpManager: BasePowerUpManager {
 
-		public SpeedAbilityProperties SpeedProperties;
-		public SandboxInkAbilityProperties InkProperties;
-	
-
-		// Events
-		public delegate void OnSpeedBoostActivated ();
-		public delegate void OnInkSplatterActivated ();
-		public static event OnSpeedBoostActivated SpeedBoostActivatedEvent;		
-		public static event OnInkSplatterActivated InkSplatterActivatedEvent;
-
 		protected override void Start () {
 			base.Start ();
 			if (IsAllowedToSpawn ()) {
@@ -28,38 +18,13 @@ namespace Powerups {
 						GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += LoadMesh;
 					}
 				} else {
-					Debug.LogError ("Game Manager in GamePowerUpMaager is Null");
+					Debug.LogError ("Game Manager in GamePowerUpManager is Null");
 				}
 			}
 
             ClientScene.RegisterPrefab(SpeedProperties.PowerupPrefab);
             ClientScene.RegisterPrefab(InkProperties.PowerupPrefab);
         }
-
-		override protected PowerupDefinition[] GetAvailablePowerups () {
-			return new PowerupDefinition[] { 
-				new PowerupDefinition (typeof(SpeedAbility), SpeedProperties),
-				new PowerupDefinition (typeof(SandboxInkAbility), InkProperties)
-			};
-		}
-
-		public override void OnPowerUpStart<T> (BaseAbility<T> ability) {
-			if (ability.GetType ().IsAssignableFrom (typeof(SpeedAbility))) {
-				Debug.Log ("'GPUM': Speed boost activated");
-				SpeedBoostActivatedEvent ();
-			} else if (ability.GetType ().IsAssignableFrom (typeof(SandboxInkAbility))) {
-				InkSplatterActivatedEvent ();
-				Debug.Log ("'GPUM':Ink splatter activated");
-			}
-		}
-
-		public override void OnPowerUpStop<T> (BaseAbility<T> ability) {
-			if (ability.GetType ().IsAssignableFrom (typeof(SpeedAbility))) {
-				Debug.Log ("'GPUM':Speed boost deactivated");
-			} else if (ability.GetType ().IsAssignableFrom (typeof(SandboxInkAbility))) {
-				Debug.Log ("'GPUM':Ink splatter deactivated");
-			}
-		}
 
 		protected override bool IsAllowedToSpawn(){
 			return UnityEngine.Networking.NetworkServer.active;
@@ -73,9 +38,5 @@ namespace Powerups {
 		private void LoadMesh(GameObject worldMesh){
 			OnMeshReady (worldMesh);
 		}
-
-
-
 	}
-
 }
