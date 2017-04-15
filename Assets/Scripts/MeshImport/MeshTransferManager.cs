@@ -106,6 +106,7 @@ public class MeshTransferManager {
 		mesh.triangles = _triangles;
 
 		mesh.RecalculateBounds ();
+		mesh.RecalculateNormals();
 
 		// choose the material - we can get round to using a custom invisible
 		// shader at some point here, but for development purposes it's nice

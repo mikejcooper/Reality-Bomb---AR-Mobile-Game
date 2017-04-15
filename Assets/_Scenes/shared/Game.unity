@@ -104,6 +104,7 @@ GameObject:
   - component: {fileID: 30509390}
   - component: {fileID: 30509394}
   - component: {fileID: 30509393}
+  - component: {fileID: 30509395}
   m_Layer: 9
   m_Name: GameManager
   m_TagString: Untagged
@@ -130,8 +131,6 @@ MonoBehaviour:
   GameExplanationDialogPrefab: {fileID: 1009257554643248, guid: cf065a03ea06048a1a17034397d6ed8b,
     type: 2}
   GameStartingDialogObj: {fileID: 194278527}
-  ButtonPrefab: {fileID: 1810755449097852, guid: c70280e3da345460faaff0b6cd7457ed,
-    type: 2}
   Canvas: {fileID: 1343903775}
   _startingBombPlayerConnectionId: 0
   ExplosionSound: {fileID: 1326126675}
@@ -218,6 +217,26 @@ MonoBehaviour:
       type: 2}
     Duration: 8
     SplatterTexture: {fileID: 2800000, guid: 453cc8a4aa1ad41f39f54292f544af93, type: 3}
+--- !u!114 &30509395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 30509389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c5235de3bfec4e92b9a012377028e59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ButtonPrefab: {fileID: 1810755449097852, guid: c70280e3da345460faaff0b6cd7457ed,
+    type: 2}
+  GameStartingDialogObj: {fileID: 194278527}
+  Canvas: {fileID: 1343903775}
+  GameManagerObj: {fileID: 30509390}
+  ServerUIPrefab: {fileID: 1239915692607504, guid: 520a3be53e4e241098f8417ee18f54ba,
+    type: 2}
+  ARToolkitObj: {fileID: 1965431130}
+  MeshMaterial: {fileID: 2100000, guid: a42e8cf03370a48ee889c2d36da70b3d, type: 2}
 --- !u!1 &178973363
 GameObject:
   m_ObjectHideFlags: 0
@@ -10611,7 +10630,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1965431130}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe4ec33cee90c844ea1bcc2cd642033e, type: 3}
   m_Name: 

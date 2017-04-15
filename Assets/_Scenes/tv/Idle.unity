@@ -124,7 +124,7 @@ GameObject:
   m_Component:
   - component: {fileID: 24}
   m_Layer: 9
-  m_Name: Camera Roatate Point
+  m_Name: Camera Rotate Point
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
