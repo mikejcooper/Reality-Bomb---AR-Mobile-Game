@@ -16,16 +16,14 @@ public class PreparingGame : MonoBehaviour
 
 	private GameObject _entry;
 
-	private AudioSource _beep;
-	private AudioSource _boop;
+	public AudioSource _beep;
+	public AudioSource _boop;
 
 	void Start () {
 		_entry = GameObject.Instantiate (LeaderboardEntryPrefab);
 //		_entry.transform.Find ("Waiting").GetComponent<TextMeshProUGUI> ().text = "Waiting for players...";
 		_entry.transform.parent = transform;
 //		GameManager.StartGameCountDownEvent += StartGameCountDown ();
-		_beep = GameObject.Find("Beep").GetComponent<AudioSource>();
-		_boop = GameObject.Find ("Boop").GetComponent<AudioSource>();
 	}
 
 	IEnumerator StartCountDown(bool sound) {

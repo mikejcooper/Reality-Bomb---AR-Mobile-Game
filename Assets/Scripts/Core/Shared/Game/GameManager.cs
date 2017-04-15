@@ -48,6 +48,7 @@ public class GameManager : NetworkBehaviour {
 
 	public GameObject WorldMesh { get; private set; }
 
+	public AudioSource ExplosionSound;
 
 
 	void Start ()
@@ -91,6 +92,13 @@ public class GameManager : NetworkBehaviour {
 
 		if (!isServer) {
 			ClientSceneManager.Instance.OnGameLoaded ();
+
+			var muteButton = GameObject.Find ("MuteButton");
+			if (muteButton != null) {
+				muteButton.SetActive (false);
+			} else {
+				Debug.LogWarning ("Could not find mute button. Check this!");
+			}
 		}
 	}
 
@@ -182,6 +190,9 @@ public class GameManager : NetworkBehaviour {
 		_cars.KillPlayer (car);
 		CheckForGameOver ();
 		if(_cars.GetNumberOfBombsPresent() == 0) _cars.PassBombRandomPlayer();
+		if (ExplosionSound != null) {
+			ExplosionSound.PlayOneShot (ExplosionSound.clip);
+		}
 	}
 
 	[Server]
