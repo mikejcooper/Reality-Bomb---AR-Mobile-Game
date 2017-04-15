@@ -14,7 +14,7 @@ public class SandboxManager : MonoBehaviour
 	public GameObject PlaneObject;
 	public Canvas CanvasObj;
 	public ToastManager ToastManagerObject;
-	public SandBoxPowerUpManager PowerupManager;
+	public SandBoxPowerUpManager PowerUpManager;
 	public List<GameObject> TutorialDialogPrefabs;
 	public GameObject GameCountdownDialogPrefab;
 
@@ -30,12 +30,12 @@ public class SandboxManager : MonoBehaviour
 	void Start(){
 		if (TutorialDialogPrefabs.Count > 0) {
 			SetCurrentDialog (0);
-			PowerupManager.enabled = false;
+			PowerUpManager.enabled = false;
 		}
 			
-		PowerupManager.SpeedBoostActivatedEvent += SetSpeedTxt;
-		PowerupManager.InkSplatterActivatedEvent += SetSplatTxt;
-		PowerupManager.ShieldActivatedEvent += SetShieldTxt;
+		BasePowerUpManager.SpeedBoostActivatedEvent += SetSpeedTxt;
+		BasePowerUpManager.InkSplatterActivatedEvent += SetSplatTxt;
+		BasePowerUpManager.ShieldActivatedEvent += SetShieldTxt;
 
 		if(ClientSceneManager.Instance != null){
 			ClientSceneManager.Instance.OnCountDownTimeUpdateEvent += OnCountDownTimeUpdate;
@@ -45,9 +45,9 @@ public class SandboxManager : MonoBehaviour
 	}
 
 	void OnDestroy(){
-		PowerupManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
-		PowerupManager.InkSplatterActivatedEvent -= SetSplatTxt;
-		PowerupManager.ShieldActivatedEvent -= SetShieldTxt;
+        BasePowerUpManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
+        BasePowerUpManager.InkSplatterActivatedEvent -= SetSplatTxt;
+		BasePowerUpManager.ShieldActivatedEvent -= SetShieldTxt;
 
 		if (ClientSceneManager.Instance != null) {
 			ClientSceneManager.Instance.OnCountDownTimeUpdateEvent -= OnCountDownTimeUpdate;
@@ -87,7 +87,7 @@ public class SandboxManager : MonoBehaviour
 	}
 
 	private void OnModalTutorialEnd () {
-		PowerupManager.enabled = true;
+		PowerUpManager.enabled = true;
 	}
 
 	void Update(){

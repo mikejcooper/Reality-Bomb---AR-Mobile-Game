@@ -2,6 +2,8 @@
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using TMPro;
+using Abilities;
+using Powerups;
 
 public class CarController : NetworkBehaviour
 {
@@ -221,14 +223,38 @@ public class CarController : NetworkBehaviour
 	public void UpdateTransferTime(float inc){
 		_transferTime = Time.time + inc;
 	}
-		
 
-	void OnCollisionEnter(Collision col)
+    /*
+     * Handling the PowerUp RPCs in the CarController because it makes it simpler to 
+     * pass the relevant data to the right places (CarProperties).
+     */
+    [ClientRpc]
+    public void RpcPowerUp(string tag)
+    {
+        GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
+
+        if (tag == "InkPowerUp" && !isLocalPlayer) //Will only appear on opponents' screens
+        {
+            Debug.Log("******** INKED! ********");
+            //Add ink ability component to object
+            InkAbility ability = (InkAbility)gameObject.AddComponent(typeof(InkAbility));
+            ability.initialise(CarProperties, gpm.InkProperties, gpm.PlayerCanvas);
+        }
+        else if (tag == "SpeedPowerUp" && isLocalPlayer)
+        {
+            Debug.Log("******** Speed Power Up! ********");
+            //Add speed ability component to object
+            SpeedAbility ability = (SpeedAbility)gameObject.AddComponent(typeof(SpeedAbility));
+            ability.initialise(CarProperties, gpm.SpeedProperties, gpm.PlayerCanvas);
+        }
+    }
+
+    void OnCollisionEnter(Collision col)
 	{
 		if (isServer) {
 			GameObject.FindObjectOfType<GameManager> ().CollisionEvent (this, col);
 		} else {
-			if (col.gameObject.tag != "PowerUp") {
+			if (!col.gameObject.tag.Contains("PowerUp")) {
 /*
  * Uncomment the following line to add bouncing between the players in the main game
  * the current implementation is a bit laggy so has been left uncommented until this is fixed 
