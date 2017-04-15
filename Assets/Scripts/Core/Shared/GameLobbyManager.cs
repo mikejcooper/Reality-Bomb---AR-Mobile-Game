@@ -13,6 +13,7 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 	public delegate void OnLobbyClientDisconnected ();
 	public delegate void OnLobbyClientReadyToBegin ();
 	public delegate void OnLobbyClientGameLoaded ();
+	public delegate void OnLobbyClientNameSubmission (int connId, string name);
     public delegate void OnMeshClearToDownloadCallback(string address, int port);
 	public delegate void OnUpdatePlayerDataCallback (string data);
 	public delegate void OnPlayerIDCallback (int playerID);
@@ -25,6 +26,7 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 	public event OnLobbyClientDisconnected OnLobbyClientDisconnectedEvent;
 	public event OnLobbyClientReadyToBegin OnLobbyClientReadyToBeginEvent;
 	public event OnLobbyClientGameLoaded OnLobbyAllClientGamesLoadedEvent;
+	public event OnLobbyClientNameSubmission OnLobbyClientNameSubmissionEvent;
     public event OnMeshClearToDownloadCallback OnMeshClearToDownloadEvent;
 	public event OnUpdatePlayerDataCallback OnUpdatePlayerDataEvent;
 	public event OnPlayerIDCallback OnPlayerIDEvent;
@@ -32,6 +34,17 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 	public event OnCancelGameCountdownCallback OnCancelGameCountdownEvent;
 
     private int _totalNotLoaded = -10;
+
+	public override void OnLobbyStartServer() {
+		NetworkServer.RegisterHandler(NetworkConstants.MSG_PLAYER_DATA_SUBMIT, OnServerPlayerDataSubmission);
+	}
+
+	public void OnServerPlayerDataSubmission (NetworkMessage netMsg) {
+		string name = netMsg.ReadMessage<UnityEngine.Networking.NetworkSystem.StringMessage> ().value;
+		if (OnLobbyClientNameSubmissionEvent != null) {
+			OnLobbyClientNameSubmissionEvent (netMsg.conn.connectionId, name);
+		}
+	}
 
 	public override void OnLobbyServerGameLoaded(NetworkConnection conn) {
         if (_totalNotLoaded == -10)
@@ -143,6 +156,12 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 				NetworkServer.SendToAll (NetworkConstants.MSG_PLAYER_DATA_UPDATE, msg);
 			}
 		}
+	}
+
+	public void SendOwnPlayerName (string name) {
+		var msg = new UnityEngine.Networking.NetworkSystem.StringMessage (name);
+
+		client.Send (NetworkConstants.MSG_PLAYER_DATA_SUBMIT, msg);
 	}
 
 	public override void OnLobbyServerConnect (NetworkConnection conn) {

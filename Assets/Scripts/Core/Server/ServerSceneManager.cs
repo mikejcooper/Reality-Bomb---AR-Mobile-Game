@@ -35,6 +35,7 @@ public class ServerSceneManager : MonoBehaviour
 	public int ReadyPlayerCount { get { return _networkLobbyManager.ReadyPlayerCount (); }}
 
 	private GameLobbyManager _networkLobbyManager;
+	private ColourPool _colourPool;
 	private MeshDiscoveryServer _meshDiscoveryServer;
 	private MeshTransferManager _meshTransferManager;
 	private PlayerDataManager _playerDataManager;
@@ -86,6 +87,8 @@ public class ServerSceneManager : MonoBehaviour
 
 		// seemingly weird neccesary hack. todo: add this to our compat implementation
 		_networkLobbyManager.lobbySlots = new NetworkLobbyPlayer[_networkLobbyManager.maxPlayers];
+
+		_colourPool = new ColourPool ();
 
 		List<string> lobbyScenes = new List<string> ();
 		lobbyScenes.Add ("Idle");
@@ -173,7 +176,10 @@ public class ServerSceneManager : MonoBehaviour
         if (DEBUG) Debug.Log ("OnPlayerConnected");
 		ConnectedPlayerCount++;
 
-		_playerDataManager.AddPlayer (conn.connectionId, NameGenerator.GenerateName ());
+
+		int hue = _colourPool.getColour ();
+		Debug.Log (string.Format ("added player with hue: {0}", hue));
+		_playerDataManager.AddPlayer (conn.connectionId, hue);
 
 		if (ConnectedPlayerCount >= MIN_REQ_PLAYERS) {
 			_innerProcess.MoveNext (Command.EnoughPlayersJoined);
@@ -204,6 +210,8 @@ public class ServerSceneManager : MonoBehaviour
 	{
         if (DEBUG) Debug.Log ("OnPlayerDisconnected");
 		ConnectedPlayerCount--;
+
+		_colourPool.releaseColour (_playerDataManager.GetPlayerById (conn.connectionId).colour);
 
 		_playerDataManager.RemovePlayer (conn.connectionId);
 

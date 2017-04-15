@@ -20,6 +20,7 @@ public class PlayerDataManager {
 	public class PlayerData
 	{
 		public int ServerId;
+		public int colour;
 		public string Name;
 		public int FinishPosition;
 		public float RemainingTime;
@@ -34,6 +35,7 @@ public class PlayerDataManager {
 		_networkManager = networkManager;
 		_networkManager.OnUpdatePlayerDataEvent += OnListUpdate;
 		_networkManager.OnPlayerIDEvent += OnPlayerID;
+		_networkManager.OnLobbyClientNameSubmissionEvent += SetPlayerName;
 	}
 
 	private void OnPlayerID (int playerID) {
@@ -49,7 +51,7 @@ public class PlayerDataManager {
 		_networkManager.UpdatePlayerData (JsonUtility.ToJson (list));
 	}
 		
-	public void AddPlayer (int serverId, string name) {
+	public void AddPlayer (int serverId, int colour) {
 		// don't allow dupes
 		foreach (var player in list.players) {
 			if (player.ServerId == serverId)
@@ -59,7 +61,8 @@ public class PlayerDataManager {
 		PlayerData data = new PlayerData ();
 		data.FinishPosition = -1;
 		data.RemainingTime = -1;
-		data.Name = name;
+		data.Name = null;
+		data.colour = colour;
 		data.ServerId = serverId;
 
 		var playersList = new List<PlayerData> (list.players);
@@ -83,6 +86,12 @@ public class PlayerDataManager {
 				return;
 			}
 		}
+	}
+
+	private void SetPlayerName (int serverId, string name) {
+		Debug.Log (string.Format ("setting player id {0}'s name to {1}", serverId, name));
+		GetPlayerById (serverId).Name = name;
+		InvalidateList ();
 	}
 
 	public void UpdatePlayerGameData (int serverId, int finishPosition, float remainingTime) {		

@@ -27,7 +27,7 @@ public class ClientIdleGUI : MonoBehaviour {
 				displayErrorText(null);
 				ConnectingTextObject.StartBlinking();
 				FormObject.SetActive(false);
-				ClientSceneManager.Instance.OnUserRequestFindGame();
+				ClientSceneManager.Instance.OnUserRequestFindGame(NickNameText.text);
 			}
 		});
 

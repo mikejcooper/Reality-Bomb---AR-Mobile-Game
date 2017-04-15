@@ -30,12 +30,13 @@ public class ClientSceneManager : MonoBehaviour
 	private int _defaultSleepTimeout;
 	private Coroutine _countdownCoroutine;
 
-	public ProcessState CurrentState () {
-		return _innerProcess.CurrentState;
-	}
+	private string _clientNickName;
 
 	public static ClientSceneManager Instance { get { return _instance; } }
 
+	public ProcessState CurrentState () {
+		return _innerProcess.CurrentState;
+	}
 
 	private void Awake()
 	{
@@ -73,8 +74,6 @@ public class ClientSceneManager : MonoBehaviour
 
 		_networkLobbyManager.playScene = "Game";
 
-		InitialisePlayerCar (GamePlayerPrefab);
-
 		_networkLobbyManager.lobbyPlayerPrefab = LobbyPlayerPrefab;
 		_networkLobbyManager.gamePlayerPrefab = GamePlayerPrefab;
 
@@ -85,6 +84,7 @@ public class ClientSceneManager : MonoBehaviour
 		_networkLobbyManager.OnMeshClearToDownloadEvent += _meshTransferManager.FetchData;
 		_networkLobbyManager.OnStartGameCountdownEvent += OnStartGameCountdown;
 		_networkLobbyManager.OnCancelGameCountdownEvent += OnCancelGameCountdown;
+		_networkLobbyManager.OnPlayerIDEvent += OnPlayerID;
 
         //Listener for when the we have finished downloading the mesh
 		_meshTransferManager.OnMeshDataReceivedEvent += OnMeshDataReceived;
@@ -92,19 +92,6 @@ public class ClientSceneManager : MonoBehaviour
 		_discoveryClient.serverDiscoveryEvent += OnServerDiscovered;
 
 		SceneManager.sceneLoaded += OnSceneLoaded;
-	}
-
-	private void InitialisePlayerCar (GameObject GamePlayerPrefab)
-	{
-		int ran = Random.Range (0, 360);
-		Material[] materials = GamePlayerPrefab.transform.FindChild("Car_Model").GetComponent<MeshRenderer> ().sharedMaterials;
-
-		materials [0].color = Color.black; // Spoiler
-		materials [1].color = Color.HSVToRGB(ran/360f, 0.96f, 0.67f); // Side glow
-		materials [2].color = Color.HSVToRGB(ran/360f, 0.96f, 0.67f); // Blades
-		materials [3].color = Color.HSVToRGB (ran / 360f, 1f, 0.38f); // Body
-		materials [4].color = Color.gray; // Blades Inner
-		materials [5].color = Color.black; // Winscreen
 	}
 		
     private void OnMeshDataReceived()
@@ -126,8 +113,9 @@ public class ClientSceneManager : MonoBehaviour
 		}
 	}
 
-	public void OnUserRequestFindGame () {
+	public void OnUserRequestFindGame (string nickname) {
 		if (DEBUG) Debug.Log ("OnUserRequestFindGame");
+		_clientNickName = nickname;
 		_innerProcess.MoveNext (Command.JoinGame);
 		ensureCorrectScene ();
 
@@ -138,6 +126,14 @@ public class ClientSceneManager : MonoBehaviour
 			_discoveryClient.ListenForServers ();
 		}
 
+	}
+
+	private void OnPlayerID (int playerID) {
+		// We don't actually care what our ID is.
+		// This is just a good sign that the server 
+		// has setup our player data and we can submit
+		// our name.
+		_networkLobbyManager.SendOwnPlayerName(_clientNickName);
 	}
 
 	private void OnStartGameCountdown (int delay) {
