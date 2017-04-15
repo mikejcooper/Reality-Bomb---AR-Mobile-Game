@@ -215,12 +215,12 @@ public class GameManager : NetworkBehaviour {
                 car.UpdateTransferTime(1.0f);
             }
         }
-        else if (col.gameObject.tag.Contains("PowerUp"))
+		else if (Abilities.AbilityRouter.IsAbilityObject(col.gameObject))
         {
             //Handle powerups on the CarController clients
-            car.RpcPowerUp(col.gameObject.tag);
+			car.RpcPowerUp(Abilities.AbilityRouter.GetAbilityTag(col.gameObject));
             //Destroy the gameobject we collided with (because it's a powerup)
-            Destroy(col.gameObject);
+			NetworkServer.Destroy(col.gameObject);
         }
     }
 		

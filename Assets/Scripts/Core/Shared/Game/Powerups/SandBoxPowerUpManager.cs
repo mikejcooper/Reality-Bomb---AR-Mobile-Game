@@ -7,6 +7,17 @@ namespace Powerups {
 	
 	public class SandBoxPowerUpManager : BasePowerUpManager {
 
+		public SpeedAbilityProperties SpeedProperties;
+		public SandboxInkAbilityProperties SandboxInkProperties;
+		public ShieldAbilityProperties ShieldProperties;
+
+		public delegate void OnSpeedBoostActivated();
+		public delegate void OnInkSplatterActivated();
+		public delegate void OnShieldActivated();
+		public event OnSpeedBoostActivated SpeedBoostActivatedEvent = delegate {};
+		public event OnInkSplatterActivated InkSplatterActivatedEvent = delegate {};
+		public event OnShieldActivated ShieldActivatedEvent = delegate {};
+
 		public GameObject PlaneObject;
 
 		protected override void Start () {
@@ -14,6 +25,28 @@ namespace Powerups {
 			OnMeshReady (PlaneObject);	
 		}
 
+		protected override PowerupDefinition[] GetAvailablePowerups () {
+			return new PowerupDefinition[] {
+				new PowerupDefinition (typeof(SpeedAbility), SpeedAbility.TAG, SpeedProperties),
+				new PowerupDefinition (typeof(SandboxInkAbility), SandboxInkAbility.TAG, SandboxInkProperties),
+				new PowerupDefinition (typeof(ShieldAbility), ShieldAbility.TAG, ShieldProperties)
+			};
+		}
+
+		public override void OnAbilityStart (string abilityTag) {
+			switch (abilityTag) {
+			case SandboxInkAbility.TAG:
+				InkSplatterActivatedEvent ();
+				break;
+			case SpeedAbility.TAG:
+				SpeedBoostActivatedEvent ();
+				break;
+			case ShieldAbility.TAG:
+				ShieldActivatedEvent ();
+				break;
+			}
+		}
+			
 		protected override bool IsAllowedToSpawn(){
 			return true;
 		}

@@ -251,24 +251,10 @@ public class CarController : NetworkBehaviour
      * pass the relevant data to the right places (CarProperties).
      */
     [ClientRpc]
-    public void RpcPowerUp(string tag)
+	public void RpcPowerUp(string tag)
     {
         GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
-
-        if (tag == "InkPowerUp" && !isLocalPlayer) //Will only appear on opponents' screens
-        {
-            Debug.Log("******** INKED! ********");
-            //Add ink ability component to object
-            InkAbility ability = (InkAbility)gameObject.AddComponent(typeof(InkAbility));
-            ability.initialise(CarProperties, gpm.InkProperties, gpm.PlayerCanvas);
-        }
-        else if (tag == "SpeedPowerUp" && isLocalPlayer)
-        {
-            Debug.Log("******** Speed Power Up! ********");
-            //Add speed ability component to object
-            SpeedAbility ability = (SpeedAbility)gameObject.AddComponent(typeof(SpeedAbility));
-            ability.initialise(CarProperties, gpm.SpeedProperties, gpm.PlayerCanvas);
-        }
+		AbilityRouter.RouteTag (tag, CarProperties, gameObject, gpm, isLocalPlayer);
     }
 
     void OnCollisionEnter(Collision col)

@@ -471,7 +471,15 @@ MonoBehaviour:
       type: 2}
     Duration: 8
     SplatterTexture: {fileID: 2800000, guid: 453cc8a4aa1ad41f39f54292f544af93, type: 3}
-  PlaneObject: {fileID: 2137931947}
+  ShieldProperties:
+    PowerupPrefab: {fileID: 1504067970210294, guid: 21be0bc1659b94fda8e58e0f96a9e6de,
+      type: 2}
+    CanvasSplash: {fileID: 1328406001218798, guid: 605eaf91c133e4a738d8d94a9fbab530,
+      type: 2}
+    Duration: 8
+    ShieldPrefab: {fileID: 0}
+  PlaneObject: {fileID: 1827426437650360, guid: 45627fa0e48c040378b624877710522b,
+    type: 2}
 --- !u!1001 &793272625
 Prefab:
   m_ObjectHideFlags: 0

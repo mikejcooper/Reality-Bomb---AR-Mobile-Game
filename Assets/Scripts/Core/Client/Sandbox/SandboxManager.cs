@@ -33,9 +33,9 @@ public class SandboxManager : MonoBehaviour
 			PowerUpManager.enabled = false;
 		}
 			
-		BasePowerUpManager.SpeedBoostActivatedEvent += SetSpeedTxt;
-		BasePowerUpManager.InkSplatterActivatedEvent += SetSplatTxt;
-		BasePowerUpManager.ShieldActivatedEvent += SetShieldTxt;
+		PowerUpManager.SpeedBoostActivatedEvent += SetSpeedTxt;
+		PowerUpManager.InkSplatterActivatedEvent += SetSplatTxt;
+		PowerUpManager.ShieldActivatedEvent += SetShieldTxt;
 
 		if(ClientSceneManager.Instance != null){
 			ClientSceneManager.Instance.OnCountDownTimeUpdateEvent += OnCountDownTimeUpdate;
@@ -45,9 +45,9 @@ public class SandboxManager : MonoBehaviour
 	}
 
 	void OnDestroy(){
-        BasePowerUpManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
-        BasePowerUpManager.InkSplatterActivatedEvent -= SetSplatTxt;
-		BasePowerUpManager.ShieldActivatedEvent -= SetShieldTxt;
+		PowerUpManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
+		PowerUpManager.InkSplatterActivatedEvent -= SetSplatTxt;
+		PowerUpManager.ShieldActivatedEvent -= SetShieldTxt;
 
 		if (ClientSceneManager.Instance != null) {
 			ClientSceneManager.Instance.OnCountDownTimeUpdateEvent -= OnCountDownTimeUpdate;

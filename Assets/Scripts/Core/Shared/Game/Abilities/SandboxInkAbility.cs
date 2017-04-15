@@ -6,17 +6,17 @@ using UnityEngine.UI;
 namespace Abilities {
 		
 	[System.Serializable]
-	public class InkAbilityProperties : BaseAbilityProperties {
+	public class SandboxInkAbilityProperties : BaseAbilityProperties {
 		public Texture SplatterTexture;
 	}
     
-	public class InkAbility : BaseAbility<InkAbilityProperties> {
+	public class SandboxInkAbility : BaseAbility<SandboxInkAbilityProperties> {
 
-		public const string TAG = "inkability";
+		public const string TAG = "sandboxinkability";
 
 		protected GameObject _splatterObject;
         
-		override protected void OnApplyAbilityOther (CarProperties properties, Canvas canvas) {
+		override protected void OnApplyAbilitySelf (CarProperties properties, Canvas canvas) {
 			_splatterObject = new GameObject ("Splatter");
 
 			_splatterObject.transform.parent = canvas.transform;
@@ -31,7 +31,7 @@ namespace Abilities {
 			splatterImage.CrossFadeAlpha(0.0f,8.0f,false);
 		}
 
-		override protected void OnRemoveAbilityOther (CarProperties properties, Canvas canvas) {
+		override protected void OnRemoveAbilitySelf (CarProperties properties, Canvas canvas) {
 			Destroy (_splatterObject);
 		}
 
