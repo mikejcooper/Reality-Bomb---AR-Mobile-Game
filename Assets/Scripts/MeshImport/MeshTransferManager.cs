@@ -164,8 +164,8 @@ public class MeshTransferManager {
 		int[] triangles = new int[positions.Count * 4 * 3];
 		mesh.name = "ScriptedMesh";
 		for (int i = 0; i < positions.Count; i++) {
-			vertices [i]                   = new Vector3 (positions[i].x , -3.0f, positions[i].z);
-			vertices [i + positions.Count] = new Vector3 (positions[i].x , 3.0f , positions[i].z);
+			vertices [i]                   = new Vector3 (positions[i].x , -0.2f, positions[i].z);
+			vertices [i + positions.Count] = new Vector3 (positions[i].x , 2.0f , positions[i].z);
 
 			triangles [0 * 3 * positions.Count + 3 * i + 0] = i;
 			triangles [0 * 3 * positions.Count + 3 * i + 1] = (i + 1) % positions.Count;
