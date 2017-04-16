@@ -30,7 +30,7 @@ public class ServerSceneManager : MonoBehaviour
 	public MeshRetrievalState MeshRetrievalStatus = MeshRetrievalState.Idle;
 	public NetworkLobbyPlayer LobbyPlayerPrefab;
 	public GameObject GamePlayerPrefab;
-	public GameObject WorldMesh { get { return _meshTransferManager.ProduceGameObject (); }}
+	public GameMapObjects WorldMesh { get { return _meshTransferManager.ProduceGameObjects (); }}
 	public int ConnectedPlayerCount { get; private set; }
 	public int ReadyPlayerCount { get { return _networkLobbyManager.ReadyPlayerCount (); }}
 

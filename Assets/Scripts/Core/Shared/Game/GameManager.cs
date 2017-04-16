@@ -14,7 +14,7 @@ using UnityEngine.UI;
 
 public class GameManager : NetworkBehaviour {
 
-	public delegate void OnWorldMeshAvailable(GameObject worldMesh);
+	public delegate void OnWorldMeshAvailable(GameMapObjects worldMesh);
 	public event OnWorldMeshAvailable OnWorldMeshAvailableEvent = delegate {};
 
 	public delegate void StartGameCountDown();
@@ -46,7 +46,7 @@ public class GameManager : NetworkBehaviour {
 	public int _startingBombPlayerConnectionId;
 	private GameObject _clientExplanationDialog;
 
-	public GameObject WorldMesh { get; private set; }
+	public GameMapObjects WorldMesh { get; private set; }
 
 	public AudioSource ExplosionSound;
 
@@ -78,12 +78,14 @@ public class GameManager : NetworkBehaviour {
 		// use downloaded marker pattern
 		MeshTransferManager.ApplyMarkerData (MarkerComponent);
 
-		WorldMesh.transform.parent = MarkerScene.transform;
+		WorldMesh.ground.transform.parent = MarkerScene.transform;
+		WorldMesh.boundary.transform.parent = MarkerScene.transform;
 
 
 
-		if (OnWorldMeshAvailableEvent != null)
+		if (OnWorldMeshAvailableEvent != null) {
 			OnWorldMeshAvailableEvent (WorldMesh);
+		}
 
 
 		foreach (var existingCarController in GameObject.FindObjectsOfType<CarController>()) {

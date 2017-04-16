@@ -295,7 +295,7 @@ public class CarController : NetworkBehaviour
 	}
 
 
-	public void Reposition(GameObject worldMesh)
+	public void Reposition(GameMapObjects gameMapObjects)
 	{
 		Debug.Log ("repositioning");
 		if (hasAuthority) {
@@ -307,7 +307,7 @@ public class CarController : NetworkBehaviour
 			_rigidbody.velocity = Vector3.zero;
 			_rigidbody.angularVelocity = Vector3.zero;
 
-			Vector3 position = GameUtils.FindSpawnLocation (worldMesh);
+			Vector3 position = GameUtils.FindSpawnLocationInsideConvexHull (gameMapObjects);
 
 			if (position != Vector3.zero) {
 				Debug.Log ("unfreezing");
@@ -367,9 +367,9 @@ public class CarController : NetworkBehaviour
 		GameObject.Find ("SpectatingText").GetComponent<TextMeshProUGUI> ().text = "Spectating...";
 	}
 
-	private void SetFallDistance(GameObject _meshObj){
-		float meshHeight = _meshObj.transform.GetComponent<MeshRenderer> ().bounds.size.y;
-		float meshMinY = _meshObj.transform.GetComponent<MeshRenderer> ().bounds.min.y;
+	private void SetFallDistance(GameMapObjects gameMapObjects){
+		float meshHeight = gameMapObjects.ground.transform.GetComponent<MeshRenderer> ().bounds.size.y;
+		float meshMinY = gameMapObjects.ground.transform.GetComponent<MeshRenderer> ().bounds.min.y;
 		_fallDistanceBeforeRespawn = meshMinY - meshHeight*0.65f;
 	}
 }

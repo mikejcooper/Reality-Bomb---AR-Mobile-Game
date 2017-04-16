@@ -97,8 +97,18 @@ public class MeshTransferManager {
 		}
 	}
 
-	public GameObject ProduceGameObject () {
+	public GameMapObjects ProduceGameObjects () {
+		Mesh boundaryMesh = getBoundaryMesh (MarkerVertices);
+		Mesh groundMesh = getGroundMesh ();
 
+
+		GameObject ground = ProduceGameObjectFromMesh (groundMesh);
+		GameObject boundary = ProduceGameObjectFromMesh (boundaryMesh);
+
+		return new GameMapObjects(ground,boundary);
+	}
+
+	Mesh getGroundMesh(){
 		Mesh mesh = new Mesh ();
 		mesh.vertices = _vertices;
 		mesh.normals = _normals;
@@ -106,32 +116,34 @@ public class MeshTransferManager {
 		mesh.triangles = _triangles;
 
 		mesh.RecalculateBounds ();
+		return mesh;
+	}
+		
+	public GameObject ProduceGameObjectFromMesh(Mesh mesh){
+		
 
-		// choose the material - we can get round to using a custom invisible
-		// shader at some point here, but for development purposes it's nice
-		// to be able to see the mesh
 		Material material = Resources.Load ("Materials/MeshVisible", typeof(Material)) as Material;
 		PhysicMaterial physicMaterial = Resources.Load ("Materials/BouncyMaterial", typeof(PhysicMaterial)) as PhysicMaterial;
 
-		GameObject worldMeshObj = new GameObject ("World Mesh");
+		GameObject MeshObject = new GameObject ("World Mesh");
 
-		MeshFilter filter = worldMeshObj.GetComponent<MeshFilter> ();
+		MeshFilter filter = MeshObject.GetComponent<MeshFilter> ();
 		if (filter == null)
-			filter = worldMeshObj.AddComponent<MeshFilter> ();
+			filter = MeshObject.AddComponent<MeshFilter> ();
 
 		filter.mesh = mesh;
 
-		MeshRenderer renderer = worldMeshObj.GetComponent<MeshRenderer> ();
+		MeshRenderer renderer = MeshObject.GetComponent<MeshRenderer> ();
 		if (renderer == null)
-			renderer = worldMeshObj.AddComponent<MeshRenderer> ();
+			renderer = MeshObject.AddComponent<MeshRenderer> ();
 
 		if (Application.isMobilePlatform) {
 			renderer.enabled = false;
 		}
 
-		MeshCollider collider = worldMeshObj.GetComponent<MeshCollider> ();
+		MeshCollider collider = MeshObject.GetComponent<MeshCollider> ();
 		if (collider == null)
-			collider = worldMeshObj.AddComponent<MeshCollider> ();
+			collider = MeshObject.AddComponent<MeshCollider> ();
 
 		collider.sharedMesh = mesh;
 		collider.material = physicMaterial;
@@ -140,11 +152,45 @@ public class MeshTransferManager {
 		renderer.material = material;
 
 		// set the layer to ground
-		SetLayerRecursively (worldMeshObj, 8);
+		SetLayerRecursively (MeshObject, 8);
 
-		return worldMeshObj;
+		return MeshObject;
 	}
 
+	Mesh getBoundaryMesh(List<Vector3> positions){
+		Mesh mesh = new Mesh ();
+		Vector3[] vertices = new Vector3[positions.Count * 2];
+		int[] triangles = new int[positions.Count * 4 * 3];
+		mesh.name = "ScriptedMesh";
+		for (int i = 0; i < positions.Count; i++) {
+			vertices [i]                   = new Vector3 (positions[i].x , -3.0f, positions[i].z);
+			vertices [i + positions.Count] = new Vector3 (positions[i].x , 3.0f , positions[i].z);
+
+			triangles [0 * 3 * positions.Count + 3 * i + 0] = i;
+			triangles [0 * 3 * positions.Count + 3 * i + 1] = (i + 1) % positions.Count;
+			triangles [0 * 3 * positions.Count + 3 * i + 2] = (i + 1) % positions.Count + positions.Count;
+
+			triangles [1 * 3 * positions.Count + 3 * i + 0] = i;
+			triangles [1 * 3 * positions.Count + 3 * i + 1] = (i + 1) % positions.Count + positions.Count;
+			triangles [1 * 3 * positions.Count + 3 * i + 2] = positions.Count + i;
+
+			triangles [2 * 3 * positions.Count + 3 * i + 0] = (i + 1) % positions.Count + positions.Count;
+			triangles [2 * 3 * positions.Count + 3 * i + 1] = (i + 1) % positions.Count;
+			triangles [2 * 3 * positions.Count + 3 * i + 2] = i;
+
+			triangles [3 * 3 * positions.Count + 3 * i + 0] = positions.Count + i;
+			triangles [3 * 3 * positions.Count + 3 * i + 1] = (i + 1) % positions.Count + positions.Count;
+			triangles [3 * 3 * positions.Count + 3 * i + 2] = i;
+		}
+
+		mesh.vertices = vertices;
+		mesh.triangles = triangles;
+		mesh.RecalculateNormals ();
+		mesh.RecalculateBounds ();
+
+
+		return mesh;
+	}
 
 	private void SaveMarkerData (string data) {
 		Debug.Log ("received markers");
