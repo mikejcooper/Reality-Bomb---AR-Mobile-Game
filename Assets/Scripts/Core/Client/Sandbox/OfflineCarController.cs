@@ -14,6 +14,13 @@ public class OfflineCarController : MonoBehaviour
 	private Rigidbody _rigidbody;
 	private Quaternion _lookAngle = Quaternion.Euler(Vector3.forward);
 
+	void Start () {
+		CarProperties.OriginalHue = 0;
+
+		Material[] materials = transform.FindChild("Car_Model").GetComponent<MeshRenderer> ().materials;
+
+		GameUtils.SetCarMaterialColoursFromHue (materials, CarProperties.OriginalHue);
+	}
 
 	private void OnEnable ()
 	{
@@ -70,7 +77,7 @@ public class OfflineCarController : MonoBehaviour
 
 		if (AbilityRouter.IsAbilityObject (col.gameObject)) {
 			SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager>();
-			AbilityRouter.RouteTag (AbilityRouter.GetAbilityTag(col.gameObject), CarProperties, gameObject, spm, true);
+			AbilityRouter.RouteTag (AbilityRouter.GetAbilityTag(col.gameObject), CarProperties, gameObject, spm, true, true);
 			Destroy(col.gameObject);
 		} else {
 			// If two players collide, calculate the angle of collision, reverse the direction and add a force in that direction

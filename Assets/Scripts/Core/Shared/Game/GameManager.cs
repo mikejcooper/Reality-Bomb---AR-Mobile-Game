@@ -217,8 +217,9 @@ public class GameManager : NetworkBehaviour {
         }
 		else if (Abilities.AbilityRouter.IsAbilityObject(col.gameObject))
         {
+			
             //Handle powerups on the CarController clients
-			car.RpcPowerUp(Abilities.AbilityRouter.GetAbilityTag(col.gameObject));
+			_cars.TriggerPowerup (Abilities.AbilityRouter.GetAbilityTag (col.gameObject), car.ServerId);
             //Destroy the gameobject we collided with (because it's a powerup)
 			NetworkServer.Destroy(col.gameObject);
         }

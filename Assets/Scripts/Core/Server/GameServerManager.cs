@@ -17,6 +17,7 @@ public class GameServerManager : MonoBehaviour {
 	public Material MeshMaterial;
 
 	private Button _serverStartButton;
+	private GameObject _button;
 	private GameObject _serverUI;
 
 	void Start () {
@@ -26,15 +27,25 @@ public class GameServerManager : MonoBehaviour {
 			return;
 		}
 
+		Debug.Log ("GameServerManager Start");
+
 		SetupUI ();
 		if (ServerSceneManager.Instance != null) {
-			ServerSceneManager.Instance.OnAllPlayersLoadedEvent += (() => {
-				_serverStartButton.enabled = true;
-			});
+			ServerSceneManager.Instance.OnAllPlayersLoadedEvent += OnAllPlayersLoaded;
 		}
 
 		StartCoroutine (PollForWorldMesh()); 
-		PollForWorldMesh ();
+	}
+
+	void OnDestroy () {
+		ServerSceneManager.Instance.OnAllPlayersLoadedEvent -= OnAllPlayersLoaded;
+	}
+
+	void OnAllPlayersLoaded () {
+		Debug.Log ("GameServerManager OnAllPlayersLoaded");
+		if (_serverStartButton != null) {
+			_serverStartButton.enabled = true;	
+		}
 	}
 
 	IEnumerator PollForWorldMesh()
@@ -115,23 +126,27 @@ public class GameServerManager : MonoBehaviour {
 		_serverUI = GameObject.Instantiate (ServerUIPrefab);
 
 		// this is pretty hacky dev stuff
-		GameObject button = GameObject.Instantiate (ButtonPrefab);
+		_button = GameObject.Instantiate (ButtonPrefab);
 
-		button.transform.parent = Canvas.transform;
+		_button.transform.parent = Canvas.transform;
 
-		button.GetComponentInChildren<UnityEngine.UI.Text> ().text = "Start";
-		_serverStartButton = button.GetComponent<UnityEngine.UI.Button> ();
+		_button.GetComponentInChildren<UnityEngine.UI.Text> ().text = "Start";
+		_serverStartButton = _button.GetComponent<UnityEngine.UI.Button> ();
 		_serverStartButton.enabled = false;
-		_serverStartButton.onClick.AddListener (() => {
-			Debug.Log("click");
-			Destroy(button);
-			_serverStartButton = null;
-			GameManagerObj.StartCountdown();
-		});
-		button.GetComponent<RectTransform> ().anchoredPosition = Vector2.zero;
+		_serverStartButton.onClick.AddListener (ButtonClickListener);
+		_button.GetComponent<RectTransform> ().anchoredPosition = Vector2.zero;
 
 
 
+	}
+
+	void ButtonClickListener () {
+		if (_serverStartButton != null) {
+			_serverStartButton.onClick.RemoveListener (ButtonClickListener);
+		}
+		Debug.Log("click");
+		Destroy(_button);
+		GameManagerObj.StartCountdown();
 	}
 
 }

@@ -128,5 +128,11 @@ public class CarList
 		}
 	}
 
+	public void TriggerPowerup (String powerupTag, int triggeringCarId) {
+		foreach (CarController car in _cars) {
+			car.RpcPowerUp (powerupTag, triggeringCarId);
+		}
+	}
+
 }
 

@@ -24,17 +24,19 @@ namespace Abilities {
 		private CarProperties _ownCarProperties;
 		private Canvas _playerCanvas;
 		private GameObject _splashObject;
-		private bool _ownedByLocalPlayer;
+		private bool _didTriggerPowerup;
+		private bool _isLocalAuthority;
 		private AbilityCallbacks _callbacks;
 
 		protected T _abilityProperties;
 
-		public void initialise(CarProperties carProp, T abilityProp, Canvas canvas, bool ownedByLocalPlayer, AbilityCallbacks callbacks) {
+		public void initialise(CarProperties carProp, T abilityProp, Canvas canvas, bool didTriggerPowerup, bool isLocalAuthority, AbilityCallbacks callbacks) {
 			Debug.Log ("initialising ability");
             _ownCarProperties = carProp;
             _abilityProperties = abilityProp;
             _playerCanvas = canvas;
-			_ownedByLocalPlayer = ownedByLocalPlayer;
+			_didTriggerPowerup = didTriggerPowerup;
+			_isLocalAuthority = isLocalAuthority;
 			_callbacks = callbacks;
 		}
 
@@ -55,20 +57,22 @@ namespace Abilities {
 
 		public void StartAbility () {
 			_callbacks.OnAbilityStart (GetTag());
-			if (_ownedByLocalPlayer) {
-				DisplaySplash ();
-            	OnApplyAbilitySelf(_ownCarProperties, _playerCanvas);
-			} else {
-				OnApplyAbilityOther(_ownCarProperties, _playerCanvas);
+
+			OnApplyCarEffect (_ownCarProperties, _didTriggerPowerup);
+			if (_isLocalAuthority) {
+				OnApplyCanvasEffect (_playerCanvas, _didTriggerPowerup);
+				if (_didTriggerPowerup) {
+					DisplaySplash ();
+				}
 			}
+
 		}
 
 		public void StopAbility () {
 			_callbacks.OnAbilityStop (GetTag());
-			if (_ownedByLocalPlayer) {
-				OnRemoveAbilitySelf (_ownCarProperties, _playerCanvas);
-			} else {
-				OnRemoveAbilityOther (_ownCarProperties, _playerCanvas);
+			OnRemoveCarEffect (_ownCarProperties, _didTriggerPowerup);
+			if (_isLocalAuthority) {
+				OnRemoveCanvasEffect (_playerCanvas, _didTriggerPowerup);
 			}
             Destroy (this);
 		}
@@ -120,20 +124,13 @@ namespace Abilities {
 
 		public abstract string GetTag ();
 
-		// Called on client that triggered this ability.
-		// Apply things that should affect the car that triggered the event,
-		// like speed boost.
-		protected virtual void OnApplyAbilitySelf(CarProperties properties, Canvas canvas) {}
+		// these are called individually for every car in the scene
+		protected virtual void OnApplyCarEffect (CarProperties properties, bool triggeredPowerup) {}
+		protected virtual void OnRemoveCarEffect (CarProperties properties, bool triggeredPowerup) {}
 
-		// Called on individual clients that didn't trigger this ability
-		// Apply things that should affect all clients that didn't trigger,
-		// the event, like an ink splatter.
-		protected virtual void OnApplyAbilityOther(CarProperties properties, Canvas canvas) {}
+		protected virtual void OnApplyCanvasEffect (Canvas canvas, bool triggeredPowerup) {}
+		protected virtual void OnRemoveCanvasEffect (Canvas canvas, bool triggeredPowerup) {}
 
-		// Called on client that triggered this ability
-		protected virtual void OnRemoveAbilitySelf(CarProperties properties, Canvas canvas) {}
 
-		// Called on individual clients that didn't trigger this ability
-		protected virtual void OnRemoveAbilityOther(CarProperties properties, Canvas canvas) {}
 	}
 }
