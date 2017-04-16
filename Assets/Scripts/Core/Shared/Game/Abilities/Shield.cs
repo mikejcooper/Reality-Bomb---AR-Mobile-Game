@@ -16,12 +16,6 @@ public class Shield  : MonoBehaviour {
 		_shieldObject.transform.SetParent(transform, false);
 		_shieldObject.transform.localPosition = Vector3.zero;
 
-
-		var rend = _shieldObject.GetComponent <MeshRenderer> ();
-		Color shieldColour = new Color (1.0f, 1.0f, 0.0f, 0.35f);
-		rend.material.color = shieldColour;
-		rend.material.shader = Shader.Find( "Transparent/VertexLit" );
-
 	}
 
 	void OnTriggerEnter(Collider other) {
