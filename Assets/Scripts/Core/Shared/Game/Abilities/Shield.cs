@@ -20,12 +20,12 @@ public class Shield  : MonoBehaviour {
 		var rend = _shieldObject.GetComponent <MeshRenderer> ();
 		Color shieldColour = new Color (1.0f, 1.0f, 0.0f, 0.35f);
 		rend.material.color = shieldColour;
-		rend.material.shader = Shader.Find( "Transparent/Diffuse" );
+		rend.material.shader = Shader.Find( "Transparent/VertexLit" );
 
 	}
 
 	void OnTriggerEnter(Collider other) {
-		if (other.tag != "PowerUp") {
+		if (!Abilities.AbilityRouter.IsAbilityObject(other.gameObject)) {
 			var force = 600;
 			Vector3 explosionPos = transform.position;
 			Rigidbody rb = other.GetComponent<Rigidbody>();
