@@ -77,7 +77,8 @@ public class OfflineCarController : MonoBehaviour
 
 		if (AbilityRouter.IsAbilityObject (col.gameObject)) {
 			SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager>();
-			AbilityRouter.RouteTag (AbilityRouter.GetAbilityTag(col.gameObject), CarProperties, gameObject, spm, true, true);
+//			AbilityRouter.RouteTag (AbilityRouter.GetAbilityTag(col.gameObject), CarProperties, gameObject, spm, true, true);
+			AbilityRouter.RouteTag (spm.GetPowerupType(col.gameObject, false), CarProperties, gameObject, spm, true, true);
 			Destroy(col.gameObject);
 		} else {
 			// If two players collide, calculate the angle of collision, reverse the direction and add a force in that direction

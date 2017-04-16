@@ -471,6 +471,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerCanvas: {fileID: 1343903778}
+  PowerupPrefab: {fileID: 1844041903375178, guid: 1810a89b163c144cb9c0d6d43f10b0c6,
+    type: 2}
   SpeedProperties:
     PowerupPrefab: {fileID: 1844041903375178, guid: 1810a89b163c144cb9c0d6d43f10b0c6,
       type: 2}
@@ -1408,7 +1410,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1965431130}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe4ec33cee90c844ea1bcc2cd642033e, type: 3}
   m_Name: 

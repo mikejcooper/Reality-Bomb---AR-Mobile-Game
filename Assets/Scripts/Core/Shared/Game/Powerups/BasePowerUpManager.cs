@@ -23,6 +23,7 @@ namespace Powerups {
 	public abstract class BasePowerUpManager : NetworkBehaviour, AbilityCallbacks {
 
 		public Canvas PlayerCanvas;
+		public GameObject PowerupPrefab;
 
         private GameObject _meshObj;
 		private float _yOffSet;
@@ -104,10 +105,11 @@ namespace Powerups {
 		// Generate a powerup once the decision to spawn one has been made
 		private void GenPowerUp () {
             var abilityTypeIndex = Random.Range(0,_availableAbilities.Length);
-            GameObject powerUpObj = GameObject.Instantiate (_availableAbilities [abilityTypeIndex].Properties.PowerupPrefab) as GameObject;
+//            GameObject powerUpObj = GameObject.Instantiate (_availableAbilities [abilityTypeIndex].Properties.PowerupPrefab) as GameObject;
+			GameObject powerUpObj = GameObject.Instantiate(PowerupPrefab);
 			powerUpObj.transform.parent = GameObject.Find("Marker scene").transform;
 			powerUpObj.GetComponent<SphereCollider> ();
-			powerUpObj.name = _availableAbilities [abilityTypeIndex].Tag;
+			powerUpObj.name = "powerup";//_availableAbilities [abilityTypeIndex].Tag;
 
             Vector3 position = GameUtils.FindSpawnLocation (_meshObj);
 			position.y += (_yOffSet + 10.0f);
@@ -115,6 +117,20 @@ namespace Powerups {
 			powerUpObj.transform.localScale = Vector3.one;
 
 			OnPowerUpGenerated (powerUpObj);
+		}
+
+		public string GetPowerupType (GameObject powerupObj, bool hasBomb) {
+			while (true) {
+				var abilityTypeIndex = Random.Range (0, _availableAbilities.Length);
+				string tag = _availableAbilities [abilityTypeIndex].Tag;
+				if (hasBomb && tag.Equals (ShieldAbility.TAG)) {
+					// if the player has the bomb, we don't want them to get a shield
+					// todo: make this a generic property of abilities, as to whether
+					// or not the car can have a bomb
+					continue;
+				}
+				return tag;
+			}
 		}
 
 		public virtual void OnAbilityStart (string abilityTag) {}

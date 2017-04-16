@@ -219,7 +219,9 @@ public class GameManager : NetworkBehaviour {
         {
 			
             //Handle powerups on the CarController clients
-			_cars.TriggerPowerup (Abilities.AbilityRouter.GetAbilityTag (col.gameObject), car.ServerId);
+//			_cars.TriggerPowerup (Abilities.AbilityRouter.GetAbilityTag (col.gameObject), car.ServerId);
+			GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
+			_cars.TriggerPowerup (gpm.GetPowerupType (col.gameObject, car.HasBomb), car.ServerId);
             //Destroy the gameobject we collided with (because it's a powerup)
 			NetworkServer.Destroy(col.gameObject);
         }
