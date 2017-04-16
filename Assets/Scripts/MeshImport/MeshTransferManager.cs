@@ -121,6 +121,7 @@ public class MeshTransferManager {
 		
 	public GameObject ProduceGameObjectFromMesh(Mesh mesh){
 		
+		mesh.RecalculateNormals();
 
 		Material material = Resources.Load ("Materials/MeshVisible", typeof(Material)) as Material;
 		PhysicMaterial physicMaterial = Resources.Load ("Materials/BouncyMaterial", typeof(PhysicMaterial)) as PhysicMaterial;

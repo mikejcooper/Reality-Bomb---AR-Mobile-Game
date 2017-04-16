@@ -13,18 +13,24 @@ namespace Abilities {
 
 	public class ShieldAbility : BaseAbility<ShieldAbilityProperties> {
 
+		public const string TAG = "shield";
+
 		private Shield _component;
 
-		override protected void OnApplyAbility (CarProperties properties, Canvas canvas) {
-
-			_component = properties.gameObject.AddComponent<Shield> ();
-			_component.ShieldPrefab = _abilityProperties.ShieldPrefab;
-
+		protected override void OnApplyCarEffect (CarProperties properties, bool triggeredPowerup) {
+			if (triggeredPowerup) {
+				_component = properties.gameObject.AddComponent<Shield> ();
+				_component.ShieldPrefab = _abilityProperties.ShieldPrefab;
+			}
 		}
 
-		override protected void OnRemoveAbility (CarProperties properties, Canvas canvas) {
+		protected override void OnRemoveCarEffect (CarProperties properties, bool triggeredPowerup) {
 			_component.Destroy ();
-			Destroy (_component);
+			Destroy (_component);	
+		}
+
+		public override string GetTag () {
+			return TAG;
 		}
 	}
 }

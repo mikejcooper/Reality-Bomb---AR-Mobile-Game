@@ -61,11 +61,8 @@ public class Joystick : MonoBehaviour, IDragHandler, IPointerDownHandler, IPoint
 		}
 	}
 
-	public virtual void OnDrag(PointerEventData ped)
-	{
+	private void OnPointerEvent(PointerEventData ped) {
 		var offset = new Vector2 (transform.position.x, transform.position.y) - ped.position;
-
-
 
 		var radius = GetComponent<RectTransform> ().sizeDelta.x / 2.0f;
 
@@ -76,8 +73,13 @@ public class Joystick : MonoBehaviour, IDragHandler, IPointerDownHandler, IPoint
 		SetPosition (NormalisedVector * length);
 	}
 
+	public virtual void OnDrag(PointerEventData ped) {
+		OnPointerEvent (ped);
+	}
+
 	public void OnPointerDown (PointerEventData eventData) {
 		Active = true;
+		OnPointerEvent (eventData);
 	}
 
 	public void OnPointerUp (PointerEventData eventData) {

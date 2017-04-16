@@ -5,18 +5,44 @@ using UnityEngine;
 namespace Abilities {
 	
 	[System.Serializable]
-	public class SpeedAbilityProperties : BaseAbilityProperties {}
+	public class SpeedAbilityProperties : BaseAbilityProperties {
+		public GameObject SparklesPrefab;
+	}
 
 	public class SpeedAbility : BaseAbility<SpeedAbilityProperties> {
 
-		override protected void OnApplyAbility (CarProperties properties, Canvas canvas) {
-			properties.MaxSpeed *= 2.0f;
-			properties.Acceleration *= 2.0f;
+		public const string TAG = "speed";
+		private const int SPARKLES_LIFETIME_SECONDS = 5;
+
+		private GameObject _sparklesObj;
+
+		protected override void OnApplyCarEffect (CarProperties properties, bool triggeredPowerup) {
+			if (triggeredPowerup) {
+				_sparklesObj = GameObject.Instantiate (_abilityProperties.SparklesPrefab);
+				_sparklesObj.transform.SetParent (properties.transform, false);
+				properties.MaxSpeed *= 2.0f;
+				properties.Acceleration *= 2.0f;
+			}
 		}
 
-		override protected void OnRemoveAbility (CarProperties properties, Canvas canvas) {
-			properties.MaxSpeed /= 2.0f;
-			properties.Acceleration /= 2.0f;
+		protected override void OnRemoveCarEffect (CarProperties properties, bool triggeredPowerup) {
+			if (triggeredPowerup) {
+				var emitter = _sparklesObj.GetComponent<ParticleSystem> ().emission;
+				emitter.enabled = false;
+
+				// SpeedAbility will be destroyed as soon as this function exits,
+				// so attach a delayed destroyer component to destroy the sparkles
+				// after they've all gone.
+				var destroyer = _sparklesObj.AddComponent<ObjectDestroyer> ();
+				destroyer.DelayedDestroy (SPARKLES_LIFETIME_SECONDS);
+
+				properties.MaxSpeed /= 2.0f;
+				properties.Acceleration /= 2.0f;
+			}
+		}
+
+		public override string GetTag () {
+			return TAG;
 		}
 			
 	}

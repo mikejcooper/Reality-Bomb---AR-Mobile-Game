@@ -10,44 +10,40 @@ namespace Powerups {
 
 	public class PowerupDefinition {
 		public Type Ability;
+		public String Tag;
 		public BaseAbilityProperties Properties;
 
-		public PowerupDefinition (Type ability, BaseAbilityProperties properties) {
+		public PowerupDefinition (Type ability, string tag, BaseAbilityProperties properties) {
 			Ability = ability;
+			Tag = tag;
 			Properties = properties;
 		}
 	}
 
-	public abstract class BasePowerUpManager : NetworkBehaviour {
+	public abstract class BasePowerUpManager : NetworkBehaviour, AbilityCallbacks {
 
 		public Canvas PlayerCanvas;
-        public SpeedAbilityProperties SpeedProperties;
-        public InkAbilityProperties InkProperties;
+		public GameObject PowerupPrefab;
 
         private GameObject _meshObj;
 		private float _yOffSet;
 
 		PowerupDefinition[] _availableAbilities;
-
-        // Events
-        public delegate void OnSpeedBoostActivated();
-        public delegate void OnInkSplatterActivated();
-        public delegate void OnShieldActivated();
-        public static event OnSpeedBoostActivated SpeedBoostActivatedEvent;
-        public static event OnInkSplatterActivated InkSplatterActivatedEvent;
-        public static event OnShieldActivated ShieldActivatedEvent;
-
+        
         protected virtual void Start () {
 			_availableAbilities = GetAvailablePowerups ();
 		}
 
-        protected PowerupDefinition[] GetAvailablePowerups()
-        {
-            return new PowerupDefinition[] {
-                new PowerupDefinition (typeof(SpeedAbility), SpeedProperties),
-                new PowerupDefinition (typeof(InkAbility), InkProperties)
-            };
-        }
+		protected abstract PowerupDefinition[] GetAvailablePowerups ();
+
+		public BaseAbilityProperties GetAbilityProperties(Type abilityType) {
+			foreach (PowerupDefinition def in GetAvailablePowerups()) {
+				if (def.Ability == abilityType) {
+					return def.Properties;
+				}
+			}
+			throw new KeyNotFoundException (string.Format("This powerup manager has no definition for an ability of type {0}", abilityType));
+		}
 
         private void ValidateAbilities () {
 			foreach (PowerupDefinition def in _availableAbilities) {
@@ -62,6 +58,7 @@ namespace Powerups {
 				if (def.Properties.Duration <= 0) {
 					Debug.LogError ("Duration is invalid for some powerups");
 				}
+					
 			}
 			Debug.Log(string.Format("{0} powerups ready to spawn", _availableAbilities.Length));
 		}
@@ -73,7 +70,8 @@ namespace Powerups {
 			while(true) 
 			{ 
 				// Adjust Range Size to adjust spawn frequency
-				int rand = Random.Range(0,3);
+//				int rand = Random.Range(0,3);
+				int rand = Random.Range(0,1);
 
 				// If generater produces the predetermined number from the range above, spawn a power up
 				if (rand == 0) { 
@@ -107,9 +105,11 @@ namespace Powerups {
 		// Generate a powerup once the decision to spawn one has been made
 		private void GenPowerUp () {
             var abilityTypeIndex = Random.Range(0,_availableAbilities.Length);
-            GameObject powerUpObj = GameObject.Instantiate (_availableAbilities [abilityTypeIndex].Properties.PowerupPrefab) as GameObject;
+//            GameObject powerUpObj = GameObject.Instantiate (_availableAbilities [abilityTypeIndex].Properties.PowerupPrefab) as GameObject;
+			GameObject powerUpObj = GameObject.Instantiate(PowerupPrefab);
 			powerUpObj.transform.parent = GameObject.Find("Marker scene").transform;
 			powerUpObj.GetComponent<SphereCollider> ();
+			powerUpObj.name = "powerup";//_availableAbilities [abilityTypeIndex].Tag;
 
             Vector3 position = GameUtils.FindSpawnLocation (_meshObj);
 			position.y += (_yOffSet + 10.0f);
@@ -119,42 +119,22 @@ namespace Powerups {
 			OnPowerUpGenerated (powerUpObj);
 		}
 
-        public static void OnPowerUpStart<T>(BaseAbility<T> ability) where T : BaseAbilityProperties
-        {
-            if (ability.GetType().IsAssignableFrom(typeof(SpeedAbility)))
-            {
-                Debug.Log("'PUM': Speed boost activated");
-                SpeedBoostActivatedEvent();
-            }
-            else if (ability.GetType().IsAssignableFrom(typeof(InkAbility)))
-            {
-                InkSplatterActivatedEvent();
-                Debug.Log("'PUM':Ink splatter activated");
-            }
-            else if (ability.GetType().IsAssignableFrom(typeof(ShieldAbility)))
-            {
-                ShieldActivatedEvent();
-                Debug.Log("'PUM': Shield activated");
-            }
-        }
+		public string GetPowerupType (GameObject powerupObj, bool hasBomb) {
+			while (true) {
+				var abilityTypeIndex = Random.Range (0, _availableAbilities.Length);
+				string tag = _availableAbilities [abilityTypeIndex].Tag;
+				if (hasBomb && tag.Equals (ShieldAbility.TAG)) {
+					// if the player has the bomb, we don't want them to get a shield
+					// todo: make this a generic property of abilities, as to whether
+					// or not the car can have a bomb
+					continue;
+				}
+				return tag;
+			}
+		}
 
-        public static void OnPowerUpStop<T>(BaseAbility<T> ability) where T : BaseAbilityProperties
-        {
-            if (ability.GetType().IsAssignableFrom(typeof(SpeedAbility)))
-            {
-                Debug.Log("'PUM':Speed boost deactivated");
-            }
-            else if (ability.GetType().IsAssignableFrom(typeof(InkAbility)))
-            {
-                Debug.Log("'PUM':Ink splatter deactivated");
-            }
-            else if (ability.GetType().IsAssignableFrom(typeof(ShieldAbility)))
-            {
-                Debug.Log("'PUM': Shield deactivated");
-            }
-        }
-
-
+		public virtual void OnAbilityStart (string abilityTag) {}
+		public virtual void OnAbilityStop (string abilityTag) {}
 
         protected virtual bool IsAllowedToSpawn () { return false; }
 		protected virtual void OnPowerUpGenerated(GameObject powerUpObj) {}

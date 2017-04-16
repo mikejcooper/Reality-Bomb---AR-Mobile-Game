@@ -14,18 +14,30 @@ namespace Abilities {
 		public int Duration;
 	}
 
+	public interface AbilityCallbacks {
+		void OnAbilityStart(string abilityTag);
+		void OnAbilityStop(string abilityTag);
+	}
+
 	public abstract class BaseAbility<T> : MonoBehaviour where T:BaseAbilityProperties {
-		
+
 		private CarProperties _ownCarProperties;
 		private Canvas _playerCanvas;
 		private GameObject _splashObject;
+		private bool _didTriggerPowerup;
+		private bool _isLocalAuthority;
+		private AbilityCallbacks _callbacks;
 
 		protected T _abilityProperties;
 
-		public void initialise(CarProperties carProp, T abilityProp, Canvas canvas) {
+		public void initialise(CarProperties carProp, T abilityProp, Canvas canvas, bool didTriggerPowerup, bool isLocalAuthority, AbilityCallbacks callbacks) {
+			Debug.Log ("initialising ability");
             _ownCarProperties = carProp;
             _abilityProperties = abilityProp;
             _playerCanvas = canvas;
+			_didTriggerPowerup = didTriggerPowerup;
+			_isLocalAuthority = isLocalAuthority;
+			_callbacks = callbacks;
 		}
 
 		private int GetThisPlayerServerId () {
@@ -44,13 +56,24 @@ namespace Abilities {
 		}
 
 		public void StartAbility () {
-			BasePowerUpManager.OnPowerUpStart (this); //Triggers an event that displays text on canvas
-            OnApplyAbility(_ownCarProperties, _playerCanvas); //Carries out the ability
+			_callbacks.OnAbilityStart (GetTag());
+
+			OnApplyCarEffect (_ownCarProperties, _didTriggerPowerup);
+			if (_isLocalAuthority) {
+				OnApplyCanvasEffect (_playerCanvas, _didTriggerPowerup);
+				if (_didTriggerPowerup) {
+					DisplaySplash ();
+				}
+			}
+
 		}
 
 		public void StopAbility () {
-			BasePowerUpManager.OnPowerUpStop (this);
-            OnRemoveAbility(_ownCarProperties, _playerCanvas);
+			_callbacks.OnAbilityStop (GetTag());
+			OnRemoveCarEffect (_ownCarProperties, _didTriggerPowerup);
+			if (_isLocalAuthority) {
+				OnRemoveCanvasEffect (_playerCanvas, _didTriggerPowerup);
+			}
             Destroy (this);
 		}
 
@@ -99,12 +122,15 @@ namespace Abilities {
 			} while ( animation.isPlaying );
 		}
 
-		// Called on client that triggered this ability.
-		// Apply things that should affect the car that triggered the event,
-		// like speed boost.
-		protected virtual void OnApplyAbility(CarProperties properties, Canvas canvas) {}
+		public abstract string GetTag ();
 
-		// Called on client that triggered this ability
-		protected virtual void OnRemoveAbility(CarProperties properties, Canvas canvas) {}
+		// these are called individually for every car in the scene
+		protected virtual void OnApplyCarEffect (CarProperties properties, bool triggeredPowerup) {}
+		protected virtual void OnRemoveCarEffect (CarProperties properties, bool triggeredPowerup) {}
+
+		protected virtual void OnApplyCanvasEffect (Canvas canvas, bool triggeredPowerup) {}
+		protected virtual void OnRemoveCanvasEffect (Canvas canvas, bool triggeredPowerup) {}
+
+
 	}
 }

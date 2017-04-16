@@ -14,6 +14,13 @@ public class OfflineCarController : MonoBehaviour
 	private Rigidbody _rigidbody;
 	private Quaternion _lookAngle = Quaternion.Euler(Vector3.forward);
 
+	void Start () {
+		CarProperties.OriginalHue = 0;
+
+		Material[] materials = transform.FindChild("Car_Model").GetComponent<MeshRenderer> ().materials;
+
+		GameUtils.SetCarMaterialColoursFromHue (materials, CarProperties.OriginalHue);
+	}
 
 	private void OnEnable ()
 	{
@@ -67,33 +74,20 @@ public class OfflineCarController : MonoBehaviour
 	}
 
 	void OnCollisionEnter(Collision col) {
-		// If two players collide, calculate the angle of collision, reverse the direction and add a force in that direction
-		if (!col.gameObject.tag.Contains("PowerUp")) {
+
+		if (AbilityRouter.IsAbilityObject (col.gameObject)) {
+			SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager>();
+//			AbilityRouter.RouteTag (AbilityRouter.GetAbilityTag(col.gameObject), CarProperties, gameObject, spm, true, true);
+			AbilityRouter.RouteTag (spm.GetPowerupType(col.gameObject, false), CarProperties, gameObject, spm, true, true);
+			Destroy(col.gameObject);
+		} else {
+			// If two players collide, calculate the angle of collision, reverse the direction and add a force in that direction
 			var bounceForce = 350;
-			Vector3 direction = col.contacts[0].point - transform.position;
+			Vector3 direction = col.contacts [0].point - transform.position;
 			direction = -direction.normalized;
 			direction.y = 0;
-			GetComponent<Rigidbody>().AddForce(direction * bounceForce);
+			GetComponent<Rigidbody> ().AddForce (direction * bounceForce);
 		}
-        else if (col.gameObject.tag == "InkPowerUp")
-        {
-            Debug.Log("******** INKED! ********");
-            //Add Ink ability component to object
-            SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager>();
-
-            InkAbility ability = (InkAbility)gameObject.AddComponent(typeof(InkAbility));
-            ability.initialise(CarProperties, spm.InkProperties, spm.PlayerCanvas);
-            Destroy(col.gameObject);
-        }
-        else if (col.gameObject.tag == "SpeedPowerUp")
-        {
-            Debug.Log("******** Speed Power Up! ********");
-            SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager>();
-
-            SpeedAbility ability = (SpeedAbility)gameObject.AddComponent(typeof(SpeedAbility));
-            ability.initialise(CarProperties, spm.SpeedProperties, spm.PlayerCanvas);
-            Destroy(col.gameObject);
-        }
     }
 }
 

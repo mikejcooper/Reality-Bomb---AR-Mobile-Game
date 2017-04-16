@@ -8,6 +8,10 @@ namespace Powerups {
 
 	public class GamePowerUpManager: BasePowerUpManager {
 
+		public SpeedAbilityProperties SpeedProperties;
+		public InkAbilityProperties InkProperties;
+		public ShieldAbilityProperties ShieldProperties;
+
 		protected override void Start () {
 			base.Start ();
 			if (IsAllowedToSpawn ()) {
@@ -25,6 +29,15 @@ namespace Powerups {
             ClientScene.RegisterPrefab(SpeedProperties.PowerupPrefab);
             ClientScene.RegisterPrefab(InkProperties.PowerupPrefab);
         }
+
+		protected override PowerupDefinition[] GetAvailablePowerups () {
+            return new PowerupDefinition[] {
+				new PowerupDefinition (typeof(SpeedAbility), SpeedAbility.TAG, SpeedProperties),
+				new PowerupDefinition (typeof(InkAbility), InkAbility.TAG, InkProperties),
+				new PowerupDefinition (typeof(ShieldAbility), ShieldAbility.TAG, ShieldProperties)
+            };
+        }
+
 
 		protected override bool IsAllowedToSpawn(){
 			return UnityEngine.Networking.NetworkServer.active;

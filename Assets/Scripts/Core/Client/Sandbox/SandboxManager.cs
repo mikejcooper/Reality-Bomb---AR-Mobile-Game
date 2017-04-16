@@ -22,10 +22,10 @@ public class SandboxManager : MonoBehaviour
 	private GameObject _currentTutorialDialog;
 	private GameObject _countdownDialog;
 
-	private string _splatter_Txt = "You've Activated the Splatter Power Up! This splatters ink on your opponents' screens as shown below making it harder for them to see!";
-	private string _speed_Txt = "You've Activated the Speed Boost Power Up! Enjoy double the speed but be careful not to lose control!";
+	private string _splatter_Txt = "You've Activated the Ink Splatter power up! This splatters ink on your opponents' screens as shown below making it harder for them to see!";
+	private string _speed_Txt = "You've Activated the Speed Boost power up! Enjoy double the speed but be careful not to lose control!";
 	private string _respawn_Txt = "Oops!! You fell off the map! Don't Worry, You'll be respawned but you won't be able to move for 5s. Be careful or become an easy target!";
-	private string _shield_Txt = "Shield Txt";
+	private string _shield_Txt = "You've activated the Shield power up! While you have it, no one can touch you!";
 
 	void Start(){
 		if (TutorialDialogPrefabs.Count > 0) {
@@ -33,9 +33,9 @@ public class SandboxManager : MonoBehaviour
 			PowerUpManager.enabled = false;
 		}
 			
-		BasePowerUpManager.SpeedBoostActivatedEvent += SetSpeedTxt;
-		BasePowerUpManager.InkSplatterActivatedEvent += SetSplatTxt;
-		BasePowerUpManager.ShieldActivatedEvent += SetShieldTxt;
+		PowerUpManager.SpeedBoostActivatedEvent += SetSpeedTxt;
+		PowerUpManager.InkSplatterActivatedEvent += SetSplatTxt;
+		PowerUpManager.ShieldActivatedEvent += SetShieldTxt;
 
 		if(ClientSceneManager.Instance != null){
 			ClientSceneManager.Instance.OnCountDownTimeUpdateEvent += OnCountDownTimeUpdate;
@@ -45,9 +45,9 @@ public class SandboxManager : MonoBehaviour
 	}
 
 	void OnDestroy(){
-        BasePowerUpManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
-        BasePowerUpManager.InkSplatterActivatedEvent -= SetSplatTxt;
-		BasePowerUpManager.ShieldActivatedEvent -= SetShieldTxt;
+		PowerUpManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
+		PowerUpManager.InkSplatterActivatedEvent -= SetSplatTxt;
+		PowerUpManager.ShieldActivatedEvent -= SetShieldTxt;
 
 		if (ClientSceneManager.Instance != null) {
 			ClientSceneManager.Instance.OnCountDownTimeUpdateEvent -= OnCountDownTimeUpdate;

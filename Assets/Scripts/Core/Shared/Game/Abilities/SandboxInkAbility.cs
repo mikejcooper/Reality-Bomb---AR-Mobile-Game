@@ -6,18 +6,18 @@ using UnityEngine.UI;
 namespace Abilities {
 		
 	[System.Serializable]
-	public class InkAbilityProperties : BaseAbilityProperties {
+	public class SandboxInkAbilityProperties : BaseAbilityProperties {
 		public Texture SplatterTexture;
 	}
     
-	public class InkAbility : BaseAbility<InkAbilityProperties> {
+	public class SandboxInkAbility : BaseAbility<SandboxInkAbilityProperties> {
 
-		public const string TAG = "inkability";
+		public const string TAG = "sandboxinkability";
 
-		private GameObject _splatterObject;
+		protected GameObject _splatterObject;
         
 		override protected void OnApplyCanvasEffect (Canvas canvas, bool triggeredPowerup) {
-			if (!triggeredPowerup) {
+			if (triggeredPowerup) {
 				_splatterObject = new GameObject ("Splatter");
 
 				_splatterObject.transform.parent = canvas.transform;
@@ -28,45 +28,28 @@ namespace Abilities {
 				splatterImage.texture = _abilityProperties.SplatterTexture;
 
 				// The following lines fade out the splatter effect over time
-				splatterImage.GetComponent<CanvasRenderer> ().SetAlpha (1.0f);
-				splatterImage.CrossFadeAlpha (0.0f, 8.0f, false);
+				splatterImage.GetComponent<CanvasRenderer>().SetAlpha(1.0f);
+				splatterImage.CrossFadeAlpha(0.0f,8.0f,false);
 			}
 		}
 
 		override protected void OnRemoveCanvasEffect (Canvas canvas, bool triggeredPowerup) {
-			if (!triggeredPowerup) {
+			if (triggeredPowerup) {
 				Destroy (_splatterObject);
 			}
 		}
 
 		protected override void OnApplyCarEffect (CarProperties properties, bool triggeredPowerup) {
-			if (!triggeredPowerup) {
-				SetCarColor (properties);
+			if (triggeredPowerup) {
+				InkAbility.SetCarColor (properties);
 			}
 		}
 
 		protected override void OnRemoveCarEffect (CarProperties properties, bool triggeredPowerup) {
-			if (!triggeredPowerup) {
-				ResetCarColor (properties);
+			if (triggeredPowerup) {
+				InkAbility.ResetCarColor (properties);
 			}
 		}
-
-		// alters the value property of the car materials' HSV
-		public static void SetCarColor (CarProperties properties) {
-			Material[] materials = properties.transform.FindChild("Car_Model").GetComponent<MeshRenderer> ().materials;
-
-			materials [1].color = Color.HSVToRGB(0f, 0f, 0f); // Side glow
-			materials [2].color = Color.HSVToRGB(0f, 0f, 0f); // Blades
-			materials [3].color = Color.HSVToRGB(0f, 0f, 0f); // Body
-		}
-
-		public static void ResetCarColor (CarProperties properties) {
-			Material[] materials = properties.transform.FindChild("Car_Model").GetComponent<MeshRenderer> ().materials;
-
-			GameUtils.SetCarMaterialColoursFromHue (materials, properties.OriginalHue);
-		}
-
-
 
 		public override string GetTag () {
 			return TAG;

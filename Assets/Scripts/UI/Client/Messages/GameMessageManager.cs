@@ -27,15 +27,7 @@ public class GameMessageManager : NetworkBehaviour {
 				GameObject.Find ("SpectatingText").GetComponent<TextMeshProUGUI>().text = "Spectating...";
 			}
 		}
-		BasePowerUpManager.SpeedBoostActivatedEvent += SetSpeedTxt;
-		BasePowerUpManager.InkSplatterActivatedEvent += SetSplatTxt;
-        BasePowerUpManager.ShieldActivatedEvent += SetShieldTxt;
-    }
 
-	void OnDestroy(){
-		BasePowerUpManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
-		BasePowerUpManager.InkSplatterActivatedEvent -= SetSplatTxt;
-        BasePowerUpManager.ShieldActivatedEvent -= SetShieldTxt;
     }
 
 	public void SetSplatTxt(){

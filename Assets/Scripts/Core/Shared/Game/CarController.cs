@@ -108,21 +108,16 @@ public class CarController : NetworkBehaviour
 
 	private void ConfigCarFromPlayerData (PlayerDataManager.PlayerData playerData) {
 
+		CarProperties.OriginalHue = playerData.colour;
+
 		Transform nameText = transform.Find ("NameTag").Find ("NameText");
 		Text textComponent = nameText.gameObject.GetComponent<Text> ();
 
 		textComponent.text = playerData.Name;
 
-		int hue = playerData.colour;
-		Debug.Log (string.Format ("creatin car with hue: {0}", hue));
 		Material[] materials = transform.FindChild("Car_Model").GetComponent<MeshRenderer> ().materials;
 
-		materials [0].color = Color.black; // Spoiler
-		materials [1].color = Color.HSVToRGB(hue/360f, 0.96f, 0.67f); // Side glow
-		materials [2].color = Color.HSVToRGB(hue/360f, 0.96f, 0.67f); // Blades
-		materials [3].color = Color.HSVToRGB (hue / 360f, 1f, 0.38f); // Body
-		materials [4].color = Color.gray; // Blades Inner
-		materials [5].color = Color.black; // Winscreen
+		GameUtils.SetCarMaterialColoursFromHue (materials, CarProperties.OriginalHue);
 	}
 
 	void OnDestroy () {
@@ -251,24 +246,10 @@ public class CarController : NetworkBehaviour
      * pass the relevant data to the right places (CarProperties).
      */
     [ClientRpc]
-    public void RpcPowerUp(string tag)
+	public void RpcPowerUp(string tag, int triggeringServerId)
     {
         GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
-
-        if (tag == "InkPowerUp" && !isLocalPlayer) //Will only appear on opponents' screens
-        {
-            Debug.Log("******** INKED! ********");
-            //Add ink ability component to object
-            InkAbility ability = (InkAbility)gameObject.AddComponent(typeof(InkAbility));
-            ability.initialise(CarProperties, gpm.InkProperties, gpm.PlayerCanvas);
-        }
-        else if (tag == "SpeedPowerUp" && isLocalPlayer)
-        {
-            Debug.Log("******** Speed Power Up! ********");
-            //Add speed ability component to object
-            SpeedAbility ability = (SpeedAbility)gameObject.AddComponent(typeof(SpeedAbility));
-            ability.initialise(CarProperties, gpm.SpeedProperties, gpm.PlayerCanvas);
-        }
+		AbilityRouter.RouteTag (tag, CarProperties, gameObject, gpm, triggeringServerId == ServerId, isLocalPlayer);
     }
 
     void OnCollisionEnter(Collision col)

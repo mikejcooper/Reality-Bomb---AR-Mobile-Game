@@ -31,13 +31,10 @@ public class GameManager : NetworkBehaviour {
 	public GameObject GameExplanationDialogPrefab;
 	public GameObject GameStartingDialogObj;
 
-	// todo: get rid of this once we transition to keyboard shortcuts
-	public GameObject ButtonPrefab;
 	public GameObject Canvas;
 
 	private const int EXPLANATION_DIALOG_DELAY = 2;
 
-	private Button _serverStartButton;
 	private CarList _cars = new CarList();
 
 	private bool _allPlayersReady = false;
@@ -72,7 +69,6 @@ public class GameManager : NetworkBehaviour {
 			ServerSceneManager.Instance.OnAllPlayersLoadedEvent += AllPlayersReady;
 			ServerSceneManager.Instance.OnPlayerDisconnectEvent += OnPlayerDisconnected;
 
-			SetServerUI ();
 		}
 			
 		// use downloaded marker pattern
@@ -113,52 +109,6 @@ public class GameManager : NetworkBehaviour {
 		_clientExplanationDialog.gameObject.GetComponentInChildren<Button> ().onClick.AddListener (() => {
 			Destroy(_clientExplanationDialog);
 		});
-	}
-
-	[Server]
-	private void SetServerUI () {
-
-		var joystick = GameObject.FindObjectOfType<Joystick> ();
-		if (joystick != null) {
-			joystick.gameObject.SetActive (false);
-		} else {
-			Debug.LogWarning ("Could not find joystick. Check this!");
-		}
-
-		var healthbar = GameObject.Find ("HealthBar");
-		if (healthbar != null) {
-			healthbar.SetActive (false);
-		} else {
-			Debug.LogWarning ("Could not find health bar. Check this!");
-		}
-
-		var markerAlert = GameObject.Find ("MarkerAlert");
-		if (markerAlert != null) {
-			markerAlert.SetActive (false);
-		} else {
-			Debug.LogWarning ("Could not find marker alert. Check this!");
-		}
-
-		Destroy (GameStartingDialogObj);
-		GameStartingDialogObj = null;
-
-		// this is pretty hacky dev stuff
-		GameObject button = GameObject.Instantiate (ButtonPrefab);
-
-		button.transform.parent = Canvas.transform;
-
-		button.GetComponentInChildren<UnityEngine.UI.Text> ().text = "Start";
-		_serverStartButton = button.GetComponent<UnityEngine.UI.Button> ();
-		_serverStartButton.enabled = false;
-		_serverStartButton.onClick.AddListener (() => {
-			Debug.Log("click");
-			Destroy(button);
-			_serverStartButton = null;
-			StartCountdown();
-		});
-		button.GetComponent<RectTransform> ().anchoredPosition = Vector2.zero;
-
-
 	}
 
 	private void Update ()
@@ -209,11 +159,10 @@ public class GameManager : NetworkBehaviour {
 	private void AllPlayersReady(){
 		
 		_allPlayersReady = true;
-		_serverStartButton.enabled = true;
 	}
 
 	[Server]
-	private void StartCountdown () {
+	public void StartCountdown () {
 		//Need to make sure _cars is populated at this point
 		foreach(CarController car in FindObjectsOfType<CarController>())
 		{
@@ -268,12 +217,15 @@ public class GameManager : NetworkBehaviour {
                 car.UpdateTransferTime(1.0f);
             }
         }
-        else if (col.gameObject.tag.Contains("PowerUp"))
+		else if (Abilities.AbilityRouter.IsAbilityObject(col.gameObject))
         {
+			
             //Handle powerups on the CarController clients
-            car.RpcPowerUp(col.gameObject.tag);
+//			_cars.TriggerPowerup (Abilities.AbilityRouter.GetAbilityTag (col.gameObject), car.ServerId);
+			GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
+			_cars.TriggerPowerup (gpm.GetPowerupType (col.gameObject, car.HasBomb), car.ServerId);
             //Destroy the gameobject we collided with (because it's a powerup)
-            Destroy(col.gameObject);
+			NetworkServer.Destroy(col.gameObject);
         }
     }
 		
