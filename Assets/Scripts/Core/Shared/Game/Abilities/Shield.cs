@@ -20,18 +20,31 @@ public class Shield  : MonoBehaviour {
 		var rend = _shieldObject.GetComponent <MeshRenderer> ();
 		Color shieldColour = new Color (1.0f, 1.0f, 0.0f, 0.35f);
 		rend.material.color = shieldColour;
-		rend.material.shader = Shader.Find( "Transparent/Diffuse" );
+		rend.material.shader = Shader.Find( "Transparent/VertexLit" );
 
 	}
 
 	void OnTriggerEnter(Collider other) {
-		if (other.tag != "PowerUp") {
+		if (!Abilities.AbilityRouter.IsAbilityObject(other.gameObject)) {
 			var force = 600;
 			Vector3 explosionPos = transform.position;
-			Rigidbody rb = other.GetComponent<Rigidbody>();
-			if (rb != null)
-				rb.AddExplosionForce(force, explosionPos, 3.0f, 0.0f);
-			
+			Rigidbody rb1 = other.GetComponent<Rigidbody>();
+			if (rb1 != null) {
+				rb1.AddExplosionForce (force, explosionPos, 3.0f, 0.0f);
+
+			}
+		}
+	}
+
+	void OnTriggerStay(Collider other)
+	{
+		if (!Abilities.AbilityRouter.IsAbilityObject(other.gameObject)) {
+			var force = 600;
+			Vector3 explosionPos = transform.position;
+			Rigidbody rb2 = gameObject.GetComponent<Rigidbody>();
+			if (rb2 != null) {
+				rb2.AddExplosionForce (force, -explosionPos, 3.0f, 0.0f);
+			}
 		}
 	}
 
