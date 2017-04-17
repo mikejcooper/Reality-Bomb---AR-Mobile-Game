@@ -10872,7 +10872,7 @@ MonoBehaviour:
   MultiConfigNonStreamingFile: 
   NFTDataName: 
   currentUseContPoseEstimation: 0
-  currentFiltered: 1
+  currentFiltered: 0
   currentFilterSampleRate: 30
   currentFilterCutoffFreq: 19
   currentNFTScale: 1
