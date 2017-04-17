@@ -199,12 +199,12 @@ public class GameManager : NetworkBehaviour {
 	}
 
     [Server]
-    public void CollisionEvent(CarController car, Collision col)
+    public void CollisionEvent(CarController car, GameObject other)
     {
 
         //this is two cars colliding
-        CarController collisionCar = col.gameObject.GetComponent<CarController>();
-        if (col.gameObject.tag == "TankTag")
+        CarController collisionCar = other.GetComponent<CarController>();
+        if (other.tag == "TankTag")
         {
             if (collisionCar.IsTransferTimeExpired() && collisionCar.HasBomb)
             {
@@ -213,15 +213,15 @@ public class GameManager : NetworkBehaviour {
                 car.UpdateTransferTime(1.0f);
             }
         }
-		else if (Abilities.AbilityRouter.IsAbilityObject(col.gameObject))
+		else if (Abilities.AbilityRouter.IsAbilityObject(other))
         {
 			
             //Handle powerups on the CarController clients
 //			_cars.TriggerPowerup (Abilities.AbilityRouter.GetAbilityTag (col.gameObject), car.ServerId);
 
-			_cars.TriggerPowerup (PowerUpManager.GetPowerupType (col.gameObject, car.HasBomb), car.ServerId);
+			_cars.TriggerPowerup (PowerUpManager.GetPowerupType (other, car.HasBomb), car.ServerId);
             //Destroy the gameobject we collided with (because it's a powerup)
-			NetworkServer.Destroy(col.gameObject);
+			NetworkServer.Destroy(other);
         }
     }
 		

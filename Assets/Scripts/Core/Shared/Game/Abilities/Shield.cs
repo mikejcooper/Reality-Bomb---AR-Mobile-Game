@@ -18,6 +18,7 @@ public class Shield  : MonoBehaviour {
 
 	}
 
+    //This was causing collisions with the plane. I put the shield in a different layer to avoid this.
 	void OnTriggerEnter(Collider other) {
 		if (!Abilities.AbilityRouter.IsAbilityObject(other.gameObject)) {
 			var force = 600;
@@ -41,6 +42,7 @@ public class Shield  : MonoBehaviour {
 			}
 		}
 	}
+    
 
 	public void Destroy(){
 		Destroy(_shieldObject);
