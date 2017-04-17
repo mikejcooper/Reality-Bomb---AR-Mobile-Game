@@ -123,7 +123,6 @@ public class CarController : NetworkBehaviour
 	void OnDestroy () {
 		GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent -= Reposition;
 		GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent -= SetFallDistance;
-
 	}
 		
 	public void setBombAllDevices(bool b){

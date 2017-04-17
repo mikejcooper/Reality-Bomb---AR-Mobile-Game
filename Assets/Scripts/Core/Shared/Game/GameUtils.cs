@@ -38,16 +38,18 @@ public class GameUtils
 	}
 		
 	public static Vector3 FindSpawnLocationInsideConvexHull(GameMapObjects gameMapObjects){
-		Vector3[] convexHull = new Vector3[gameMapObjects.boundary.GetComponent<MeshFilter> ().mesh.vertices.Length / 2];
-		Array.Copy (gameMapObjects.boundary.GetComponent<MeshFilter> ().mesh.vertices, 0, convexHull, 0, gameMapObjects.boundary.GetComponent<MeshFilter> ().mesh.vertices.Length / 2);
-		convexHull = MinimizeConvexHull (convexHull);
+		float convexHullSpawnSizeRatio = 0.6f;
+
+		List<Vector3> convexhull = gameMapObjects.convexhullVertices;
+		convexhull = MinimizeConvexHull (convexhull,convexHullSpawnSizeRatio);
+	
 
 		Bounds bounds = gameMapObjects.boundary.transform.GetComponent<MeshRenderer> ().bounds;
 		Vector3 center = bounds.center;
 
 		for (int i = 0; i < 30; i++) {
-			float x = UnityEngine.Random.Range (center.x - (bounds.size.x / 2), center.x + (bounds.size.x / 2));
-			float z = UnityEngine.Random.Range (center.z - (bounds.size.z / 2), center.z + (bounds.size.z / 2));
+			float x = UnityEngine.Random.Range (center.x - (bounds.size.x / 2) * convexHullSpawnSizeRatio, center.x + (bounds.size.x / 2) * convexHullSpawnSizeRatio);
+			float z = UnityEngine.Random.Range (center.z - (bounds.size.z / 2) * convexHullSpawnSizeRatio, center.z + (bounds.size.z / 2) * convexHullSpawnSizeRatio);
 
 			Vector3 position = new Vector3 (x, center.y + bounds.size.y, z);
 			RaycastHit hit;
@@ -55,7 +57,7 @@ public class GameUtils
 			if (Physics.Raycast (position, Vector3.down, out hit, bounds.size.y * 2)) {
 				position.y = hit.point.y;
 
-				if (isLocationInConvex (convexHull, position) && isLocationAtAnotherCar(position)) {
+				if ( !isLocationAtAnotherCar(position) && isLocationInConvex (convexhull, position)) {
 					return position + new Vector3(0.0f,1.0f,0.0f);
 				}
 			}
@@ -66,7 +68,7 @@ public class GameUtils
 	public static bool isLocationAtAnotherCar(Vector3 location){
 		CarController[] cars = GameObject.FindObjectsOfType<CarController> ();
 		foreach (CarController car in cars) {
-			float size = Vector3.Magnitude(car.GetComponentInParent<MeshCollider> ().bounds.extents);
+			float size = Vector3.Magnitude(car.transform.FindChild("Car_Model").GetComponent<MeshRenderer> ().bounds.extents);
 			if (Vector3.Distance (car.transform.position, location) < size) {
 				return true;
 			}
@@ -74,11 +76,11 @@ public class GameUtils
 		return false;
 	}
 
-	public static Vector3[] MinimizeConvexHull(Vector3[] convexHull){
+	public static List<Vector3> MinimizeConvexHull(List<Vector3> convexHull,float percentage){
 		Vector3 average = findAverage (convexHull);
-		Vector3[] result = new Vector3[convexHull.Length];
-		for (int i = 0; i < convexHull.Length; i++) {
-			result [i] = MinimizeLine (average, convexHull [i], 0.4f);
+		List<Vector3> result = new List<Vector3>();
+		for (int i = 0; i < convexHull.Count; i++) {
+			result.Add(MinimizeLine (average, convexHull [i], percentage));
 		}
 		return result;
 	}
@@ -87,18 +89,19 @@ public class GameUtils
 		return (point - center) * percentage + center;
 	}
 
-	public static Vector3 findAverage(Vector3[] list){
+	public static Vector3 findAverage(List<Vector3> list){
 		Vector3 sum = Vector3.zero;
-		for(int i =0; i < list.Length; i++){
-			sum += list [i];
+		foreach (Vector3 pos in list) {
+			sum += pos;
 		}
-		return sum / list.Length;
+		return sum / list.Count;
 	}
 
-	public static bool isLocationInConvex(Vector3[] convexHull, Vector3 location){
-		for(int i = 0; i < convexHull.Length; i++){
-			int j = (i +1) % convexHull.Length;
-			if (isLeft (convexHull[i],convexHull[j],location)) {
+	public static bool isLocationInConvex(List<Vector3> convexHull, Vector3 location){
+		Vector3[] array = convexHull.ToArray ();
+		for(int i = 0; i < array.Length; i++){
+			int j = (i +1) % array.Length;
+			if (isLeft (array[i],array[j],location)) {
 				return false;
 			}
 		}

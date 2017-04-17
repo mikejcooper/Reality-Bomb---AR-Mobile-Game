@@ -23,15 +23,12 @@ public class MeshTransferManager {
 	private Vector3[] _normals;
 	private Vector2[] _uvs;
 	private int[] _triangles;
-	private static List<Vector3> _markerVertices;
+	private static List<Vector3> _convexHullVertices;
+	private static List<Vector3> _boundaryVertices;
 	private bool _isPatternDataSaved = false;
 	private static string PATTERN_FILE_NAME = "markers.dat";
 	private static string PATTERN_FILE_PATH = System.IO.Path.Combine (Application.persistentDataPath, PATTERN_FILE_NAME);
 
-	public static List<Vector3> MarkerVertices
-	{
-		get { return _markerVertices; }
-	}
 
 	private static void SetLayerRecursively (GameObject go, int layerNumber) {
 		foreach (Transform trans in go.GetComponentsInChildren<Transform>(true)) {
@@ -59,8 +56,14 @@ public class MeshTransferManager {
 					TryToCallback ();
 				} else if (e.Data.StartsWith ("markers")) {
 					SaveMarkerData (e.Data.Substring ("markers".Length));
-				} else if (e.Data.StartsWith ("vertices")) {
-					handleMarkerCoords(e.Data.Substring("vertices".Length));
+				} else if (e.Data.StartsWith ("chull_vertices")) {
+					_convexHullVertices = ParseVertices(e.Data.Substring("chull_vertices".Length));
+					_convexHullVertices = InvertVerticesX(_convexHullVertices);
+					TryToCallback ();
+				} else if (e.Data.StartsWith ("boundary_vertices")) {
+					_boundaryVertices = ParseVertices(e.Data.Substring("boundary_vertices".Length));
+					_boundaryVertices = InvertVerticesX(_boundaryVertices);
+					TryToCallback ();
 				} else {
 					Debug.Log ("unknown websocket event: " + e.Data);
 				}
@@ -87,7 +90,7 @@ public class MeshTransferManager {
 	}
 
 	private void TryToCallback () {
-		if (_isPatternDataSaved && _triangles.Length > 0 && _markerVertices.Count > 0) {
+		if (_isPatternDataSaved && _triangles.Length > 0 && _boundaryVertices.Count > 0 && _convexHullVertices.Count > 0) {
 			UnityThreadHelper.Dispatcher.Dispatch (() => {
 				if (OnMeshDataReceivedEvent != null)
 					OnMeshDataReceivedEvent ();
@@ -98,14 +101,14 @@ public class MeshTransferManager {
 	}
 
 	public GameMapObjects ProduceGameObjects () {
-		Mesh boundaryMesh = getBoundaryMesh (MarkerVertices);
+		Mesh boundaryMesh = getBoundaryMesh (_boundaryVertices);
 		Mesh groundMesh = getGroundMesh ();
 
 
 		GameObject ground = ProduceGameObjectFromMesh (groundMesh);
 		GameObject boundary = ProduceGameObjectFromMesh (boundaryMesh);
 
-		return new GameMapObjects(ground,boundary);
+		return new GameMapObjects(ground,boundary,_convexHullVertices);
 	}
 
 	Mesh getGroundMesh(){
@@ -231,9 +234,9 @@ public class MeshTransferManager {
 		markerComponent.enabled = true;
 	}
 
-	void handleMarkerCoords (string data) {
+	List<Vector3> ParseVertices (string data) {
 		string[] lines = data.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
-		_markerVertices = new List<Vector3> ();
+		List<Vector3> vertices = new List<Vector3> ();
 		foreach (string vertex in lines) {
 			
 			if (vertex.Trim ().Length == 0)
@@ -241,10 +244,18 @@ public class MeshTransferManager {
 			
 			string[] values = vertex.Split(',');
 			var vec = new Vector3 (Convert.ToSingle(values [0]), Convert.ToSingle(values [1]), Convert.ToSingle(values [2]));
-			_markerVertices.Add (vec);
+			vertices.Add (vec);
 		}
 
-		TryToCallback ();
+		return vertices;
+	}
+
+	private static List<Vector3> InvertVerticesX(List<Vector3> vertices){
+		List<Vector3> result = new List<Vector3> ();
+		foreach(Vector3 vertex in vertices){
+			result.Add (new Vector3 (-vertex.x, vertex.y, vertex.z));
+		}
+		return result;
 	}
 
 }

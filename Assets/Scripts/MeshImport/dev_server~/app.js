@@ -10,33 +10,40 @@ var UDP_PAYLOAD = "RealityBomb";
 var B_START = "\033[1m"
 var B_END = "\033[0m"
 
-var meshFile, verticesFile, transformsFile;
-var meshStr, verticesStr, transformsStr;
+var meshFile, chullVerticesFile, boundaryVerticesFile, transformsFile;
+var meshStr, chullVerticesStr, boundaryVerticesStr, transformsStr;
 
 if (process.argv.length != 2 && process.argv.length != 5) {
   console.log(
 `usage: node app.js [mesh vertices marker_transforms]
        ${B_START}mesh${B_END}: the mesh obj file
-       ${B_START}vertices${B_END}: the mesh obj file that represents marker positions
+       ${B_START}chull_vertices${B_END}: a newline seperated list of vertices defining the convex hull
+       ${B_START}boundary_vertices${B_END}: a newline seperated list of vertices defining the boundary (derived from convex hull)
        ${B_START}marker_transforms${B_END}: the multimarker config file`)
   return;
 } else if (process.argv.length == 2) {
-  meshFile = "example_data/debug_mesh.obj"
-  verticesFile = "example_data/debug_vertices.txt"
-  transformsFile = "example_data/debug_transforms.dat"
+  meshFile = "example_data/mesh.obj"
+  chullVerticesFile = "example_data/chull_vertices.txt"
+  boundaryVerticesFile = "example_data/boundary_vertices.txt"
+  transformsFile = "example_data/transforms.dat"
 } else if (process.argv.length == 5) {
   meshFile = process.argv[2];
-  verticesFile = process.argv[3];
-  transformsFile = process.argv[4];
+  chullVerticesFile = process.argv[3];
+  boundaryVerticesFile = process.argv[4];
+  transformsFile = process.argv[5];
 }
 
 fsp.readFile(meshFile)
   .then(function(data){
     meshStr = data
-    return fsp.readFile(verticesFile)
+    return fsp.readFile(chullVerticesFile)
   })
   .then(function(data){
-    verticesStr = data
+    chullVerticesStr = data
+    return fsp.readFile(boundaryVerticesFile)
+  })
+  .then(function(data){
+    boundaryVerticesStr = data
     return fsp.readFile(transformsFile)
   })
   .then(function(data){
@@ -64,7 +71,8 @@ var openServer = function () {
     console.log("new connection")
     conn.sendText(`mesh${meshStr}`)
     conn.sendText(`markers${transformsStr}`)
-    conn.sendText(`vertices${verticesStr}`)
+    conn.sendText(`chull_vertices${chullVerticesStr}`)
+    conn.sendText(`boundary_vertices${boundaryVerticesStr}`)
   }).listen(TRANSFER_PORT)
 
   console.log('server running')

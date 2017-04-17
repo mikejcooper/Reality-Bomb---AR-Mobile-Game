@@ -10,8 +10,8 @@ public class GameServerManager : MonoBehaviour {
 	// todo: get rid of this once we transition to keyboard shortcuts
 	public GameObject ButtonPrefab;
 	public GameObject GameStartingDialogObj;
+	public Powerups.GamePowerUpManager PowerupManager;
 	public GameObject Canvas;
-	public GameManager GameManagerObj;
 	public GameObject ServerUIPrefab;
 	public GameObject ARToolkitObj;
 	public Material MeshMaterial;
@@ -27,7 +27,7 @@ public class GameServerManager : MonoBehaviour {
 			return;
 		}
 
-		Debug.Log ("GameServerManager Start");
+		PowerupManager.enabled = false;
 
 		SetupUI ();
 		if (ServerSceneManager.Instance != null) {
@@ -38,11 +38,12 @@ public class GameServerManager : MonoBehaviour {
 	}
 
 	void OnDestroy () {
-		ServerSceneManager.Instance.OnAllPlayersLoadedEvent -= OnAllPlayersLoaded;
+		if (ServerSceneManager.Instance != null) {
+			ServerSceneManager.Instance.OnAllPlayersLoadedEvent -= OnAllPlayersLoaded;
+		}
 	}
 
 	void OnAllPlayersLoaded () {
-		Debug.Log ("GameServerManager OnAllPlayersLoaded");
 		if (_serverStartButton != null) {
 			_serverStartButton.enabled = true;	
 		}
@@ -50,7 +51,7 @@ public class GameServerManager : MonoBehaviour {
 
 	IEnumerator PollForWorldMesh()
 	{
-		while(GameManagerObj.WorldMesh == null) 
+		while(FindObjectOfType<GameManager>().WorldMesh == null) 
 		{ 
 			yield return new WaitForSeconds(0.1f);
 		}
@@ -61,8 +62,8 @@ public class GameServerManager : MonoBehaviour {
 	private void SetupMeshDependentUI () {
 		OrthoCameraMeshFitter camFitter = _serverUI.GetComponentInChildren<OrthoCameraMeshFitter> ();
 
-		if (GameManagerObj.WorldMesh != null) {
-			MeshRenderer renderer = GameManagerObj.WorldMesh.ground.GetComponent<MeshRenderer> ();
+		if (FindObjectOfType<GameManager>().WorldMesh != null) {
+			MeshRenderer renderer = FindObjectOfType<GameManager>().WorldMesh.ground.GetComponent<MeshRenderer> ();
 			Bounds bounds = renderer.bounds;
 			Material[] mats = renderer.materials;
 			mats[0] = MeshMaterial;
@@ -74,7 +75,6 @@ public class GameServerManager : MonoBehaviour {
 	}
 		
 	private void SetupUI () {
-		Debug.LogWarning ("setting up server UI");
 
 		var joystick = GameObject.FindObjectOfType<Joystick> ();
 		if (joystick != null) {
@@ -144,9 +144,10 @@ public class GameServerManager : MonoBehaviour {
 		if (_serverStartButton != null) {
 			_serverStartButton.onClick.RemoveListener (ButtonClickListener);
 		}
-		Debug.Log("click");
+
 		Destroy(_button);
-		GameManagerObj.StartCountdown();
+		PowerupManager.enabled = true;
+		FindObjectOfType<GameManager>().StartCountdown();
 	}
 
 }

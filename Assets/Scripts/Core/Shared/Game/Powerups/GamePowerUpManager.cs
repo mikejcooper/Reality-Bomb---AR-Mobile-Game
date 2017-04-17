@@ -25,9 +25,12 @@ namespace Powerups {
 					Debug.LogError ("Game Manager in GamePowerUpManager is Null");
 				}
 			}
+				
+			ClientScene.RegisterPrefab(PowerupPrefab);
 
-            ClientScene.RegisterPrefab(SpeedProperties.PowerupPrefab);
-            ClientScene.RegisterPrefab(InkProperties.PowerupPrefab);
+//			  ClientScene.RegisterPrefab(ShieldProperties.PowerupPrefab);
+//            ClientScene.RegisterPrefab(SpeedProperties.PowerupPrefab);
+//            ClientScene.RegisterPrefab(InkProperties.PowerupPrefab);
         }
 
 		protected override PowerupDefinition[] GetAvailablePowerups () {
