@@ -104,7 +104,7 @@ namespace Powerups {
 
 		// Generate a powerup once the decision to spawn one has been made
 		private void GenPowerUp () {
-            var abilityTypeIndex = Random.Range(0,_availableAbilities.Length);
+//            var abilityTypeIndex = Random.Range(0,_availableAbilities.Length);
 //            GameObject powerUpObj = GameObject.Instantiate (_availableAbilities [abilityTypeIndex].Properties.PowerupPrefab) as GameObject;
 			GameObject powerUpObj = GameObject.Instantiate(PowerupPrefab);
 			powerUpObj.transform.parent = GameObject.Find("Marker scene").transform;

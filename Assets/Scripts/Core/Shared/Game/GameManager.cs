@@ -50,7 +50,6 @@ public class GameManager : NetworkBehaviour {
 
 	void Start ()
 	{
-		PowerUpManager.enabled = false;
 		if (!isServer) {
 			WorldMesh = ClientSceneManager.Instance.WorldMesh;
 
@@ -188,7 +187,6 @@ public class GameManager : NetworkBehaviour {
 			OnGameStartedEvent();
 		}
 		_cars.enableAllControls();
-		PowerUpManager.enabled = true;
         if(_cars.GetNumberOfBombsPresent() < 1) _cars.PassBombRandomPlayer ();
 
 		//Play the game music on the server only
@@ -220,8 +218,8 @@ public class GameManager : NetworkBehaviour {
 			
             //Handle powerups on the CarController clients
 //			_cars.TriggerPowerup (Abilities.AbilityRouter.GetAbilityTag (col.gameObject), car.ServerId);
-			GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
-			_cars.TriggerPowerup (gpm.GetPowerupType (col.gameObject, car.HasBomb), car.ServerId);
+
+			_cars.TriggerPowerup (PowerUpManager.GetPowerupType (col.gameObject, car.HasBomb), car.ServerId);
             //Destroy the gameobject we collided with (because it's a powerup)
 			NetworkServer.Destroy(col.gameObject);
         }

@@ -100,11 +100,11 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 30509392}
-  - component: {fileID: 30509391}
-  - component: {fileID: 30509390}
+  - component: {fileID: 30509395}
   - component: {fileID: 30509394}
   - component: {fileID: 30509393}
-  - component: {fileID: 30509395}
+  - component: {fileID: 30509391}
+  - component: {fileID: 30509390}
   m_Layer: 9
   m_Name: GameManager
   m_TagString: Untagged
@@ -113,86 +113,6 @@ GameObject:
   m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!114 &30509390
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 30509389}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3bcbaa1e835654059b46fd364b03cb0f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PreparingCanvas: {fileID: 178973365}
-  MarkerScene: {fileID: 188577963}
-  MarkerComponent: {fileID: 1965431133}
-  BombObject: {fileID: 0}
-  PowerUpManager: {fileID: 30509394}
-  GameExplanationDialogPrefab: {fileID: 1009257554643248, guid: cf065a03ea06048a1a17034397d6ed8b,
-    type: 2}
-  GameStartingDialogObj: {fileID: 194278527}
-  Canvas: {fileID: 1343903775}
-  _startingBombPlayerConnectionId: 0
-  ExplosionSound: {fileID: 1326126675}
---- !u!114 &30509391
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 30509389}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SceneId:
-    m_Value: 0
-  m_AssetId:
-    i0: 0
-    i1: 0
-    i2: 0
-    i3: 0
-    i4: 0
-    i5: 0
-    i6: 0
-    i7: 0
-    i8: 0
-    i9: 0
-    i10: 0
-    i11: 0
-    i12: 0
-    i13: 0
-    i14: 0
-    i15: 0
-  m_ServerOnly: 0
-  m_LocalPlayerAuthority: 0
---- !u!4 &30509392
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 30509389}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -132.46701, y: 46.022995, z: -23.755005}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &30509393
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 30509389}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9af1c5b0b80f147fabeead12e1688d65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PreparingCanvas: {fileID: 178973365}
-  CanvasMessage: {fileID: 1763481704}
---- !u!114 &30509394
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
@@ -229,6 +149,86 @@ MonoBehaviour:
     Duration: 8
     ShieldPrefab: {fileID: 1827426437650360, guid: 45627fa0e48c040378b624877710522b,
       type: 2}
+--- !u!114 &30509391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 30509389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9af1c5b0b80f147fabeead12e1688d65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PreparingCanvas: {fileID: 178973365}
+  CanvasMessage: {fileID: 1763481704}
+--- !u!4 &30509392
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 30509389}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -132.46701, y: 46.022995, z: -23.755005}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &30509393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 30509389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bcbaa1e835654059b46fd364b03cb0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PreparingCanvas: {fileID: 178973365}
+  MarkerScene: {fileID: 188577963}
+  MarkerComponent: {fileID: 1965431133}
+  BombObject: {fileID: 0}
+  PowerUpManager: {fileID: 30509390}
+  GameExplanationDialogPrefab: {fileID: 1009257554643248, guid: cf065a03ea06048a1a17034397d6ed8b,
+    type: 2}
+  GameStartingDialogObj: {fileID: 194278527}
+  Canvas: {fileID: 1343903775}
+  _startingBombPlayerConnectionId: 0
+  ExplosionSound: {fileID: 1326126675}
+--- !u!114 &30509394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 30509389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!114 &30509395
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -243,8 +243,8 @@ MonoBehaviour:
   ButtonPrefab: {fileID: 1810755449097852, guid: c70280e3da345460faaff0b6cd7457ed,
     type: 2}
   GameStartingDialogObj: {fileID: 194278527}
+  PowerupManager: {fileID: 30509390}
   Canvas: {fileID: 1343903775}
-  GameManagerObj: {fileID: 30509390}
   ServerUIPrefab: {fileID: 1239915692607504, guid: 520a3be53e4e241098f8417ee18f54ba,
     type: 2}
   ARToolkitObj: {fileID: 1965431130}
@@ -10642,7 +10642,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1965431130}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe4ec33cee90c844ea1bcc2cd642033e, type: 3}
   m_Name: 
