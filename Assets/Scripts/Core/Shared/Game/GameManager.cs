@@ -45,8 +45,6 @@ public class GameManager : NetworkBehaviour {
 
 	public GameObject WorldMesh { get; private set; }
 
-	public AudioSource ExplosionSound;
-
 
 	void Start ()
 	{
@@ -139,9 +137,6 @@ public class GameManager : NetworkBehaviour {
 		_cars.KillPlayer (car);
 		CheckForGameOver ();
 		if(_cars.GetNumberOfBombsPresent() == 0) _cars.PassBombRandomPlayer();
-		if (ExplosionSound != null) {
-			ExplosionSound.PlayOneShot (ExplosionSound.clip);
-		}
 	}
 
 	[Server]
