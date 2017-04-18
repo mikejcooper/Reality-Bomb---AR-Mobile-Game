@@ -1178,9 +1178,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d011e48578fd3d4ebbe44beafc07f48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FadeInTime: 3
   StartVolume: 0
   FinalVolume: 0.5
+  StartDelay: 1
+  FadeInTime: 3
   FadeOutTime: 3
 --- !u!114 &70
 MonoBehaviour:
@@ -1862,7 +1863,7 @@ Prefab:
     - target: {fileID: 224618012438287146, guid: 4860a5aacf79c8e4b8fb5d314dfd202f,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 28.999996
+      value: -29
       objectReference: {fileID: 0}
     - target: {fileID: 224618012438287146, guid: 4860a5aacf79c8e4b8fb5d314dfd202f,
         type: 2}
@@ -1882,7 +1883,7 @@ Prefab:
     - target: {fileID: 224618012438287146, guid: 4860a5aacf79c8e4b8fb5d314dfd202f,
         type: 2}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224618012438287146, guid: 4860a5aacf79c8e4b8fb5d314dfd202f,
         type: 2}
@@ -1892,7 +1893,7 @@ Prefab:
     - target: {fileID: 224618012438287146, guid: 4860a5aacf79c8e4b8fb5d314dfd202f,
         type: 2}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224618012438287146, guid: 4860a5aacf79c8e4b8fb5d314dfd202f,
         type: 2}

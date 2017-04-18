@@ -25,6 +25,11 @@ public class CarController : NetworkBehaviour
 	// at some point to a better place.
 	public GameObject ExplosionAnimation;
 
+	public AudioSource ExplosionSound;
+	public AudioSource PowerUpSound;
+	public AudioSource BombAlertSound;
+	public AudioSource BumpSound;
+
 	[SyncVar]
 	public int ServerId;
 
@@ -101,6 +106,21 @@ public class CarController : NetworkBehaviour
 				GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += Reposition;
 				GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += SetFallDistance;
 			}
+
+			if (isLocalPlayer) {
+				if (GameObject.Find ("ExplosionSound") != null) {
+					ExplosionSound = GameObject.Find ("ExplosionSound").GetComponent<AudioSource> ();
+				}
+				if (GameObject.Find ("PowerUpSound") != null) {
+					PowerUpSound = GameObject.Find ("PowerUpSound").GetComponent<AudioSource> ();
+				}
+				if (GameObject.Find ("BombAlertSound") != null) {
+					BombAlertSound = GameObject.Find ("BombAlertSound").GetComponent<AudioSource> ();
+				}
+				if (GameObject.Find ("BumpSound") != null) {
+					BumpSound = GameObject.Find ("BumpSound").GetComponent<AudioSource> ();
+				}
+			}
 				
 		}
 
@@ -123,7 +143,6 @@ public class CarController : NetworkBehaviour
 	void OnDestroy () {
 		GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent -= Reposition;
 		GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent -= SetFallDistance;
-
 	}
 		
 	public void setBombAllDevices(bool b){
@@ -143,6 +162,11 @@ public class CarController : NetworkBehaviour
 
 	private void setBomb(bool b){
 		this.HasBomb = b;
+		if (b == true) {
+			if (BombAlertSound != null) {
+				BombAlertSound.PlayOneShot (BombAlertSound.clip);
+			}
+		}
 		#if UNITY_ANDROID || UNITY_IPHONE
 		// vibrate on exchange
 		if (isLocalPlayer){
@@ -181,6 +205,9 @@ public class CarController : NetworkBehaviour
 
 	private void Boom(){
 		Instantiate(ExplosionAnimation, transform.position, Quaternion.identity);
+		if (ExplosionSound != null) {
+			ExplosionSound.PlayOneShot (ExplosionSound.clip);
+		}
 	}
 
 	private void Update ()
@@ -250,6 +277,9 @@ public class CarController : NetworkBehaviour
     {
         GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
 		AbilityRouter.RouteTag (tag, CarProperties, gameObject, gpm, triggeringServerId == ServerId, isLocalPlayer);
+		if (PowerUpSound != null && triggeringServerId == ServerId) {
+			PowerUpSound.PlayOneShot (PowerUpSound.clip);
+		}
     }
 
     void OnCollisionEnter(Collision col)
@@ -281,10 +311,13 @@ public class CarController : NetworkBehaviour
 		direction = -direction.normalized;
 		direction.y = 0;
 		GetComponent<Rigidbody>().AddForce(direction * bounceForce);
+		/*if (isLocalPlayer && BumpSound != null) {
+			BumpSound.PlayOneShot (BumpSound.clip);
+		}*/
 	}
 
 
-	public void Reposition(GameObject worldMesh)
+	public void Reposition(GameMapObjects gameMapObjects)
 	{
 		Debug.Log ("repositioning");
 		if (hasAuthority) {
@@ -296,7 +329,7 @@ public class CarController : NetworkBehaviour
 			_rigidbody.velocity = Vector3.zero;
 			_rigidbody.angularVelocity = Vector3.zero;
 
-			Vector3 position = GameUtils.FindSpawnLocation (worldMesh);
+			Vector3 position = GameUtils.FindSpawnLocationInsideConvexHull (gameMapObjects);
 
 			if (position != Vector3.zero) {
 				Debug.Log ("unfreezing");
@@ -356,9 +389,9 @@ public class CarController : NetworkBehaviour
 		GameObject.Find ("SpectatingText").GetComponent<TextMeshProUGUI> ().text = "Spectating...";
 	}
 
-	private void SetFallDistance(GameObject _meshObj){
-		float meshHeight = _meshObj.transform.GetComponent<MeshRenderer> ().bounds.size.y;
-		float meshMinY = _meshObj.transform.GetComponent<MeshRenderer> ().bounds.min.y;
+	private void SetFallDistance(GameMapObjects gameMapObjects){
+		float meshHeight = gameMapObjects.ground.transform.GetComponent<MeshRenderer> ().bounds.size.y;
+		float meshMinY = gameMapObjects.ground.transform.GetComponent<MeshRenderer> ().bounds.min.y;
 		_fallDistanceBeforeRespawn = meshMinY - meshHeight*0.65f;
 	}
 }

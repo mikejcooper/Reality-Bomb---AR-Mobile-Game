@@ -12,6 +12,9 @@ namespace Powerups {
 		public InkAbilityProperties InkProperties;
 		public ShieldAbilityProperties ShieldProperties;
 
+		public GrowAbilityProperties GrowProperties;
+		public ShrinkAbilityProperties ShrinkProperties;
+
 		protected override void Start () {
 			base.Start ();
 			if (IsAllowedToSpawn ()) {
@@ -37,7 +40,10 @@ namespace Powerups {
             return new PowerupDefinition[] {
 				new PowerupDefinition (typeof(SpeedAbility), SpeedAbility.TAG, SpeedProperties),
 				new PowerupDefinition (typeof(InkAbility), InkAbility.TAG, InkProperties),
-				new PowerupDefinition (typeof(ShieldAbility), ShieldAbility.TAG, ShieldProperties)
+				new PowerupDefinition (typeof(ShieldAbility), ShieldAbility.TAG, ShieldProperties),
+
+				new PowerupDefinition (typeof(GrowAbility), GrowAbility.TAG, GrowProperties),
+				new PowerupDefinition (typeof(ShrinkAbility), ShrinkAbility.TAG, ShrinkProperties)
             };
         }
 
@@ -51,8 +57,8 @@ namespace Powerups {
                 NetworkServer.Spawn(powerUpObj);
 		}
 
-		private void LoadMesh(GameObject worldMesh){
-			OnMeshReady (worldMesh);
+		private void LoadMesh(GameMapObjects gameMapObject){
+			OnMeshReady (gameMapObject.ground);
 		}
 	}
 }

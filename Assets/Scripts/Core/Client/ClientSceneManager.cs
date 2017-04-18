@@ -18,7 +18,7 @@ public class ClientSceneManager : MonoBehaviour
 	public OnCountDownCanceledCallback OnCountDownCanceledEvent = delegate {};
 	public NetworkLobbyPlayer LobbyPlayerPrefab;
 	public GameObject GamePlayerPrefab;
-	public GameObject WorldMesh { get { return _meshTransferManager.ProduceGameObject (); }}
+	public GameMapObjects WorldMesh { get { return _meshTransferManager.ProduceGameObjects (); }}
 
 	private DiscoveryClient _discoveryClient;
 	private GameLobbyManager _networkLobbyManager;
@@ -37,6 +37,8 @@ public class ClientSceneManager : MonoBehaviour
 	public ProcessState CurrentState () {
 		return _innerProcess.CurrentState;
 	}
+
+	public bool StartMuted;
 
 	private void Awake()
 	{
@@ -92,6 +94,10 @@ public class ClientSceneManager : MonoBehaviour
 		_discoveryClient.serverDiscoveryEvent += OnServerDiscovered;
 
 		SceneManager.sceneLoaded += OnSceneLoaded;
+
+		if (StartMuted) {
+			AudioListener.volume = 0.0f;
+		}
 	}
 		
     private void OnMeshDataReceived()

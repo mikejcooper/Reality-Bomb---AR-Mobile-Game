@@ -14,7 +14,7 @@ using UnityEngine.UI;
 
 public class GameManager : NetworkBehaviour {
 
-	public delegate void OnWorldMeshAvailable(GameObject worldMesh);
+	public delegate void OnWorldMeshAvailable(GameMapObjects worldMesh);
 	public event OnWorldMeshAvailable OnWorldMeshAvailableEvent = delegate {};
 
 	public delegate void StartGameCountDown();
@@ -43,9 +43,7 @@ public class GameManager : NetworkBehaviour {
 	public int _startingBombPlayerConnectionId;
 	private GameObject _clientExplanationDialog;
 
-	public GameObject WorldMesh { get; private set; }
-
-	public AudioSource ExplosionSound;
+	public GameMapObjects WorldMesh { get; private set; }
 
 
 	void Start ()
@@ -73,12 +71,14 @@ public class GameManager : NetworkBehaviour {
 		// use downloaded marker pattern
 		MeshTransferManager.ApplyMarkerData (MarkerComponent);
 
-		WorldMesh.transform.parent = MarkerScene.transform;
+		WorldMesh.ground.transform.parent = MarkerScene.transform;
+		WorldMesh.boundary.transform.parent = MarkerScene.transform;
 
 
 
-		if (OnWorldMeshAvailableEvent != null)
+		if (OnWorldMeshAvailableEvent != null) {
 			OnWorldMeshAvailableEvent (WorldMesh);
+		}
 
 
 		foreach (var existingCarController in GameObject.FindObjectsOfType<CarController>()) {
@@ -87,14 +87,8 @@ public class GameManager : NetworkBehaviour {
 
 		if (!isServer) {
 			ClientSceneManager.Instance.OnGameLoaded ();
-
-			var muteButton = GameObject.Find ("MuteButton");
-			if (muteButton != null) {
-				muteButton.SetActive (false);
-			} else {
-				Debug.LogWarning ("Could not find mute button. Check this!");
-			}
 		}
+			
 	}
 
 	private void ShowExplanationDialog () {
@@ -139,9 +133,6 @@ public class GameManager : NetworkBehaviour {
 		_cars.KillPlayer (car);
 		CheckForGameOver ();
 		if(_cars.GetNumberOfBombsPresent() == 0) _cars.PassBombRandomPlayer();
-		if (ExplosionSound != null) {
-			ExplosionSound.PlayOneShot (ExplosionSound.clip);
-		}
 	}
 
 	[Server]
@@ -166,18 +157,52 @@ public class GameManager : NetworkBehaviour {
 			AddCar(car.gameObject);
 		}
 		_cars.StartGameCountDown();
-		RpcEnsureExplanationDialogDismissed ();
+		RpcOnBeginCountdown ();
 		PreparingCanvas.StartGameCountDown (true);
 
 		Debug.Log ("SERVER GAME COUNT DOWN");
 	}
 
 	[ClientRpc]
-	public void RpcEnsureExplanationDialogDismissed () {
+	public void RpcOnBeginCountdown () {
 		if (_clientExplanationDialog != null) {
 			Destroy (_clientExplanationDialog);
 		}
+
+		StartCoroutine(FadeOutMesh(5));
 	}
+
+	IEnumerator FadeOutMesh(int duration)
+	{
+		int steps = 100;
+		float timeInterval = duration / (float) steps;
+
+		var material = WorldMesh.ground.GetComponent<MeshRenderer> ().material;
+
+		float sourceAlpha = material.GetFloat ("_Alpha");
+		float targetAlpha = 0.2f;
+
+		float sourceSpeed = material.GetFloat ("_Speed");
+		float targetSpeed = 0f;
+
+		float alphaDec = (sourceAlpha - targetAlpha) / (float) steps;
+		float speedDec = (sourceSpeed - targetSpeed) / (float) steps;
+
+
+
+		material.DisableKeyword("_ALPHATEST_ON");
+		material.EnableKeyword("_ALPHABLEND_ON");
+		material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+
+		for (int i=0; i<steps; i++)
+		{ 
+			material.SetFloat ("_Alpha", sourceAlpha - i*alphaDec);
+			material.SetFloat ("_Speed", sourceSpeed - i*speedDec);
+			yield return new WaitForSeconds(timeInterval);
+		}
+
+	}
+
 		
 	[Server]
 	public void CountDownFinishedStartPlaying(){
