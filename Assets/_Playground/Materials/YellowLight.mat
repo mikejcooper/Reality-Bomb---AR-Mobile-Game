@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Sand
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_Name: YellowLight
+  m_Shader: {fileID: 4800000, guid: b2660c1d1d97ba04ca06ece687bb5657, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
@@ -83,6 +83,9 @@ Material:
         name: _DstBlend
       second: 0
     - first:
+        name: _EmissionScaleUI
+      second: 0
+    - first:
         name: _GlossMapScale
       second: 1
     - first:
@@ -104,6 +107,9 @@ Material:
         name: _Parallax
       second: 0.02
     - first:
+        name: _Scale
+      second: 1
+    - first:
         name: _SmoothnessTextureChannel
       second: 0
     - first:
@@ -121,7 +127,10 @@ Material:
     m_Colors:
     - first:
         name: _Color
-      second: {r: 1, g: 0.7329152, b: 0.30147058, a: 1}
+      second: {r: 0.93725497, g: 0.78823537, b: 0.5764706, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 0}
+    - first:
+        name: _EmissionColorUI
+      second: {r: 1, g: 1, b: 1, a: 1}
