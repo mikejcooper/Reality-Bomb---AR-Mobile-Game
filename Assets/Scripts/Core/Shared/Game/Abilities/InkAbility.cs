@@ -18,22 +18,61 @@ namespace Abilities {
         
 		override protected void OnApplyCanvasEffect (Canvas canvas, bool triggeredPowerup) {
 			if (!triggeredPowerup) {
-				_splatterObject = new GameObject ("Splatter");
+                _splatterObject = new GameObject("Splatter");
+                _splatterObject.transform.SetParent(canvas.transform);
 
-				_splatterObject.transform.parent = canvas.transform;
+                _splatterObject.transform.position = Vector3.zero;
+                _splatterObject.transform.SetSiblingIndex(0);
+                _splatterObject.transform.localPosition = Vector3.zero;
 
-				RawImage splatterImage = _splatterObject.AddComponent<RawImage> ();
-				splatterImage.GetComponent<RectTransform> ().localPosition = canvas.gameObject.GetComponent<RectTransform> ().rect.center;
-				splatterImage.GetComponent<RectTransform> ().localScale = 3.0f * Vector3.one;
-				splatterImage.texture = _abilityProperties.SplatterTexture;
+                GenerateSplatters(canvas, 5);
 
-				// The following lines fade out the splatter effect over time
-				splatterImage.GetComponent<CanvasRenderer> ().SetAlpha (1.0f);
-				splatterImage.CrossFadeAlpha (0.0f, 8.0f, false);
-			}
+                Invoke("FadeOut", 2);
+            }
 		}
 
-		override protected void OnRemoveCanvasEffect (Canvas canvas, bool triggeredPowerup) {
+        private void GenerateSplatters(Canvas canvas, int n)
+        {
+            Vector3[] positions = { new Vector3(-100,100,0),
+                                    new Vector3(100,100,0),
+                                    new Vector3(100,-100,0),
+                                    new Vector3(-100,-100,0),
+                                    new Vector3(0,0,0)};
+            for (int i = 0; i < n; i++)
+            {
+                Vector3 rand_pos = new Vector3(Random.Range(-50, 50), Random.Range(-50, 50), -1);
+
+                StartCoroutine(CreateInk(positions[i] + rand_pos));
+            }
+        }
+
+        IEnumerator CreateInk(Vector3 pos)
+        {
+            yield return new WaitForSeconds(Random.Range(0.0f, 1.0f));
+
+            GameObject splat = new GameObject("Ink");
+            splat.transform.SetParent(_splatterObject.transform);
+            splat.transform.localPosition = pos;
+            splat.transform.Rotate(0, 0, Random.Range(0.0f, 360.0f));
+
+            RawImage splatterImage = splat.AddComponent<RawImage>();
+            float size = Random.Range(2.0f, 3.5f);
+            splatterImage.GetComponent<RectTransform>().localScale = size * Vector3.one;
+            splatterImage.texture = _abilityProperties.SplatterTexture;
+        }
+
+        private void FadeOut()
+        {
+            RawImage[] splatterImages = _splatterObject.GetComponentsInChildren<RawImage>();
+            // The following lines fade out the splatter effect over time
+            foreach (var splat in splatterImages)
+            {
+                splat.GetComponent<CanvasRenderer>().SetAlpha(1.0f);
+                splat.CrossFadeAlpha(0.0f, 6.0f, false);
+            }
+        }
+
+        override protected void OnRemoveCanvasEffect (Canvas canvas, bool triggeredPowerup) {
 			if (!triggeredPowerup) {
 				Destroy (_splatterObject);
 			}
