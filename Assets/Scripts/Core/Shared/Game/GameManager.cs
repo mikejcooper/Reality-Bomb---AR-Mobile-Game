@@ -95,6 +95,7 @@ public class GameManager : NetworkBehaviour {
 				Debug.LogWarning ("Could not find mute button. Check this!");
 			}
 		}
+			
 	}
 
 	private void ShowExplanationDialog () {
@@ -166,18 +167,40 @@ public class GameManager : NetworkBehaviour {
 			AddCar(car.gameObject);
 		}
 		_cars.StartGameCountDown();
-		RpcEnsureExplanationDialogDismissed ();
+		RpcOnBeginCountdown ();
 		PreparingCanvas.StartGameCountDown (true);
 
 		Debug.Log ("SERVER GAME COUNT DOWN");
 	}
 
 	[ClientRpc]
-	public void RpcEnsureExplanationDialogDismissed () {
+	public void RpcOnBeginCountdown () {
 		if (_clientExplanationDialog != null) {
 			Destroy (_clientExplanationDialog);
 		}
+
+		StartCoroutine(FadeOutMesh(5));
 	}
+
+	IEnumerator FadeOutMesh(int duration)
+	{
+		int steps = 100;
+		float timeInterval = duration / (float) steps;
+		float dec = 1f / (float) steps;
+		float alpha = 1.0f;
+
+		while(alpha > 0.0f) 
+		{ 
+			alpha -= dec;
+			WorldMesh.GetComponent<MeshRenderer> ().material.SetFloat ("_Alpha", alpha);
+			yield return new WaitForSeconds(timeInterval);
+		}
+
+		WorldMesh.GetComponent<MeshRenderer> ().enabled = false;
+
+
+	}
+
 		
 	[Server]
 	public void CountDownFinishedStartPlaying(){

@@ -111,7 +111,7 @@ public class MeshTransferManager {
 		// choose the material - we can get round to using a custom invisible
 		// shader at some point here, but for development purposes it's nice
 		// to be able to see the mesh
-		Material material = Resources.Load ("Materials/MeshVisible", typeof(Material)) as Material;
+		Material material = Resources.Load ("Materials/Wireframe", typeof(Material)) as Material;
 		PhysicMaterial physicMaterial = Resources.Load ("Materials/BouncyMaterial", typeof(PhysicMaterial)) as PhysicMaterial;
 
 		GameObject worldMeshObj = new GameObject ("World Mesh");
@@ -126,9 +126,9 @@ public class MeshTransferManager {
 		if (renderer == null)
 			renderer = worldMeshObj.AddComponent<MeshRenderer> ();
 
-		if (Application.isMobilePlatform) {
-			renderer.enabled = false;
-		}
+//		if (Application.isMobilePlatform) {
+//			renderer.enabled = false;
+//		}
 
 		MeshCollider collider = worldMeshObj.GetComponent<MeshCollider> ();
 		if (collider == null)
