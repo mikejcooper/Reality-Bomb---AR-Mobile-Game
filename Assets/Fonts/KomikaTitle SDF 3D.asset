@@ -966,7 +966,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: KomikaTitle SDF Material
-  m_Shader: {fileID: 4800000, guid: 8e6b9842dbb1a5a4887378afab854e63, type: 3}
+  m_Shader: {fileID: 4800000, guid: 3c2ea7753c1425145a74d106ec1cd852, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1

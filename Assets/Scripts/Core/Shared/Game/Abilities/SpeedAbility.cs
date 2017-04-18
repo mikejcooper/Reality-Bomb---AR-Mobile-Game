@@ -16,19 +16,32 @@ namespace Abilities {
 
 		private GameObject _sparklesObj;
 
+		private float _current_spd;
+		private float _current_acc;
+
+
 		protected override void OnApplyCarEffect (CarProperties properties, bool triggeredPowerup) {
+			_current_acc = properties.Acceleration;
+			_current_spd = properties.MaxSpeed;
+
 			if (triggeredPowerup) {
 				_sparklesObj = GameObject.Instantiate (_abilityProperties.SparklesPrefab);
 				_sparklesObj.transform.SetParent (properties.transform, false);
-				properties.MaxSpeed *= 2.0f;
-				properties.Acceleration *= 2.0f;
+			
+				properties.MaxSpeed     = Mathf.Min (24f,  properties.MaxSpeed * 2.0f);
+				properties.Acceleration = Mathf.Min (180f, properties.Acceleration * 2.0f);
+			
 			}
 		}
 
 		protected override void OnRemoveCarEffect (CarProperties properties, bool triggeredPowerup) {
 			if (triggeredPowerup) {
-				var emitter = _sparklesObj.GetComponent<ParticleSystem> ().emission;
-				emitter.enabled = false;
+				var ps = _sparklesObj.GetComponentsInChildren<ParticleSystem>();
+                foreach (var p in ps)
+                {
+                    var em = p.emission;
+                    em.enabled = false;
+                }
 
 				// SpeedAbility will be destroyed as soon as this function exits,
 				// so attach a delayed destroyer component to destroy the sparkles
@@ -36,8 +49,9 @@ namespace Abilities {
 				var destroyer = _sparklesObj.AddComponent<ObjectDestroyer> ();
 				destroyer.DelayedDestroy (SPARKLES_LIFETIME_SECONDS);
 
-				properties.MaxSpeed /= 2.0f;
-				properties.Acceleration /= 2.0f;
+				properties.MaxSpeed     = Mathf.Max (1.5f,  properties.MaxSpeed / 2.0f);
+				properties.Acceleration = Mathf.Max (10f, properties.Acceleration / 2.0f);
+
 			}
 		}
 

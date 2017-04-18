@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: ParticleFirework
-  m_Shader: {fileID: 4800000, guid: d934a53c4d587774e93fd7d03b7606c7, type: 3}
+  m_Shader: {fileID: 202, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
@@ -48,7 +48,7 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: 76b24fa8a46a2c14f9a7df1e975dc4b9, type: 3}
+        m_Texture: {fileID: 2800000, guid: 76f28107d4e7d410b8342b4e4ae97db6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -96,7 +96,7 @@ Material:
       second: 1
     - first:
         name: _InvFade
-      second: 1
+      second: 0.01
     - first:
         name: _Metallic
       second: 0
@@ -151,4 +151,4 @@ Material:
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
         name: _TintColor
-      second: {r: 1, g: 1, b: 1, a: 0.5019608}
+      second: {r: 0.5147059, g: 0.5071367, b: 0.49956748, a: 0.5019608}

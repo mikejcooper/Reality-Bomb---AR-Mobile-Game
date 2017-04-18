@@ -26,6 +26,8 @@ public class SandboxManager : MonoBehaviour
 	private string _speed_Txt = "You've Activated the Speed Boost power up! Enjoy double the speed but be careful not to lose control!";
 	private string _respawn_Txt = "Oops!! You fell off the map! Don't Worry, You'll be respawned but you won't be able to move for 5s. Be careful or become an easy target!";
 	private string _shield_Txt = "You've activated the Shield power up! While you have it, no one can touch you!";
+	private string _grow_Txt = "You've been Super Sized! Your opponents don't stand a chance!";
+	private string _shrink_Txt = "You've been Shrunk! You're enemies will have a hard time trying to see you.";
 
 	void Start(){
 		if (TutorialDialogPrefabs.Count > 0) {
@@ -36,6 +38,8 @@ public class SandboxManager : MonoBehaviour
 		PowerUpManager.SpeedBoostActivatedEvent += SetSpeedTxt;
 		PowerUpManager.InkSplatterActivatedEvent += SetSplatTxt;
 		PowerUpManager.ShieldActivatedEvent += SetShieldTxt;
+		PowerUpManager.GrowActivatedEvent += SetGrowTxt;
+		PowerUpManager.ShrinkActivatedEvent += SetShrinkTxt;
 
 		if(ClientSceneManager.Instance != null){
 			ClientSceneManager.Instance.OnCountDownTimeUpdateEvent += OnCountDownTimeUpdate;
@@ -48,6 +52,8 @@ public class SandboxManager : MonoBehaviour
 		PowerUpManager.SpeedBoostActivatedEvent -= SetSpeedTxt;
 		PowerUpManager.InkSplatterActivatedEvent -= SetSplatTxt;
 		PowerUpManager.ShieldActivatedEvent -= SetShieldTxt;
+		PowerUpManager.GrowActivatedEvent -= SetGrowTxt;
+		PowerUpManager.ShrinkActivatedEvent -= SetShrinkTxt;
 
 		if (ClientSceneManager.Instance != null) {
 			ClientSceneManager.Instance.OnCountDownTimeUpdateEvent -= OnCountDownTimeUpdate;
@@ -137,6 +143,13 @@ public class SandboxManager : MonoBehaviour
 		ToastManagerObject.ShowMessage(_shield_Txt);
 	}
 
+	public void SetGrowTxt(){
+		ToastManagerObject.ShowMessage(_grow_Txt);
+	}
+
+	public void SetShrinkTxt(){
+		ToastManagerObject.ShowMessage(_shrink_Txt);
+	}
 
 }
 
