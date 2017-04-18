@@ -18,7 +18,7 @@ public class ClientSceneManager : MonoBehaviour
 	public OnCountDownCanceledCallback OnCountDownCanceledEvent = delegate {};
 	public NetworkLobbyPlayer LobbyPlayerPrefab;
 	public GameObject GamePlayerPrefab;
-	public GameObject WorldMesh { get { return _meshTransferManager.ProduceGameObject (); }}
+	public GameMapObjects WorldMesh { get { return _meshTransferManager.ProduceGameObjects (); }}
 
 	private DiscoveryClient _discoveryClient;
 	private GameLobbyManager _networkLobbyManager;

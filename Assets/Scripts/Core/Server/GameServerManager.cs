@@ -63,7 +63,7 @@ public class GameServerManager : MonoBehaviour {
 		OrthoCameraMeshFitter camFitter = _serverUI.GetComponentInChildren<OrthoCameraMeshFitter> ();
 
 		if (FindObjectOfType<GameManager>().WorldMesh != null) {
-			MeshRenderer renderer = FindObjectOfType<GameManager>().WorldMesh.GetComponent<MeshRenderer> ();
+			MeshRenderer renderer = FindObjectOfType<GameManager>().WorldMesh.ground.GetComponent<MeshRenderer> ();
 			Bounds bounds = renderer.bounds;
 			Material[] mats = renderer.materials;
 			mats[0] = MeshMaterial;

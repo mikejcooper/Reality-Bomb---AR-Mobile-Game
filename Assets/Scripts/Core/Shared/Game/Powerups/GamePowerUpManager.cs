@@ -57,8 +57,8 @@ namespace Powerups {
                 NetworkServer.Spawn(powerUpObj);
 		}
 
-		private void LoadMesh(GameObject worldMesh){
-			OnMeshReady (worldMesh);
+		private void LoadMesh(GameMapObjects gameMapObject){
+			OnMeshReady (gameMapObject.ground);
 		}
 	}
 }
