@@ -20,7 +20,8 @@ namespace Abilities {
 			if (triggeredPowerup) {
 				_sparklesObj = GameObject.Instantiate (_abilityProperties.SparklesPrefab);
 				_sparklesObj.transform.SetParent (properties.transform, false);
-				properties.MaxSpeed *= 2.0f;
+			
+//				properties.MaxSpeed = Mathf.Min (10f, properties.MaxSpeed * 2.0f);
 				properties.Acceleration *= 2.0f;
 			}
 		}

@@ -496,6 +496,14 @@ MonoBehaviour:
     Duration: 8
     ShieldPrefab: {fileID: 1827426437650360, guid: 45627fa0e48c040378b624877710522b,
       type: 2}
+  GrowProperties:
+    PowerupPrefab: {fileID: 0}
+    CanvasSplash: {fileID: 0}
+    Duration: 8
+  ShrinkProperties:
+    PowerupPrefab: {fileID: 0}
+    CanvasSplash: {fileID: 0}
+    Duration: 8
   PlaneObject: {fileID: 2137931947}
 --- !u!1001 &793272625
 Prefab:
