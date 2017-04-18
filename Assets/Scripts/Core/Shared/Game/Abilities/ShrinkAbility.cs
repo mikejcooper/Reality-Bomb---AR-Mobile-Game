@@ -19,6 +19,7 @@ namespace Abilities {
 
 		private Vector3 _originalSize;
 		private Vector3 _scale;
+		private bool _maxShrink;
 
 
 		override protected void OnApplyCanvasEffect (Canvas canvas, bool triggeredPowerup) {
@@ -34,19 +35,27 @@ namespace Abilities {
 		}
 
 		protected override void OnApplyCarEffect (CarProperties properties, bool triggeredPowerup) {
-			gameObject.transform.localScale /= 2f;
+			_maxShrink = false;
 
-			properties.MaxSpeed /= SPEED_FACTOR;
-			properties.Acceleration /= SPEED_FACTOR;
+			if (gameObject.transform.localScale.x > 0.25f) {
+				gameObject.transform.localScale /= 2f;
+
+				properties.MaxSpeed /= SPEED_FACTOR;
+				properties.Acceleration /= SPEED_FACTOR;
+			} else {
+				_maxShrink = true;
+			}
 
 
 		}
 
 		protected override void OnRemoveCarEffect (CarProperties properties, bool triggeredPowerup) {
-			gameObject.transform.localScale *= 2f;
+			if (!_maxShrink) {
+				gameObject.transform.localScale *= 2f;
 
-			properties.MaxSpeed *= SPEED_FACTOR;
-			properties.Acceleration *= SPEED_FACTOR;
+				properties.MaxSpeed *= SPEED_FACTOR;
+				properties.Acceleration *= SPEED_FACTOR;
+			}
 		}
 
 

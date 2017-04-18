@@ -16,13 +16,21 @@ namespace Abilities {
 
 		private GameObject _sparklesObj;
 
+		private float _current_spd;
+		private float _current_acc;
+
+
 		protected override void OnApplyCarEffect (CarProperties properties, bool triggeredPowerup) {
+			_current_acc = properties.Acceleration;
+			_current_spd = properties.MaxSpeed;
+
 			if (triggeredPowerup) {
 				_sparklesObj = GameObject.Instantiate (_abilityProperties.SparklesPrefab);
 				_sparklesObj.transform.SetParent (properties.transform, false);
 			
-//				properties.MaxSpeed = Mathf.Min (10f, properties.MaxSpeed * 2.0f);
-				properties.Acceleration *= 2.0f;
+				properties.MaxSpeed     = Mathf.Min (24f,  properties.MaxSpeed * 2.0f);
+				properties.Acceleration = Mathf.Min (180f, properties.Acceleration * 2.0f);
+			
 			}
 		}
 
@@ -41,8 +49,9 @@ namespace Abilities {
 				var destroyer = _sparklesObj.AddComponent<ObjectDestroyer> ();
 				destroyer.DelayedDestroy (SPARKLES_LIFETIME_SECONDS);
 
-				properties.MaxSpeed /= 2.0f;
-				properties.Acceleration /= 2.0f;
+				properties.MaxSpeed     = Mathf.Max (1.5f,  properties.MaxSpeed / 2.0f);
+				properties.Acceleration = Mathf.Max (10f, properties.Acceleration / 2.0f);
+
 			}
 		}
 
