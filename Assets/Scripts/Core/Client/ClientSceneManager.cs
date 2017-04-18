@@ -38,6 +38,8 @@ public class ClientSceneManager : MonoBehaviour
 		return _innerProcess.CurrentState;
 	}
 
+	public bool StartMuted;
+
 	private void Awake()
 	{
 		if (_instance != null && _instance != this)
@@ -92,6 +94,10 @@ public class ClientSceneManager : MonoBehaviour
 		_discoveryClient.serverDiscoveryEvent += OnServerDiscovered;
 
 		SceneManager.sceneLoaded += OnSceneLoaded;
+
+		if (StartMuted) {
+			AudioListener.volume = 0.0f;
+		}
 	}
 		
     private void OnMeshDataReceived()

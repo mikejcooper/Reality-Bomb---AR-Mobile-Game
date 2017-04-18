@@ -85,13 +85,6 @@ public class GameManager : NetworkBehaviour {
 
 		if (!isServer) {
 			ClientSceneManager.Instance.OnGameLoaded ();
-
-			var muteButton = GameObject.Find ("MuteButton");
-			if (muteButton != null) {
-				muteButton.SetActive (false);
-			} else {
-				Debug.LogWarning ("Could not find mute button. Check this!");
-			}
 		}
 			
 	}
