@@ -108,8 +108,10 @@ public class TestMeshImporter {
 		Mesh groundMesh = getGroundMesh ();
 
 
-		GameObject ground = ProduceGameObjectFromMesh (groundMesh);
-		GameObject boundary = ProduceGameObjectFromMesh (boundaryMesh);
+		Material wireframeMaterial = Resources.Load ("Materials/Wireframe", typeof(Material)) as Material;
+		GameObject ground = ProduceGameObjectFromMesh (groundMesh, wireframeMaterial);
+		Material boundaryMaterial = Resources.Load ("Materials/Boundary", typeof(Material)) as Material;
+		GameObject boundary = ProduceGameObjectFromMesh (boundaryMesh, boundaryMaterial);
 
 		return new GameMapObjects(ground,boundary,_convexHullVertices);
 	}
@@ -125,11 +127,10 @@ public class TestMeshImporter {
 		return mesh;
 	}
 
-	public GameObject ProduceGameObjectFromMesh(Mesh mesh){
+	public GameObject ProduceGameObjectFromMesh(Mesh mesh, Material material){
 
 		mesh.RecalculateNormals();
 
-		Material material = Resources.Load ("Materials/MeshVisible", typeof(Material)) as Material;
 		PhysicMaterial physicMaterial = Resources.Load ("Materials/BouncyMaterial", typeof(PhysicMaterial)) as PhysicMaterial;
 
 		GameObject MeshObject = new GameObject ("World Mesh");
@@ -170,8 +171,8 @@ public class TestMeshImporter {
 		int[] triangles = new int[positions.Count * 4 * 3];
 		mesh.name = "ScriptedMesh";
 		for (int i = 0; i < positions.Count; i++) {
-			vertices [i]                   = new Vector3 (positions[i].x , -0.2f, positions[i].z);
-			vertices [i + positions.Count] = new Vector3 (positions[i].x , 2.0f , positions[i].z);
+			vertices [i]                   = new Vector3 (positions[i].x , positions[i].y, positions[i].z);
+			vertices [i + positions.Count] = new Vector3 (positions[i].x , positions[i].y+5.0f , positions[i].z);
 
 			triangles [0 * 3 * positions.Count + 3 * i + 0] = i;
 			triangles [0 * 3 * positions.Count + 3 * i + 1] = (i + 1) % positions.Count;

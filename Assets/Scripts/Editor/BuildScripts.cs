@@ -42,18 +42,32 @@ public class BuildScripts
 	[MenuItem("Builds/iOS")]
 	public static void BuildIOS ()
 	{
+		EnsureARControllerState (true);
 		BuildAndRun ("iOS.app", CLIENT_LEVELS, BuildTarget.iOS, GenerateBuildOptions ());
 	}
 
     [MenuItem("Builds/Windows TV")]
     public static void BuildWindowsTV()
     {
+		EnsureARControllerState (false);
 		BuildAndRun ("TV.exe", TV_LEVELS, BuildTarget.StandaloneWindows64, GenerateBuildOptions ());
     }
 
     [MenuItem("Builds/Windows client")]
     public static void BuildWindowsClient()
     {
+		EnsureARControllerState (false);
 		BuildAndRun ("client.exe", CLIENT_LEVELS, BuildTarget.StandaloneWindows64, GenerateBuildOptions ());
     }
+
+	private static void EnsureARControllerState (bool enabled) {
+		// make sure ar controllers are enabled
+		EditorApplication.SaveScene();
+		EditorApplication.OpenScene("Assets/_Scenes/mobile/Sandbox.unity");
+		GameObject.FindObjectOfType<ARController> ().enabled = enabled;
+		EditorApplication.SaveScene();
+		EditorApplication.OpenScene("Assets/_Scenes/shared/Game.unity");
+		GameObject.FindObjectOfType<ARController> ().enabled = enabled;
+		EditorApplication.SaveScene();
+	}
 }
