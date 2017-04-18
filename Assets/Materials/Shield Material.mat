@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Shield Material
-  m_Shader: {fileID: 34, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 4800000, guid: f1082a48af758c74aab78e82f5313929, type: 3}
   m_ShaderKeywords: _ALPHAPREMULTIPLY_ON _EMISSION
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
@@ -69,6 +69,12 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - first:
+        name: _Texture
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
         name: _BumpScale
@@ -92,6 +98,9 @@ Material:
         name: _GlossyReflections
       second: 1
     - first:
+        name: _Inside
+      second: 0
+    - first:
         name: _Metallic
       second: 0
     - first:
@@ -103,6 +112,9 @@ Material:
     - first:
         name: _Parallax
       second: 0.02
+    - first:
+        name: _Rim
+      second: 1.2
     - first:
         name: _Scale
       second: 1
@@ -116,8 +128,17 @@ Material:
         name: _SpecularHighlights
       second: 1
     - first:
+        name: _Speed
+      second: 0.5
+    - first:
         name: _SrcBlend
       second: 1
+    - first:
+        name: _Strength
+      second: 1.5
+    - first:
+        name: _Tile
+      second: 5
     - first:
         name: _UVSec
       second: 0
@@ -127,7 +148,7 @@ Material:
     m_Colors:
     - first:
         name: _Color
-      second: {r: 1, g: 1, b: 0, a: 0.3529412}
+      second: {r: 0.125, g: 1, b: 1, a: 0.3529412}
     - first:
         name: _Emission
       second: {r: 0, g: 0, b: 0, a: 0}
