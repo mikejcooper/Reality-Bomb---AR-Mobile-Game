@@ -38,7 +38,7 @@ public class GameUtils
 	}
 		
 	public static Vector3 FindSpawnLocationInsideConvexHull(GameMapObjects gameMapObjects){
-		float convexHullSpawnSizeRatio = 0.6f;
+		float convexHullSpawnSizeRatio = 0.8f;
 
 		List<Vector3> convexhull = gameMapObjects.convexhullVertices;
 		convexhull = MinimizeConvexHull (convexhull,convexHullSpawnSizeRatio);
@@ -47,7 +47,7 @@ public class GameUtils
 		Bounds bounds = gameMapObjects.boundary.transform.GetComponent<MeshRenderer> ().bounds;
 		Vector3 center = bounds.center;
 
-		for (int i = 0; i < 30; i++) {
+		for (int i = 0; i < 60; i++) {
 			float x = UnityEngine.Random.Range (center.x - (bounds.size.x / 2) * convexHullSpawnSizeRatio, center.x + (bounds.size.x / 2) * convexHullSpawnSizeRatio);
 			float z = UnityEngine.Random.Range (center.z - (bounds.size.z / 2) * convexHullSpawnSizeRatio, center.z + (bounds.size.z / 2) * convexHullSpawnSizeRatio);
 
@@ -57,7 +57,7 @@ public class GameUtils
 			if (Physics.Raycast (position, Vector3.down, out hit, bounds.size.y * 2)) {
 				position.y = hit.point.y;
 
-				if ( !isLocationAtAnotherCar(position) && isLocationInConvex (convexhull, position)) {
+				if (isLocationInConvex (convexhull, position)) {
 					return position + new Vector3(0.0f,1.0f,0.0f);
 				}
 			}
@@ -101,7 +101,7 @@ public class GameUtils
 		Vector3[] array = convexHull.ToArray ();
 		for(int i = 0; i < array.Length; i++){
 			int j = (i +1) % array.Length;
-			if (isLeft (array[i],array[j],location)) {
+			if (!isLeft (array[i],array[j],location)) {
 				return false;
 			}
 		}
