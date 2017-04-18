@@ -502,12 +502,16 @@ MonoBehaviour:
     ShieldPrefab: {fileID: 1827426437650360, guid: 45627fa0e48c040378b624877710522b,
       type: 2}
   GrowProperties:
-    PowerupPrefab: {fileID: 0}
-    CanvasSplash: {fileID: 0}
+    PowerupPrefab: {fileID: 1844041903375178, guid: 1810a89b163c144cb9c0d6d43f10b0c6,
+      type: 2}
+    CanvasSplash: {fileID: 1451450378736652, guid: 7849e4adb8d624d6c87f6613c311ea81,
+      type: 2}
     Duration: 8
   ShrinkProperties:
-    PowerupPrefab: {fileID: 0}
-    CanvasSplash: {fileID: 0}
+    PowerupPrefab: {fileID: 1844041903375178, guid: 1810a89b163c144cb9c0d6d43f10b0c6,
+      type: 2}
+    CanvasSplash: {fileID: 1451450378736652, guid: a79ae04c2e83b48e0a087270d769c8bb,
+      type: 2}
     Duration: 8
   PlaneObject: {fileID: 2137931947}
 --- !u!1001 &793272625
