@@ -117,9 +117,10 @@ public class MeshTransferManager {
 		Mesh boundaryMesh = getBoundaryMesh (_boundaryVertices);
 		Mesh groundMesh = getGroundMesh ();
 
-
-		GameObject ground = ProduceGameObjectFromMesh (groundMesh);
-		GameObject boundary = ProduceGameObjectFromMesh (boundaryMesh);
+		Material meshMaterial = Resources.Load ("Materials/Wireframe", typeof(Material)) as Material;
+		GameObject ground = ProduceGameObjectFromMesh (groundMesh, meshMaterial);
+		Material boundaryMaterial = Resources.Load ("Materials/Boundary", typeof(Material)) as Material;
+		GameObject boundary = ProduceGameObjectFromMesh (boundaryMesh, boundaryMaterial);
 
 		return new GameMapObjects(ground,boundary,_convexHullVertices);
 	}
@@ -135,14 +136,14 @@ public class MeshTransferManager {
 		return mesh;
 	}
 		
-	public GameObject ProduceGameObjectFromMesh(Mesh mesh){
+	public GameObject ProduceGameObjectFromMesh(Mesh mesh, Material material){
 		
 		mesh.RecalculateNormals();
 
 		// choose the material - we can get round to using a custom invisible
 		// shader at some point here, but for development purposes it's nice
 		// to be able to see the mesh
-		Material material = Resources.Load ("Materials/Wireframe", typeof(Material)) as Material;
+
 		PhysicMaterial physicMaterial = Resources.Load ("Materials/BouncyMaterial", typeof(PhysicMaterial)) as PhysicMaterial;
 
 		GameObject MeshObject = new GameObject ("World Mesh");

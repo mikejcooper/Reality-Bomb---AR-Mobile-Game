@@ -28,7 +28,19 @@ namespace Powerups {
 
 		protected override void Start () {
 			base.Start ();
-			OnMeshReady (PlaneObject);	
+			GameMapObjects gameMapObjects = new GameMapObjects (PlaneObject, PlaneObject, getBoundingBox (PlaneObject.GetComponent<MeshFilter> ().mesh));
+			OnMeshReady (gameMapObjects);	
+		}
+
+		private List<Vector3> getBoundingBox(Mesh mesh){
+			List<Vector3> result = new List<Vector3> ();
+			Vector3 min = mesh.bounds.min;
+			Vector3 max = mesh.bounds.max;
+			result.Add (new Vector3(min.x,0,min.z));
+			result.Add (new Vector3(min.x,0,max.z));
+			result.Add (new Vector3(max.x,0,max.z));
+			result.Add (new Vector3(max.x,0,min.z));
+			return result;
 		}
 
 		protected override PowerupDefinition[] GetAvailablePowerups () {

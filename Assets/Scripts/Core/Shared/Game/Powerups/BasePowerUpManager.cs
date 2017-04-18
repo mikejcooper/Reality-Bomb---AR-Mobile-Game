@@ -25,7 +25,8 @@ namespace Powerups {
 		public Canvas PlayerCanvas;
 		public GameObject PowerupPrefab;
 
-        private GameObject _meshObj;
+		private GameMapObjects _meshObj;
+
 		private float _yOffSet;
 
 		PowerupDefinition[] _availableAbilities;
@@ -82,7 +83,7 @@ namespace Powerups {
 			}
 		}
 
-		protected void OnMeshReady (GameObject mesh) {
+		protected void OnMeshReady (GameMapObjects mesh) {
 			if (!IsAllowedToSpawn ()) {
 				Debug.Log ("This PowerUpManager is not allowed to spawn");
 				return;
@@ -95,7 +96,7 @@ namespace Powerups {
 
 			_meshObj = mesh;
 			Debug.Log ("OnMeshReady");
-			Bounds bounds = _meshObj.transform.GetComponent<MeshRenderer> ().bounds;
+			Bounds bounds = _meshObj.ground.transform.GetComponent<MeshRenderer> ().bounds;
 			_yOffSet = bounds.size.y / 2.0f;
 
 			StartCoroutine (TryToSpawn());
@@ -108,7 +109,7 @@ namespace Powerups {
 			powerUpObj.transform.parent = GameObject.Find("Marker scene").transform;
 			powerUpObj.name = "powerup";//_availableAbilities [abilityTypeIndex].Tag;
 
-            Vector3 position = GameUtils.FindSpawnLocation (_meshObj);
+			Vector3 position = GameUtils.FindSpawnLocationInsideConvexHull (_meshObj);
 			position.y += (_yOffSet + 10.0f);
 			powerUpObj.transform.position = position;
 			powerUpObj.transform.localScale = Vector3.one;
