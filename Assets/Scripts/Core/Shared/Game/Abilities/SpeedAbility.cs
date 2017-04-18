@@ -12,7 +12,7 @@ namespace Abilities {
 	public class SpeedAbility : BaseAbility<SpeedAbilityProperties> {
 
 		public const string TAG = "speed";
-		private const int SPARKLES_LIFETIME_SECONDS = 5;
+		public const int SPARKLES_LIFETIME_SECONDS = 5;
 
 		private GameObject _sparklesObj;
 

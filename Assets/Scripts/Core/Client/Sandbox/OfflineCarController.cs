@@ -2,17 +2,18 @@
 using Powerups;
 using UnityEngine;
 using UnityEngine.Networking;
+using System.Collections;
 using UnityEngine.UI;
-
 
 public class OfflineCarController : MonoBehaviour
 {
 	public CarProperties CarProperties;
+	public ParticleSystem SandParticles;
 
 	private Joystick _joystick;
 	// Reference used to move the tank.
 	private Rigidbody _rigidbody;
-	private Quaternion _lookAngle = Quaternion.Euler(Vector3.forward);
+	private Quaternion _lookAngle = Quaternion.Euler (Vector3.forward);
 
 	void Start () {
 		CarProperties.OriginalHue = 0;
@@ -76,9 +77,9 @@ public class OfflineCarController : MonoBehaviour
 	void OnCollisionEnter(Collision col) {
 
 		if (AbilityRouter.IsAbilityObject (col.gameObject)) {
-			SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager>();
-//			AbilityRouter.RouteTag (AbilityRouter.GetAbilityTag(col.gameObject), CarProperties, gameObject, spm, true, true);
-			AbilityRouter.RouteTag (spm.GetPowerupType(col.gameObject, false), CarProperties, gameObject, spm, true, true);
+			SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager> ();
+			string type = spm.GetPowerupType (col.gameObject, false);
+			AbilityRouter.RouteTag (type, CarProperties, gameObject, spm, true, true);
 			Destroy(col.gameObject);
 		} else {
 			// If two players collide, calculate the angle of collision, reverse the direction and add a force in that direction
@@ -95,10 +96,21 @@ public class OfflineCarController : MonoBehaviour
         if (AbilityRouter.IsAbilityObject(other.transform.parent.gameObject))
         {
             SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager>();
-            //			AbilityRouter.RouteTag (AbilityRouter.GetAbilityTag(col.gameObject), CarProperties, gameObject, spm, true, true);
-            AbilityRouter.RouteTag(spm.GetPowerupType(other.transform.parent.gameObject, false), CarProperties, gameObject, spm, true, true);
+			string type = spm.GetPowerupType (other.transform.parent.gameObject, false);
+			if (type == SpeedAbility.TAG) {
+				StartCoroutine( HideShowParticles (SandParticles, SpeedAbility.SPARKLES_LIFETIME_SECONDS) );
+			}
+            AbilityRouter.RouteTag(type, CarProperties, gameObject, spm, true, true);
             Destroy(other.transform.parent.gameObject);
         }
     }
+
+	IEnumerator HideShowParticles(ParticleSystem particleSystem, int duration){
+		particleSystem.Stop ();
+		yield return new WaitForSeconds (duration);
+		particleSystem.Play();			
+	}
+
+		
 }
 
