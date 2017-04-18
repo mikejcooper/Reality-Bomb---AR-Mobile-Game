@@ -27,6 +27,7 @@ public class CarController : NetworkBehaviour
 
 	public AudioSource ExplosionSound;
 	public AudioSource PowerUpSound;
+	public AudioSource BombAlertSound;
 
 	[SyncVar]
 	public int ServerId;
@@ -112,6 +113,9 @@ public class CarController : NetworkBehaviour
 				if (GameObject.Find ("PowerUpSound") != null) {
 					PowerUpSound = GameObject.Find ("PowerUpSound").GetComponent<AudioSource> ();
 				}
+				if (GameObject.Find ("BombAlertSound") != null) {
+					BombAlertSound = GameObject.Find ("BombAlertSound").GetComponent<AudioSource> ();
+				}
 			}
 				
 		}
@@ -155,6 +159,11 @@ public class CarController : NetworkBehaviour
 
 	private void setBomb(bool b){
 		this.HasBomb = b;
+		if (b == true) {
+			if (BombAlertSound != null) {
+				BombAlertSound.PlayOneShot (BombAlertSound.clip);
+			}
+		}
 		#if UNITY_ANDROID || UNITY_IPHONE
 		// vibrate on exchange
 		if (isLocalPlayer){
