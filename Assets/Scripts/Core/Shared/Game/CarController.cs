@@ -28,6 +28,7 @@ public class CarController : NetworkBehaviour
 	public AudioSource ExplosionSound;
 	public AudioSource PowerUpSound;
 	public AudioSource BombAlertSound;
+	public AudioSource BumpSound;
 
 	[SyncVar]
 	public int ServerId;
@@ -115,6 +116,9 @@ public class CarController : NetworkBehaviour
 				}
 				if (GameObject.Find ("BombAlertSound") != null) {
 					BombAlertSound = GameObject.Find ("BombAlertSound").GetComponent<AudioSource> ();
+				}
+				if (GameObject.Find ("BumpSound") != null) {
+					BumpSound = GameObject.Find ("BumpSound").GetComponent<AudioSource> ();
 				}
 			}
 				
@@ -307,6 +311,9 @@ public class CarController : NetworkBehaviour
 		direction = -direction.normalized;
 		direction.y = 0;
 		GetComponent<Rigidbody>().AddForce(direction * bounceForce);
+		/*if (isLocalPlayer && BumpSound != null) {
+			BumpSound.PlayOneShot (BumpSound.clip);
+		}*/
 	}
 
 
