@@ -39,7 +39,7 @@ GameObject:
   - component: {fileID: 222942306538853416}
   - component: {fileID: 114827167563108192}
   - component: {fileID: 114227659663591008}
-  - component: {fileID: 114155879399689890}
+  - component: {fileID: 114960209953479792}
   m_Layer: 5
   m_Name: MuteButton
   m_TagString: Untagged
@@ -47,18 +47,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &114155879399689890
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1662203249781030}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48b7dc2fb46b21e479917075431268c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Muted: 1
 --- !u!114 &114193153522826948
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -131,8 +119,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114155879399689890}
-        m_MethodName: ToggleMuteAllSound
+      - m_Target: {fileID: 114960209953479792}
+        m_MethodName: ToggleMuteSound
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -171,6 +159,17 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114960209953479792
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1662203249781030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48b7dc2fb46b21e479917075431268c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!222 &222884427023879926
 CanvasRenderer:
   m_ObjectHideFlags: 1
