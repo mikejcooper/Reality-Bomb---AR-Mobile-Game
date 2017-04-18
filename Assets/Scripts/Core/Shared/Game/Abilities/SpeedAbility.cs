@@ -27,8 +27,12 @@ namespace Abilities {
 
 		protected override void OnRemoveCarEffect (CarProperties properties, bool triggeredPowerup) {
 			if (triggeredPowerup) {
-				var emitter = _sparklesObj.GetComponent<ParticleSystem> ().emission;
-				emitter.enabled = false;
+				var ps = _sparklesObj.GetComponentsInChildren<ParticleSystem>();
+                foreach (var p in ps)
+                {
+                    var em = p.emission;
+                    em.enabled = false;
+                }
 
 				// SpeedAbility will be destroyed as soon as this function exits,
 				// so attach a delayed destroyer component to destroy the sparkles
