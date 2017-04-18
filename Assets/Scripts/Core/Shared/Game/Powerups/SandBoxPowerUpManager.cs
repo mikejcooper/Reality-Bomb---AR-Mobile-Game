@@ -54,6 +54,7 @@ namespace Powerups {
 		}
 
 		public override void OnAbilityStart (string abilityTag) {
+			base.OnAbilityStart(abilityTag);
 			switch (abilityTag) {
 			case SandboxInkAbility.TAG:
 				InkSplatterActivatedEvent ();

@@ -28,11 +28,15 @@ namespace Powerups {
 		private GameMapObjects _meshObj;
 
 		private float _yOffSet;
+		private int _numCurrentPowerups;
+		private bool _testingFlag; // False for Testing spawn frequency, True for actual spawn frequency.
 
 		PowerupDefinition[] _availableAbilities;
         
         protected virtual void Start () {
 			_availableAbilities = GetAvailablePowerups ();
+			_numCurrentPowerups = 0;
+			_testingFlag = true; // Set to false once testing is complete.
 		}
 
 		protected abstract PowerupDefinition[] GetAvailablePowerups ();
@@ -70,9 +74,20 @@ namespace Powerups {
 			Debug.Log ("Trying to spawn powerup");
 			while(true) 
 			{ 
-				// Adjust Range Size to adjust spawn frequency
-//				int rand = Random.Range(0,3);
-				int rand = Random.Range(0,1);
+				int rand;
+
+
+				if (_testingFlag) {
+					rand = Random.Range (0, 1);
+				} else {
+					// Spawn frequency varies and gets lower as more powerups are spawned
+					if (_numCurrentPowerups < 5) { 
+						rand = Random.Range (0, (1 + _numCurrentPowerups));
+					} else { // Dont spawn any more powerups if 5 are already in the scene
+						rand = 1;
+					}
+				}
+
 
 				// If generater produces the predetermined number from the range above, spawn a power up
 				if (rand == 0) { 
@@ -115,6 +130,8 @@ namespace Powerups {
 			powerUpObj.transform.localScale = Vector3.one;
 
 			OnPowerUpGenerated (powerUpObj);
+
+			_numCurrentPowerups += 1;
 		}
 
 		public string GetPowerupType (GameObject powerupObj, bool hasBomb) {
@@ -131,7 +148,9 @@ namespace Powerups {
 			}
 		}
 
-		public virtual void OnAbilityStart (string abilityTag) {}
+		public virtual void OnAbilityStart (string abilityTag) {
+			_numCurrentPowerups -= 1;
+		}
 		public virtual void OnAbilityStop (string abilityTag) {}
 
         protected virtual bool IsAllowedToSpawn () { return false; }

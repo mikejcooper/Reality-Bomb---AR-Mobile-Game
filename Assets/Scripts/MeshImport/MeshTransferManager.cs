@@ -117,32 +117,18 @@ public class MeshTransferManager {
 		Mesh boundaryMesh = getBoundaryMesh (_boundaryVertices);
 		Mesh groundMesh = getGroundMesh ();
 
-		Material meshMaterial = Resources.Load ("Materials/Wireframe", typeof(Material)) as Material;
-		GameObject ground = ProduceGameObjectFromMesh (groundMesh, meshMaterial);
+
+		Material wireframeMaterial = Resources.Load ("Materials/Wireframe", typeof(Material)) as Material;
+		GameObject ground = ProduceGameObjectFromMesh (groundMesh, wireframeMaterial);
 		Material boundaryMaterial = Resources.Load ("Materials/Boundary", typeof(Material)) as Material;
 		GameObject boundary = ProduceGameObjectFromMesh (boundaryMesh, boundaryMaterial);
 
 		return new GameMapObjects(ground,boundary,_convexHullVertices);
 	}
 
-	Mesh getGroundMesh(){
-		Mesh mesh = new Mesh ();
-		mesh.vertices = _meshVertices;
-		mesh.normals = _meshNormals;
-		mesh.uv = _meshUVs;
-		mesh.triangles = _meshTriangles;
 
-		mesh.RecalculateBounds ();
-		return mesh;
-	}
-		
+			
 	public GameObject ProduceGameObjectFromMesh(Mesh mesh, Material material){
-		
-		mesh.RecalculateNormals();
-
-		// choose the material - we can get round to using a custom invisible
-		// shader at some point here, but for development purposes it's nice
-		// to be able to see the mesh
 
 		PhysicMaterial physicMaterial = Resources.Load ("Materials/BouncyMaterial", typeof(PhysicMaterial)) as PhysicMaterial;
 
@@ -179,14 +165,27 @@ public class MeshTransferManager {
 		return MeshObject;
 	}
 
+	Mesh getGroundMesh(){
+		Mesh mesh = new Mesh ();
+		mesh.vertices = _meshVertices;
+		mesh.normals = _meshNormals;
+		mesh.uv = _meshUVs;
+		mesh.triangles = _meshTriangles;
+
+		mesh.RecalculateBounds ();
+		mesh.RecalculateNormals ();
+
+		return mesh;
+	}
+
 	Mesh getBoundaryMesh(List<Vector3> positions){
 		Mesh mesh = new Mesh ();
 		Vector3[] vertices = new Vector3[positions.Count * 2];
 		int[] triangles = new int[positions.Count * 4 * 3];
 		mesh.name = "ScriptedMesh";
 		for (int i = 0; i < positions.Count; i++) {
-			vertices [i]                   = new Vector3 (positions[i].x , -0.2f, positions[i].z);
-			vertices [i + positions.Count] = new Vector3 (positions[i].x , 2.0f , positions[i].z);
+			vertices [i]                   = new Vector3 (positions[i].x , positions[i].y, positions[i].z);
+			vertices [i + positions.Count] = new Vector3 (positions[i].x , positions[i].y+5.0f , positions[i].z);
 
 			triangles [0 * 3 * positions.Count + 3 * i + 0] = i;
 			triangles [0 * 3 * positions.Count + 3 * i + 1] = (i + 1) % positions.Count;
@@ -207,9 +206,9 @@ public class MeshTransferManager {
 
 		mesh.vertices = vertices;
 		mesh.triangles = triangles;
-		mesh.RecalculateNormals ();
-		mesh.RecalculateBounds ();
 
+		mesh.RecalculateBounds ();
+		mesh.RecalculateNormals ();
 
 		return mesh;
 	}
