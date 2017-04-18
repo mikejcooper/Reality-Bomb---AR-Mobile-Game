@@ -180,7 +180,7 @@ public class GameManager : NetworkBehaviour {
 		var material = WorldMesh.ground.GetComponent<MeshRenderer> ().material;
 
 		float sourceAlpha = material.GetFloat ("_Alpha");
-		float targetAlpha = 0.2f;
+		float targetAlpha = 0f;
 
 		float sourceSpeed = material.GetFloat ("_Speed");
 		float targetSpeed = 0f;
@@ -200,6 +200,8 @@ public class GameManager : NetworkBehaviour {
 			material.SetFloat ("_Speed", sourceSpeed - i*speedDec);
 			yield return new WaitForSeconds(timeInterval);
 		}
+
+		WorldMesh.ground.GetComponent<MeshRenderer> ().enabled = false;
 
 	}
 
