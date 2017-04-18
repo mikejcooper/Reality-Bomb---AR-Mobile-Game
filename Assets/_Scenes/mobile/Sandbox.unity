@@ -1664,6 +1664,108 @@ MonoBehaviour:
   CameraXRotation: 90
   CameraYRotation: 0
   CameraZRotation: 0
+--- !u!1001 &2113284200
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 905620703}
+    m_Modifications:
+    - target: {fileID: 4990434951948538, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4990434951948538, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -0.89
+      objectReference: {fileID: 0}
+    - target: {fileID: 4990434951948538, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4990434951948538, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4990434951948538, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4990434951948538, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4990434951948538, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4990434951948538, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8, type: 2}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 198931059209867158, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8,
+        type: 2}
+      propertyPath: randomSeed
+      value: -1236657097
+      objectReference: {fileID: 0}
+    - target: {fileID: 198931059209867158, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8,
+        type: 2}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 0.40392157
+      objectReference: {fileID: 0}
+    - target: {fileID: 198931059209867158, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8,
+        type: 2}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0.34117648
+      objectReference: {fileID: 0}
+    - target: {fileID: 198931059209867158, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8,
+        type: 2}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.26666668
+      objectReference: {fileID: 0}
+    - target: {fileID: 198931059209867158, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8,
+        type: 2}
+      propertyPath: InitialModule.maxNumParticles
+      value: 100000
+      objectReference: {fileID: 0}
+    - target: {fileID: 198931059209867158, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8,
+        type: 2}
+      propertyPath: InitialModule.gravityModifier.scalar
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 198931059209867158, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8,
+        type: 2}
+      propertyPath: InitialModule.startSize.scalar
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 198931059209867158, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8,
+        type: 2}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 198931059209867158, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8,
+        type: 2}
+      propertyPath: TrailModule.enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 198931059209867158, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8,
+        type: 2}
+      propertyPath: EmissionModule.rateOverDistance.scalar
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 198931059209867158, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8,
+        type: 2}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 198931059209867158, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8,
+        type: 2}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 3
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &2137931947
 GameObject:
   m_ObjectHideFlags: 0
