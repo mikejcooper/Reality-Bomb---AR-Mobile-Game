@@ -72,7 +72,7 @@ Material:
     - first:
         name: _Texture
       second:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 451ebe569d9ed6c43b69ce510a3a5b2a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -114,7 +114,7 @@ Material:
       second: 0.02
     - first:
         name: _Rim
-      second: 1.2
+      second: 0.708
     - first:
         name: _Scale
       second: 1
@@ -129,16 +129,16 @@ Material:
       second: 1
     - first:
         name: _Speed
-      second: 0.5
+      second: 1.79
     - first:
         name: _SrcBlend
       second: 1
     - first:
         name: _Strength
-      second: 1.5
+      second: 2.28
     - first:
         name: _Tile
-      second: 5
+      second: 10
     - first:
         name: _UVSec
       second: 0
