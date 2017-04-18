@@ -273,14 +273,17 @@ public class CarController : NetworkBehaviour
      * pass the relevant data to the right places (CarProperties).
      */
     [ClientRpc]
-	public void RpcPowerUp(string tag, int triggeringServerId)
-    {
-        GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
+	public void RpcPowerUp(string tag, int triggeringServerId) {
+		LocalPowerUp (tag, triggeringServerId);
+    }
+
+	public void LocalPowerUp (string tag, int triggeringServerId) {
+		GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
 		AbilityRouter.RouteTag (tag, CarProperties, gameObject, gpm, triggeringServerId == ServerId, isLocalPlayer);
 		if (PowerUpSound != null && triggeringServerId == ServerId) {
 			PowerUpSound.PlayOneShot (PowerUpSound.clip);
 		}
-    }
+	}
 
     void OnCollisionEnter(Collision col)
 	{
@@ -366,12 +369,6 @@ public class CarController : NetworkBehaviour
 		Debug.Log ("RPC CONTROLS");
 
 		_controlsDisabled = false;
-	}
-
-	[ClientRpc]
-	public void RpcStartGameCountDown(){
-		Debug.Log ("RPC GAME COUNT DOWN");
-		GameObject.FindObjectOfType<PreparingGame>().StartGameCountDown (false);
 	}
 
 	public void DisableControls(){
