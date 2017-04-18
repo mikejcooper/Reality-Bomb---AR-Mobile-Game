@@ -186,18 +186,30 @@ public class GameManager : NetworkBehaviour {
 	{
 		int steps = 100;
 		float timeInterval = duration / (float) steps;
-		float dec = 1f / (float) steps;
-		float alpha = 1.0f;
 
-		while(alpha > 0.0f) 
+		var material = WorldMesh.GetComponent<MeshRenderer> ().material;
+
+		float sourceAlpha = material.GetFloat ("_Alpha");
+		float targetAlpha = 0.2f;
+
+		float sourceSpeed = material.GetFloat ("_Speed");
+		float targetSpeed = 0f;
+
+		float alphaDec = (sourceAlpha - targetAlpha) / (float) steps;
+		float speedDec = (sourceSpeed - targetSpeed) / (float) steps;
+
+
+
+		material.DisableKeyword("_ALPHATEST_ON");
+		material.EnableKeyword("_ALPHABLEND_ON");
+		material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+
+		for (int i=0; i<steps; i++)
 		{ 
-			alpha -= dec;
-			WorldMesh.GetComponent<MeshRenderer> ().material.SetFloat ("_Alpha", alpha);
+			material.SetFloat ("_Alpha", sourceAlpha - i*alphaDec);
+			material.SetFloat ("_Speed", sourceSpeed - i*speedDec);
 			yield return new WaitForSeconds(timeInterval);
 		}
-
-		WorldMesh.GetComponent<MeshRenderer> ().enabled = false;
-
 
 	}
 
