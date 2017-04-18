@@ -6804,9 +6804,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39c4debb9cc9db248b9b4a61843861a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FadeInTime: 3
   StartVolume: 0
   FinalVolume: 0.5
+  StartDelay: 0
+  FadeInTime: 3
   FadeOutTime: 3
 --- !u!82 &1032852765
 AudioSource:

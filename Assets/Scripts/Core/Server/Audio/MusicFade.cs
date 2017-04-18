@@ -6,9 +6,10 @@ using UnityEngine.SceneManagement;
 public class MusicFade : MonoBehaviour {
 
 	protected AudioSource _music;
-	public float FadeInTime;
 	public float StartVolume;
 	public float FinalVolume;
+	public float StartDelay;
+	public float FadeInTime;
 	public float FadeOutTime;
 
 	IEnumerator FadeInMusic() {
@@ -42,8 +43,12 @@ public class MusicFade : MonoBehaviour {
 		StartCoroutine (FadeOutMusic ());
 	}
 
-	public void StartMusic() {
+	public void StartAfterDelay() {
 		StartCoroutine (FadeInMusic ());
+	}
+
+	public void StartMusic() {
+		Invoke ("StartAfterDelay", StartDelay);
 	}
 }
 
