@@ -273,7 +273,7 @@ public class CarController : NetworkBehaviour
     {
         GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
 		AbilityRouter.RouteTag (tag, CarProperties, gameObject, gpm, triggeringServerId == ServerId, isLocalPlayer);
-		if (PowerUpSound != null) {
+		if (PowerUpSound != null && triggeringServerId == ServerId) {
 			PowerUpSound.PlayOneShot (PowerUpSound.clip);
 		}
     }
