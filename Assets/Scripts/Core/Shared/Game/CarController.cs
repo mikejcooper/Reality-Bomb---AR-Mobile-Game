@@ -25,6 +25,9 @@ public class CarController : NetworkBehaviour
 	// at some point to a better place.
 	public GameObject ExplosionAnimation;
 
+	public AudioSource ExplosionSound;
+	public AudioSource PowerUpSound;
+
 	[SyncVar]
 	public int ServerId;
 
@@ -100,6 +103,15 @@ public class CarController : NetworkBehaviour
 				Debug.Log ("unavailable");
 				GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += Reposition;
 				GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += SetFallDistance;
+			}
+
+			if (isLocalPlayer) {
+				if (GameObject.Find ("ExplosionSound") != null) {
+					ExplosionSound = GameObject.Find ("ExplosionSound").GetComponent<AudioSource> ();
+				}
+				if (GameObject.Find ("PowerUpSound") != null) {
+					PowerUpSound = GameObject.Find ("PowerUpSound").GetComponent<AudioSource> ();
+				}
 			}
 				
 		}
@@ -181,6 +193,9 @@ public class CarController : NetworkBehaviour
 
 	private void Boom(){
 		Instantiate(ExplosionAnimation, transform.position, Quaternion.identity);
+		if (ExplosionSound != null) {
+			ExplosionSound.PlayOneShot (ExplosionSound.clip);
+		}
 	}
 
 	private void Update ()
@@ -250,6 +265,9 @@ public class CarController : NetworkBehaviour
     {
         GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
 		AbilityRouter.RouteTag (tag, CarProperties, gameObject, gpm, triggeringServerId == ServerId, isLocalPlayer);
+		if (PowerUpSound != null) {
+			PowerUpSound.PlayOneShot (PowerUpSound.clip);
+		}
     }
 
     void OnCollisionEnter(Collision col)
