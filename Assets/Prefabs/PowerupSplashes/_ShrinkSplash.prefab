@@ -39,15 +39,15 @@ GameObject:
   - component: {fileID: 224146648996081420}
   - component: {fileID: 222343275790273206}
   - component: {fileID: 114200773611508330}
-  - component: {fileID: 111931673913383816}
+  - component: {fileID: 111347855217418080}
   m_Layer: 5
-  m_Name: SpeedBoostSplash
+  m_Name: _ShrinkSplash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!111 &111931673913383816
+--- !u!111 &111347855217418080
 Animation:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -55,12 +55,11 @@ Animation:
   m_GameObject: {fileID: 1451450378736652}
   m_Enabled: 1
   serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: 019f191447cc54713809a2482b1150a3, type: 2}
+  m_Animation: {fileID: 7400000, guid: bbeb3f5a3482f4539af60e53c6faf5c3, type: 2}
   m_Animations:
-  - {fileID: 7400000, guid: 38297e639ee734a5aa45ae6eda30a319, type: 2}
-  - {fileID: 7400000, guid: 019f191447cc54713809a2482b1150a3, type: 2}
+  - {fileID: 7400000, guid: bbeb3f5a3482f4539af60e53c6faf5c3, type: 2}
   m_WrapMode: 0
-  m_PlayAutomatically: 0
+  m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 0
 --- !u!114 &114200773611508330
@@ -86,7 +85,7 @@ MonoBehaviour:
   m_Script: {fileID: -900027084, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_EffectColor: {r: 1, g: 1, b: 1, a: 1}
+  m_EffectColor: {r: 0.3897059, g: 0.0745026, b: 0.0745026, a: 1}
   m_EffectDistance: {x: 3.26, y: 2.79}
   m_UseGraphicAlpha: 1
 --- !u!114 &114568187656601418
@@ -101,7 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.4509804, b: 0.15686275, a: 1}
+  m_Color: {r: 0.96470594, g: 0.2392157, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -121,7 +120,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Speed Boost
+  m_Text: SHRINKKK
 --- !u!222 &222079212384287732
 CanvasRenderer:
   m_ObjectHideFlags: 1
@@ -161,7 +160,7 @@ RectTransform:
   m_GameObject: {fileID: 1413538457575928}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 5, y: 6, z: 5}
   m_Children: []
   m_Father: {fileID: 224146648996081420}
   m_RootOrder: 0

@@ -19,8 +19,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4571732366403514}
-  - component: {fileID: 199848802785251770}
-  - component: {fileID: 198201640095340946}
+  - component: {fileID: 199417222369602830}
+  - component: {fileID: 198545581310757588}
   m_Layer: 9
   m_Name: Right
   m_TagString: Untagged
@@ -328,11 +328,11 @@ ParticleSystem:
         m_Mode: 0
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
-      minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.23529412, g: 0.8117647, b: 1, a: 1}
-      minMaxState: 0
+      minColor: {r: 1, g: 0.80784315, b: 0.15686275, a: 1}
+      maxColor: {r: 1, g: 0.4509804, b: 0.15686275, a: 1}
+      minMaxState: 2
     startSize:
-      scalar: 0.1
+      scalar: 0.3
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -972,10 +972,10 @@ ParticleSystem:
       maxGradient:
         key0:
           serializedVersion: 2
-          rgba: 4294967295
+          rgba: 4280831999
         key1:
           serializedVersion: 2
-          rgba: 4294967295
+          rgba: 2677759
         key2:
           serializedVersion: 2
           rgba: 0
@@ -1002,7 +1002,7 @@ ParticleSystem:
         ctime5: 0
         ctime6: 0
         ctime7: 0
-        atime0: 0
+        atime0: 36623
         atime1: 65535
         atime2: 0
         atime3: 0
@@ -2720,7 +2720,7 @@ ParticleSystem:
       minColor: {r: 1, g: 1, b: 1, a: 1}
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       minMaxState: 0
---- !u!198 &198201640095340946
+--- !u!198 &198545581310757588
 ParticleSystem:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -2947,11 +2947,11 @@ ParticleSystem:
         m_Mode: 0
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
-      minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.23529412, g: 0.8117647, b: 1, a: 1}
-      minMaxState: 0
+      minColor: {r: 1, g: 0.80784315, b: 0.15686275, a: 1}
+      maxColor: {r: 1, g: 0.4509804, b: 0.15686275, a: 1}
+      minMaxState: 2
     startSize:
-      scalar: 0.1
+      scalar: 0.3
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -3591,10 +3591,10 @@ ParticleSystem:
       maxGradient:
         key0:
           serializedVersion: 2
-          rgba: 4294967295
+          rgba: 4280831999
         key1:
           serializedVersion: 2
-          rgba: 4294967295
+          rgba: 2677759
         key2:
           serializedVersion: 2
           rgba: 0
@@ -3621,7 +3621,7 @@ ParticleSystem:
         ctime5: 0
         ctime6: 0
         ctime7: 0
-        atime0: 0
+        atime0: 36623
         atime1: 65535
         atime2: 0
         atime3: 0
@@ -5389,7 +5389,7 @@ ParticleSystemRenderer:
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
---- !u!199 &199848802785251770
+--- !u!199 &199417222369602830
 ParticleSystemRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 1
