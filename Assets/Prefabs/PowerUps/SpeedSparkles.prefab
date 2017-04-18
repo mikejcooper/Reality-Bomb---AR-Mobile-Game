@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4990434951948538}
   - component: {fileID: 198931059209867158}
   - component: {fileID: 199405858677013242}
+  - component: {fileID: 114655995293087312}
   m_Layer: 9
   m_Name: SpeedSparkles
   m_TagString: Untagged
@@ -41,6 +42,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!114 &114655995293087312
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1881590009535144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2405598850cfd744b64df322d50f77f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!198 &198931059209867158
 ParticleSystem:
   m_ObjectHideFlags: 1
