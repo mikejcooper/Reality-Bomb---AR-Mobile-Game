@@ -501,6 +501,14 @@ MonoBehaviour:
     Duration: 8
     ShieldPrefab: {fileID: 1827426437650360, guid: 45627fa0e48c040378b624877710522b,
       type: 2}
+  GrowProperties:
+    PowerupPrefab: {fileID: 0}
+    CanvasSplash: {fileID: 0}
+    Duration: 8
+  ShrinkProperties:
+    PowerupPrefab: {fileID: 0}
+    CanvasSplash: {fileID: 0}
+    Duration: 8
   PlaneObject: {fileID: 2137931947}
 --- !u!1001 &793272625
 Prefab:
@@ -1462,7 +1470,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1965431130}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe4ec33cee90c844ea1bcc2cd642033e, type: 3}
   m_Name: 

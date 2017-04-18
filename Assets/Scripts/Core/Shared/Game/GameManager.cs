@@ -45,8 +45,6 @@ public class GameManager : NetworkBehaviour {
 
 	public GameObject WorldMesh { get; private set; }
 
-	public AudioSource ExplosionSound;
-
 
 	void Start ()
 	{
@@ -87,14 +85,8 @@ public class GameManager : NetworkBehaviour {
 
 		if (!isServer) {
 			ClientSceneManager.Instance.OnGameLoaded ();
-
-			var muteButton = GameObject.Find ("MuteButton");
-			if (muteButton != null) {
-				muteButton.SetActive (false);
-			} else {
-				Debug.LogWarning ("Could not find mute button. Check this!");
-			}
 		}
+			
 	}
 
 	private void ShowExplanationDialog () {
@@ -139,9 +131,6 @@ public class GameManager : NetworkBehaviour {
 		_cars.KillPlayer (car);
 		CheckForGameOver ();
 		if(_cars.GetNumberOfBombsPresent() == 0) _cars.PassBombRandomPlayer();
-		if (ExplosionSound != null) {
-			ExplosionSound.PlayOneShot (ExplosionSound.clip);
-		}
 	}
 
 	[Server]
@@ -166,18 +155,52 @@ public class GameManager : NetworkBehaviour {
 			AddCar(car.gameObject);
 		}
 		_cars.StartGameCountDown();
-		RpcEnsureExplanationDialogDismissed ();
+		RpcOnBeginCountdown ();
 		PreparingCanvas.StartGameCountDown (true);
 
 		Debug.Log ("SERVER GAME COUNT DOWN");
 	}
 
 	[ClientRpc]
-	public void RpcEnsureExplanationDialogDismissed () {
+	public void RpcOnBeginCountdown () {
 		if (_clientExplanationDialog != null) {
 			Destroy (_clientExplanationDialog);
 		}
+
+		StartCoroutine(FadeOutMesh(5));
 	}
+
+	IEnumerator FadeOutMesh(int duration)
+	{
+		int steps = 100;
+		float timeInterval = duration / (float) steps;
+
+		var material = WorldMesh.GetComponent<MeshRenderer> ().material;
+
+		float sourceAlpha = material.GetFloat ("_Alpha");
+		float targetAlpha = 0.2f;
+
+		float sourceSpeed = material.GetFloat ("_Speed");
+		float targetSpeed = 0f;
+
+		float alphaDec = (sourceAlpha - targetAlpha) / (float) steps;
+		float speedDec = (sourceSpeed - targetSpeed) / (float) steps;
+
+
+
+		material.DisableKeyword("_ALPHATEST_ON");
+		material.EnableKeyword("_ALPHABLEND_ON");
+		material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+
+		for (int i=0; i<steps; i++)
+		{ 
+			material.SetFloat ("_Alpha", sourceAlpha - i*alphaDec);
+			material.SetFloat ("_Speed", sourceSpeed - i*speedDec);
+			yield return new WaitForSeconds(timeInterval);
+		}
+
+	}
+
 		
 	[Server]
 	public void CountDownFinishedStartPlaying(){

@@ -25,6 +25,10 @@ public class CarController : NetworkBehaviour
 	// at some point to a better place.
 	public GameObject ExplosionAnimation;
 
+	public AudioSource ExplosionSound;
+	public AudioSource PowerUpSound;
+	public AudioSource BombAlertSound;
+
 	[SyncVar]
 	public int ServerId;
 
@@ -101,6 +105,18 @@ public class CarController : NetworkBehaviour
 				GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += Reposition;
 				GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += SetFallDistance;
 			}
+
+			if (isLocalPlayer) {
+				if (GameObject.Find ("ExplosionSound") != null) {
+					ExplosionSound = GameObject.Find ("ExplosionSound").GetComponent<AudioSource> ();
+				}
+				if (GameObject.Find ("PowerUpSound") != null) {
+					PowerUpSound = GameObject.Find ("PowerUpSound").GetComponent<AudioSource> ();
+				}
+				if (GameObject.Find ("BombAlertSound") != null) {
+					BombAlertSound = GameObject.Find ("BombAlertSound").GetComponent<AudioSource> ();
+				}
+			}
 				
 		}
 
@@ -143,6 +159,11 @@ public class CarController : NetworkBehaviour
 
 	private void setBomb(bool b){
 		this.HasBomb = b;
+		if (b == true) {
+			if (BombAlertSound != null) {
+				BombAlertSound.PlayOneShot (BombAlertSound.clip);
+			}
+		}
 		#if UNITY_ANDROID || UNITY_IPHONE
 		// vibrate on exchange
 		if (isLocalPlayer){
@@ -181,6 +202,9 @@ public class CarController : NetworkBehaviour
 
 	private void Boom(){
 		Instantiate(ExplosionAnimation, transform.position, Quaternion.identity);
+		if (ExplosionSound != null) {
+			ExplosionSound.PlayOneShot (ExplosionSound.clip);
+		}
 	}
 
 	private void Update ()
@@ -250,6 +274,9 @@ public class CarController : NetworkBehaviour
     {
         GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
 		AbilityRouter.RouteTag (tag, CarProperties, gameObject, gpm, triggeringServerId == ServerId, isLocalPlayer);
+		if (PowerUpSound != null) {
+			PowerUpSound.PlayOneShot (PowerUpSound.clip);
+		}
     }
 
     void OnCollisionEnter(Collision col)
