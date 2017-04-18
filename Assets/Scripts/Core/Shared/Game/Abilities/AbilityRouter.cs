@@ -6,7 +6,7 @@ namespace Abilities {
 	public class AbilityRouter {
 
 		public static string POWERUP_OBJ_NAME = "powerup";
-		static string[] ALL_TAGS = new string[] { SandboxInkAbility.TAG, InkAbility.TAG, SpeedAbility.TAG, ShieldAbility.TAG };
+		static string[] ALL_TAGS = new string[] { SandboxInkAbility.TAG, InkAbility.TAG, SpeedAbility.TAG, ShieldAbility.TAG, GrowAbility.TAG, ShrinkAbility.TAG };
 
 		public static void RouteTag(String abilityTag, CarProperties carProperties, GameObject gameObject, BasePowerUpManager powerupManager, bool didTriggerPowerup, bool isLocalPlayer) {
 			switch (abilityTag) {
@@ -29,6 +29,16 @@ namespace Abilities {
 				Debug.Log("******** SHIELD! ********");
 				ShieldAbility shieldAbility = (ShieldAbility)gameObject.AddComponent(typeof(ShieldAbility));
 				shieldAbility.initialise(carProperties, (ShieldAbilityProperties) powerupManager.GetAbilityProperties(typeof(ShieldAbility)), powerupManager.PlayerCanvas, didTriggerPowerup, isLocalPlayer, (AbilityCallbacks) powerupManager);
+				break;
+			case GrowAbility.TAG:
+				Debug.Log("******** GROW! ********");
+				GrowAbility growAbility = (GrowAbility)gameObject.AddComponent(typeof(GrowAbility));
+				growAbility.initialise(carProperties, (GrowAbilityProperties) powerupManager.GetAbilityProperties(typeof(GrowAbility)), powerupManager.PlayerCanvas, didTriggerPowerup, isLocalPlayer, (AbilityCallbacks) powerupManager);
+				break;
+			case ShrinkAbility.TAG:
+				Debug.Log("******** Shrink! ********");
+				ShrinkAbility shrinkAbility = (ShrinkAbility)gameObject.AddComponent(typeof(ShrinkAbility));
+				shrinkAbility.initialise(carProperties, (ShrinkAbilityProperties) powerupManager.GetAbilityProperties(typeof(ShrinkAbility)), powerupManager.PlayerCanvas, didTriggerPowerup, isLocalPlayer, (AbilityCallbacks) powerupManager);
 				break;
 			}
 
