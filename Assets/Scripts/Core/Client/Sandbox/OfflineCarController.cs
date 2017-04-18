@@ -89,5 +89,16 @@ public class OfflineCarController : MonoBehaviour
 			GetComponent<Rigidbody> ().AddForce (direction * bounceForce);
 		}
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (AbilityRouter.IsAbilityObject(other.transform.parent.gameObject))
+        {
+            SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager>();
+            //			AbilityRouter.RouteTag (AbilityRouter.GetAbilityTag(col.gameObject), CarProperties, gameObject, spm, true, true);
+            AbilityRouter.RouteTag(spm.GetPowerupType(other.transform.parent.gameObject, false), CarProperties, gameObject, spm, true, true);
+            Destroy(other.transform.parent.gameObject);
+        }
+    }
 }
 

@@ -255,7 +255,7 @@ public class CarController : NetworkBehaviour
     void OnCollisionEnter(Collision col)
 	{
 		if (isServer) {
-			GameObject.FindObjectOfType<GameManager> ().CollisionEvent (this, col);
+			GameObject.FindObjectOfType<GameManager> ().CollisionEvent (this, col.gameObject);
 		} else {
 			if (!col.gameObject.tag.Contains("PowerUp")) {
 /*
@@ -266,8 +266,16 @@ public class CarController : NetworkBehaviour
 			}
 		}
 	}
-		
-	void Bounce(Collision col){
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (isServer && AbilityRouter.IsAbilityObject(other.transform.parent.gameObject))
+        {
+            GameObject.FindObjectOfType<GameManager>().CollisionEvent(this, other.transform.parent.gameObject);
+        }
+    }
+
+    void Bounce(Collision col){
 		var bounceForce = 350;
 		Vector3 direction = col.contacts[0].point - transform.position;
 		direction = -direction.normalized;
