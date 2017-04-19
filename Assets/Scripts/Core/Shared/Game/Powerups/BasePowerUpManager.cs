@@ -24,10 +24,11 @@ namespace Powerups {
 
 		public Canvas PlayerCanvas;
 		public GameObject PowerupPrefab;
+		public float _yOffSet = 0.0f; 		// Temp made public 
+
 
 		private GameMapObjects _meshObj;
 
-		private float _yOffSet;
 		private int _numCurrentPowerups;
 		private bool _testingFlag; // False for Testing spawn frequency, True for actual spawn frequency.
 

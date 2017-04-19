@@ -20,13 +20,16 @@ public class ProjectObject : MonoBehaviour {
 	{          
 //		Launch();
 	}
-		
 
 	public void Launch (Transform Source, Vector3 Target, float firingAngle = 45.0f) {
+		StartCoroutine(Launch_Enum (Source, Target, firingAngle));
+	}
+
+	IEnumerator Launch_Enum(Transform Source, Vector3 Target, float firingAngle = 45.0f) {
 		// Move source to start position + some offset. 
 		Source.position = myTransform.position + new Vector3(0, 0.0f, 0);
 
-		var rigid = Source.GetComponent<Rigidbody>();
+		yield return new WaitForSeconds (3);
 
 		Vector3 t = Target;
 		Vector3 s = Source.position;
@@ -53,6 +56,6 @@ public class ProjectObject : MonoBehaviour {
 		Vector3 finalVelocity = Quaternion.AngleAxis(angleBetweenObjects, Vector3.up) * velocity;
 
 		// Fire!
-		rigid.velocity = finalVelocity;
+		Source.GetComponent<Rigidbody>().velocity = finalVelocity;
 	}
 }
