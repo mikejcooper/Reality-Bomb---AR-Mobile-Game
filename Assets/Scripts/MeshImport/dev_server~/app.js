@@ -1,3 +1,4 @@
+var keypress = require('keypress');
 var ws = require("nodejs-websocket")
 var fsp = require('fs-promise')
 var dgram = require('dgram');
@@ -12,6 +13,8 @@ var B_END = "\033[0m"
 
 var meshFile, chullVerticesFile, boundaryVerticesFile, transformsFile;
 var meshStr, chullVerticesStr, boundaryVerticesStr, transformsStr;
+
+keypress(process.stdin);
 
 if (process.argv.length != 2 && process.argv.length != 5) {
   console.log(
@@ -33,23 +36,26 @@ if (process.argv.length != 2 && process.argv.length != 5) {
   transformsFile = process.argv[5];
 }
 
-fsp.readFile(meshFile)
-  .then(function(data){
-    meshStr = data
-    return fsp.readFile(chullVerticesFile)
-  })
-  .then(function(data){
-    chullVerticesStr = data
-    return fsp.readFile(boundaryVerticesFile)
-  })
-  .then(function(data){
-    boundaryVerticesStr = data
-    return fsp.readFile(transformsFile)
-  })
-  .then(function(data){
-    transformsStr = data
-    openServer()
-  }).catch(error => console.log(error))
+var loadData = function (callback) {
+  fsp.readFile(meshFile)
+    .then(function(data){
+      meshStr = data
+      return fsp.readFile(chullVerticesFile)
+    })
+    .then(function(data){
+      chullVerticesStr = data
+      return fsp.readFile(boundaryVerticesFile)
+    })
+    .then(function(data){
+      boundaryVerticesStr = data
+      return fsp.readFile(transformsFile)
+    })
+    .then(function(data){
+      transformsStr = data
+      console.log('loaded data');
+      if (callback) callback()
+    }).catch(error => console.log(error))
+}
 
 var sendBroadcast = function () {
   console.log(`Broadcasting to ${ip.subnet(ip.address(), '255.255.255.0').broadcastAddress}`);
@@ -77,4 +83,19 @@ var openServer = function () {
 
   console.log('server running')
 }
+
+loadData(openServer);
+
+// listen for the "keypress" event
+process.stdin.on('keypress', function (ch, key) {
+  if (key && key.ctrl && key.name == 'r') {
+    loadData()
+  } else if (key && key.ctrl && key.name == 'c') {
+    process.stdin.pause();
+    process.exit();
+  }
+})
+
+process.stdin.setRawMode(true);
+process.stdin.resume();
 
