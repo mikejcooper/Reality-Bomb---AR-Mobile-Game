@@ -27,7 +27,7 @@ public class ProjectObject : MonoBehaviour {
 
 	IEnumerator Launch_Enum(Transform Source, Vector3 Target, float firingAngle = 45.0f) {
 		// Move source to start position + some offset. 
-		Source.position = myTransform.position + new Vector3(0, 0.0f, 0);
+		Source.position = myTransform.position + new Vector3(0, 1.0f, 0);
 
 		yield return new WaitForSeconds (3);
 
