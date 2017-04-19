@@ -527,6 +527,7 @@ MonoBehaviour:
     CanvasSplash: {fileID: 1451450378736652, guid: a79ae04c2e83b48e0a087270d769c8bb,
       type: 2}
     Duration: 8
+  SpawnSource: {fileID: 0}
   PlaneObject: {fileID: 2137931947}
 --- !u!1001 &793272625
 Prefab:
