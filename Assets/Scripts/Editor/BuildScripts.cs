@@ -24,12 +24,14 @@ public class BuildScripts
 	[MenuItem("Builds/OS X TV")]
 	public static void BuildMacTV ()
 	{
+		EnsureARControllerState (false);
 		BuildAndRun ("TV.app", TV_LEVELS, BuildTarget.StandaloneOSXUniversal, GenerateBuildOptions ());
 	}
 
 	[MenuItem("Builds/OS X client")]
 	public static void BuildMacClient ()
 	{
+		EnsureARControllerState (false);
 		BuildAndRun ("client.app", CLIENT_LEVELS, BuildTarget.StandaloneOSXUniversal, GenerateBuildOptions ());
 	}
 

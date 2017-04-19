@@ -406,6 +406,10 @@ MonoBehaviour:
   DisabledControlDurationSeconds: 2
   ExplosionAnimation: {fileID: 1901629115959148, guid: 68ea650ef099f41a3a35693e4cfdd70a,
     type: 2}
+  ExplosionSound: {fileID: 0}
+  PowerUpSound: {fileID: 0}
+  BombAlertSound: {fileID: 0}
+  BumpSound: {fileID: 0}
   ServerId: 0
   Lifetime: 0
 --- !u!114 &114628965064406510
@@ -452,9 +456,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5090c8b5dabcd4814ae58d23310c3a3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxSpeed: 6
-  Acceleration: 40
-  TurnRate: 5
+  _startingSpeedLim: 6
+  _maxSpeedLim: 15
+  _minSpeedLim: 1.5
+  SpeedLimit: 0
+  _startingScale: 0.5
+  _maxScale: 1
+  _minScale: 0.25
+  Scale: 0
+  _startingAccel: 40
+  _maxAccel: 180
+  _minAccel: 10
+  Accel: 0
+  _startingTurnRate: 5
+  TurnRate: 0
   OriginalHue: 0
 --- !u!114 &114674841567501480
 MonoBehaviour:

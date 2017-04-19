@@ -44,7 +44,7 @@ public class Shield  : MonoBehaviour {
 	}
     
 
-	public void Destroy(){
+	public void OnDestroy(){
 		Destroy(_shieldObject);
 	}
 

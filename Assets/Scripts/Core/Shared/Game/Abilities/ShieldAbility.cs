@@ -25,8 +25,9 @@ namespace Abilities {
 		}
 
 		protected override void OnRemoveCarEffect (CarProperties properties, bool triggeredPowerup) {
-			_component.Destroy ();
-			Destroy (_component);	
+			if (triggeredPowerup) {
+				Destroy (_component);
+			}
 		}
 
 		public override string GetTag () {

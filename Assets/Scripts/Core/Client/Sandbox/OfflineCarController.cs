@@ -66,11 +66,13 @@ public class OfflineCarController : MonoBehaviour
 		}
 
 		if (_joystick.Active) {
-			_rigidbody.AddForce (transform.forward * joystickVector.magnitude * CarProperties.Acceleration);
+			_rigidbody.AddForce (transform.forward * joystickVector.magnitude * CarProperties.SafeAccel);
 		}
 
-		if(_rigidbody.velocity.magnitude > CarProperties.MaxSpeed) {
-			_rigidbody.velocity = _rigidbody.velocity.normalized * CarProperties.MaxSpeed;
+		transform.localScale = Vector3.one * CarProperties.SafeScale;
+
+		if(_rigidbody.velocity.magnitude > CarProperties.SafeSpeedLimit) {
+			_rigidbody.velocity = _rigidbody.velocity.normalized * CarProperties.SafeSpeedLimit;
 		}
 	}
 
