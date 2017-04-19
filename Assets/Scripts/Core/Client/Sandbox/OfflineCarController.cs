@@ -99,20 +99,9 @@ public class OfflineCarController : MonoBehaviour
         {
             SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager>();
 			string type = spm.GetPowerupType (other.transform.parent.gameObject, false);
-			if (type == SpeedAbility.TAG) {
-				StartCoroutine( HideShowParticles (SandParticles, SpeedAbility.SPARKLES_LIFETIME_SECONDS) );
-			}
             AbilityRouter.RouteTag(type, CarProperties, gameObject, spm, true, true);
             Destroy(other.transform.parent.gameObject);
         }
-    }
-
-	IEnumerator HideShowParticles(ParticleSystem particleSystem, int duration){
-		particleSystem.Stop ();
-		yield return new WaitForSeconds (duration);
-		particleSystem.Play();			
-	}
-
-		
+    }		
 }
 
