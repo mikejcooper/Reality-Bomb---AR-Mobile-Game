@@ -124,25 +124,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerCanvas: {fileID: 1343903778}
-  PowerupPrefab: {fileID: 1844041903375178, guid: 1810a89b163c144cb9c0d6d43f10b0c6,
+  PowerupPrefab: {fileID: 1993525125451176, guid: 542231fbffaca4d02a331b84f4263acf,
     type: 2}
+  _yOffSet: 0
   SpeedProperties:
     PowerupPrefab: {fileID: 1844041903375178, guid: 1810a89b163c144cb9c0d6d43f10b0c6,
       type: 2}
-    CanvasSplash: {fileID: 1451450378736652, guid: 7557938c78b244f9190155be4b522bab,
+    CanvasSplash: {fileID: 1993525125451176, guid: 542231fbffaca4d02a331b84f4263acf,
       type: 2}
     Duration: 8
     SparklesPrefab: {fileID: 1881590009535144, guid: 8dd6ffe9e4dd4460d8891997ca47f4c8,
       type: 2}
   InkProperties:
-    PowerupPrefab: {fileID: 1844041903375178, guid: 1810a89b163c144cb9c0d6d43f10b0c6,
+    PowerupPrefab: {fileID: 1993525125451176, guid: 542231fbffaca4d02a331b84f4263acf,
       type: 2}
     CanvasSplash: {fileID: 1328406001218798, guid: 605eaf91c133e4a738d8d94a9fbab530,
       type: 2}
     Duration: 8
     SplatterTexture: {fileID: 2800000, guid: 453cc8a4aa1ad41f39f54292f544af93, type: 3}
   ShieldProperties:
-    PowerupPrefab: {fileID: 1844041903375178, guid: 1810a89b163c144cb9c0d6d43f10b0c6,
+    PowerupPrefab: {fileID: 1993525125451176, guid: 542231fbffaca4d02a331b84f4263acf,
       type: 2}
     CanvasSplash: {fileID: 1028337152940862, guid: f41c28861b53e4e69945b02fa9abf1ba,
       type: 2}
