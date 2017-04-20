@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 4748202110062894}
   m_Layer: 13
   m_Name: PowerUp_Model
-  m_TagString: Untagged
+  m_TagString: PowerUp
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -76,7 +76,7 @@ GameObject:
   - component: {fileID: 54898953071634142}
   m_Layer: 13
   m_Name: PowerUp_Coin
-  m_TagString: InkPowerUp
+  m_TagString: PowerUp
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

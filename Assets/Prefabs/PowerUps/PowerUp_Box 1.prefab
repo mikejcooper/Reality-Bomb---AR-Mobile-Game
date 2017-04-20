@@ -188,7 +188,7 @@ GameObject:
   - component: {fileID: 135074870802516778}
   m_Layer: 14
   m_Name: Trigger
-  m_TagString: Untagged
+  m_TagString: PowerUp
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -225,7 +225,7 @@ GameObject:
   - component: {fileID: 65097915797957226}
   m_Layer: 13
   m_Name: PowerUp_Box 1
-  m_TagString: InkPowerUp
+  m_TagString: PowerUp
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

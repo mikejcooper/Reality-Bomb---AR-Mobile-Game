@@ -4,18 +4,9 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - MegaHit
-  - Controller
-  - Character
-  - Floor
-  - Glove
-  - Target
-  - TankTag
-  - Splatter
-  - WallsTag
+  - Car
+  - Ground
   - PowerUp
-  - InkPowerUp
-  - SpeedPowerUp
   layers:
   - Default
   - TransparentFX
@@ -32,7 +23,7 @@ TagManager:
   - CarGroundContact
   - PowerUp
   - PowerUpTrigger
-  - 
+  - UIEffect
   - 
   - 
   - 

@@ -172,7 +172,7 @@ GameObject:
   - component: {fileID: 135074870802516778}
   m_Layer: 14
   m_Name: Trigger
-  m_TagString: Untagged
+  m_TagString: PowerUp
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -209,7 +209,7 @@ GameObject:
   - component: {fileID: 65097915797957226}
   m_Layer: 13
   m_Name: PowerUp_Box
-  m_TagString: InkPowerUp
+  m_TagString: PowerUp
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -739,22 +739,22 @@ MonoBehaviour:
   m_SceneId:
     m_Value: 0
   m_AssetId:
-    i0: 223
-    i1: 59
-    i2: 250
-    i3: 46
-    i4: 117
-    i5: 191
-    i6: 228
-    i7: 113
-    i8: 171
-    i9: 121
-    i10: 219
-    i11: 86
-    i12: 7
-    i13: 128
-    i14: 165
-    i15: 209
+    i0: 84
+    i1: 34
+    i2: 49
+    i3: 251
+    i4: 255
+    i5: 172
+    i6: 164
+    i7: 208
+    i8: 42
+    i9: 51
+    i10: 27
+    i11: 132
+    i12: 244
+    i13: 38
+    i14: 58
+    i15: 207
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 0
 --- !u!114 &114786233176909536

@@ -5,9 +5,6 @@ using Powerups;
 namespace Abilities {
 	public class AbilityRouter {
 
-		public static string POWERUP_OBJ_NAME = "powerup";
-		static string[] ALL_TAGS = new string[] { SandboxInkAbility.TAG, InkAbility.TAG, SpeedAbility.TAG, ShieldAbility.TAG, GrowAbility.TAG, ShrinkAbility.TAG };
-
 		public static void RouteTag(String abilityTag, CarProperties carProperties, GameObject gameObject, BasePowerUpManager powerupManager, bool didTriggerPowerup, bool isLocalPlayer) {
 			switch (abilityTag) {
 			case SandboxInkAbility.TAG:
@@ -44,26 +41,6 @@ namespace Abilities {
 
 		}
 
-		public static bool IsAbilityObject (GameObject gameObject) {
-			
-//			foreach (var tag in ALL_TAGS) {
-//				if (gameObject.name.StartsWith (tag)) {
-//					return true;
-//				}
-//			}
-//			return false;
-			return gameObject.name.Equals (POWERUP_OBJ_NAME);
-		}
-
-//		public static string GetAbilityTag (GameObject gameObject) {
-//			
-//			foreach (var tag in ALL_TAGS) {
-//				if (gameObject.name.StartsWith (tag)) {
-//					return tag;
-//				}
-//			}
-//			return null;
-//		}
 	}
 }
 

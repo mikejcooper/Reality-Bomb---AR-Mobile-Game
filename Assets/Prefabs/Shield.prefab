@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33959027478738336}
   - component: {fileID: 135046463502385546}
   - component: {fileID: 23045198136918598}
-  m_Layer: 14
+  m_Layer: 15
   m_Name: Shield
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -87,7 +87,7 @@ SphereCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1827426437650360}
   m_Material: {fileID: 13400000, guid: a7b208926646b497abc841b810ebe9bc, type: 2}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5

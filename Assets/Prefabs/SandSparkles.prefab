@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4105704399476288}
   - component: {fileID: 199872809720839888}
   - component: {fileID: 198306397850591044}
-  m_Layer: 9
+  m_Layer: 15
   m_Name: SandSparkles
   m_TagString: Untagged
   m_Icon: {fileID: 0}

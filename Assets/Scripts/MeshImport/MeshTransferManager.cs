@@ -155,8 +155,10 @@ public class MeshTransferManager {
 		// set mesh material
 		renderer.material = material;
 
+		MeshObject.tag = "Ground";
+
 		// set the layer to ground
-		SetLayerRecursively (MeshObject, 8);
+		SetLayerRecursively (MeshObject, LayerMask.NameToLayer("Ground"));
 
 		return MeshObject;
 	}

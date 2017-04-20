@@ -15,18 +15,24 @@ namespace Abilities {
 
 		public const string TAG = "shield";
 
-		private Shield _component;
+		private GameObject _shieldObject;
 
 		protected override void OnApplyCarEffect (CarProperties properties, bool triggeredPowerup) {
 			if (triggeredPowerup) {
-				_component = properties.gameObject.AddComponent<Shield> ();
-				_component.ShieldPrefab = _abilityProperties.ShieldPrefab;
+
+				// Instantiate and keep track of the new instance
+				_shieldObject = Instantiate(_abilityProperties.ShieldPrefab);
+
+				// Set parent
+				_shieldObject.transform.SetParent(transform, false);
+				_shieldObject.transform.localPosition = Vector3.zero;
+
 			}
 		}
 
 		protected override void OnRemoveCarEffect (CarProperties properties, bool triggeredPowerup) {
 			if (triggeredPowerup) {
-				Destroy (_component);
+				Destroy (_shieldObject);
 			}
 		}
 

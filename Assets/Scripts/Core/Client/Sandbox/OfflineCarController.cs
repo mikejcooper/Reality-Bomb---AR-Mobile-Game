@@ -78,11 +78,8 @@ public class OfflineCarController : MonoBehaviour
 
 	void OnCollisionEnter(Collision col) {
 
-		if (AbilityRouter.IsAbilityObject (col.gameObject)) {
-			SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager> ();
-			string type = spm.GetPowerupType (col.gameObject, false);
-			AbilityRouter.RouteTag (type, CarProperties, gameObject, spm, true, true);
-			Destroy(col.gameObject);
+		if (col.gameObject.CompareTag("PowerUp")) {
+			OnPowerupCollision (col.gameObject);
 		} else {
 			// If two players collide, calculate the angle of collision, reverse the direction and add a force in that direction
 			var bounceForce = 350;
@@ -93,14 +90,17 @@ public class OfflineCarController : MonoBehaviour
 		}
     }
 
+	private void OnPowerupCollision (GameObject obj) {
+		SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager> ();
+		string type = spm.GetPowerupType (obj, false);
+		AbilityRouter.RouteTag (type, CarProperties, gameObject, spm, true, true);
+		Destroy(obj);
+	}
+
     private void OnTriggerEnter(Collider other)
     {
-        if (AbilityRouter.IsAbilityObject(other.transform.parent.gameObject))
-        {
-            SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager>();
-			string type = spm.GetPowerupType (other.transform.parent.gameObject, false);
-            AbilityRouter.RouteTag(type, CarProperties, gameObject, spm, true, true);
-            Destroy(other.transform.parent.gameObject);
+		if (other.transform.parent.gameObject.CompareTag("PowerUp")) {
+			OnPowerupCollision (other.transform.parent.gameObject);
         }
     }		
 }

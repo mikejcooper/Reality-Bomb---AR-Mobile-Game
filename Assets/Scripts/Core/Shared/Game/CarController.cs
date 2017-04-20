@@ -130,11 +130,6 @@ public class CarController : NetworkBehaviour
 
 		CarProperties.OriginalHue = playerData.colour;
 
-		Transform nameText = transform.Find ("NameTag").Find ("NameText");
-		Text textComponent = nameText.gameObject.GetComponent<Text> ();
-
-		textComponent.text = playerData.Name;
-
 		Material[] materials = transform.FindChild("Car_Model").GetComponent<MeshRenderer> ().materials;
 
 		GameUtils.SetCarMaterialColoursFromHue (materials, CarProperties.OriginalHue);
@@ -291,23 +286,17 @@ public class CarController : NetworkBehaviour
 	{
 		if (isServer) {
 			GameObject.FindObjectOfType<GameManager> ().CollisionEvent (this, col.gameObject);
-		} else {
-			if (!col.gameObject.tag.Contains("PowerUp")) {
-/*
- * Uncomment the following line to add bouncing between the players in the main game
- * the current implementation is a bit laggy so has been left uncommented until this is fixed 
- */
-				Bounce (col);
-			}
+		}
+		if (col.gameObject.CompareTag("Car")) {
+			// Uncomment the following line to add bouncing between the players in the main game
+			// the current implementation is a bit laggy so has been left uncommented until this is fixed 
+			Bounce (col);
 		}
 	}
 
     private void OnTriggerEnter(Collider other)
     {
-        if (isServer && AbilityRouter.IsAbilityObject(other.transform.parent.gameObject))
-        {
-            GameObject.FindObjectOfType<GameManager>().CollisionEvent(this, other.transform.parent.gameObject);
-        }
+		GameObject.FindObjectOfType<GameManager>().CollisionEvent(this, other.transform.parent.gameObject);
     }
 
     void Bounce(Collision col){
