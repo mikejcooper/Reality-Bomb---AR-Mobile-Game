@@ -38,12 +38,12 @@ namespace Powerups {
 
 		protected override PowerupDefinition[] GetAvailablePowerups () {
             return new PowerupDefinition[] {
-				new PowerupDefinition (typeof(SpeedAbility), SpeedAbility.TAG, SpeedProperties),
-				new PowerupDefinition (typeof(InkAbility), InkAbility.TAG, InkProperties),
+//				new PowerupDefinition (typeof(SpeedAbility), SpeedAbility.TAG, SpeedProperties),
+//				new PowerupDefinition (typeof(InkAbility), InkAbility.TAG, InkProperties),
 				new PowerupDefinition (typeof(ShieldAbility), ShieldAbility.TAG, ShieldProperties),
 
-				new PowerupDefinition (typeof(GrowAbility), GrowAbility.TAG, GrowProperties),
-				new PowerupDefinition (typeof(ShrinkAbility), ShrinkAbility.TAG, ShrinkProperties)
+//				new PowerupDefinition (typeof(GrowAbility), GrowAbility.TAG, GrowProperties),
+//				new PowerupDefinition (typeof(ShrinkAbility), ShrinkAbility.TAG, ShrinkProperties)
             };
         }
 

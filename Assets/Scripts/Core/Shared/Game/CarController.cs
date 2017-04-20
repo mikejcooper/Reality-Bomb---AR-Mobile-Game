@@ -292,7 +292,7 @@ public class CarController : NetworkBehaviour
     void OnCollisionEnter(Collision col)
 	{
 		if (isServer) {
-			GameObject.FindObjectOfType<GameManager> ().CollisionEvent (this, col.gameObject);
+			GameObject.FindObjectOfType<GameManager> ().CollisionEvent (gameObject, col);
 		}
 		if (col.gameObject.CompareTag("Car")) {
 			// Uncomment the following line to add bouncing between the players in the main game
@@ -303,7 +303,7 @@ public class CarController : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-		GameObject.FindObjectOfType<GameManager>().CollisionEvent(this, other.transform.parent.gameObject);
+		GameObject.FindObjectOfType<GameManager>().TriggerEnterEvent(gameObject, other.transform.parent.gameObject);
     }
 
     void Bounce(Collision col){

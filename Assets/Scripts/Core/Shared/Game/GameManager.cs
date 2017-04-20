@@ -223,24 +223,42 @@ public class GameManager : NetworkBehaviour {
 	}
 
     [Server]
-    public void CollisionEvent(CarController car, GameObject other)
-    {
+	public void CollisionEvent(GameObject thisObj, Collision collision) {
+		// we have to use contact points because otherwise child colliders
+		// such as a shield just count as normal collisions
+		var contactPoint = collision.contacts [0];
 
-        //this is two cars colliding
-        CarController collisionCar = other.GetComponent<CarController>();
-		if (other.CompareTag ("Car")) {
-			if (collisionCar.IsTransferTimeExpired () && collisionCar.HasBomb) {
-				collisionCar.setBombAllDevices (false);
-				car.setBombAllDevices (true);
-				car.UpdateTransferTime (1.0f);
+		// only process collision "caused" by the car
+		if (contactPoint.thisCollider.gameObject.Equals (thisObj)) {
+			CarController thisCar = thisObj.GetComponent<CarController>();
+			GameObject otherObj = contactPoint.otherCollider.gameObject;
+
+			if (otherObj.CompareTag ("Car")) {
+				//this is two cars colliding
+				CarController otherCar = otherObj.GetComponent<CarController>();
+
+				if (otherCar.IsTransferTimeExpired () && otherCar.HasBomb) {
+					otherCar.setBombAllDevices (!otherCar.HasBomb);
+					thisCar.setBombAllDevices (!thisCar.HasBomb);
+					thisCar.UpdateTransferTime (1.0f);
+				}
+
 			}
-		} else if (other.CompareTag("PowerUp")) {
-			//Handle powerups on the CarController clients
-			_cars.TriggerPowerup (PowerUpManager.GetPowerupType (other, car.HasBomb), car.ServerId);
-			//Destroy the gameobject we collided with (because it's a powerup)
-			NetworkServer.Destroy (other);
 		}
+
+        
     }
+
+	[Server]
+	public void TriggerEnterEvent (GameObject thisObj, GameObject otherObj) {
+		if (otherObj.CompareTag("PowerUp")) {
+			CarController thisCar = thisObj.GetComponent<CarController>();
+			//Handle powerups on the CarController clients
+			_cars.TriggerPowerup (PowerUpManager.GetPowerupType (otherObj, thisCar.HasBomb), thisCar.ServerId);
+			//Destroy the gameobject we collided with (because it's a powerup)
+			NetworkServer.Destroy (otherObj);
+		}
+	}
 		
 	[Server]
 	public void OnPlayerDisconnected(){
