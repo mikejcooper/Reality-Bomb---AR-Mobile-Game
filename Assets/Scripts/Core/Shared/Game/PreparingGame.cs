@@ -14,16 +14,14 @@ public class PreparingGame : MonoBehaviour
 
 	public GameObject LeaderboardEntryPrefab;
 
-	private GameObject _entry;
+	public AudioSource Beep;
+	public AudioSource Boop;
 
-	public AudioSource _beep;
-	public AudioSource _boop;
+	private GameObject _entry;
 
 	void Start () {
 		_entry = GameObject.Instantiate (LeaderboardEntryPrefab);
-//		_entry.transform.Find ("Waiting").GetComponent<TextMeshProUGUI> ().text = "Waiting for players...";
 		_entry.transform.parent = transform;
-//		GameManager.StartGameCountDownEvent += StartGameCountDown ();
 	}
 
 	IEnumerator StartCountDown(bool sound) {
@@ -32,10 +30,10 @@ public class PreparingGame : MonoBehaviour
 		yield return new WaitForSeconds (t1);
 		_entry.transform.Find ("Waiting").GetComponent<TextMeshProUGUI> ().text = "";
 
-		yield return StartCoroutine(ShowHideText (t1, t2, "3", "Numbers", sound, _beep));
-		yield return StartCoroutine(ShowHideText (t1, t2, "2", "Numbers", sound, _beep));
-		yield return StartCoroutine(ShowHideText (t1, t2, "1", "Numbers", sound, _beep));
-		yield return StartCoroutine(ShowHideText (t1, t2, "Go!", "Go", sound, _boop));
+		yield return StartCoroutine(ShowHideText (t1, t2, "3", "Numbers", sound, Beep));
+		yield return StartCoroutine(ShowHideText (t1, t2, "2", "Numbers", sound, Beep));
+		yield return StartCoroutine(ShowHideText (t1, t2, "1", "Numbers", sound, Beep));
+		yield return StartCoroutine(ShowHideText (t1, t2, "Go!", "Go", sound, Boop));
 		if(CountDownFinishedEvent != null)
 			CountDownFinishedEvent ();
 	}
@@ -56,20 +54,4 @@ public class PreparingGame : MonoBehaviour
 		StartCoroutine(StartCountDown (sound));
 	}
 
-	public void ShowArrowOnCurrentPlayer(){
-		// make arrow appear
-	}	
-
-	public void HideArrowOnCurrentPlayer(){
-	}
-
-
-
-	private void PlayNumberSound(){
-		// Trigger sound
-	}
-
-	private void PlayGoSound(){
-		// Trigger sound 
-	}
 }

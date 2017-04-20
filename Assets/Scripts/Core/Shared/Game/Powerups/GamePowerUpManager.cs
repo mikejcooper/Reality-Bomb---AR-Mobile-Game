@@ -58,7 +58,8 @@ namespace Powerups {
 		}
 
 		private void LoadMesh(GameMapObjects gameMapObject){
-			OnMeshReady (gameMapObject.ground);
+			OnMeshReady (gameMapObject);
 		}
+
 	}
 }

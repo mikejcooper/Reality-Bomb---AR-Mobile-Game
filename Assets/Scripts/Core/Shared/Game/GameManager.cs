@@ -7,11 +7,6 @@ using TMPro;
 using Powerups;
 using UnityEngine.UI;
 
-/*
-* REMEMBER CANT USE CLIENTRPC ATTRIBUTE IN GAMEMANAGER
-* ClientRpcs can only be run on objects that have been spawned via NetworkServer.Spawn(). Do not run RPC from a static gameobject.
-*/
-
 public class GameManager : NetworkBehaviour {
 
 	public delegate void OnWorldMeshAvailable(GameMapObjects worldMesh);
@@ -156,7 +151,7 @@ public class GameManager : NetworkBehaviour {
 		{
 			AddCar(car.gameObject);
 		}
-		_cars.StartGameCountDown();
+
 		RpcOnBeginCountdown ();
 		PreparingCanvas.StartGameCountDown (true);
 
@@ -165,13 +160,15 @@ public class GameManager : NetworkBehaviour {
 
 	[ClientRpc]
 	public void RpcOnBeginCountdown () {
+		Debug.Log ("RPC GAME COUNT DOWN");
 		if (_clientExplanationDialog != null) {
 			Destroy (_clientExplanationDialog);
 		}
 
 		StartCoroutine(FadeOutMesh(5));
+		PreparingCanvas.StartGameCountDown (false);
 	}
-
+		
 	IEnumerator FadeOutMesh(int duration)
 	{
 		int steps = 100;
@@ -180,7 +177,7 @@ public class GameManager : NetworkBehaviour {
 		var material = WorldMesh.ground.GetComponent<MeshRenderer> ().material;
 
 		float sourceAlpha = material.GetFloat ("_Alpha");
-		float targetAlpha = 0.2f;
+		float targetAlpha = 0f;
 
 		float sourceSpeed = material.GetFloat ("_Speed");
 		float targetSpeed = 0f;
@@ -200,6 +197,8 @@ public class GameManager : NetworkBehaviour {
 			material.SetFloat ("_Speed", sourceSpeed - i*speedDec);
 			yield return new WaitForSeconds(timeInterval);
 		}
+
+		WorldMesh.ground.GetComponent<MeshRenderer> ().enabled = false;
 
 	}
 

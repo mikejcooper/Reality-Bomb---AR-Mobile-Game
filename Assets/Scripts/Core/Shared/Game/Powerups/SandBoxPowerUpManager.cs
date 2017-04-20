@@ -13,6 +13,8 @@ namespace Powerups {
 		public GrowAbilityProperties GrowProperties;
 		public ShrinkAbilityProperties ShrinkProperties;
 
+		public GameObject SpawnSource;
+
 		public delegate void OnSpeedBoostActivated();
 		public delegate void OnInkSplatterActivated();
 		public delegate void OnShieldActivated();
@@ -28,7 +30,19 @@ namespace Powerups {
 
 		protected override void Start () {
 			base.Start ();
-			OnMeshReady (PlaneObject);	
+			GameMapObjects gameMapObjects = new GameMapObjects (PlaneObject, PlaneObject, getBoundingBox (PlaneObject.GetComponent<MeshFilter> ().mesh));
+			OnMeshReady (gameMapObjects);	
+		}
+
+		private List<Vector3> getBoundingBox(Mesh mesh){
+			List<Vector3> result = new List<Vector3> ();
+			Vector3 min = mesh.bounds.min;
+			Vector3 max = mesh.bounds.max;
+			result.Add (new Vector3(min.x,0,min.z));
+			result.Add (new Vector3(min.x,0,max.z));
+			result.Add (new Vector3(max.x,0,max.z));
+			result.Add (new Vector3(max.x,0,min.z));
+			return result;
 		}
 
 		protected override PowerupDefinition[] GetAvailablePowerups () {
@@ -64,6 +78,15 @@ namespace Powerups {
 			
 		protected override bool IsAllowedToSpawn(){
 			return true;
+		}
+
+		protected override void OnPowerUpGenerated(GameObject powerUpObj) {
+			if (SpawnSource != null) {
+				Vector3 p = powerUpObj.transform.position;
+				powerUpObj.transform.position = new Vector3(p.x, p.y - (_yOffSet + 10.0f) , p.z);
+				SpawnSource.GetComponent<ProjectObject> ().Launch (powerUpObj.transform, powerUpObj.transform.position);
+			}
+
 		}
 	}
 

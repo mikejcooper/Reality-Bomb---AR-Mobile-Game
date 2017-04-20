@@ -66,11 +66,13 @@ public class OfflineCarController : MonoBehaviour
 		}
 
 		if (_joystick.Active) {
-			_rigidbody.AddForce (transform.forward * joystickVector.magnitude * CarProperties.Acceleration);
+			_rigidbody.AddForce (transform.forward * joystickVector.magnitude * CarProperties.SafeAccel);
 		}
 
-		if(_rigidbody.velocity.magnitude > CarProperties.MaxSpeed) {
-			_rigidbody.velocity = _rigidbody.velocity.normalized * CarProperties.MaxSpeed;
+		transform.localScale = Vector3.one * CarProperties.SafeScale;
+
+		if(_rigidbody.velocity.magnitude > CarProperties.SafeSpeedLimit) {
+			_rigidbody.velocity = _rigidbody.velocity.normalized * CarProperties.SafeSpeedLimit;
 		}
 	}
 
@@ -97,20 +99,9 @@ public class OfflineCarController : MonoBehaviour
         {
             SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager>();
 			string type = spm.GetPowerupType (other.transform.parent.gameObject, false);
-			if (type == SpeedAbility.TAG) {
-				StartCoroutine( HideShowParticles (SandParticles, SpeedAbility.SPARKLES_LIFETIME_SECONDS) );
-			}
             AbilityRouter.RouteTag(type, CarProperties, gameObject, spm, true, true);
             Destroy(other.transform.parent.gameObject);
         }
-    }
-
-	IEnumerator HideShowParticles(ParticleSystem particleSystem, int duration){
-		particleSystem.Stop ();
-		yield return new WaitForSeconds (duration);
-		particleSystem.Play();			
-	}
-
-		
+    }		
 }
 

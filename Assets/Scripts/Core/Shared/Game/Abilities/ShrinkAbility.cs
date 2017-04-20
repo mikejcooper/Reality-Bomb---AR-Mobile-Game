@@ -6,55 +6,31 @@ using UnityEngine.UI;
 namespace Abilities {
 
 	[System.Serializable]
-	public class ShrinkAbilityProperties : BaseAbilityProperties {
-		//		public Texture GrowTexture;
-	}
+	public class ShrinkAbilityProperties : BaseAbilityProperties {}
 
 	public class ShrinkAbility : BaseAbility<ShrinkAbilityProperties> {
 
 		public const string TAG = "shrinkability";
-		private const float SPEED_FACTOR = 1.5f;
-
-		protected GameObject _shrinkObject;
-
-		private Vector3 _originalSize;
-		private Vector3 _scale;
-		private bool _maxShrink;
-
-
-		override protected void OnApplyCanvasEffect (Canvas canvas, bool triggeredPowerup) {
-			if (triggeredPowerup) {
-
-			}
-		}
-
-		override protected void OnRemoveCanvasEffect (Canvas canvas, bool triggeredPowerup) {
-			if (triggeredPowerup) {
-				Destroy (_shrinkObject);
-			}
-		}
+		private const float SPEED_FACTOR = 0.75f;
+		private const float SCALE_FACTOR = 0.5f;
 
 		protected override void OnApplyCarEffect (CarProperties properties, bool triggeredPowerup) {
-			_maxShrink = false;
+			if (triggeredPowerup) {
+				properties.Scale *= SCALE_FACTOR;
 
-			if (gameObject.transform.localScale.x > 0.25f) {
-				gameObject.transform.localScale /= 2f;
+				properties.SpeedLimit *= SPEED_FACTOR;
+				properties.Accel *= SPEED_FACTOR;
 
-				properties.MaxSpeed /= SPEED_FACTOR;
-				properties.Acceleration /= SPEED_FACTOR;
-			} else {
-				_maxShrink = true;
 			}
-
 
 		}
 
 		protected override void OnRemoveCarEffect (CarProperties properties, bool triggeredPowerup) {
-			if (!_maxShrink) {
-				gameObject.transform.localScale *= 2f;
+			if (triggeredPowerup) {
+				properties.Scale /= SCALE_FACTOR;
 
-				properties.MaxSpeed *= SPEED_FACTOR;
-				properties.Acceleration *= SPEED_FACTOR;
+				properties.SpeedLimit /= SPEED_FACTOR;
+				properties.Accel /= SPEED_FACTOR;
 			}
 		}
 
