@@ -62,6 +62,13 @@ public class CarController : NetworkBehaviour
 		if (!_initialised) {
 			_joystick = GameObject.FindObjectOfType<Joystick> ();
 
+			var markerScene = GameObject.Find ("Marker scene");
+			if (markerScene != null) {
+				transform.parent = markerScene.transform;
+			} else {
+				Debug.LogError ("Could not reposition car as child of Marker scene because we can't find Marker scene");
+			}
+
 			PlayerDataManager.PlayerData playerData;
 			if (isServer) {
 				playerData = ServerSceneManager.Instance.GetPlayerDataById (ServerId);
