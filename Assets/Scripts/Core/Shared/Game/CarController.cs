@@ -36,6 +36,8 @@ public class CarController : NetworkBehaviour
 	[SyncVar]
 	public float Lifetime;
 
+	private const float BOMB_SPEED_BOOST_FACTOR = 1.1f;
+
 	private Joystick _joystick;
     private UIHealthBar _healthBar;
     //    private Image _bombImage;
@@ -162,12 +164,15 @@ public class CarController : NetworkBehaviour
 		setBomb (b);
 	}
 
-	private void setBomb(bool b){
-		this.HasBomb = b;
-		if (b == true) {
+	private void setBomb(bool hasBomb){
+		HasBomb = hasBomb;
+		if (hasBomb) {
 			if (BombAlertSound != null) {
 				BombAlertSound.PlayOneShot (BombAlertSound.clip);
 			}
+			CarProperties.SpeedLimit *= BOMB_SPEED_BOOST_FACTOR;
+		} else {
+			CarProperties.SpeedLimit /= BOMB_SPEED_BOOST_FACTOR;
 		}
 		#if UNITY_ANDROID || UNITY_IPHONE
 		// vibrate on exchange
@@ -176,7 +181,7 @@ public class CarController : NetworkBehaviour
 		}
 		#endif
 		if (OnSetBombEvent != null) {
-			OnSetBombEvent (b);
+			OnSetBombEvent (hasBomb);
 		}
 				
 	}
