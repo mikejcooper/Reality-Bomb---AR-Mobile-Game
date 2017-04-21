@@ -93,8 +93,5 @@ public class Joystick : MonoBehaviour, IDragHandler, IPointerDownHandler, IPoint
 	private void SetPosition (Vector2 pos) {
 		_currentPos = pos;
 		Front.GetComponent<RectTransform> ().localPosition = pos;
-		foreach (var deco in DecoObjects) {
-			deco.GetComponent<RectTransform> ().localPosition = pos;
-		}
 	}
 }
