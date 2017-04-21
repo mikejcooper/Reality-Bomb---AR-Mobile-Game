@@ -62,13 +62,16 @@ public class Joystick : MonoBehaviour, IDragHandler, IPointerDownHandler, IPoint
 	}
 
 	private void OnPointerEvent(PointerEventData ped) {
+		
 		var offset = new Vector2 (transform.position.x, transform.position.y) - ped.position;
 
-		var radius = GetComponent<RectTransform> ().sizeDelta.x / 2.0f;
+		var maxRadius = GetComponent<RectTransform> ().sizeDelta.x / 2.0f;
 
-		var length = Mathf.Min (radius, offset.magnitude);
+		var offsetLength = offset.magnitude / 2.0f;
 
-		NormalisedVector = new Vector2 (-offset.x, -offset.y).normalized;
+		var length = Mathf.Min (maxRadius, offsetLength);
+
+		NormalisedVector = new Vector2 (-offset.x, -offset.y).normalized * (length / maxRadius);
 
 		SetPosition (NormalisedVector * length);
 	}
@@ -84,6 +87,7 @@ public class Joystick : MonoBehaviour, IDragHandler, IPointerDownHandler, IPoint
 
 	public void OnPointerUp (PointerEventData eventData) {
 		Active = false;
+		NormalisedVector = Vector3.zero;
 	}
 
 	private void SetPosition (Vector2 pos) {
