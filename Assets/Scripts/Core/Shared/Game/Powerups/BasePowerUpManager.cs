@@ -57,10 +57,6 @@ namespace Powerups {
 					Debug.LogError ("CanvasSplash is undefined for some powerups");
 				}
 
-				if (def.Properties.PowerupPrefab == null) {
-					Debug.LogError ("PowerupPrefab is undefined for some powerups");
-				}
-
 				if (def.Properties.Duration <= 0) {
 					Debug.LogError ("Duration is invalid for some powerups");
 				}
