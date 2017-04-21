@@ -60,6 +60,9 @@ public class OfflineCarController : MonoBehaviour
 
 		if (_joystick.Active) {
 			_lookAngle = Quaternion.FromToRotation (Vector3.forward, rotatedVector);
+			// think about combining z and y so that it moves away when close to 0 degrees
+			float combined = _lookAngle.eulerAngles.y;
+			_lookAngle.eulerAngles = new Vector3(0, combined, 0);
 
 			// how close are we to facing the direction the user wants?
 			float dirFactor = Mathf.Max(0,Vector3.Dot(transform.forward, _lookAngle * Vector3.forward));

@@ -225,7 +225,7 @@ public class CarController : NetworkBehaviour
 		if ((isLocalPlayer || IsPlayingSolo)) {
             _healthBar.UpdateCountdown(Lifetime, HasBomb);
 			EnsureCarIsOnMap ();
-			transform.rotation= Quaternion.Lerp (transform.rotation, _lookAngle , CarProperties.SafeTurnRate * Time.deltaTime);
+			transform.rotation = Quaternion.RotateTowards (transform.rotation, _lookAngle, CarProperties.SafeTurnRate * Time.deltaTime);
 			if (Lifetime <= 0.0f) {
 				Spectate ();
 			}
@@ -255,10 +255,11 @@ public class CarController : NetworkBehaviour
 				// think about combining z and y so that it moves away when close to 0 degrees
 				float combined = _lookAngle.eulerAngles.y;
 				_lookAngle.eulerAngles = new Vector3(0, combined, 0);
-			}
+			
+				// how close are we to facing the direction the user wants?
+				float dirFactor = Mathf.Max(0,Vector3.Dot(transform.forward, _lookAngle * Vector3.forward));
 
-			if (_joystick.Active) {
-				_rigidbody.AddForce (transform.forward * joystickVector.magnitude * CarProperties.SafeAccel);
+				_rigidbody.AddForce (transform.forward * dirFactor * joystickVector.magnitude * CarProperties.SafeAccel);
 			}
 
 			if(_rigidbody.velocity.magnitude > CarProperties.SafeSpeedLimit) {
