@@ -17,7 +17,16 @@ public class ClientIdleGUI : MonoBehaviour {
 	public Text ErrorText;
 	public ConnectingText ConnectingTextObject;
 
+	private ProfanityFilter _filter;
+
+	private string[] _profanityResponses = new string[] {
+		"does your mother know you speak like that?",
+		"wash your mouth out with soap!",
+		"let's try another name"
+	};
+
 	void Start () {
+		_filter = new ProfanityFilter ();
 
 		JoinGameButton.onClick.AddListener (() => {
 			string errorString = validateNickName();
@@ -53,7 +62,10 @@ public class ClientIdleGUI : MonoBehaviour {
 			return "please enter a nickname";
 		}
 
-		// todo: check for inappropriate names
+		if (!_filter.IsClean (nickName)) {
+			NickNameText.text = "";
+			return _profanityResponses [new System.Random ().Next (_profanityResponses.Length - 1)];
+		}
 
 		// possible todo: check server for taken names
 
