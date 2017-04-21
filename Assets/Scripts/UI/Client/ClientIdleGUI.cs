@@ -10,6 +10,8 @@ public class ClientIdleGUI : MonoBehaviour {
 
 	public Button JoinGameButton;
 
+	public GameObject SceneObject;
+
 	public GameObject NickNameObject;
 	public GameObject FormObject;
 
@@ -43,6 +45,7 @@ public class ClientIdleGUI : MonoBehaviour {
 		PlayNowButton.onClick.AddListener(() => {
 			resetNickNameForm();
 			NickNameObject.SetActive(true);
+			SceneObject.SetActive(false);
 		});
 
 		CancelButton.onClick.AddListener (() => {
@@ -50,6 +53,7 @@ public class ClientIdleGUI : MonoBehaviour {
 				ClientSceneManager.Instance.OnUserRequestLeaveGame();
 			}
 			NickNameObject.SetActive(false);
+			SceneObject.SetActive(true);
 		});
 	}
 

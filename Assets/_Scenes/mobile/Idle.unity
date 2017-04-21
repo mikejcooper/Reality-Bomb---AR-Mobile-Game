@@ -238,6 +238,7 @@ MonoBehaviour:
   PlayNowButton: {fileID: 408920593}
   CancelButton: {fileID: 325303256}
   JoinGameButton: {fileID: 884891906}
+  SceneObject: {fileID: 1000648817}
   NickNameObject: {fileID: 1301001935}
   FormObject: {fileID: 11698364}
   NickNameText: {fileID: 651774017}
