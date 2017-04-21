@@ -161,7 +161,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Have Fun!
+  m_Text: Go play!
 --- !u!114 &114089720895341286
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -349,8 +349,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "It\u2019s time to explore reality bomb for yourself.\nwe\u2019ll let you
-    know when the real game\u2019s about to begin!"
+  m_Text: 'Get used to the controls and some of the powerups you''ll see later.
+
+    we''ll let you know when the game''s about to begin...'
 --- !u!222 &222039779261996312
 CanvasRenderer:
   m_ObjectHideFlags: 1
