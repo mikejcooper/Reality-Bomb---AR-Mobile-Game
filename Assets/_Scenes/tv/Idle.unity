@@ -1215,7 +1215,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Load Mesh
+  m_Text: Load Mesh (l)
 --- !u!114 &71
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1488,7 +1488,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Start Game '
+  m_Text: Start Game (s)
 --- !u!114 &83
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1675,7 +1675,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Instant Start Game \n"
+  m_Text: Instant Start Game (i)
 --- !u!222 &289000006
 CanvasRenderer:
   m_ObjectHideFlags: 0

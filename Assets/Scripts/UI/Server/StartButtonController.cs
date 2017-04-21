@@ -14,11 +14,11 @@ public class StartButtonController : ServerStateViewBehaviour {
 		Debug.Log (state);
 		switch (state) {
 		case ProcessState.PreparingGame:
-			text.text = "Start Game";
+			text.text = "Start Game (s)";
 			button.enabled = true;
 			break;
 		case ProcessState.CountingDown:
-			text.text = "Cancel Game";
+			text.text = "Cancel Game (c)";
 			button.enabled = true;
 			break;
 		default:

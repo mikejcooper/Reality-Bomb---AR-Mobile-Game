@@ -10,7 +10,7 @@ public class MuteButton : MonoBehaviour {
 	void Start() {
 		_buttonText = GetComponentInChildren<Text>();
 		if(AudioListener.volume == 0.0f) {
-			_buttonText.text = "Unmute";
+			_buttonText.text = "Unmute (m)";
 		}
 	}
 
@@ -18,11 +18,11 @@ public class MuteButton : MonoBehaviour {
 	public void ToggleMuteSound() {
 		if(AudioListener.volume == 0.0f) {
 			AudioListener.volume = 1.0f;
-			_buttonText.text = "Mute";
+			_buttonText.text = "Mute (m)";
 		}
 		else {
 			AudioListener.volume = 0.0f;
-			_buttonText.text = "Unmute";
+			_buttonText.text = "Unmute (m)";
 		}
 	}
 }

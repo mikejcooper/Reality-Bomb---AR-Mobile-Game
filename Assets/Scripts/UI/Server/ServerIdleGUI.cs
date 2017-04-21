@@ -21,8 +21,41 @@ public class ServerIdleGUI : MonoBehaviour {
 			}
 
 		});
-		instantStartGameButton.GetComponent<UnityEngine.UI.Button> ().onClick.AddListener(() => ServerSceneManager.Instance.OnServerRequestGameStart(0));
-		loadMeshButton.GetComponent<UnityEngine.UI.Button> ().onClick.AddListener(() => ServerSceneManager.Instance.OnServerRequestLoadNewMesh());
+		instantStartGameButton.GetComponent<UnityEngine.UI.Button> ().onClick.AddListener(OnInstantStart);
+		loadMeshButton.GetComponent<UnityEngine.UI.Button> ().onClick.AddListener(OnLoadMesh);
+	}
+
+	private void OnInstantStart () {
+		ServerSceneManager.Instance.OnServerRequestGameStart (0);
+	}
+
+	private void OnLoadMesh () {
+		ServerSceneManager.Instance.OnServerRequestLoadNewMesh ();
+	}
+
+	void OnGUI() {
+		
+		if (Event.current.Equals (Event.KeyboardEvent ("s")) && ServerSceneManager.Instance.CurrentState() == ProcessState.PreparingGame)
+			ServerSceneManager.Instance.OnServerRequestGameStart (5);
+
+		if (Event.current.Equals (Event.KeyboardEvent ("c")) && ServerSceneManager.Instance.CurrentState() == ProcessState.CountingDown)
+			ServerSceneManager.Instance.OnServerRequestCancelGameStart ();
+
+		if (Event.current.Equals (Event.KeyboardEvent ("l")))
+			OnLoadMesh ();
+
+		if (Event.current.Equals (Event.KeyboardEvent ("i")))
+			OnInstantStart ();
+
+		if (Event.current.Equals (Event.KeyboardEvent ("m"))) {
+			var muteButton = GetComponentInChildren<MuteButton> ();
+			if (muteButton != null) {
+				muteButton.ToggleMuteSound ();
+			} else {
+				Debug.LogWarning ("could not find mute button");
+			}
+		}
+
 	}
 
 }
