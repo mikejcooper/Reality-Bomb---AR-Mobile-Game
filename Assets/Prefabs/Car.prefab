@@ -241,6 +241,8 @@ MonoBehaviour:
   _minAccel: 10
   Accel: 0
   _startingTurnRate: 5
+  _maxTurnRate: 12.5
+  _minTurnRate: 2
   TurnRate: 0
   OriginalHue: 0
 --- !u!114 &114979356219680182

@@ -12,6 +12,7 @@ namespace Abilities {
 
 		public const string TAG = "growability";
 
+		private const float TURN_FACTOR = 0.5f;
 		private const float SPEED_FACTOR = 1.5f;
 		private const float SCALE_FACTOR = 2f;
 
@@ -20,6 +21,7 @@ namespace Abilities {
 				properties.Scale *= SCALE_FACTOR;
 				properties.SpeedLimit *= SPEED_FACTOR;
 				properties.Accel *= SPEED_FACTOR;
+				properties.TurnRate *= TURN_FACTOR;
 			}
 		}
 
@@ -28,6 +30,7 @@ namespace Abilities {
 				properties.Scale /= SCALE_FACTOR;
 				properties.SpeedLimit /= SPEED_FACTOR;
 				properties.Accel /= SPEED_FACTOR;
+				properties.TurnRate /= TURN_FACTOR;
 			}
 		}
 			

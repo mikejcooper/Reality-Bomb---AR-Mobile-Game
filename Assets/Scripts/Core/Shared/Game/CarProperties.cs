@@ -27,8 +27,11 @@ public class CarProperties : MonoBehaviour
 	public float SafeAccel { get { return Math.Max(Math.Min(Accel, _maxAccel), _minAccel); }}
 
 	[SerializeField] private float _startingTurnRate;
+	[SerializeField] private float _maxTurnRate;
+	[SerializeField] private float _minTurnRate;
 	[HideInInspector]
 	public float TurnRate;
+	public float SafeTurnRate { get { return Math.Max(Math.Min(TurnRate, _maxTurnRate), _minTurnRate); }}
 
 	[HideInInspector]
 	public float OriginalHue;

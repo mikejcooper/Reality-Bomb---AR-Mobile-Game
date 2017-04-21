@@ -11,6 +11,7 @@ namespace Abilities {
 	public class ShrinkAbility : BaseAbility<ShrinkAbilityProperties> {
 
 		public const string TAG = "shrinkability";
+		private const float TURN_FACTOR = 1.5f;
 		private const float SPEED_FACTOR = 0.75f;
 		private const float SCALE_FACTOR = 0.5f;
 
@@ -20,6 +21,7 @@ namespace Abilities {
 
 				properties.SpeedLimit *= SPEED_FACTOR;
 				properties.Accel *= SPEED_FACTOR;
+				properties.TurnRate *= TURN_FACTOR;
 
 			}
 
@@ -31,6 +33,7 @@ namespace Abilities {
 
 				properties.SpeedLimit /= SPEED_FACTOR;
 				properties.Accel /= SPEED_FACTOR;
+				properties.TurnRate /= TURN_FACTOR;
 			}
 		}
 

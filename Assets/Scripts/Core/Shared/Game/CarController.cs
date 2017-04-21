@@ -225,7 +225,7 @@ public class CarController : NetworkBehaviour
 		if ((isLocalPlayer || IsPlayingSolo)) {
             _healthBar.UpdateCountdown(Lifetime, HasBomb);
 			EnsureCarIsOnMap ();
-			transform.rotation= Quaternion.Lerp (transform.rotation, _lookAngle , CarProperties.TurnRate * Time.deltaTime);
+			transform.rotation= Quaternion.Lerp (transform.rotation, _lookAngle , CarProperties.SafeTurnRate * Time.deltaTime);
 			if (Lifetime <= 0.0f) {
 				Spectate ();
 			}

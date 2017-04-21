@@ -48,7 +48,7 @@ public class OfflineCarController : MonoBehaviour
 
 	private void Update ()
 	{
-		transform.rotation= Quaternion.Lerp (transform.rotation, _lookAngle , CarProperties.TurnRate * Time.deltaTime);
+		transform.rotation = Quaternion.RotateTowards (transform.rotation, _lookAngle, CarProperties.SafeTurnRate * Time.deltaTime);
 	}
 
 	private void FixedUpdate ()
@@ -60,13 +60,11 @@ public class OfflineCarController : MonoBehaviour
 
 		if (_joystick.Active) {
 			_lookAngle = Quaternion.FromToRotation (Vector3.forward, rotatedVector);
-			// think about combining z and y so that it moves away when close to 0 degrees
-			float combined = _lookAngle.eulerAngles.y;
-			_lookAngle.eulerAngles = new Vector3(0, combined, 0);
-		}
 
-		if (_joystick.Active) {
-			_rigidbody.AddForce (transform.forward * joystickVector.magnitude * CarProperties.SafeAccel);
+			// how close are we to facing the direction the user wants?
+			float dirFactor = Mathf.Max(0,Vector3.Dot(transform.forward, _lookAngle * Vector3.forward));
+
+			_rigidbody.AddForce (transform.forward * dirFactor * joystickVector.magnitude * CarProperties.SafeAccel);
 		}
 
 		transform.localScale = Vector3.one * CarProperties.SafeScale;
@@ -80,13 +78,6 @@ public class OfflineCarController : MonoBehaviour
 
 		if (col.gameObject.CompareTag("PowerUp")) {
 			OnPowerupCollision (col.gameObject);
-		} else {
-			// If two players collide, calculate the angle of collision, reverse the direction and add a force in that direction
-			var bounceForce = 350;
-			Vector3 direction = col.contacts [0].point - transform.position;
-			direction = -direction.normalized;
-			direction.y = 0;
-			GetComponent<Rigidbody> ().AddForce (direction * bounceForce);
 		}
     }
 
