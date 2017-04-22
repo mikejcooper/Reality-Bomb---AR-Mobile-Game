@@ -57,12 +57,16 @@ public class GameUtils
 			if (Physics.Raycast (position, Vector3.down, out hit, bounds.size.y * 2)) {
 				position.y = hit.point.y;
 
-				if (isLocationInConvex (convexhull, position) && !isLocationAtAnotherCar(position)) {
+				if (isLocationInConvex (convexhull, position) && !isLocationAtAnotherCar(position) && !isPositionAtOrigin(position)) {
 					return position + new Vector3(0.0f,1.0f,0.0f);
 				}
 			}
 		}
 		return Vector3.zero;
+	}
+
+	private static bool isPositionAtOrigin(Vector3 position){
+		return -1.5f < position.x && position.x < 1.5f && -1.5f < position.z && position.z < 1.5f;
 	}
 
 	public static bool isLocationAtAnotherCar(Vector3 location){
