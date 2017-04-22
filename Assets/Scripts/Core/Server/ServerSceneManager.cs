@@ -284,6 +284,15 @@ public class ServerSceneManager : MonoBehaviour
 //		 todo call correct things at game end
 	}
 
+	//Fade out current scene when switching scenes
+	IEnumerator ChangeToGameScene() {
+		float fadeTime = GameObject.Find ("Fade").GetComponent<SceneFade> ().BeginFade (1);
+		yield return new WaitForSeconds (fadeTime);
+		_currentScene = "Game"; 
+		_playerDataManager.ResetAllGameData ();
+		_networkLobbyManager.ServerChangeScene ("Game");
+	}
+
 	private void OnStateUpdate ()
 	{
 		switch (_innerProcess.CurrentState) {
@@ -322,9 +331,7 @@ public class ServerSceneManager : MonoBehaviour
 		case ProcessState.PlayingGame:
 			if (_currentScene != "Game") {
 				// put this in some scene load callback
-				_currentScene = "Game"; 
-				_playerDataManager.ResetAllGameData ();
-				_networkLobbyManager.ServerChangeScene ("Game");
+				StartCoroutine(ChangeToGameScene());
 			}
 			break;
 		}
