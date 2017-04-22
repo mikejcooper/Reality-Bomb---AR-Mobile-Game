@@ -1740,6 +1740,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 114671313472114046, guid: 59c1685463242c34e8253f863b80306f,
+        type: 2}
+      propertyPath: FadeInScene
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 59c1685463242c34e8253f863b80306f, type: 2}
   m_IsPrefabParent: 0
