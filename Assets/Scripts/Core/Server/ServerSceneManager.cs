@@ -286,7 +286,7 @@ public class ServerSceneManager : MonoBehaviour
 
 	//Fade out current scene when switching scenes
 	IEnumerator FadeOutToGameScene() {
-		float fadeTime = GameObject.Find ("Fade").GetComponent<SceneFade> ().BeginFade (1);
+		float fadeTime = GameObject.Find ("Fade").GetComponent<FadeScene> ().BeginFadeOut ();
 		yield return new WaitForSeconds (fadeTime);
 		_currentScene = "Game"; 
 		_playerDataManager.ResetAllGameData ();
@@ -294,7 +294,7 @@ public class ServerSceneManager : MonoBehaviour
 	}
 
 	IEnumerator FadeOutToLeaderboardScene() {
-		float fadeTime = GameObject.Find ("Fade").GetComponent<SceneFade> ().BeginFade (1);
+		float fadeTime = GameObject.Find ("Fade").GetComponent<FadeScene> ().BeginFadeOut ();
 		yield return new WaitForSeconds (fadeTime);
 		_networkLobbyManager.ServerChangeScene("Leaderboard");
 		_currentScene = "Leaderboard"; // put this in some scene load callback
@@ -324,7 +324,7 @@ public class ServerSceneManager : MonoBehaviour
 			if (_playerDataManager.HasGameData()) {
 				//				networkLobbyManager.ServerChangeScene ("Leaderboard");
 				if (_currentScene != "Leaderboard") {
-					StartCoroutine (FadeOutToLeaderboardScene ());
+					StartCoroutine(FadeOutToLeaderboardScene ());
 				}
 			} else {
 				if (_currentScene != "Idle") {
