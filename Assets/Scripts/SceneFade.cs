@@ -14,10 +14,10 @@ public class SceneFade : MonoBehaviour {
 	private int _fadeDir = -1;			// the direction to fade: in = -1 or out = 1
 
 	void Start() {
+		SceneManager.sceneLoaded += OnLevelFinishedLoading;
 		if (FadeInScene == false) {
 			enabled = false;
 		}
-		SceneManager.sceneLoaded += OnLevelFinishedLoading;
 	}
 
 
@@ -35,7 +35,9 @@ public class SceneFade : MonoBehaviour {
 
 	// sets fadeDir to the direction parameter making the scene fade in -1 and out if 1
 	public float BeginFade(int direction) {
-		enabled = true;
+		if (direction == 1) {
+			_alpha = 0.0f;
+		}
 		_fadeDir = direction;
 		return (FadeSpeed);
 	}
