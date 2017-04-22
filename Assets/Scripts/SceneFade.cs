@@ -1,16 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SceneFade : MonoBehaviour {
 
 	public Texture2D FadeOutTexture;	// the texture that willl overlay the screen.
 	public float FadeSpeed = 0.8f;		// the fading speed
-	public bool FadeIn = true;
+	public bool FadeInScene;
 
 	private int _drawDepth = -1000;		// the texture's order in the draw hierarchy: a low number renders on top
 	private float _alpha = 1.0f;			// the texture's aplha value between 0 and 1
 	private int _fadeDir = -1;			// the direction to fade: in = -1 or out = 1
+
+	void Start() {
+		if (FadeInScene == false) {
+			enabled = false;
+		}
+		SceneManager.sceneLoaded += OnLevelFinishedLoading;
+	}
 
 
 	void OnGUI() {
@@ -27,15 +35,12 @@ public class SceneFade : MonoBehaviour {
 
 	// sets fadeDir to the direction parameter making the scene fade in -1 and out if 1
 	public float BeginFade(int direction) {
+		enabled = true;
 		_fadeDir = direction;
 		return (FadeSpeed);
 	}
 
-	// OnLevelWasLoaded is called when a level is loaded. It takes loaded level index (int) as a parameter so you can limit the fade in to certain scenes
-	void OnLevelWasLoaded() {
-		// alpha = 1;		// use this if the alpha is not set to 1 by default
-		if(FadeIn) {
-			BeginFade (-1);		// call the fade in direction
-		}
+	void OnLevelFinishedLoading(Scene scene, LoadSceneMode mode) {
+		BeginFade (-1);
 	}
 }

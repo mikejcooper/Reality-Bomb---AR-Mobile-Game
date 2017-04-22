@@ -285,7 +285,7 @@ public class ServerSceneManager : MonoBehaviour
 	}
 
 	//Fade out current scene when switching scenes
-	IEnumerator ChangeToGameScene() {
+	IEnumerator FadeOutToGameScene() {
 		float fadeTime = GameObject.Find ("Fade").GetComponent<SceneFade> ().BeginFade (1);
 		yield return new WaitForSeconds (fadeTime);
 		_currentScene = "Game"; 
@@ -331,7 +331,7 @@ public class ServerSceneManager : MonoBehaviour
 		case ProcessState.PlayingGame:
 			if (_currentScene != "Game") {
 				// put this in some scene load callback
-				StartCoroutine(ChangeToGameScene());
+				StartCoroutine(FadeOutToGameScene());
 			}
 			break;
 		}
