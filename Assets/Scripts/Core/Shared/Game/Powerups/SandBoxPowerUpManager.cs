@@ -13,6 +13,8 @@ namespace Powerups {
 		public GrowAbilityProperties GrowProperties;
 		public ShrinkAbilityProperties ShrinkProperties;
 
+		public GameObject SpawnSource;
+
 		public delegate void OnSpeedBoostActivated();
 		public delegate void OnInkSplatterActivated();
 		public delegate void OnShieldActivated();
@@ -76,6 +78,15 @@ namespace Powerups {
 			
 		protected override bool IsAllowedToSpawn(){
 			return true;
+		}
+
+		protected override void OnPowerUpGenerated(GameObject powerUpObj) {
+			if (SpawnSource != null) {
+				Vector3 p = powerUpObj.transform.position;
+				powerUpObj.transform.position = new Vector3(p.x, p.y - (_yOffSet + 10.0f) , p.z);
+				SpawnSource.GetComponent<ProjectObject> ().Launch (powerUpObj.transform, powerUpObj.transform.position);
+			}
+
 		}
 	}
 

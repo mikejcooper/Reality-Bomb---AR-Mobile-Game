@@ -25,25 +25,33 @@ namespace Abilities {
                 _splatterObject.transform.SetSiblingIndex(0);
                 _splatterObject.transform.localPosition = Vector3.zero;
 
-                GenerateSplatters(canvas, 5);
+				foreach (Vector3 position in GenerateSplatters(canvas, 5)) {
+					StartCoroutine(CreateInk(position));
+				}
+
 
                 Invoke("FadeOut", 2);
             }
 		}
 
-        private void GenerateSplatters(Canvas canvas, int n)
+		public static Vector3[] GenerateSplatters(Canvas canvas, int n)
         {
-            Vector3[] positions = { new Vector3(-100,100,0),
-                                    new Vector3(100,100,0),
-                                    new Vector3(100,-100,0),
-                                    new Vector3(-100,-100,0),
+			float xOffset = canvas.pixelRect.width / 5.0f;
+			float yOffset = canvas.pixelRect.height / 5.0f;
+			Vector3[] positions = { new Vector3(-xOffset,yOffset,0),
+									new Vector3(xOffset,yOffset,0),
+									new Vector3(xOffset,-yOffset,0),
+									new Vector3(-xOffset,-yOffset,0),
                                     new Vector3(0,0,0)};
+			Vector3[] randPositions = new Vector3[n];
+			float xWriggle = xOffset / 2.0f;
+			float yWriggle = yOffset / 2.0f;
             for (int i = 0; i < n; i++)
             {
-                Vector3 rand_pos = new Vector3(Random.Range(-50, 50), Random.Range(-50, 50), -1);
-
-                StartCoroutine(CreateInk(positions[i] + rand_pos));
+				randPositions[i] = positions[i] + new Vector3(Random.Range(-xWriggle, yWriggle), Random.Range(-xWriggle, yWriggle), -1);
             }
+
+			return randPositions;
         }
 
         IEnumerator CreateInk(Vector3 pos)

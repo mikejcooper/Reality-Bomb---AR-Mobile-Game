@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4386470862740516}
   - component: {fileID: 198290296205877428}
   - component: {fileID: 199497172044849876}
-  m_Layer: 9
+  m_Layer: 15
   m_Name: CarExplosion
   m_TagString: Untagged
   m_Icon: {fileID: 0}

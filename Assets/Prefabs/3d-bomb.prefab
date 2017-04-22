@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4497922830265260}
   - component: {fileID: 23427948381761944}
-  m_Layer: 9
+  m_Layer: 15
   m_Name: 3d-bomb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +37,7 @@ GameObject:
   - component: {fileID: 4911346959566768}
   - component: {fileID: 33897153008628960}
   - component: {fileID: 23128877762899868}
-  m_Layer: 9
+  m_Layer: 15
   m_Name: pSphere1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -52,7 +52,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4853212675362374}
-  m_Layer: 9
+  m_Layer: 15
   m_Name: curve1
   m_TagString: Untagged
   m_Icon: {fileID: 0}

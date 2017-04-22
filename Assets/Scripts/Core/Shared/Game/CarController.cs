@@ -36,6 +36,8 @@ public class CarController : NetworkBehaviour
 	[SyncVar]
 	public float Lifetime;
 
+	private const float BOMB_SPEED_BOOST_FACTOR = 1.1f;
+
 	private Joystick _joystick;
     private UIHealthBar _healthBar;
     //    private Image _bombImage;
@@ -61,6 +63,13 @@ public class CarController : NetworkBehaviour
 
 		if (!_initialised) {
 			_joystick = GameObject.FindObjectOfType<Joystick> ();
+
+			var markerScene = GameObject.Find ("Marker scene");
+			if (markerScene != null) {
+				transform.parent = markerScene.transform;
+			} else {
+				Debug.LogError ("Could not reposition car as child of Marker scene because we can't find Marker scene");
+			}
 
 			PlayerDataManager.PlayerData playerData;
 			if (isServer) {
@@ -130,11 +139,6 @@ public class CarController : NetworkBehaviour
 
 		CarProperties.OriginalHue = playerData.colour;
 
-		Transform nameText = transform.Find ("NameTag").Find ("NameText");
-		Text textComponent = nameText.gameObject.GetComponent<Text> ();
-
-		textComponent.text = playerData.Name;
-
 		Material[] materials = transform.FindChild("Car_Model").GetComponent<MeshRenderer> ().materials;
 
 		GameUtils.SetCarMaterialColoursFromHue (materials, CarProperties.OriginalHue);
@@ -160,12 +164,15 @@ public class CarController : NetworkBehaviour
 		setBomb (b);
 	}
 
-	private void setBomb(bool b){
-		this.HasBomb = b;
-		if (b == true) {
+	private void setBomb(bool hasBomb){
+		HasBomb = hasBomb;
+		if (hasBomb) {
 			if (BombAlertSound != null) {
 				BombAlertSound.PlayOneShot (BombAlertSound.clip);
 			}
+			CarProperties.SpeedLimit *= BOMB_SPEED_BOOST_FACTOR;
+		} else {
+			CarProperties.SpeedLimit /= BOMB_SPEED_BOOST_FACTOR;
 		}
 		#if UNITY_ANDROID || UNITY_IPHONE
 		// vibrate on exchange
@@ -174,7 +181,7 @@ public class CarController : NetworkBehaviour
 		}
 		#endif
 		if (OnSetBombEvent != null) {
-			OnSetBombEvent (b);
+			OnSetBombEvent (hasBomb);
 		}
 				
 	}
@@ -218,7 +225,7 @@ public class CarController : NetworkBehaviour
 		if ((isLocalPlayer || IsPlayingSolo)) {
             _healthBar.UpdateCountdown(Lifetime, HasBomb);
 			EnsureCarIsOnMap ();
-			transform.rotation= Quaternion.Lerp (transform.rotation, _lookAngle , CarProperties.TurnRate * Time.deltaTime);
+			transform.rotation = Quaternion.RotateTowards (transform.rotation, _lookAngle, CarProperties.SafeTurnRate * Time.deltaTime);
 			if (Lifetime <= 0.0f) {
 				Spectate ();
 			}
@@ -228,6 +235,8 @@ public class CarController : NetworkBehaviour
 
 	private void FixedUpdate ()
 	{
+		transform.localScale = Vector3.one * CarProperties.SafeScale;
+
 		if (!_initialised)
 			return;
 		
@@ -246,14 +255,15 @@ public class CarController : NetworkBehaviour
 				// think about combining z and y so that it moves away when close to 0 degrees
 				float combined = _lookAngle.eulerAngles.y;
 				_lookAngle.eulerAngles = new Vector3(0, combined, 0);
+			
+				// how close are we to facing the direction the user wants?
+				float dirFactor = Mathf.Max(0,Vector3.Dot(transform.forward, _lookAngle * Vector3.forward));
+
+				_rigidbody.AddForce (transform.forward * dirFactor * joystickVector.magnitude * CarProperties.SafeAccel);
 			}
 
-			if (_joystick.Active) {
-				_rigidbody.AddForce (transform.forward * joystickVector.magnitude * CarProperties.Acceleration);
-			}
-
-			if(_rigidbody.velocity.magnitude > CarProperties.MaxSpeed) {
-				_rigidbody.velocity = _rigidbody.velocity.normalized * CarProperties.MaxSpeed;
+			if(_rigidbody.velocity.magnitude > CarProperties.SafeSpeedLimit) {
+				_rigidbody.velocity = _rigidbody.velocity.normalized * CarProperties.SafeSpeedLimit;
 			}
 
 		}
@@ -273,36 +283,33 @@ public class CarController : NetworkBehaviour
      * pass the relevant data to the right places (CarProperties).
      */
     [ClientRpc]
-	public void RpcPowerUp(string tag, int triggeringServerId)
-    {
-        GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
+	public void RpcPowerUp(string tag, int triggeringServerId) {
+		LocalPowerUp (tag, triggeringServerId);
+    }
+
+	public void LocalPowerUp (string tag, int triggeringServerId) {
+		GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
 		AbilityRouter.RouteTag (tag, CarProperties, gameObject, gpm, triggeringServerId == ServerId, isLocalPlayer);
 		if (PowerUpSound != null && triggeringServerId == ServerId) {
 			PowerUpSound.PlayOneShot (PowerUpSound.clip);
 		}
-    }
+	}
 
     void OnCollisionEnter(Collision col)
 	{
 		if (isServer) {
-			GameObject.FindObjectOfType<GameManager> ().CollisionEvent (this, col.gameObject);
-		} else {
-			if (!col.gameObject.tag.Contains("PowerUp")) {
-/*
- * Uncomment the following line to add bouncing between the players in the main game
- * the current implementation is a bit laggy so has been left uncommented until this is fixed 
- */
-				Bounce (col);
-			}
+			GameObject.FindObjectOfType<GameManager> ().CollisionEvent (gameObject, col);
+		}
+		if (col.gameObject.CompareTag("Car")) {
+			// Uncomment the following line to add bouncing between the players in the main game
+			// the current implementation is a bit laggy so has been left uncommented until this is fixed 
+			Bounce (col);
 		}
 	}
 
     private void OnTriggerEnter(Collider other)
     {
-        if (isServer && AbilityRouter.IsAbilityObject(other.transform.parent.gameObject))
-        {
-            GameObject.FindObjectOfType<GameManager>().CollisionEvent(this, other.transform.parent.gameObject);
-        }
+		GameObject.FindObjectOfType<GameManager>().TriggerEnterEvent(gameObject, other.transform.parent.gameObject);
     }
 
     void Bounce(Collision col){
@@ -367,12 +374,6 @@ public class CarController : NetworkBehaviour
 		Debug.Log ("RPC CONTROLS");
 
 		_controlsDisabled = false;
-	}
-
-	[ClientRpc]
-	public void RpcStartGameCountDown(){
-		Debug.Log ("RPC GAME COUNT DOWN");
-		GameObject.FindObjectOfType<PreparingGame>().StartGameCountDown (false);
 	}
 
 	public void DisableControls(){

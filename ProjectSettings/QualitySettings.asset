@@ -33,7 +33,6 @@ QualitySettings:
     asyncUploadBufferSize: 4
     excludedTargetPlatforms:
     - iPhone
-    - Standalone
   - serializedVersion: 2
     name: Fast
     pixelLightCount: 0

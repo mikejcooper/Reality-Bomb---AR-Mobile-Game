@@ -25,26 +25,13 @@ namespace Abilities {
                 _splatterObject.transform.SetSiblingIndex(0);
                 _splatterObject.transform.localPosition = Vector3.zero;
 
-                GenerateSplatters(canvas, 5);
+				foreach (Vector3 position in InkAbility.GenerateSplatters(canvas, 5)) {
+					StartCoroutine(CreateInk(position));
+				}
 
                 Invoke("FadeOut", 2);
             }
 		}
-
-        private void GenerateSplatters(Canvas canvas, int n)
-        {
-            Vector3[] positions = { new Vector3(-100,100,0),
-                                    new Vector3(100,100,0),
-                                    new Vector3(100,-100,0),
-                                    new Vector3(-100,-100,0),
-                                    new Vector3(0,0,0)};
-            for( int i = 0; i < n; i++)
-            {
-                Vector3 rand_pos = new Vector3(Random.Range(-50, 50), Random.Range(-50, 50), -1);
-                
-                StartCoroutine(CreateInk(positions[i] + rand_pos));
-            }
-        }
 
         IEnumerator CreateInk(Vector3 pos)
         {

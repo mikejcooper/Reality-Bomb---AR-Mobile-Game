@@ -7,11 +7,6 @@ using TMPro;
 using Powerups;
 using UnityEngine.UI;
 
-/*
-* REMEMBER CANT USE CLIENTRPC ATTRIBUTE IN GAMEMANAGER
-* ClientRpcs can only be run on objects that have been spawned via NetworkServer.Spawn(). Do not run RPC from a static gameobject.
-*/
-
 public class GameManager : NetworkBehaviour {
 
 	public delegate void OnWorldMeshAvailable(GameMapObjects worldMesh);
@@ -156,7 +151,7 @@ public class GameManager : NetworkBehaviour {
 		{
 			AddCar(car.gameObject);
 		}
-		_cars.StartGameCountDown();
+
 		RpcOnBeginCountdown ();
 		PreparingCanvas.StartGameCountDown (true);
 
@@ -165,13 +160,15 @@ public class GameManager : NetworkBehaviour {
 
 	[ClientRpc]
 	public void RpcOnBeginCountdown () {
+		Debug.Log ("RPC GAME COUNT DOWN");
 		if (_clientExplanationDialog != null) {
 			Destroy (_clientExplanationDialog);
 		}
 
 		StartCoroutine(FadeOutMesh(5));
+		PreparingCanvas.StartGameCountDown (false);
 	}
-
+		
 	IEnumerator FadeOutMesh(int duration)
 	{
 		int steps = 100;
@@ -226,31 +223,42 @@ public class GameManager : NetworkBehaviour {
 	}
 
     [Server]
-    public void CollisionEvent(CarController car, GameObject other)
-    {
+	public void CollisionEvent(GameObject thisObj, Collision collision) {
+		// we have to use contact points because otherwise child colliders
+		// such as a shield just count as normal collisions
+		var contactPoint = collision.contacts [0];
 
-        //this is two cars colliding
-        CarController collisionCar = other.GetComponent<CarController>();
-        if (other.tag == "TankTag")
-        {
-            if (collisionCar.IsTransferTimeExpired() && collisionCar.HasBomb)
-            {
-                collisionCar.setBombAllDevices(false);
-                car.setBombAllDevices(true);
-                car.UpdateTransferTime(1.0f);
-            }
-        }
-		else if (Abilities.AbilityRouter.IsAbilityObject(other))
-        {
-			
-            //Handle powerups on the CarController clients
-//			_cars.TriggerPowerup (Abilities.AbilityRouter.GetAbilityTag (col.gameObject), car.ServerId);
+		// only process collision "caused" by the car
+		if (contactPoint.thisCollider.gameObject.Equals (thisObj)) {
+			CarController thisCar = thisObj.GetComponent<CarController>();
+			GameObject otherObj = contactPoint.otherCollider.gameObject;
 
-			_cars.TriggerPowerup (PowerUpManager.GetPowerupType (other, car.HasBomb), car.ServerId);
-            //Destroy the gameobject we collided with (because it's a powerup)
-			NetworkServer.Destroy(other);
-        }
+			if (otherObj.CompareTag ("Car")) {
+				//this is two cars colliding
+				CarController otherCar = otherObj.GetComponent<CarController>();
+
+				if (otherCar.IsTransferTimeExpired () && otherCar.HasBomb) {
+					otherCar.setBombAllDevices (!otherCar.HasBomb);
+					thisCar.setBombAllDevices (!thisCar.HasBomb);
+					thisCar.UpdateTransferTime (1.0f);
+				}
+
+			}
+		}
+
+        
     }
+
+	[Server]
+	public void TriggerEnterEvent (GameObject thisObj, GameObject otherObj) {
+		if (otherObj.CompareTag("PowerUp")) {
+			CarController thisCar = thisObj.GetComponent<CarController>();
+			//Handle powerups on the CarController clients
+			_cars.TriggerPowerup (PowerUpManager.GetPowerupType (otherObj, thisCar.HasBomb), thisCar.ServerId);
+			//Destroy the gameobject we collided with (because it's a powerup)
+			NetworkServer.Destroy (otherObj);
+		}
+	}
 		
 	[Server]
 	public void OnPlayerDisconnected(){

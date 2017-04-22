@@ -120,16 +120,10 @@ public class CarList
 			car.RpcEnableControls ();
 		}
 	}
-		
-
-	public void StartGameCountDown (){
-		foreach (CarController car in _cars) {
-			car.RpcStartGameCountDown ();
-		}
-	}
 
 	public void TriggerPowerup (String powerupTag, int triggeringCarId) {
 		foreach (CarController car in _cars) {
+			car.LocalPowerUp (powerupTag, triggeringCarId);
 			car.RpcPowerUp (powerupTag, triggeringCarId);
 		}
 	}

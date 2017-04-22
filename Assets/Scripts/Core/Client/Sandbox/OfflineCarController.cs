@@ -48,7 +48,7 @@ public class OfflineCarController : MonoBehaviour
 
 	private void Update ()
 	{
-		transform.rotation= Quaternion.Lerp (transform.rotation, _lookAngle , CarProperties.TurnRate * Time.deltaTime);
+		transform.rotation = Quaternion.RotateTowards (transform.rotation, _lookAngle, CarProperties.SafeTurnRate * Time.deltaTime);
 	}
 
 	private void FixedUpdate ()
@@ -63,54 +63,39 @@ public class OfflineCarController : MonoBehaviour
 			// think about combining z and y so that it moves away when close to 0 degrees
 			float combined = _lookAngle.eulerAngles.y;
 			_lookAngle.eulerAngles = new Vector3(0, combined, 0);
+
+			// how close are we to facing the direction the user wants?
+			float dirFactor = Mathf.Max(0,Vector3.Dot(transform.forward, _lookAngle * Vector3.forward));
+
+			_rigidbody.AddForce (transform.forward * dirFactor * joystickVector.magnitude * CarProperties.SafeAccel);
 		}
 
-		if (_joystick.Active) {
-			_rigidbody.AddForce (transform.forward * joystickVector.magnitude * CarProperties.Acceleration);
-		}
+		transform.localScale = Vector3.one * CarProperties.SafeScale;
 
-		if(_rigidbody.velocity.magnitude > CarProperties.MaxSpeed) {
-			_rigidbody.velocity = _rigidbody.velocity.normalized * CarProperties.MaxSpeed;
+		if(_rigidbody.velocity.magnitude > CarProperties.SafeSpeedLimit) {
+			_rigidbody.velocity = _rigidbody.velocity.normalized * CarProperties.SafeSpeedLimit;
 		}
 	}
 
 	void OnCollisionEnter(Collision col) {
 
-		if (AbilityRouter.IsAbilityObject (col.gameObject)) {
-			SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager> ();
-			string type = spm.GetPowerupType (col.gameObject, false);
-			AbilityRouter.RouteTag (type, CarProperties, gameObject, spm, true, true);
-			Destroy(col.gameObject);
-		} else {
-			// If two players collide, calculate the angle of collision, reverse the direction and add a force in that direction
-			var bounceForce = 350;
-			Vector3 direction = col.contacts [0].point - transform.position;
-			direction = -direction.normalized;
-			direction.y = 0;
-			GetComponent<Rigidbody> ().AddForce (direction * bounceForce);
+		if (col.gameObject.CompareTag("PowerUp")) {
+			OnPowerupCollision (col.gameObject);
 		}
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (AbilityRouter.IsAbilityObject(other.transform.parent.gameObject))
-        {
-            SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager>();
-			string type = spm.GetPowerupType (other.transform.parent.gameObject, false);
-			if (type == SpeedAbility.TAG) {
-				StartCoroutine( HideShowParticles (SandParticles, SpeedAbility.SPARKLES_LIFETIME_SECONDS) );
-			}
-            AbilityRouter.RouteTag(type, CarProperties, gameObject, spm, true, true);
-            Destroy(other.transform.parent.gameObject);
-        }
-    }
-
-	IEnumerator HideShowParticles(ParticleSystem particleSystem, int duration){
-		particleSystem.Stop ();
-		yield return new WaitForSeconds (duration);
-		particleSystem.Play();			
+	private void OnPowerupCollision (GameObject obj) {
+		SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager> ();
+		string type = spm.GetPowerupType (obj, false);
+		AbilityRouter.RouteTag (type, CarProperties, gameObject, spm, true, true);
+		Destroy(obj);
 	}
 
-		
+    private void OnTriggerEnter(Collider other)
+    {
+		if (other.transform.parent.gameObject.CompareTag("PowerUp")) {
+			OnPowerupCollision (other.transform.parent.gameObject);
+        }
+    }		
 }
 

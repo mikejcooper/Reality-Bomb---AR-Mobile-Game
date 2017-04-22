@@ -6,40 +6,31 @@ using UnityEngine.UI;
 namespace Abilities {
 
 	[System.Serializable]
-	public class GrowAbilityProperties : BaseAbilityProperties {
-//		public Texture GrowTexture;
-	}
+	public class GrowAbilityProperties : BaseAbilityProperties {}
 
 	public class GrowAbility : BaseAbility<GrowAbilityProperties> {
 
 		public const string TAG = "growability";
-		private const float SPEED_FACTOR = 1.5f;
 
-		private Vector3 _originalSize;
-		private Vector3 _scale;
-		private bool _maxGrow;
+		private const float TURN_FACTOR = 0.5f;
+		private const float SPEED_FACTOR = 1.5f;
+		private const float SCALE_FACTOR = 2f;
 
 		protected override void OnApplyCarEffect (CarProperties properties, bool triggeredPowerup) {
 			if (triggeredPowerup) {
-				_maxGrow = false;
-
-				if (gameObject.transform.localScale.x < 1.5f) {
-					gameObject.transform.localScale *= 3f;
-
-					properties.MaxSpeed *= SPEED_FACTOR;
-					properties.Acceleration *= SPEED_FACTOR;
-				} else {
-					_maxGrow = true;
-				}
+				properties.Scale *= SCALE_FACTOR;
+				properties.SpeedLimit *= SPEED_FACTOR;
+				properties.Accel *= SPEED_FACTOR;
+				properties.TurnRate *= TURN_FACTOR;
 			}
 		}
 
 		protected override void OnRemoveCarEffect (CarProperties properties, bool triggeredPowerup) {
-			if (triggeredPowerup && !_maxGrow) {
-				gameObject.transform.localScale /= 3f;
-
-				properties.MaxSpeed /= SPEED_FACTOR;
-				properties.Acceleration /= SPEED_FACTOR;
+			if (triggeredPowerup) {
+				properties.Scale /= SCALE_FACTOR;
+				properties.SpeedLimit /= SPEED_FACTOR;
+				properties.Accel /= SPEED_FACTOR;
+				properties.TurnRate /= TURN_FACTOR;
 			}
 		}
 			

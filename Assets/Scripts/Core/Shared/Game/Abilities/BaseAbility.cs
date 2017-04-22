@@ -9,7 +9,6 @@ namespace Abilities {
 
 	[System.Serializable]
 	public abstract class BaseAbilityProperties {
-		public GameObject PowerupPrefab;
 		public GameObject CanvasSplash;
 		public int Duration;
 	}
