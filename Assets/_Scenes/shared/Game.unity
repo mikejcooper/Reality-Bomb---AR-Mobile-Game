@@ -299,8 +299,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LeaderboardEntryPrefab: {fileID: 1919387886165460, guid: 329657b1f99884a668ebffd5f2849092,
     type: 2}
-  Beep: {fileID: 0}
-  Boop: {fileID: 0}
+  Beep: {fileID: 1770637557}
+  Boop: {fileID: 754448012}
 --- !u!114 &178973366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -856,7 +856,7 @@ GameObject:
   - component: {fileID: 754448013}
   - component: {fileID: 754448012}
   m_Layer: 0
-  m_Name: Boop
+  m_Name: CountdownBoop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7809,7 +7809,7 @@ GameObject:
   - component: {fileID: 1770637558}
   - component: {fileID: 1770637557}
   m_Layer: 0
-  m_Name: Beep
+  m_Name: CountdownBeep
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8150,7 +8150,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1965431130}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe4ec33cee90c844ea1bcc2cd642033e, type: 3}
   m_Name: 
