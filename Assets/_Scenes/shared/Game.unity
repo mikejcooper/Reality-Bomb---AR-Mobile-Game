@@ -124,7 +124,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerCanvas: {fileID: 1343903778}
-  PowerupPrefab: {fileID: 1993525125451176, guid: 542231fbffaca4d02a331b84f4263acf,
+  PowerupPrefab: {fileID: 1993525125451176, guid: 8423806b6f13c4428af4c9553d9d00a9,
     type: 2}
   _yOffSet: 0
   SpeedProperties:
@@ -3886,11 +3886,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 1
   m_subTextObjects:
