@@ -285,12 +285,32 @@ public class ServerSceneManager : MonoBehaviour
 	}
 
 	//Fade out current scene when switching scenes
-	IEnumerator ChangeToGameScene() {
-		float fadeTime = GameObject.Find ("Fade").GetComponent<SceneFade> ().BeginFade (1);
+	IEnumerator FadeOutToGameScene() {
+		float fadeTime = GameObject.Find ("Fade").GetComponent<FadeScene> ().BeginFadeOut ();
 		yield return new WaitForSeconds (fadeTime);
 		_currentScene = "Game"; 
 		_playerDataManager.ResetAllGameData ();
 		_networkLobbyManager.ServerChangeScene ("Game");
+	}
+
+	IEnumerator FadeOutToLeaderboardScene() {
+		float fadeTime = GameObject.Find ("Fade").GetComponent<FadeScene> ().BeginFadeOut ();
+		yield return new WaitForSeconds (fadeTime);
+		_networkLobbyManager.ServerChangeScene("Leaderboard");
+		_currentScene = "Leaderboard"; // put this in some scene load callback
+		foreach (var lobbyPlayer in _networkLobbyManager.lobbySlots) {
+
+			if (lobbyPlayer == null)
+				continue;
+
+			lobbyPlayer.GetComponent<NetworkCompat.NetworkLobbyPlayer> ().readyToBegin = true;
+
+			// tell every player that this player is ready
+			var outMsg = new LobbyReadyToBeginMessage ();
+			outMsg.slotId = lobbyPlayer.slot;
+			outMsg.readyState = true;
+			UnityEngine.Networking.NetworkServer.SendToReady (null, UnityEngine.Networking.MsgType.LobbyReadyToBegin, outMsg);
+		}
 	}
 
 	private void OnStateUpdate ()
@@ -304,21 +324,7 @@ public class ServerSceneManager : MonoBehaviour
 			if (_playerDataManager.HasGameData()) {
 				//				networkLobbyManager.ServerChangeScene ("Leaderboard");
 				if (_currentScene != "Leaderboard") {
-					_networkLobbyManager.ServerChangeScene("Leaderboard");
-					_currentScene = "Leaderboard"; // put this in some scene load callback
-					foreach (var lobbyPlayer in _networkLobbyManager.lobbySlots) {
-
-						if (lobbyPlayer == null)
-							continue;
-
-						lobbyPlayer.GetComponent<NetworkCompat.NetworkLobbyPlayer> ().readyToBegin = true;
-
-						// tell every player that this player is ready
-						var outMsg = new LobbyReadyToBeginMessage ();
-						outMsg.slotId = lobbyPlayer.slot;
-						outMsg.readyState = true;
-						UnityEngine.Networking.NetworkServer.SendToReady (null, UnityEngine.Networking.MsgType.LobbyReadyToBegin, outMsg);
-					}
+					StartCoroutine(FadeOutToLeaderboardScene ());
 				}
 			} else {
 				if (_currentScene != "Idle") {
@@ -331,7 +337,7 @@ public class ServerSceneManager : MonoBehaviour
 		case ProcessState.PlayingGame:
 			if (_currentScene != "Game") {
 				// put this in some scene load callback
-				StartCoroutine(ChangeToGameScene());
+				StartCoroutine(FadeOutToGameScene());
 			}
 			break;
 		}

@@ -61,6 +61,7 @@ public class GameManager : NetworkBehaviour {
 			ServerSceneManager.Instance.OnAllPlayersLoadedEvent += AllPlayersReady;
 			ServerSceneManager.Instance.OnPlayerDisconnectEvent += OnPlayerDisconnected;
 
+			GameObject.Find ("Fade").GetComponent<FadeScene> ().FadeInScene = true;
 		}
 			
 		// use downloaded marker pattern
