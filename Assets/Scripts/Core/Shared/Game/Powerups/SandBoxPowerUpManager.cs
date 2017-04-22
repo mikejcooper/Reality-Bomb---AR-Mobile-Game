@@ -38,10 +38,11 @@ namespace Powerups {
 			List<Vector3> result = new List<Vector3> ();
 			Vector3 min = mesh.bounds.min;
 			Vector3 max = mesh.bounds.max;
-			result.Add (new Vector3(min.x,0,min.z));
-			result.Add (new Vector3(min.x,0,max.z));
-			result.Add (new Vector3(max.x,0,max.z));
 			result.Add (new Vector3(max.x,0,min.z));
+			result.Add (new Vector3(max.x,0,max.z));
+			result.Add (new Vector3(min.x,0,max.z));
+			result.Add (new Vector3(min.x,0,min.z));
+
 			return result;
 		}
 

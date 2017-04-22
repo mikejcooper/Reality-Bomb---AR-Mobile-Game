@@ -124,7 +124,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerCanvas: {fileID: 1343903778}
-  PowerupPrefab: {fileID: 1993525125451176, guid: 542231fbffaca4d02a331b84f4263acf,
+  PowerupPrefab: {fileID: 1993525125451176, guid: 8423806b6f13c4428af4c9553d9d00a9,
     type: 2}
   _yOffSet: 0
   SpeedProperties:
@@ -7908,6 +7908,58 @@ Transform:
   m_Father: {fileID: 630721906}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1804561291
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4031970744896994, guid: 59c1685463242c34e8253f863b80306f, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4031970744896994, guid: 59c1685463242c34e8253f863b80306f, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4031970744896994, guid: 59c1685463242c34e8253f863b80306f, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4031970744896994, guid: 59c1685463242c34e8253f863b80306f, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4031970744896994, guid: 59c1685463242c34e8253f863b80306f, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4031970744896994, guid: 59c1685463242c34e8253f863b80306f, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4031970744896994, guid: 59c1685463242c34e8253f863b80306f, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4031970744896994, guid: 59c1685463242c34e8253f863b80306f, type: 2}
+      propertyPath: m_RootOrder
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 114671313472114046, guid: 59c1685463242c34e8253f863b80306f,
+        type: 2}
+      propertyPath: FadeIn
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114671313472114046, guid: 59c1685463242c34e8253f863b80306f,
+        type: 2}
+      propertyPath: FadeInScene
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 59c1685463242c34e8253f863b80306f, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1001 &1932886150
 Prefab:
   m_ObjectHideFlags: 0

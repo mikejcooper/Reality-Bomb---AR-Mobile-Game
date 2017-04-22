@@ -60,7 +60,6 @@ public class GameManager : NetworkBehaviour {
             //Triggered when last player loads game scene
 			ServerSceneManager.Instance.OnAllPlayersLoadedEvent += AllPlayersReady;
 			ServerSceneManager.Instance.OnPlayerDisconnectEvent += OnPlayerDisconnected;
-
 		}
 			
 		// use downloaded marker pattern
@@ -82,6 +81,7 @@ public class GameManager : NetworkBehaviour {
 
 		if (!isServer) {
 			ClientSceneManager.Instance.OnGameLoaded ();
+			GameObject.Find ("Fade").GetComponent<SceneFade> ().FadeInScene = false;
 		}
 			
 	}
