@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.20532215, g: 0.26171857, b: 0.31738347, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -238,7 +238,7 @@ MonoBehaviour:
   PlayNowButton: {fileID: 408920593}
   CancelButton: {fileID: 325303256}
   JoinGameButton: {fileID: 884891906}
-  SceneObject: {fileID: 1000648817}
+  SceneObject: {fileID: 0}
   NickNameObject: {fileID: 1301001935}
   FormObject: {fileID: 11698364}
   NickNameText: {fileID: 651774017}
