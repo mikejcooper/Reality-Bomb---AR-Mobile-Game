@@ -25,6 +25,7 @@ public class GameManager : NetworkBehaviour {
 	public GamePowerUpManager PowerUpManager;
 	public GameObject GameExplanationDialogPrefab;
 	public GameObject GameStartingDialogObj;
+    public GameObject SpinnerPrefab;
 
 	public GameObject Canvas;
 
@@ -34,6 +35,7 @@ public class GameManager : NetworkBehaviour {
 
 	private bool _allPlayersReady = false;
 	private bool _preparingGame = true;
+    private bool _assigning_bomb = false;
 
 	public int _startingBombPlayerConnectionId;
 	private GameObject _clientExplanationDialog;
@@ -108,8 +110,8 @@ public class GameManager : NetworkBehaviour {
 				KillPlayer (car);
 			}
 			_cars.ClearAllDisconnectedPlayers ();
-			if (_cars.GetNumberOfBombsPresent() == 0) {
-				_cars.PassBombRandomPlayer ();
+			if (_cars.GetNumberOfBombsPresent() == 0 && !_assigning_bomb) {
+				PassBombRandomPlayerWrapper ();
 			}
 		}
 	}
@@ -127,7 +129,7 @@ public class GameManager : NetworkBehaviour {
 	private void KillPlayer (CarController car) {
 		_cars.KillPlayer (car);
 		CheckForGameOver ();
-		if(_cars.GetNumberOfBombsPresent() == 0) _cars.PassBombRandomPlayer();
+		if(_cars.GetNumberOfBombsPresent() == 0 && !_assigning_bomb) PassBombRandomPlayerWrapper ();
 	}
 
 	[Server]
@@ -211,11 +213,23 @@ public class GameManager : NetworkBehaviour {
 			OnGameStartedEvent();
 		}
 		_cars.enableAllControls();
-        if(_cars.GetNumberOfBombsPresent() < 1) _cars.PassBombRandomPlayer ();
+        if(_cars.GetNumberOfBombsPresent() == 0 && !_assigning_bomb) PassBombRandomPlayerWrapper ();
 
 		//Play the game music on the server only
 		GameObject.FindObjectOfType<GameMusic>().StartMusic ();
 	}
+
+    private void PassBombRandomPlayerWrapper()
+    {
+        GameObject spinnerObj = Instantiate(SpinnerPrefab);
+        spinnerObj.transform.SetParent(Canvas.transform);
+        Spinner spinner = spinnerObj.GetComponent<Spinner>();
+        spinner.init(_cars);
+        _assigning_bomb = true;
+        spinner.OnSpinnerFinishedEvent += (() => _assigning_bomb = false);
+
+        //_cars.PassBombRandomPlayer();
+    }
 
 	public void AddCar(GameObject gamePlayer)
 	{
@@ -267,7 +281,7 @@ public class GameManager : NetworkBehaviour {
 		_cars.ClearAllDisconnectedPlayers ();
 		Debug.Log ("Players Left: " + _cars.GetCarsOutOfTime() + _cars.GetNumberAliveCars());
 		CheckForGameOver ();
-		if (_cars.GetNumberOfBombsPresent() < 1) _cars.PassBombRandomPlayer ();
+		if (_cars.GetNumberOfBombsPresent() < 1 && !_assigning_bomb) PassBombRandomPlayerWrapper ();
 	}
 
 

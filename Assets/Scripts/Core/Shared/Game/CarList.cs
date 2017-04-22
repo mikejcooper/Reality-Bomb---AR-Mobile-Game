@@ -30,10 +30,13 @@ public class CarList
 	public void ClearAllDisconnectedPlayers(){
 		for(var i = _cars.Count - 1; i > -1; i--)
 		{
-			UnityEngine.Debug.Log ("car.connection: " + _cars [i].connectionToClient);
             if (_cars[i].connectionToClient == null)
             {
                 _cars.RemoveAt(i);
+            }
+            else
+            {
+                UnityEngine.Debug.Log("car.connection: " + _cars[i].connectionToClient);
             }
 		}
 	}
