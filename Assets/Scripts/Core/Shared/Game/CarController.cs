@@ -346,6 +346,7 @@ public class CarController : NetworkBehaviour
 		
 	public void EnsureCarIsOnMap(){
 		if(_rigidbody.position.y <= _fallDistanceBeforeRespawn){
+			Debug.Log ("Car Is not on map");
 			Reposition (GameObject.FindObjectOfType<GameManager> ().WorldMesh);
 			DisableControlsTime (DisabledControlDurationSeconds);
 		}

@@ -19,7 +19,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4497922830265260}
-  - component: {fileID: 95840771893931280}
   - component: {fileID: 23427948381761944}
   m_Layer: 9
   m_Name: 3d-bomb
@@ -114,9 +113,9 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 1372425718077457a9e03e17674919cd, type: 2}
-  - {fileID: 2100000, guid: bb2c5bccbd92949f1a2c9d23f1862539, type: 2}
-  - {fileID: 2100000, guid: 571c9c9cb503643c0847a72f134dec7d, type: 2}
+  - {fileID: 2100000, guid: cfed46db6afc44bc6ab586b3b802b72f, type: 2}
+  - {fileID: 2100000, guid: aa54baa005bf84148934eab1d62dcb77, type: 2}
+  - {fileID: 2100000, guid: 65b34bd0b696fd64c809daa8ff1aac63, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -172,20 +171,3 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1501737419258750}
   m_Mesh: {fileID: 4300000, guid: 385ac7f15a1fd40df804022f5ab65974, type: 3}
---- !u!95 &95840771893931280
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1151405325917586}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 385ac7f15a1fd40df804022f5ab65974, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1

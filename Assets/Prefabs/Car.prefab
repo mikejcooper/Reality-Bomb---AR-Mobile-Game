@@ -326,9 +326,9 @@ MonoBehaviour:
   YouPointer: {fileID: 1988901391611034, guid: 769f8f7605e4548bc8b88e4645d0f87a, type: 2}
   BombObject: {fileID: 1151405325917586, guid: b3cb5b3b2fcc043239cb5668294e5f51, type: 2}
   isMeIndicaterOn: 1
-  isBombIndicaterOn: 1
-  material1: {fileID: 2100000, guid: dce1260e08e394eb795dbe0032966fe6, type: 2}
-  material2: {fileID: 2100000, guid: 463052f3f7389124f9e7b34b0b931d0d, type: 2}
+  isBombIndicaterOn: 0
+  material1: {fileID: 2100000, guid: cfed46db6afc44bc6ab586b3b802b72f, type: 2}
+  material2: {fileID: 2100000, guid: 858b5bb4de83347d5b1489fc05d27d2f, type: 2}
 --- !u!114 &114155580886546474
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -406,6 +406,10 @@ MonoBehaviour:
   DisabledControlDurationSeconds: 2
   ExplosionAnimation: {fileID: 1901629115959148, guid: 68ea650ef099f41a3a35693e4cfdd70a,
     type: 2}
+  ExplosionSound: {fileID: 0}
+  PowerUpSound: {fileID: 0}
+  BombAlertSound: {fileID: 0}
+  BumpSound: {fileID: 0}
   ServerId: 0
   Lifetime: 0
 --- !u!114 &114628965064406510
