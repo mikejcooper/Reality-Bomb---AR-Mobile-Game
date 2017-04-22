@@ -124,7 +124,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerCanvas: {fileID: 1343903778}
-  PowerupPrefab: {fileID: 1993525125451176, guid: 542231fbffaca4d02a331b84f4263acf,
+  PowerupPrefab: {fileID: 1993525125451176, guid: 8423806b6f13c4428af4c9553d9d00a9,
     type: 2}
   _yOffSet: 0
   SpeedProperties:
@@ -299,8 +299,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LeaderboardEntryPrefab: {fileID: 1919387886165460, guid: 329657b1f99884a668ebffd5f2849092,
     type: 2}
-  Beep: {fileID: 0}
-  Boop: {fileID: 0}
+  Beep: {fileID: 1770637557}
+  Boop: {fileID: 754448012}
 --- !u!114 &178973366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -856,7 +856,7 @@ GameObject:
   - component: {fileID: 754448013}
   - component: {fileID: 754448012}
   m_Layer: 0
-  m_Name: Boop
+  m_Name: CountdownBoop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3886,11 +3886,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 1
   m_subTextObjects:
@@ -4106,7 +4106,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 481c75bbae65928489d1b0367690dc92, type: 3}
+  m_audioClip: {fileID: 8300000, guid: b17ffafd188290b4196fd74e48c0a44c, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0
   m_Pitch: 1
@@ -7809,7 +7809,7 @@ GameObject:
   - component: {fileID: 1770637558}
   - component: {fileID: 1770637557}
   m_Layer: 0
-  m_Name: Beep
+  m_Name: CountdownBeep
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
