@@ -7,33 +7,39 @@ public class ProjectObject : MonoBehaviour {
 //	public Transform Target;
 //	public float firingAngle = 45.0f;
 //	public float gravity = 9.8f;
-//	public Transform Source;    
+//	public Transform Source; 
 
-	private Transform myTransform;
+	public delegate void OnPositionsSet();
+	public delegate void OnFinshedStartMovement();
+	public event OnPositionsSet OnPositionsSetEvent = delegate {};
+	public event OnFinshedStartMovement OnFinshedStartMovementEvent = delegate {};
 
-	void Awake()
-	{
-		myTransform = transform;      
-	}
+	public float PathSpeed = 10.0f;
+
+	private List<Vector3> _positions; 
+	private bool _finshedStartMovement = false;
+	private float _yOffset = 10.0f;
 
 	void Start()
-	{          
-//		Launch();
+	{  
+		StartCoroutine(StartObjectMovement());
 	}
-
+		
 	public void Launch (Transform Source, Vector3 Target, float firingAngle = 45.0f) {
 		StartCoroutine(Launch_Enum (Source, Target, firingAngle));
 	}
 
 	IEnumerator Launch_Enum(Transform Source, Vector3 Target, float firingAngle = 45.0f) {
 		// Move source to start position + some offset. 
-		Source.position = myTransform.position + new Vector3(0, 1.0f, 0);
+		Source.position = transform.position + new Vector3(0, 1.0f, 0);
+		//Decouple with Projection Obj
+		Source.SetParent (transform);
 
-		yield return new WaitForSeconds (3);
+		yield return new WaitForSeconds (1);
 
 		Vector3 t = Target;
 		Vector3 s = Source.position;
-
+	
 		float gravity = Physics.gravity.magnitude;
 		// Selected angle in radians
 		float angle = firingAngle * Mathf.Deg2Rad;
@@ -53,9 +59,68 @@ public class ProjectObject : MonoBehaviour {
 
 		// Rotate our velocity to match the direction between the two objects
 		float angleBetweenObjects = Vector3.Angle(Vector3.forward, planarTarget - planarPostion);
+
+		if (s.x > t.x)
+			angleBetweenObjects = -angleBetweenObjects;
+
 		Vector3 finalVelocity = Quaternion.AngleAxis(angleBetweenObjects, Vector3.up) * velocity;
 
+		//Decouple from Projection Obj
+		Source.parent = null;
 		// Fire!
 		Source.GetComponent<Rigidbody>().velocity = finalVelocity;
+
+	}
+
+	IEnumerator StartObjectMovement(){
+		// Move Object up by _yOffset
+		Vector3 moveUp = new Vector3 (transform.position.x, transform.position.y + _yOffset, transform.position.z);
+		yield return StartCoroutine(MoveObject(transform.position, moveUp, 10.0f));
+
+		OnFinshedStartMovementEvent ();
+		_finshedStartMovement = true;
+
+		yield return new WaitForSeconds (4.0f);
+
+		if (OnPositionsSetEvent != null) {
+			StartCoroutine (BeginObjectPath ());
+		} else {
+			OnPositionsSetEvent += () => StartCoroutine ( BeginObjectPath () );
+		}
+	}
+		
+	IEnumerator BeginObjectPath() {
+		int i = 0;
+		while (true) {
+			i = (i == _positions.Count - 1) ? 0 : i + 1;
+			Vector3 target = new Vector3 (_positions[i].x, _positions[i].y + _yOffset, _positions[i].z);
+			if (transform.position == target)
+				continue;
+			yield return StartCoroutine(MoveObject(transform.position, target, PathSpeed));
+		}
+	}
+
+	IEnumerator MoveObject(Vector3 startPos, Vector3 endPos, float time){
+
+		float i = 0.0f;
+		float rate = 1.0f / time;
+		while (i < 1.0f) {
+			i += Time.deltaTime * rate;
+			transform.position = Vector3.Lerp(startPos, endPos, i);
+			yield return null; 
+		}
+	}
+
+	public bool onFinishedStartMovement(){
+		return _finshedStartMovement;
+	}
+		
+	public void SetPositions(List<Vector3> positions){
+		_positions = positions;
+		OnPositionsSetEvent ();
+	}
+
+	public void SetHeight(float yOffset){
+		_yOffset = yOffset;
 	}
 }

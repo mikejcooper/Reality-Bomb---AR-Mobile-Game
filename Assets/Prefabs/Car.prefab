@@ -205,7 +205,7 @@ MonoBehaviour:
   IsPlayingSolo: 0
   CarProperties: {fileID: 114643793274007896}
   TurnSpeed: 180
-  MaxLifetime: 15
+  MaxLifetime: 50
   HasBomb: 0
   Alive: 1
   DisabledControlDurationSeconds: 2

@@ -4,7 +4,7 @@ using UnityEngine;
 using Abilities;
 
 namespace Powerups {
-	
+
 	public class SandBoxPowerUpManager : BasePowerUpManager {
 
 		public SpeedAbilityProperties SpeedProperties;
@@ -12,8 +12,6 @@ namespace Powerups {
 		public ShieldAbilityProperties ShieldProperties;
 		public GrowAbilityProperties GrowProperties;
 		public ShrinkAbilityProperties ShrinkProperties;
-
-		public GameObject SpawnSource;
 
 		public delegate void OnSpeedBoostActivated();
 		public delegate void OnInkSplatterActivated();
@@ -28,21 +26,23 @@ namespace Powerups {
 
 		public GameObject PlaneObject;
 
+		private GameObject _projectionAreaObj;
+
 		protected override void Start () {
 			base.Start ();
-			GameMapObjects gameMapObjects = new GameMapObjects (PlaneObject, PlaneObject, getBoundingBox (PlaneObject.GetComponent<MeshFilter> ().mesh));
-			OnMeshReady (gameMapObjects);	
+			GameMapObjects gameMapObjects = new GameMapObjects (PlaneObject, PlaneObject, GetBoundingBox (PlaneObject.GetComponent<MeshFilter> ().mesh, PlaneObject));
+			OnMeshReady (gameMapObjects);
 		}
 
-		private List<Vector3> getBoundingBox(Mesh mesh){
+		private List<Vector3> GetBoundingBox(Mesh mesh, GameObject _planeObject){
 			List<Vector3> result = new List<Vector3> ();
+			Vector3 scale = _planeObject.transform.localScale;
 			Vector3 min = mesh.bounds.min;
 			Vector3 max = mesh.bounds.max;
-			result.Add (new Vector3(max.x,0,min.z));
-			result.Add (new Vector3(max.x,0,max.z));
-			result.Add (new Vector3(min.x,0,max.z));
-			result.Add (new Vector3(min.x,0,min.z));
-
+			result.Add (new Vector3(max.x * scale.x, 0, min.z * scale.z));
+			result.Add (new Vector3(max.x * scale.x, 0, max.z * scale.z));
+			result.Add (new Vector3(min.x * scale.x, 0, max.z * scale.z));
+			result.Add (new Vector3(min.x * scale.x, 0, min.z * scale.z));
 			return result;
 		}
 
@@ -76,19 +76,25 @@ namespace Powerups {
 				break;
 			}
 		}
-			
+
 		protected override bool IsAllowedToSpawn(){
 			return true;
 		}
 
 		protected override void OnPowerUpGenerated(GameObject powerUpObj) {
-			if (SpawnSource != null) {
+			if (_projectionAreaObj != null) {
 				Vector3 p = powerUpObj.transform.position;
 				powerUpObj.transform.position = new Vector3(p.x, p.y - (_yOffSet + 10.0f) , p.z);
-				SpawnSource.GetComponent<ProjectObject> ().Launch (powerUpObj.transform, powerUpObj.transform.position);
+				_projectionAreaObj.GetComponent<ProjectObject> ().Launch (powerUpObj.transform, powerUpObj.transform.position);
 			}
-
 		}
+
+		protected override void OnProjectionAreaGenerated(GameObject projectionAreaObj) {
+			_projectionAreaObj = projectionAreaObj;
+			_projectionAreaObj.GetComponent<ProjectObject> ().SetHeight (5.0f);
+		}
+
+
 	}
 
 }
