@@ -80,9 +80,9 @@ namespace Abilities {
 			if (_abilityProperties.CanvasSplash != null) {
 				
 				_splashObject = GameObject.Instantiate (_abilityProperties.CanvasSplash);
-				_splashObject.transform.parent = _playerCanvas.transform;
+				_splashObject.transform.SetParent(_playerCanvas.transform, false);
 				_splashObject.transform.localScale = Vector3.one;
-				_splashObject.transform.localPosition = Vector3.zero;
+//				_splashObject.transform.localPosition = Vector3.zero;
 				Animation anim = _splashObject.GetComponent<Animation> ();
 				if (anim != null) {
 					anim.Play ();

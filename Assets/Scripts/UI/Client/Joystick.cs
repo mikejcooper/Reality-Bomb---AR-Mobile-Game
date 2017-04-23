@@ -62,16 +62,23 @@ public class Joystick : MonoBehaviour, IDragHandler, IPointerDownHandler, IPoint
 	}
 
 	private void OnPointerEvent(PointerEventData ped) {
-		
-		var offset = new Vector2 (transform.position.x, transform.position.y) - ped.position;
+
+		Vector2 pos; 
+
+		if (RectTransformUtility.ScreenPointToLocalPointInRectangle (GetComponent<RectTransform>(), ped.position, ped.pressEventCamera, out pos)) {
+		}
+
+		var offset = pos;//new Vector2 (transform.position.x, transform.position.y) - ped.position;
+
+		Debug.Log (pos);
 
 		var maxRadius = GetComponent<RectTransform> ().sizeDelta.x / 2.0f;
 
-		var offsetLength = offset.magnitude / 2.0f;
+		var offsetLength = offset.magnitude;
 
 		var length = Mathf.Min (maxRadius, offsetLength);
 
-		NormalisedVector = new Vector2 (-offset.x, -offset.y).normalized * (length / maxRadius);
+		NormalisedVector = new Vector2 (offset.x, offset.y).normalized * (length / maxRadius);
 
 		SetPosition (NormalisedVector * length);
 	}

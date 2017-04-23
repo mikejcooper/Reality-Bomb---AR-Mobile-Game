@@ -19,7 +19,7 @@ namespace Abilities {
 		override protected void OnApplyCanvasEffect (Canvas canvas, bool triggeredPowerup) {
 			if (triggeredPowerup) {
                 _splatterObject = new GameObject("Splatter");
-                _splatterObject.transform.SetParent(canvas.transform);
+                _splatterObject.transform.SetParent(canvas.transform, false);
 
                 _splatterObject.transform.position = Vector3.zero;
                 _splatterObject.transform.SetSiblingIndex(0);
@@ -38,7 +38,7 @@ namespace Abilities {
             yield return new WaitForSeconds(Random.Range(0.0f, 1.0f));
 
             GameObject splat = new GameObject("Ink");
-            splat.transform.SetParent(_splatterObject.transform);
+            splat.transform.SetParent(_splatterObject.transform, false);
             splat.transform.localPosition = pos;
             splat.transform.Rotate(0, 0, Random.Range(0.0f, 360.0f));
 

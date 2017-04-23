@@ -7,10 +7,10 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Red
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 4800000, guid: 83504a78841414944b4bfbefa50d88de, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3000
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
@@ -77,6 +77,9 @@ Material:
         name: _Cutoff
       second: 0.5
     - first:
+        name: _Density
+      second: 0.435
+    - first:
         name: _DetailNormalMapScale
       second: 1
     - first:
@@ -85,6 +88,9 @@ Material:
     - first:
         name: _EmissionScaleUI
       second: 0
+    - first:
+        name: _FullHeight
+      second: 0.46
     - first:
         name: _GlossMapScale
       second: 1
@@ -116,6 +122,12 @@ Material:
         name: _SrcBlend
       second: 1
     - first:
+        name: _TargetAlpha
+      second: 0.428
+    - first:
+        name: _TargetHeight
+      second: 0.05
+    - first:
         name: _UVSec
       second: 0
     - first:
@@ -126,8 +138,14 @@ Material:
         name: _Color
       second: {r: 0.99215686, g: 0.38431373, b: 0.3254902, a: 1}
     - first:
+        name: _Colour
+      second: {r: 1, g: 0, b: 0, a: 1}
+    - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 0}
     - first:
         name: _EmissionColorUI
       second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _HighlightColour
+      second: {r: 1, g: 0, b: 0, a: 1}
