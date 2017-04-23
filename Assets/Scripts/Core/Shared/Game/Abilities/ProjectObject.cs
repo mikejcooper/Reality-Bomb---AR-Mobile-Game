@@ -14,11 +14,12 @@ public class ProjectObject : MonoBehaviour {
 	public event OnPositionsSet OnPositionsSetEvent = delegate {};
 	public event OnFinshedStartMovement OnFinshedStartMovementEvent = delegate {};
 
-	public float PathSpeed = 10.0f;
 
 	private List<Vector3> _positions; 
 	private bool _finshedStartMovement = false;
 	private float _yOffset = 10.0f;
+	private float _speed = 10.0f;
+	private float _positionScale= 1.03f;
 
 	void Start()
 	{  
@@ -73,9 +74,12 @@ public class ProjectObject : MonoBehaviour {
 	}
 
 	IEnumerator StartObjectMovement(){
+		// Hack to avoid outer boundary of mini game when projecting first few powerupd
+		transform.position = transform.position * _positionScale * 1.2f;
+
 		// Move Object up by _yOffset
-		Vector3 moveUp = new Vector3 (transform.position.x, transform.position.y + _yOffset, transform.position.z);
-		yield return StartCoroutine(MoveObject(transform.position, moveUp, 10.0f));
+		Vector3 moveUp = new Vector3 (transform.position.x, transform.position.y + _yOffset, transform.position.z) * _positionScale;
+		yield return StartCoroutine(MoveObject(transform.position, moveUp, 0.5f));
 
 		OnFinshedStartMovementEvent ();
 		_finshedStartMovement = true;
@@ -93,16 +97,17 @@ public class ProjectObject : MonoBehaviour {
 		int i = 0;
 		while (true) {
 			i = (i == _positions.Count - 1) ? 0 : i + 1;
-			Vector3 target = new Vector3 (_positions[i].x, _positions[i].y + _yOffset, _positions[i].z);
+			Vector3 target = new Vector3 (_positions[i].x, _positions[i].y + _yOffset, _positions[i].z) * _positionScale;
 			if (transform.position == target)
 				continue;
-			yield return StartCoroutine(MoveObject(transform.position, target, PathSpeed));
+			yield return StartCoroutine(MoveObject(transform.position, target, _speed));
 		}
 	}
 
-	IEnumerator MoveObject(Vector3 startPos, Vector3 endPos, float time){
+	IEnumerator MoveObject(Vector3 startPos, Vector3 endPos, float _speed){
 
 		float i = 0.0f;
+		float time = Vector3.Distance(startPos, endPos) / _speed;
 		float rate = 1.0f / time;
 		while (i < 1.0f) {
 			i += Time.deltaTime * rate;
@@ -123,4 +128,13 @@ public class ProjectObject : MonoBehaviour {
 	public void SetHeight(float yOffset){
 		_yOffset = yOffset;
 	}
+
+	public void SetSpeed(float speed){
+		_speed = speed;
+	}
+
+	public void SetPositionScale(float positionScale){
+		_positionScale = positionScale;
+	}
+
 }
