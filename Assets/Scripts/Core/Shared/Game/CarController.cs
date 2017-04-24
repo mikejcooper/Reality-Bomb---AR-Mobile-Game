@@ -30,6 +30,8 @@ public class CarController : NetworkBehaviour
 	public AudioSource BombAlertSound;
 	public AudioSource BumpSound;
 
+
+
 	[SyncVar]
 	public int ServerId;
 
@@ -336,7 +338,7 @@ public class CarController : NetworkBehaviour
 			_rigidbody.velocity = Vector3.zero;
 			_rigidbody.angularVelocity = Vector3.zero;
 
-			Vector3 position = GameUtils.FindSpawnLocationInsideConvexHull (gameMapObjects);
+			Vector3 position = GameUtils.FindSpawnLocationInsideConvexHull (gameMapObjects,0.8f);
 
 			if (position != Vector3.zero) {
 				Debug.Log ("unfreezing");
@@ -397,4 +399,5 @@ public class CarController : NetworkBehaviour
 		float meshMinY = gameMapObjects.ground.transform.GetComponent<MeshRenderer> ().bounds.min.y;
 		_fallDistanceBeforeRespawn = meshMinY - (meshHeight*0.65f + 4.0f);
 	}
+
 }

@@ -37,8 +37,7 @@ public class GameUtils
 		return Vector3.zero;
 	}
 		
-	public static Vector3 FindSpawnLocationInsideConvexHull(GameMapObjects gameMapObjects){
-		float convexHullSpawnSizeRatio = 0.8f;
+	public static Vector3 FindSpawnLocationInsideConvexHull(GameMapObjects gameMapObjects,float convexHullSpawnSizeRatio){
 
 		List<Vector3> convexhull = gameMapObjects.convexhullVertices;
 		convexhull = MinimizeConvexHull (convexhull,convexHullSpawnSizeRatio);

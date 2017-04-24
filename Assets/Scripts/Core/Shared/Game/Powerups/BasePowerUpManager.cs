@@ -135,7 +135,7 @@ namespace Powerups {
 			powerUpObj.transform.parent = GameObject.Find("Marker scene").transform;
 			powerUpObj.name = "powerup";//_availableAbilities [abilityTypeIndex].Tag;
 
-			Vector3 position = GameUtils.FindSpawnLocationInsideConvexHull (_meshObj);
+			Vector3 position = GameUtils.FindSpawnLocationInsideConvexHull (_meshObj,0.9f);
 			position.y += (_yOffSet + 10.0f);
 			powerUpObj.transform.position = position;
 
