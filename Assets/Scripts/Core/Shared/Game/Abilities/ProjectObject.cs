@@ -36,6 +36,14 @@ public class ProjectObject : MonoBehaviour {
 		//Decouple with Projection Obj
 		Source.SetParent (transform);
 
+		Vector3 cannonTarget = Target;
+
+		// This stops the cannon from rotating about the y axis
+		cannonTarget.y = transform.position.y;
+
+		gameObject.transform.LookAt (cannonTarget);
+
+
 		yield return new WaitForSeconds (1);
 
 		Vector3 t = Target;
