@@ -354,6 +354,7 @@ public class CarController : NetworkBehaviour
 	public void EnsureCarIsOnMap(){
 		if(_rigidbody.position.y <= _fallDistanceBeforeRespawn){
 			Debug.Log ("Car Is not on map");
+			Debug.Log ("car position: (" + _rigidbody.position.x + "," + _rigidbody.position.y + "," + _rigidbody.position.z + "), _fallDistanceBeforeRespawn: " + _fallDistanceBeforeRespawn );
 			Reposition (GameObject.FindObjectOfType<GameManager> ().WorldMesh);
 			DisableControlsTime (DisabledControlDurationSeconds);
 		}
@@ -394,6 +395,6 @@ public class CarController : NetworkBehaviour
 	private void SetFallDistance(GameMapObjects gameMapObjects){
 		float meshHeight = gameMapObjects.ground.transform.GetComponent<MeshRenderer> ().bounds.size.y;
 		float meshMinY = gameMapObjects.ground.transform.GetComponent<MeshRenderer> ().bounds.min.y;
-		_fallDistanceBeforeRespawn = meshMinY - meshHeight*0.65f;
+		_fallDistanceBeforeRespawn = meshMinY - (meshHeight*0.65f + 4.0f);
 	}
 }
