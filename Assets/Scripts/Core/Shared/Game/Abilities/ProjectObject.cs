@@ -87,20 +87,20 @@ public class ProjectObject : MonoBehaviour {
 		yield return new WaitForSeconds (2.0f);
 
 		if (OnPositionsSetEvent != null) {
-			StartCoroutine (BeginObjectPath ());
+			StartCoroutine (BeginObjectPath (_positions));
 		} else {
-			OnPositionsSetEvent += () => StartCoroutine ( BeginObjectPath () );
+			OnPositionsSetEvent += () => StartCoroutine ( BeginObjectPath (_positions) );
 		}
 	}
 		
-	IEnumerator BeginObjectPath() {
-		int i = 0;
+	IEnumerator BeginObjectPath(List<Vector3> positions) {
 		while (true) {
-			i = (i == _positions.Count - 1) ? 0 : i + 1;	
-			Vector3 target = new Vector3 (_positions[i].x, _positions[i].y + _yOffset, _positions[i].z);
-			if (ArePositionsClose (target, transform.position, 3.0f))
-				continue;
-			yield return StartCoroutine(MoveObject(transform.position, target, _speed));
+			foreach(Vector3 p in positions) {
+				Vector3 target = new Vector3 (p.x, p.y + _yOffset, p.z);
+				if (ArePositionsClose (target, transform.position, 3.0f))
+					continue;
+				yield return StartCoroutine(MoveObject(transform.position, target, _speed));
+			}
 		}
 	}
 
