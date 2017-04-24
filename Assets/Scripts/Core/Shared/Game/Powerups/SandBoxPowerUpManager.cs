@@ -84,8 +84,10 @@ namespace Powerups {
 		protected override void OnPowerUpGenerated(GameObject powerUpObj) {
 			if (_projectionAreaObj != null) {
 				Vector3 p = powerUpObj.transform.position;
-				powerUpObj.transform.position = new Vector3(p.x, p.y - (_yOffSet + 10.0f) , p.z);
-				_projectionAreaObj.GetComponent<ProjectObject> ().Launch (powerUpObj.transform, powerUpObj.transform.position);
+				Vector3 target = new Vector3(p.x, p.y - (_yOffSet + 10.0f) , p.z);
+				// Move source to start position + some offset. 
+				powerUpObj.transform.position = _projectionAreaObj.GetComponent<ProjectObject>().transform.position + new Vector3(0, 1.0f, 0);
+				_projectionAreaObj.GetComponent<ProjectObject> ().Launch (powerUpObj.transform, target);
 			}
 		}
 

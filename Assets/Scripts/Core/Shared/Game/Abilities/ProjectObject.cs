@@ -4,11 +4,6 @@ using UnityEngine;
 
 public class ProjectObject : MonoBehaviour {
 
-//	public Transform Target;
-//	public float firingAngle = 45.0f;
-//	public float gravity = 9.8f;
-//	public Transform Source; 
-
 	public delegate void OnPositionsSet();
 	public delegate void OnFinshedStartMovement();
 	public event OnPositionsSet OnPositionsSetEvent = delegate {};
@@ -31,8 +26,6 @@ public class ProjectObject : MonoBehaviour {
 	}
 
 	IEnumerator Launch_Enum(Transform Source, Vector3 Target, float firingAngle = 45.0f) {
-		// Move source to start position + some offset. 
-		Source.position = transform.position + new Vector3(0, 1.0f, 0);
 		//Decouple with Projection Obj
 		Source.SetParent (transform);
 
@@ -75,7 +68,7 @@ public class ProjectObject : MonoBehaviour {
 		Vector3 finalVelocity = Quaternion.AngleAxis(angleBetweenObjects, Vector3.up) * velocity;
 
 		//Decouple from Projection Obj
-		Source.parent = null;
+		Source.parent = GameObject.Find("Marker scene").transform;
 		// Fire!
 		Source.GetComponent<Rigidbody>().velocity = finalVelocity;
 

@@ -97,15 +97,11 @@ namespace Powerups {
 			
 		private void GenProjectionArea () {
 			GameObject projectionAreaObj = GameObject.Instantiate(ProjectionAreaPrefab);
+			projectionAreaObj.transform.parent = GameObject.Find("Marker scene").transform;
 			Vector3 startPosition = _meshObj.convexhullVertices[0];
 			projectionAreaObj.transform.position = startPosition;
 			projectionAreaObj.GetComponent<ProjectObject> ().SetPositions (_meshObj.convexhullVertices);
 			OnProjectionAreaGenerated (projectionAreaObj);
-//			if (projectionAreaObj.GetComponent<ProjectObject> ().onFinishedStartMovement()) {
-//				StartCoroutine (TryToSpawn());
-//			} else {
-//				projectionAreaObj.GetComponent<ProjectObject> ().OnFinshedStartMovementEvent += () => StartCoroutine (TryToSpawn());
-//			}
 		}
 
 		protected void OnMeshReady (GameMapObjects mesh) {
