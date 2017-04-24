@@ -100,7 +100,9 @@ namespace Powerups {
 			projectionAreaObj.transform.parent = GameObject.Find("Marker scene").transform;
 			Vector3 startPosition = _meshObj.convexhullVertices[0];
 			projectionAreaObj.transform.position = startPosition;
-			projectionAreaObj.GetComponent<ProjectObject> ().SetPositions (_meshObj.convexhullVertices);
+			//Scale convex hull points by 1.X%
+			List<Vector3> convexHull = GameUtils.MinimizeConvexHull(_meshObj.convexhullVertices, 1.03f);
+			projectionAreaObj.GetComponent<ProjectObject> ().SetPositions (convexHull);
 			OnProjectionAreaGenerated (projectionAreaObj);
 		}
 
