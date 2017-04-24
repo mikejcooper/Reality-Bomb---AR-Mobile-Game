@@ -118,10 +118,10 @@ public class GameManager : NetworkBehaviour {
 		_cars.TickTime (Time.deltaTime);
 		if (isServer) {
 			foreach(CarController car in _cars.GetCarsOutOfTime()){
-				KillPlayer (car);
+				KillPlayer (car); //Checks for game over
 			}
 			_cars.ClearAllDisconnectedPlayers ();
-			if (_cars.GetNumberOfBombsPresent() == 0) {
+			if (_cars.GetNumberOfBombsPresent() == 0 && _cars.GetNumberAliveCars() > 1) {
 				_cars.PassBombRandomPlayer ();
 			}
 		}
@@ -140,7 +140,6 @@ public class GameManager : NetworkBehaviour {
 	private void KillPlayer (CarController car) {
 		_cars.KillPlayer (car);
 		CheckForGameOver ();
-		if(_cars.GetNumberOfBombsPresent() == 0) _cars.PassBombRandomPlayer();
 	}
 
 	[Server]
