@@ -25,6 +25,9 @@ public class GameManager : NetworkBehaviour {
 	public GamePowerUpManager PowerUpManager;
 	public GameObject GameExplanationDialogPrefab;
 	public GameObject GameStartingDialogObj;
+	public GameObject GameDiedDialogObj;
+
+
 
 	public GameObject Canvas;
 
@@ -37,6 +40,7 @@ public class GameManager : NetworkBehaviour {
 
 	public int _startingBombPlayerConnectionId;
 	private GameObject _clientExplanationDialog;
+	private GameObject _clientGameDiedDialogObj;
 
 	public GameMapObjects WorldMesh { get; private set; }
 
@@ -98,6 +102,14 @@ public class GameManager : NetworkBehaviour {
 		});
 	}
 
+	private void ShowDiedDialog () {
+		_clientGameDiedDialogObj = GameObject.Instantiate (GameDiedDialogObj);
+		_clientGameDiedDialogObj.transform.SetParent (Canvas.transform, false);
+		_clientGameDiedDialogObj.gameObject.GetComponentInChildren<Button> ().onClick.AddListener (() => {
+			Destroy(_clientExplanationDialog);
+		});
+	}
+
 	private void Update ()
 	{
 		if (_preparingGame) {
@@ -127,6 +139,9 @@ public class GameManager : NetworkBehaviour {
 	[Server]
 	private void KillPlayer (CarController car) {
 		_cars.KillPlayer (car);
+		if (car.hasAuthority) {
+			Invoke("ShowDiedDialog",5.0f);
+		}
 		CheckForGameOver ();
 		if(_cars.GetNumberOfBombsPresent() == 0) _cars.PassBombRandomPlayer();
 	}

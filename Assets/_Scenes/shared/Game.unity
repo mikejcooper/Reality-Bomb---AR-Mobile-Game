@@ -199,6 +199,8 @@ MonoBehaviour:
   GameExplanationDialogPrefab: {fileID: 1009257554643248, guid: cf065a03ea06048a1a17034397d6ed8b,
     type: 2}
   GameStartingDialogObj: {fileID: 194278527}
+  GameDiedDialogObj: {fileID: 1448817807955788, guid: 158ff539c467749cca6ddab5ec934735,
+    type: 2}
   Canvas: {fileID: 1343903775}
   _startingBombPlayerConnectionId: 0
 --- !u!114 &30509394
@@ -8314,7 +8316,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1965431130}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe4ec33cee90c844ea1bcc2cd642033e, type: 3}
   m_Name: 
