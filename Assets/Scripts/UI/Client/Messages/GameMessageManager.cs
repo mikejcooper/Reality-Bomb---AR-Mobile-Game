@@ -28,6 +28,7 @@ public class GameMessageManager : NetworkBehaviour {
 				GameObject.Find ("SpectatingText").GetComponent<TextMeshProUGUI> ().text = "Spectating...";
 			}
 		} else {
+			GameStatusObject.SetActive (true);
 			GameObject.FindObjectOfType<GameManager> ().GameCountDownFinishedEvent += HideGameStatus;
 		}
 
