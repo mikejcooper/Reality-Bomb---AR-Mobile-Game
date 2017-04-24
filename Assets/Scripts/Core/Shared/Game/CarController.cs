@@ -92,7 +92,7 @@ public class CarController : NetworkBehaviour
 			Lifetime = MaxLifetime;
 			_transferTime = Time.time;
 			_initialised = true;
-			_controlsDisabled = true;
+			_controlsDisabled = false;
 
 			// hide and freeze so we can correctly position
 			if (hasAuthority) {
