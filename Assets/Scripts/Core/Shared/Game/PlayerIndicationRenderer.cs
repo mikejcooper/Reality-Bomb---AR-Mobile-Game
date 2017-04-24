@@ -47,14 +47,14 @@ public class PlayerIndicationRenderer : MonoBehaviour
 			_glowImage = _initialisedGlow.GetComponent<Image> ();
 
 			if (GameObject.FindObjectOfType<GameManager> () != null) {
-				GameObject.FindObjectOfType<GameManager> ().GameCountDownFinishedEvent += ShrinkYouPointer;	
+				GameObject.FindObjectOfType<GameManager> ().GameCountDownFinishedCallback += ShrinkYouPointer;	
 			}
 		}
 	}
 
 	void ShrinkYouPointer ()
 	{
-		GameObject.FindObjectOfType<GameManager> ().GameCountDownFinishedEvent -= ShrinkYouPointer;	
+		GameObject.FindObjectOfType<GameManager> ().GameCountDownFinishedCallback -= ShrinkYouPointer;	
 		Debug.Log ("ShrinkYouPointerCalled");
 //		_initialisedYouPointer.transform.localScale = 5.0f * new Vector3(14.0f,60.0f,20.0f);
 //		StartCoroutine ();

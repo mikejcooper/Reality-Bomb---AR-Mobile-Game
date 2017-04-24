@@ -22,7 +22,7 @@ public class LiveLeaderboardDriver : MonoBehaviour {
 
 		foreach (var carController in cars) {
 
-			var carName = carController.LobbyPlayer().name;
+			var carName = carController.LobbyPlayer().nickname;
 			var entryTransform = transform.Find (carName);
 			GameObject entry;
 			if (entryTransform != null) {

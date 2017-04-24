@@ -29,7 +29,7 @@ public class GameMessageManager : NetworkBehaviour {
 			}
 		} else {
 			GameStatusObject.SetActive (true);
-			GameObject.FindObjectOfType<GameManager> ().GameCountDownFinishedEvent += HideGameStatus;
+			GameObject.FindObjectOfType<GameManager> ().GameCountDownFinishedCallback += HideGameStatus;
 		}
 
     }

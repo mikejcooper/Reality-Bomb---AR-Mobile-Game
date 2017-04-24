@@ -12,11 +12,8 @@ public class GameManager : NetworkBehaviour {
 	public delegate void OnWorldMeshAvailable(GameMapObjects worldMesh);
 	public event OnWorldMeshAvailable OnWorldMeshAvailableEvent = delegate {};
 
-	public delegate void StartGameCountDown();
-	public event StartGameCountDown StartGameCountDownEvent = delegate {};
-
-	public delegate void GameCountDownFinished();
-	public event StartGameCountDown GameCountDownFinishedEvent = delegate {};
+	public delegate void GameCountDownFinishEvent();
+	public event GameCountDownFinishEvent GameCountDownFinishedCallback = delegate {};
 
 	public delegate void OnGameStarted();
 	public event OnGameStarted OnGameStartedEvent = delegate {};
@@ -38,7 +35,6 @@ public class GameManager : NetworkBehaviour {
 
 	private CarList _cars = new CarList();
 
-	private bool _allPlayersReady = false;
 	private bool _preparingGame = true;
 
 	public int _startingBombPlayerConnectionId;
@@ -65,7 +61,6 @@ public class GameManager : NetworkBehaviour {
 			PreparingCanvas.CountDownFinishedEvent += new PreparingGame.CountDownFinished (CountDownFinishedStartPlaying);
 
             //Triggered when last player loads game scene
-			ServerSceneManager.Instance.OnAllPlayersLoadedEvent += AllPlayersReady;
 			ServerSceneManager.Instance.OnPlayerDisconnectEvent += OnPlayerDisconnected;
 
 			GameObject.Find ("Fade").GetComponent<FadeScene> ().FadeInScene = true;
@@ -130,7 +125,6 @@ public class GameManager : NetworkBehaviour {
 		// so we have to check whether server is running instead.
 		if (NetworkServer.active) {
 			ServerSceneManager.Instance.OnPlayerDisconnectEvent -= OnPlayerDisconnected;
-            ServerSceneManager.Instance.OnAllPlayersLoadedEvent -= AllPlayersReady;
         }
 	}
 
@@ -146,12 +140,6 @@ public class GameManager : NetworkBehaviour {
 			_cars.FinaliseGamePlayerData();
 			ServerSceneManager.Instance.OnServerRequestGameEnd ();
 		}
-	}
-		
-	[Server]
-	private void AllPlayersReady(){
-		
-		_allPlayersReady = true;
 	}
 
 	[Server]
@@ -174,9 +162,9 @@ public class GameManager : NetworkBehaviour {
 		if (_clientExplanationDialog != null) {
 			Destroy (_clientExplanationDialog);
 		}
-		if (GameCountDownFinishedEvent != null) {
+		if (GameCountDownFinishedCallback != null) {
 			Debug.Log ("GameCountDownFinishedEvent not null");
-			GameCountDownFinishedEvent ();
+			GameCountDownFinishedCallback ();
 		}
 		StartCoroutine(FadeOutMesh(5));
 		PreparingCanvas.StartGameCountDown (false);

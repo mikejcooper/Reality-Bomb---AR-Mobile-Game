@@ -39,7 +39,7 @@ namespace NetworkCompat {
 		public int serverId { get { return m_ServerId; } set { m_ServerId = value; }}
 		public byte slot { get { return m_Slot; } set { m_Slot = value; }}
 		public bool readyToBegin { get { return m_ReadyToBegin; } set { m_ReadyToBegin = value; } }
-		public string name { get { return m_Name; } set { m_Name = value; } }
+		public string nickname { get { return m_Name; } set { m_Name = value; } }
 		public int colour { get { return m_Colour; } set { m_Colour = value; } }
 		public SyncListGameResult gameResults { get { return m_GameResults; } }
 		public GameResult lastGameResult { get { return m_GameResults [m_GameResults.Count - 1]; } }

@@ -17,7 +17,7 @@ public class LeaderboardDriver : MonoBehaviour {
 		foreach (var player in SortedList) {
 			var entry = GameObject.Instantiate (LeaderboardEntryPrefab);
 			entry.transform.Find ("place").GetComponent<TextMeshProUGUI> ().text = (player.lastGameResult.FinishPosition + 1).ToString();
-			entry.transform.Find ("name").GetComponent<TextMeshProUGUI> ().text = player.name;
+			entry.transform.Find ("name").GetComponent<TextMeshProUGUI> ().text = player.nickname;
 			entry.transform.Find ("remaining").GetComponent<TextMeshProUGUI> ().text = string.Format("{0}s", player.lastGameResult.FinishTime.ToString("n2"));
 
 			entry.transform.parent = transform;

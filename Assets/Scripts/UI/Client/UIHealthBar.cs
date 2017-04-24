@@ -4,12 +4,11 @@ using UnityEngine.UI;
 
 class UIHealthBar : MonoBehaviour
 {
+	public GameObject ExplosionPrefab;
 
     private RectTransform _rt;
     private Text _txt;
     private ParticleSystem[] _psystems;
-
-    public  GameObject _expl_prefab;
 
     private float _maxWidth;
     private float _maxValue = 15;
@@ -93,7 +92,7 @@ class UIHealthBar : MonoBehaviour
 
     public void Boom()
     {
-        GameObject explosion = Instantiate(_expl_prefab);
+        GameObject explosion = Instantiate(ExplosionPrefab);
         explosion.transform.parent = transform.parent;
         explosion.GetComponent<RectTransform>().localPosition = Vector2.zero;
         ParticlesEnabled(false);

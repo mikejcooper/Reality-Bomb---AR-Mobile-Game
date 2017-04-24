@@ -437,7 +437,7 @@ namespace NetworkCompat {
 			newLobbyPlayer.slot = slot;
 			lobbySlots[slot] = newLobbyPlayer;
 			newLobbyPlayer.colour = _colourPool.getColour ();
-			newLobbyPlayer.name = "unknown";
+			newLobbyPlayer.nickname = "unknown";
 
 			NetworkServer.AddPlayerForConnection(conn, newLobbyGameObject, playerControllerId);
 		}

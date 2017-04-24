@@ -53,7 +53,7 @@ public class AwardImageDriver : MonoBehaviour {
 		Transform name = instantiatedObj.transform.Find ("name");
 		if (name != null) {
 			Text textRenderer = name.gameObject.GetComponent<Text> ();
-			textRenderer.text = thisLobbyPlayer.name;
+			textRenderer.text = thisLobbyPlayer.nickname;
 		}
 
 		instantiatedObj.transform.parent = transform;

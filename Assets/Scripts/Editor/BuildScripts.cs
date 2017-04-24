@@ -1,6 +1,7 @@
 ﻿using UnityEditor;
 using System.Diagnostics;
 using UnityEngine;
+using UnityEditor.SceneManagement;
 
 public class BuildScripts 
 {
@@ -64,12 +65,13 @@ public class BuildScripts
 
 	private static void EnsureARControllerState (bool enabled) {
 		// make sure ar controllers are enabled
-		EditorApplication.SaveScene();
-		EditorApplication.OpenScene("Assets/_Scenes/mobile/Sandbox.unity");
+		var scene = EditorSceneManager.GetActiveScene();
+		EditorSceneManager.SaveScene(scene);
+		scene = EditorSceneManager.OpenScene("Assets/_Scenes/mobile/Sandbox.unity");
 		GameObject.FindObjectOfType<ARController> ().enabled = enabled;
-		EditorApplication.SaveScene();
-		EditorApplication.OpenScene("Assets/_Scenes/shared/Game.unity");
+		EditorSceneManager.SaveScene(scene);
+		scene = EditorSceneManager.OpenScene("Assets/_Scenes/shared/Game.unity");
 		GameObject.FindObjectOfType<ARController> ().enabled = enabled;
-		EditorApplication.SaveScene();
+		EditorSceneManager.SaveScene(scene);
 	}
 }
