@@ -17,18 +17,19 @@ public class AwardImageDriver : MonoBehaviour {
 	private void GenerateImage () {
 
 		GameObject prefab;
-		PlayerDataManager.PlayerData playerData;
+		NetworkCompat.NetworkLobbyPlayer thisLobbyPlayer = null;
+		foreach (var lobbyPlayer in GameObject.FindObjectsOfType<NetworkCompat.NetworkLobbyPlayer> ()) {
+			if (lobbyPlayer.isLocalPlayer) {
+				thisLobbyPlayer = lobbyPlayer;
+				break;
+			}
+		}
 
-		if (ClientSceneManager.Instance == null || ClientSceneManager.Instance.GetThisPlayerData () == null) {
-			Debug.LogWarning ("making up our own player data because this client's player data is null");
-			playerData = new PlayerDataManager.PlayerData ();
-			playerData.Name = NameGenerator.GenerateName ();
-			playerData.FinishPosition = new System.Random ().Next (4);
-		} else {
-			playerData = ClientSceneManager.Instance.GetThisPlayerData ();
+		if (thisLobbyPlayer == null) {
+			return;
 		}
 			
-		int place = playerData.FinishPosition;
+		int place = thisLobbyPlayer.lastGameResult.FinishPosition;
 		switch (place) {
 		case 0:
 			prefab = FirstPlacePrefab;
@@ -52,7 +53,7 @@ public class AwardImageDriver : MonoBehaviour {
 		Transform name = instantiatedObj.transform.Find ("name");
 		if (name != null) {
 			Text textRenderer = name.gameObject.GetComponent<Text> ();
-			textRenderer.text = playerData.Name;
+			textRenderer.text = thisLobbyPlayer.name;
 		}
 
 		instantiatedObj.transform.parent = transform;

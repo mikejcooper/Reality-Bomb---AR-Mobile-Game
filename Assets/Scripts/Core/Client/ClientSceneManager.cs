@@ -22,7 +22,6 @@ public class ClientSceneManager : MonoBehaviour
 
 	private DiscoveryClient _discoveryClient;
 	private GameLobbyManager _networkLobbyManager;
-	private PlayerDataManager _playerDataManager;
     private MeshTransferManager _meshTransferManager;
 	private Process _innerProcess;
 	private string _currentScene = "Idle";
@@ -30,7 +29,7 @@ public class ClientSceneManager : MonoBehaviour
 	private int _defaultSleepTimeout;
 	private Coroutine _countdownCoroutine;
 
-	private string _clientNickName;
+	public string ClientNickName;
 
 	public static ClientSceneManager Instance { get { return _instance; } }
 
@@ -59,12 +58,12 @@ public class ClientSceneManager : MonoBehaviour
 
 		_discoveryClient = transform.gameObject.AddComponent<DiscoveryClient> ();
 		_networkLobbyManager = transform.gameObject.AddComponent<GameLobbyManager> ();
-		_playerDataManager = new PlayerDataManager (_networkLobbyManager);
 		_meshTransferManager = new MeshTransferManager();
 
-		_networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Debug;
+		_networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Info;
 		_networkLobbyManager.showLobbyGUI = false;
 
+		_networkLobbyManager.maxPlayers = 16;
 		_networkLobbyManager.lobbySlots = new NetworkLobbyPlayer[_networkLobbyManager.maxPlayers];
 
 		_defaultSleepTimeout = Screen.sleepTimeout;
@@ -86,7 +85,6 @@ public class ClientSceneManager : MonoBehaviour
 		_networkLobbyManager.OnMeshClearToDownloadEvent += _meshTransferManager.FetchData;
 		_networkLobbyManager.OnStartGameCountdownEvent += OnStartGameCountdown;
 		_networkLobbyManager.OnCancelGameCountdownEvent += OnCancelGameCountdown;
-		_networkLobbyManager.OnPlayerIDEvent += OnPlayerID;
 
         //Listener for when the we have finished downloading the mesh
 		_meshTransferManager.OnMeshDataReceivedEvent += OnMeshDataReceived;
@@ -121,7 +119,7 @@ public class ClientSceneManager : MonoBehaviour
 
 	public void OnUserRequestFindGame (string nickname) {
 		if (DEBUG) Debug.Log ("OnUserRequestFindGame");
-		_clientNickName = nickname;
+		ClientNickName = nickname;
 		_innerProcess.MoveNext (Command.JoinGame);
 		ensureCorrectScene ();
 
@@ -133,15 +131,7 @@ public class ClientSceneManager : MonoBehaviour
 		}
 
 	}
-
-	private void OnPlayerID (int playerID) {
-		// We don't actually care what our ID is.
-		// This is just a good sign that the server 
-		// has setup our player data and we can submit
-		// our name.
-		_networkLobbyManager.SendOwnPlayerName(_clientNickName);
-	}
-
+		
 	private void OnStartGameCountdown (int delay) {
 		Debug.Log (string.Format ("Starting game countdown. Game will start in {0} seconds", delay));
 		_countdownCoroutine = StartCoroutine(Countdown(delay, 1f));
@@ -162,7 +152,7 @@ public class ClientSceneManager : MonoBehaviour
 		StopCoroutine (_countdownCoroutine);
 		OnCountDownCanceledEvent (reason);
 	}
-
+		
 	private void OnServerDiscovered (string address) {
         if (DEBUG) Debug.Log ("OnServerDiscovered");
 		_innerProcess.MoveNext (Command.ConnectGame);
@@ -173,14 +163,22 @@ public class ClientSceneManager : MonoBehaviour
         	_discoveryClient.StopBroadcast();
         }
 
+		var ipv4 = address.Substring (address.LastIndexOf (":")+1, address.Length - (address.LastIndexOf (":") + 1));
+		Debug.Log (string.Format ("ipv6: {0}, ipv4: {1}", address, ipv4));
+
+
+
 		if (Flags.GAME_SERVER_IS_LOCALHOST) {
 			_networkLobbyManager.networkAddress = "localhost";
 		} else {
-			_networkLobbyManager.networkAddress = address;
+			_networkLobbyManager.networkAddress = ipv4;
 		}
 
+		Debug.Log(string.Format("found server at {0}", _networkLobbyManager.networkAddress));
+	
 		_networkLobbyManager.networkPort = NetworkConstants.GAME_PORT;
 		_networkLobbyManager.StartClient ();
+
 	}
 
 	private void OnUserConnectedToGame () {
@@ -202,12 +200,6 @@ public class ClientSceneManager : MonoBehaviour
 		ensureCorrectScene ();
 	}
 
-	//call at end of GameManager (client)
-	public void OnGameLoaded () {
-        if (DEBUG) Debug.Log ("Notifying server that we have finished loading game");
-		_networkLobbyManager.SetGameLoaded ();
-	}
-
 	private void OnServerGameEnd () {
         if (DEBUG) Debug.Log ("OnServerGameEnd");
 		_innerProcess.MoveNext (Command.GameEnd);
@@ -219,15 +211,7 @@ public class ClientSceneManager : MonoBehaviour
 		_innerProcess.MoveNext (Command.PlaySandbox);
 		ensureCorrectScene ();
 	}
-
-	public PlayerDataManager.PlayerData GetPlayerDataById (int serverId) {
-		return _playerDataManager.GetPlayerById (serverId);
-	}
-
-	public PlayerDataManager.PlayerData GetThisPlayerData () {
-		return _playerDataManager.GetThisPlayer();
-	}
-
+		
 	public void OnUserRequestLeaveGame () {
 		Debug.Log ("OnUserRequestLeaveGame");
 		_innerProcess.MoveNext (Command.LeaveGame);

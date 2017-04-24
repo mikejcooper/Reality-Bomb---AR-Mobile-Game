@@ -11,7 +11,7 @@ public class ServerSceneManager : MonoBehaviour
 {
     static bool DEBUG = false;
 
-	private const int MIN_REQ_PLAYERS = 1;
+	private const int MIN_REQ_PLAYERS = 2;
 
 	public enum MeshRetrievalState
 	{
@@ -35,10 +35,9 @@ public class ServerSceneManager : MonoBehaviour
 	public int ReadyPlayerCount { get { return _networkLobbyManager.ReadyPlayerCount (); }}
 
 	private GameLobbyManager _networkLobbyManager;
-	private ColourPool _colourPool;
+
 	private MeshDiscoveryServer _meshDiscoveryServer;
 	private MeshTransferManager _meshTransferManager;
-	private PlayerDataManager _playerDataManager;
 	private Process _innerProcess;
 	private MeshServerLifecycle.Process _meshTransferProcess;
 	private string _currentScene = "Idle";
@@ -69,28 +68,24 @@ public class ServerSceneManager : MonoBehaviour
 		DontDestroyOnLoad (gameObject);
 		var ugly = UnityThreadHelper.Dispatcher;
 
-		var discoveryServer = transform.gameObject.AddComponent<DiscoveryServer> ();
-
 		// If clients will be looking at localhost anyway, don't
 		// pollute the network with broadcasts
 		if (!Flags.GAME_SERVER_IS_LOCALHOST) {
-			discoveryServer.BeginBroadcast ();
+			transform.gameObject.AddComponent<DiscoveryServer> ();
 		}
 
 		_networkLobbyManager = transform.gameObject.AddComponent<GameLobbyManager> ();
 
         _meshDiscoveryServer = new MeshDiscoveryServer ();
 		_meshTransferManager = new MeshTransferManager ();
-		_playerDataManager = new PlayerDataManager (_networkLobbyManager);
 
-		_networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Debug;
+		_networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Info;
 		_networkLobbyManager.showLobbyGUI = false;
 		_networkLobbyManager.minPlayers = MIN_REQ_PLAYERS;
 
 		// seemingly weird neccesary hack. todo: add this to our compat implementation
+		_networkLobbyManager.maxPlayers = 16;
 		_networkLobbyManager.lobbySlots = new NetworkLobbyPlayer[_networkLobbyManager.maxPlayers];
-
-		_colourPool = new ColourPool ();
 
 		List<string> lobbyScenes = new List<string> ();
 		lobbyScenes.Add ("Idle");
@@ -104,13 +99,14 @@ public class ServerSceneManager : MonoBehaviour
 
 		_networkLobbyManager.networkPort = NetworkConstants.GAME_PORT;
 
+
 		_networkLobbyManager.StartServer ();
 
 		// register listeners for when players connect / disconnect
 		_networkLobbyManager.OnLobbyServerConnectedEvent += OnGamePlayerConnected;
 		_networkLobbyManager.OnLobbyServerDisconnectedEvent += OnGamePlayerDisconnected;
 		_networkLobbyManager.OnLobbyClientReadyToBeginEvent += OnGamePlayerReady;
-		_networkLobbyManager.OnLobbyAllClientGamesLoadedEvent += OnGamePlayerAllLoaded;
+		_networkLobbyManager.OnLobbyClientGameLoadedEvent += OnPlayerGameLoaded;
 
 		_meshDiscoveryServer.MeshServerDiscoveredEvent += OnMeshServerFound;
 
@@ -183,9 +179,9 @@ public class ServerSceneManager : MonoBehaviour
 		ConnectedPlayerCount++;
 
 
-		int hue = _colourPool.getColour ();
-		Debug.Log (string.Format ("added player with hue: {0}", hue));
-		_playerDataManager.AddPlayer (conn.connectionId, hue);
+//		int hue = _colourPool.getColour ();
+//		Debug.Log (string.Format ("added player with hue: {0}", hue));
+//		_playerDataManager.AddPlayer (conn.connectionId, hue);
 
 		if (ConnectedPlayerCount >= MIN_REQ_PLAYERS) {
 			_innerProcess.MoveNext (Command.EnoughPlayersJoined);
@@ -196,30 +192,39 @@ public class ServerSceneManager : MonoBehaviour
 			_networkLobbyManager.ClientGetMesh (_meshServerAddress, _meshServerPort, conn.connectionId);
 		}
 
-		_networkLobbyManager.SendPlayerID (conn.connectionId);
-		_networkLobbyManager.SendPlayerData (JsonUtility.ToJson (_playerDataManager.list), conn.connectionId);
+//		_networkLobbyManager.SendPlayerID (conn.connectionId);
+//		_networkLobbyManager.SendPlayerData (JsonUtility.ToJson (_playerDataManager.list), conn.connectionId);
 	}
 
 	private void OnGamePlayerReady () {
 		OnStateUpdate ();
 	}
 
+	int _totalGamePlayers;
+	int _loadedGamePlayers;
 
-	private void OnGamePlayerAllLoaded () {
-		if (OnAllPlayersLoadedEvent != null) {
-            OnAllPlayersLoadedEvent();
+	private void OnPlayerGameLoaded () {
+		_loadedGamePlayers++;
+		Debug.Log (string.Format ("OnPlayerGameLoaded: {0}/{1}", _loadedGamePlayers, _totalGamePlayers));
+		if (_totalGamePlayers == _loadedGamePlayers) {
+			if (OnAllPlayersLoadedEvent != null) {
+				OnAllPlayersLoadedEvent ();
+			}
+		} else if (_loadedGamePlayers > _totalGamePlayers) {
+			Debug.LogWarning ("we have too many players");
 		}
+			
 		OnStateUpdate ();
+	}
+
+	public bool AreAllGamePlayersLoaded () {
+		return _loadedGamePlayers >= _totalGamePlayers;
 	}
 
 	private void OnGamePlayerDisconnected (UnityEngine.Networking.NetworkConnection conn)
 	{
         if (DEBUG) Debug.Log ("OnPlayerDisconnected");
 		ConnectedPlayerCount--;
-
-		_colourPool.releaseColour (_playerDataManager.GetPlayerById (conn.connectionId).colour);
-
-		_playerDataManager.RemovePlayer (conn.connectionId);
 
 		if (OnPlayerDisconnectEvent != null) {
 			OnPlayerDisconnectEvent();
@@ -262,19 +267,9 @@ public class ServerSceneManager : MonoBehaviour
 
 	private void BeginGame () {
 		_innerProcess.MoveNext (Command.GameStart);
+		_totalGamePlayers = _networkLobbyManager.ReadyPlayerCount ();
+		_loadedGamePlayers = 0;
 		OnStateUpdate ();
-	}
-
-	public void UpdatePlayerGameData (int serverId, int carsLeft, float lifetime) {
-		_playerDataManager.UpdatePlayerGameData (serverId, carsLeft, lifetime);
-	}
-
-	public PlayerDataManager.PlayerData[] GetPlayerData () {
-		return _playerDataManager.list.players;
-	}
-
-	public PlayerDataManager.PlayerData GetPlayerDataById (int serverId) {
-		return _playerDataManager.GetPlayerById (serverId);
 	}
 
 	public void OnServerRequestGameEnd () {
@@ -289,7 +284,6 @@ public class ServerSceneManager : MonoBehaviour
 		float fadeTime = GameObject.Find ("Fade").GetComponent<FadeScene> ().BeginFadeOut ();
 		yield return new WaitForSeconds (fadeTime);
 		_currentScene = "Game"; 
-		_playerDataManager.ResetAllGameData ();
 		_networkLobbyManager.ServerChangeScene ("Game");
 	}
 
@@ -313,6 +307,15 @@ public class ServerSceneManager : MonoBehaviour
 		}
 	}
 
+	private bool PlayerExistsWithGameData () {
+		foreach (var lobbyPlayer in GameObject.FindObjectsOfType<NetworkCompat.NetworkLobbyPlayer> ()) {
+			if (lobbyPlayer.gameResults.Count > 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void OnStateUpdate ()
 	{
 		switch (_innerProcess.CurrentState) {
@@ -321,7 +324,7 @@ public class ServerSceneManager : MonoBehaviour
 		case ProcessState.AwaitingPlayers:
 		case ProcessState.PreparingGame:
 		case ProcessState.CountingDown:
-			if (_playerDataManager.HasGameData()) {
+			if (PlayerExistsWithGameData()) {
 				//				networkLobbyManager.ServerChangeScene ("Leaderboard");
 				if (_currentScene != "Leaderboard") {
 					StartCoroutine(FadeOutToLeaderboardScene ());

@@ -48,13 +48,15 @@ namespace NetworkCompat {
 	}
 
 	public class Utils {
-		static public UnityEngine.Networking.PlayerController GetPlayerController(short id, NetworkConnection conn) {
+		static public bool GetPlayerController(short id, NetworkConnection conn, out UnityEngine.Networking.PlayerController player) {
 			for (int i = 0; i < conn.playerControllers.Count; i++) {
 				if (conn.playerControllers [i] != null && conn.playerControllers [i].playerControllerId == id) {
-					return conn.playerControllers [i];
+					player = conn.playerControllers [i];
+					return true;
 				}
 			}
-			return null;
+			player = null;
+			return false;
 		}
 	}
 
@@ -74,18 +76,19 @@ namespace NetworkCompat {
 		[SerializeField] int m_MinPlayers;
 		[SerializeField] NetworkLobbyPlayer m_LobbyPlayerPrefab;
 		[SerializeField] GameObject m_GamePlayerPrefab;
-		[SerializeField] List<string> m_LobbyScenes = new List<string>();
 		[SerializeField] string m_PlayScene = "";
+		[SerializeField] List<string> m_LobbyScenes = new List<string>();
+
+		private ColourPool _colourPool;
 
 		// runtime data
 		List<PendingPlayer> m_PendingPlayers = new List<PendingPlayer>();
 		public NetworkLobbyPlayer[] lobbySlots;
 
 		// static message objects to avoid runtime-allocations
-		static NetworkCompat.LobbyReadyToBeginMessage s_ReadyToBeginMessage = new NetworkCompat.LobbyReadyToBeginMessage();
+		static LobbyReadyToBeginMessage s_ReadyToBeginMessage = new LobbyReadyToBeginMessage();
 		static IntegerMessage s_SceneLoadedMessage = new IntegerMessage();
-		static NetworkCompat.LobbyReadyToBeginMessage s_LobbyReadyToBeginMessage = new NetworkCompat.LobbyReadyToBeginMessage();
-		static NetworkCompat.GameLoadedMessage s_GameLoadedMessage = new NetworkCompat.GameLoadedMessage();
+		static LobbyReadyToBeginMessage s_LobbyReadyToBeginMessage = new LobbyReadyToBeginMessage();
 
 		// properties
 		public bool showLobbyGUI             { get { return m_ShowLobbyGUI; } set { m_ShowLobbyGUI = value; } }
@@ -157,7 +160,7 @@ namespace NetworkCompat {
 			return Byte.MaxValue;
 		}
 
-		void SceneLoadedForPlayer(NetworkConnection conn, GameObject lobbyPlayerGameObject)
+		void GameSceneLoadedForPlayer(NetworkConnection conn, GameObject lobbyPlayerGameObject)
 		{
 			var lobbyPlayer = lobbyPlayerGameObject.GetComponent<NetworkLobbyPlayer>();
 			if (lobbyPlayer == null)
@@ -207,8 +210,9 @@ namespace NetworkCompat {
 		static int CheckConnectionIsReadyToBegin(NetworkConnection conn)
 		{
 			int countPlayers = 0;
-			foreach (var player in conn.playerControllers)
+			for (int i = 0; i < conn.playerControllers.Count; i++)
 			{
+				var player = conn.playerControllers[i];
 				if (player.IsValid)
 				{
 					var lobbyPlayer = player.gameObject.GetComponent<NetworkLobbyPlayer>();
@@ -221,18 +225,12 @@ namespace NetworkCompat {
 			return countPlayers;
 		}
 
-		public int ReadyPlayerCount () {
-			int readyCount = 0;
-
-			foreach (var conn in NetworkServer.connections)
-			{
-				if (conn == null)
-					continue;
-
-				readyCount += CheckConnectionIsReadyToBegin(conn);
+		public void CheckReadyToBegin()
+		{
+			if (IsReadyToBegin ()) {
+				m_PendingPlayers.Clear ();
+				OnLobbyServerPlayersReady ();
 			}
-
-			return readyCount;
 		}
 
 		public bool IsReadyToBegin () {
@@ -242,45 +240,78 @@ namespace NetworkCompat {
 				return false;
 			}
 
-			int readyCount = ReadyPlayerCount ();
+			int readyCount = ReadyPlayerCount();
+			int playerCount = TotalPlayerCount();
+
+			for (int i = 0; i < NetworkServer.connections.Count; i++)
+			{
+				var conn = NetworkServer.connections[i];
+
+				if (conn == null)
+					continue;
+
+				playerCount += 1;
+				readyCount += CheckConnectionIsReadyToBegin(conn);
+			}
 			if (m_MinPlayers > 0 && readyCount < m_MinPlayers)
 			{
 				// not enough players ready yet.
 				return false;
 			}
 
+			if (readyCount < playerCount)
+			{
+				// not all players are ready yet
+				return false;
+			}
+
 			return true;
 		}
 
-		public void CheckReadyToBegin()
-		{
-			if (IsReadyToBegin ()) {
-				m_PendingPlayers.Clear ();
-				OnLobbyServerPlayersReady ();
+		public int TotalPlayerCount () {
+			int playerCount = 0;
+			for (int i = 0; i < NetworkServer.connections.Count; i++)
+			{
+				var conn = NetworkServer.connections[i];
+
+				if (conn == null)
+					continue;
+
+				playerCount++;
 			}
+			return playerCount;
 		}
 
-		public void ServerReturnToLobby(string lobbySceneName)
+		public int ReadyPlayerCount () {
+			int readyCount = 0;
+			for (int i = 0; i < NetworkServer.connections.Count; i++)
+			{
+				var conn = NetworkServer.connections[i];
+
+				if (conn == null)
+					continue;
+
+				readyCount += CheckConnectionIsReadyToBegin(conn);
+			}
+			return readyCount;
+		}
+
+		public void ServerReturnToLobby()
 		{
 			if (!NetworkServer.active)
 			{
 				Debug.Log("ServerReturnToLobby called on client");
 				return;
 			}
-
-			if (!lobbyScenes.Contains (lobbySceneName)) {
-				Debug.LogError ("lobbyScenes does not contain scene: " + lobbySceneName);
-				return;
-			}
-
-			ServerChangeScene(lobbySceneName);
+			ServerChangeScene(offlineScene);
 		}
 
 		void CallOnClientEnterLobby()
 		{
 			OnLobbyClientEnter();
-			foreach (var player in lobbySlots)
+			for (int i = 0; i < lobbySlots.Length; i++)
 			{
+				var player = lobbySlots[i];
 				if (player == null)
 					continue;
 
@@ -292,8 +323,9 @@ namespace NetworkCompat {
 		void CallOnClientExitLobby()
 		{
 			OnLobbyClientExit();
-			foreach (var player in lobbySlots)
+			for (int i = 0; i < lobbySlots.Length; i++)
 			{
+				var player = lobbySlots[i];
 				if (player == null)
 					continue;
 
@@ -317,23 +349,22 @@ namespace NetworkCompat {
 
 		public override void OnServerConnect(NetworkConnection conn)
 		{
-			if (numPlayers >= maxPlayers)
+			// numPlayers returns the player count including this one, so ok to be equal
+			if (numPlayers > maxPlayers)
 			{
+				if (LogFilter.logWarn) { Debug.LogWarning("NetworkLobbyManager can't accept new connection [" + conn + "], too many players connected."); }
 				conn.Disconnect();
 				return;
 			}
 
 			// cannot join game in progress
-//			string loadedSceneName = SceneManager.GetSceneAt(0).name;
-//			if (!lobbyScenes.Contains(loadedSceneName))
-//			{
-//				conn.Disconnect();
-//				return;
-//			}
-			// we let new players join, but put them in the lobby.
-			// don't need to do anything here because we always set
-			// the network scene as the first lobby scene so that's
-			// what it'll connect to
+			string loadedSceneName = SceneManager.GetSceneAt(0).name;
+			if (!lobbyScenes.Contains(loadedSceneName))
+			{
+				if (LogFilter.logWarn) { Debug.LogWarning("NetworkLobbyManager can't accept new connection [" + conn + "], not in lobby and game already in progress."); }
+				conn.Disconnect();
+				return;
+			}
 
 			base.OnServerConnect(conn);
 			OnLobbyServerConnect(conn);
@@ -342,7 +373,7 @@ namespace NetworkCompat {
 		public override void OnServerDisconnect(NetworkConnection conn)
 		{
 			base.OnServerDisconnect(conn);
-			Debug.Log("ONSERVERDISCONNECTCALLED");
+
 			// if lobbyplayer for this connection has not been destroyed by now, then destroy it here
 			for (int i = 0; i < lobbySlots.Length; i++)
 			{
@@ -370,9 +401,9 @@ namespace NetworkCompat {
 
 			// check MaxPlayersPerConnection
 			int numPlayersForConnection = 0;
-			foreach (var player in conn.playerControllers)
+			for (int i = 0; i < conn.playerControllers.Count; i++)
 			{
-				if (player.IsValid)
+				if (conn.playerControllers[i].IsValid)
 					numPlayersForConnection += 1;
 			}
 
@@ -402,32 +433,34 @@ namespace NetworkCompat {
 			}
 
 			var newLobbyPlayer = newLobbyGameObject.GetComponent<NetworkLobbyPlayer>();
+			newLobbyPlayer.serverId = conn.connectionId;
 			newLobbyPlayer.slot = slot;
 			lobbySlots[slot] = newLobbyPlayer;
+			newLobbyPlayer.colour = _colourPool.getColour ();
+			newLobbyPlayer.name = "unknown";
 
 			NetworkServer.AddPlayerForConnection(conn, newLobbyGameObject, playerControllerId);
 		}
 
-		public override void OnServerRemovePlayer(NetworkConnection conn, UnityEngine.Networking.PlayerController player)
+		public override void OnServerRemovePlayer(NetworkConnection conn, PlayerController player)
 		{
 			var playerControllerId = player.playerControllerId;
-			byte slot = player.gameObject.GetComponent<NetworkLobbyPlayer>().slot;
+			var oldLobbyPlayer = player.gameObject.GetComponent<NetworkLobbyPlayer> ();
+			byte slot = oldLobbyPlayer.slot;
+			_colourPool.releaseColour (oldLobbyPlayer.colour);
 			lobbySlots[slot] = null;
 			base.OnServerRemovePlayer(conn, player);
 
-			foreach (var p in lobbySlots)
+			for (int i = 0; i < lobbySlots.Length; i++)
 			{
-				if (p != null)
+				var lobbyPlayer = lobbySlots[i];
+				if (lobbyPlayer != null)
 				{
-					p.GetComponent<NetworkLobbyPlayer>().readyToBegin = false;
+					lobbyPlayer.GetComponent<NetworkLobbyPlayer>().readyToBegin = false;
 
-					s_LobbyReadyToBeginMessage.slotId = p.slot;
+					s_LobbyReadyToBeginMessage.slotId = lobbyPlayer.slot;
 					s_LobbyReadyToBeginMessage.readyState = false;
 					NetworkServer.SendToReady(null, MsgType.LobbyReadyToBegin, s_LobbyReadyToBeginMessage);
-
-					s_GameLoadedMessage.slotId = p.slot;
-					s_GameLoadedMessage.loadedState = false;
-					NetworkServer.SendToReady(null, GlobalNetworking.NetworkConstants.MSG_GAME_LOADED, s_GameLoadedMessage);
 				}
 			}
 
@@ -438,16 +471,17 @@ namespace NetworkCompat {
 		{
 			if (lobbyScenes.Contains(sceneName))
 			{
-				foreach (var lobbyPlayer in lobbySlots)
+				for (int i = 0; i < lobbySlots.Length; i++)
 				{
+					var lobbyPlayer = lobbySlots[i];
 					if (lobbyPlayer == null)
 						continue;
 
 					// find the game-player object for this connection, and destroy it
 					var uv = lobbyPlayer.GetComponent<NetworkIdentity>();
 
-					UnityEngine.Networking.PlayerController playerController = NetworkCompat.Utils.GetPlayerController (uv.playerControllerId, uv.connectionToClient);
-					if (playerController != null)
+					PlayerController playerController;
+					if (NetworkCompat.Utils.GetPlayerController(uv.playerControllerId, uv.connectionToClient, out playerController))
 					{
 						NetworkServer.Destroy(playerController.gameObject);
 					}
@@ -461,8 +495,6 @@ namespace NetworkCompat {
 				}
 			}
 			base.ServerChangeScene(sceneName);
-			// always make sure that the default connecting scene in the first lobby scene
-			networkSceneName = lobbyScenes.First ();
 		}
 
 		public override void OnServerSceneChanged(string sceneName)
@@ -470,9 +502,10 @@ namespace NetworkCompat {
 			if (!lobbyScenes.Contains(sceneName))
 			{
 				// call SceneLoadedForPlayer on any players that become ready while we were loading the scene.
-				foreach (var pending in m_PendingPlayers)
+				for (int i = 0; i < m_PendingPlayers.Count; i++)
 				{
-					SceneLoadedForPlayer(pending.conn, pending.lobbyPlayer);
+					var pending = m_PendingPlayers[i];
+					GameSceneLoadedForPlayer(pending.conn, pending.lobbyPlayer);
 				}
 				m_PendingPlayers.Clear();
 			}
@@ -480,47 +513,13 @@ namespace NetworkCompat {
 			OnLobbyServerSceneChanged(sceneName);
 		}
 
-		// received on server when a client has loaded their game
-		void OnServergameLoadedMessage (NetworkMessage netMsg) {
-			if (LogFilter.logDebug) { Debug.Log("GameLobbyManager OnServergameLoadedMessage"); }
-			netMsg.ReadMessage(s_GameLoadedMessage);
-
-//			UnityEngine.Networking.PlayerController lobbyController = NetworkCompat.Utils.GetPlayerController (s_ReadyToBeginMessage.slotId, netMsg.conn);
-
-//			var lobbyPlayer = lobbySlots[lobbyController.playerControllerId];
-//			if (lobbyPlayer == null || lobbyPlayer.gameObject == null)
-//			{
-//				if (LogFilter.logError) { Debug.LogError("NetworkLobbyManager OnClientReadyToBegin no player at lobby slot " + s_LobbyReadyToBeginMessage.slotId); }
-//				return;
-//			}
-//
-//			UnityEngine.Networking.PlayerController lobbyController = NetworkCompat.Utils.GetPlayerController (s_GameLoadedMessage.slotId, netMsg.conn);
-//			if (lobbyController == null)
-//			{
-//				if (LogFilter.logError) { Debug.LogError("NetworkLobbyManager OnServerReadyToBeginMessage invalid playerControllerId " + s_GameLoadedMessage.slotId); }
-//				return;
-//			}
-//
-//			// set this player ready
-//			var lobbyPlayer = lobbyController.gameObject.GetComponent<NetworkLobbyPlayer>();
-			// lobbyPlayer.gameLoaded = s_GameLoadedMessage.loadedState;
-
-			// tell every player that this player is ready
-			var outMsg = new GameLoadedMessage();
-			outMsg.slotId = s_GameLoadedMessage.slotId;
-			outMsg.loadedState = s_GameLoadedMessage.loadedState;
-			NetworkServer.SendToReady(null, GlobalNetworking.NetworkConstants.MSG_GAME_LOADED, outMsg);
-
-			OnLobbyServerGameLoaded (netMsg.conn);
-		}
-
 		void OnServerReadyToBeginMessage(NetworkMessage netMsg)
 		{
 			if (LogFilter.logDebug) { Debug.Log("NetworkLobbyManager OnServerReadyToBeginMessage"); }
 			netMsg.ReadMessage(s_ReadyToBeginMessage);
 
-			UnityEngine.Networking.PlayerController lobbyController = NetworkCompat.Utils.GetPlayerController (s_ReadyToBeginMessage.slotId, netMsg.conn);
-			if (lobbyController == null)
+			PlayerController lobbyController;
+			if (! Utils.GetPlayerController((short)s_ReadyToBeginMessage.slotId, netMsg.conn, out lobbyController))
 			{
 				if (LogFilter.logError) { Debug.LogError("NetworkLobbyManager OnServerReadyToBeginMessage invalid playerControllerId " + s_ReadyToBeginMessage.slotId); }
 				return;
@@ -531,7 +530,7 @@ namespace NetworkCompat {
 			lobbyPlayer.readyToBegin = s_ReadyToBeginMessage.readyState;
 
 			// tell every player that this player is ready
-			var outMsg = new NetworkCompat.LobbyReadyToBeginMessage();
+			var outMsg = new LobbyReadyToBeginMessage();
 			outMsg.slotId = lobbyPlayer.slot;
 			outMsg.readyState = s_ReadyToBeginMessage.readyState;
 			NetworkServer.SendToReady(null, MsgType.LobbyReadyToBegin, outMsg);
@@ -548,28 +547,28 @@ namespace NetworkCompat {
 
 			netMsg.ReadMessage(s_SceneLoadedMessage);
 
-			UnityEngine.Networking.PlayerController lobbyController = NetworkCompat.Utils.GetPlayerController (s_ReadyToBeginMessage.slotId, netMsg.conn);
-			if (lobbyController == null)
+			PlayerController lobbyController;
+			if (!Utils.GetPlayerController((short)s_SceneLoadedMessage.value, netMsg.conn, out lobbyController))
 			{
 				if (LogFilter.logError) { Debug.LogError("NetworkLobbyManager OnServerSceneLoadedMessage invalid playerControllerId " + s_SceneLoadedMessage.value); }
 				return;
 			}
 
-			SceneLoadedForPlayer(netMsg.conn, lobbyController.gameObject);
+			GameSceneLoadedForPlayer(netMsg.conn, lobbyController.gameObject);
 		}
 
 		void OnServerReturnToLobbyMessage(NetworkMessage netMsg)
 		{
 			if (LogFilter.logDebug) { Debug.Log("NetworkLobbyManager OnServerReturnToLobbyMessage"); }
 
-			ServerReturnToLobby(offlineScene);
+			ServerReturnToLobby();
 		}
 
 		public override void OnStartServer()
 		{
 			if (lobbyScenes.Count == 0)
 			{
-				if (LogFilter.logError) { Debug.LogError("NetworkLobbyManager LobbyScenes is empty. Set the LobbyScenes in the inspector for the NetworkLobbyMangaer"); }
+				if (LogFilter.logError) { Debug.LogError("NetworkLobbyManager LobbyScene is empty. Set the LobbyScene in the inspector for the NetworkLobbyMangaer"); }
 				return;
 			}
 
@@ -584,8 +583,9 @@ namespace NetworkCompat {
 				lobbySlots = new NetworkLobbyPlayer[maxPlayers];
 			}
 
+			_colourPool = new ColourPool();
+
 			NetworkServer.RegisterHandler(MsgType.LobbyReadyToBegin, OnServerReadyToBeginMessage);
-			NetworkServer.RegisterHandler(GlobalNetworking.NetworkConstants.MSG_GAME_LOADED, OnServergameLoadedMessage);
 			NetworkServer.RegisterHandler(MsgType.LobbySceneLoaded, OnServerSceneLoadedMessage);
 			NetworkServer.RegisterHandler(MsgType.LobbyReturnToLobby, OnServerReturnToLobbyMessage);
 
@@ -726,10 +726,6 @@ namespace NetworkCompat {
 		{
 		}
 
-		public virtual void OnLobbyServerGameLoaded(NetworkConnection conn)
-		{
-		}
-
 		public virtual void OnLobbyServerReadyToBegin(NetworkConnection conn)
 		{
 		}
@@ -756,6 +752,9 @@ namespace NetworkCompat {
 
 		public virtual void OnLobbyServerPlayersReady()
 		{
+			// all players are readyToBegin, start the game
+//			ServerChangeScene(m_PlayScene);
+			// don't auto-start
 		}
 
 		// ------------------------ lobby client virtuals ------------------------

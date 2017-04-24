@@ -67,7 +67,7 @@ namespace Powerups {
 			if (isServer) {
 				NetworkServer.Spawn (projectionAreaObj);
 				_projectionAreaObj = projectionAreaObj;
-				_projectionAreaObj.GetComponent<ProjectObject> ().SetHeight (5.0f);
+				_projectionAreaObj.GetComponent<ProjectObject> ().SetHeight (8.0f);
 				_projectionAreaObj.GetComponent<ProjectObject> ().SetSpeed (0.5f);
 			}
 		}

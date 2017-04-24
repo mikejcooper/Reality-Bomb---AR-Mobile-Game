@@ -101,9 +101,15 @@ namespace Powerups {
 			Vector3 startPosition = _meshObj.convexhullVertices[0];
 			projectionAreaObj.transform.position = startPosition;
 			//Scale convex hull points by 1.X%
-			List<Vector3> convexHull = GameUtils.MinimizeConvexHull(_meshObj.convexhullVertices, 1.03f);
+			List<Vector3> convexHull = GameUtils.MinimizeConvexHull(_meshObj.convexhullVertices, 1.2f);
 			projectionAreaObj.GetComponent<ProjectObject> ().SetPositions (convexHull);
 			OnProjectionAreaGenerated (projectionAreaObj);
+			if (projectionAreaObj.GetComponent<ProjectObject> ().onFinishedStartMovement()) {
+				StartCoroutine (TryToSpawn());
+			} else {
+				projectionAreaObj.GetComponent<ProjectObject> ().OnFinshedStartMovementEvent += () => StartCoroutine (TryToSpawn());
+			}
+		
 		}
 
 		protected void OnMeshReady (GameMapObjects mesh) {
@@ -123,7 +129,7 @@ namespace Powerups {
 			_yOffSet = bounds.size.y / 2.0f;
 
 			GenProjectionArea ();
-			StartCoroutine (TryToSpawn ());
+//			StartCoroutine (TryToSpawn ());
 		}
 
 

@@ -14,7 +14,6 @@ public class ProjectObject : MonoBehaviour {
 	private bool _finshedStartMovement = false;
 	private float _yOffset = 10.0f;
 	private float _speed = 10.0f;
-	private float _positionScale= 1.03f;
 
 	private Vector3 _cannonTarget;
 	private Vector3 _direction;
@@ -93,16 +92,16 @@ public class ProjectObject : MonoBehaviour {
 
 	IEnumerator StartObjectMovement(){
 		// Hack to avoid outer boundary of mini game when projecting first few powerupd
-		transform.position = transform.position * _positionScale * 1.2f;
+		transform.position = transform.position * 1.2f;
 
 		// Move Object up by _yOffset
-		Vector3 moveUp = new Vector3 (transform.position.x, transform.position.y + _yOffset, transform.position.z) * _positionScale;
-		yield return StartCoroutine(MoveObject(transform.position, moveUp, 0.5f));
+		Vector3 moveUp = new Vector3 (transform.position.x, transform.position.y + _yOffset, transform.position.z);
+		yield return StartCoroutine(MoveObject(transform.position, moveUp, 1f));
 
 		OnFinshedStartMovementEvent ();
 		_finshedStartMovement = true;
 
-		yield return new WaitForSeconds (4.0f);
+		yield return new WaitForSeconds (2.0f);
 
 		if (OnPositionsSetEvent != null) {
 			StartCoroutine (BeginObjectPath ());
@@ -114,9 +113,9 @@ public class ProjectObject : MonoBehaviour {
 	IEnumerator BeginObjectPath() {
 		int i = 0;
 		while (true) {
-			i = (i == _positions.Count - 1) ? 0 : i + 1;
-			Vector3 target = new Vector3 (_positions[i].x, _positions[i].y + _yOffset, _positions[i].z) * _positionScale;
-			if (transform.position == target)
+			i = (i == _positions.Count - 1) ? 0 : i + 1;	
+			Vector3 target = new Vector3 (_positions[i].x, _positions[i].y + _yOffset, _positions[i].z);
+			if (ArePositionsClose (target, transform.position, 3.0f))
 				continue;
 			yield return StartCoroutine(MoveObject(transform.position, target, _speed));
 		}
@@ -132,6 +131,13 @@ public class ProjectObject : MonoBehaviour {
 			transform.position = Vector3.Lerp(startPos, endPos, i);
 			yield return null; 
 		}
+	}
+
+	private bool ArePositionsClose(Vector3 p1, Vector3 p2, float threshold){
+		float distance = Vector3.Distance(p1, p2);
+		if (distance < threshold)
+			return true;
+		return false;
 	}
 
 	public bool onFinishedStartMovement(){
@@ -150,9 +156,4 @@ public class ProjectObject : MonoBehaviour {
 	public void SetSpeed(float speed){
 		_speed = speed;
 	}
-
-	public void SetPositionScale(float positionScale){
-		_positionScale = positionScale;
-	}
-
 }

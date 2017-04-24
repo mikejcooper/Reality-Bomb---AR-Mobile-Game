@@ -61,6 +61,16 @@ public class CarController : NetworkBehaviour
 
 	}
 
+	public NetworkCompat.NetworkLobbyPlayer LobbyPlayer () {
+		
+		foreach (var lobbyPlayer in GameObject.FindObjectsOfType<NetworkCompat.NetworkLobbyPlayer> ()) {
+			if (lobbyPlayer.serverId == ServerId) {
+				return lobbyPlayer;
+			}
+		}
+
+		return null;
+	}
 	public void init () {
 
 		if (!_initialised) {
@@ -73,14 +83,7 @@ public class CarController : NetworkBehaviour
 				Debug.LogError ("Could not reposition car as child of Marker scene because we can't find Marker scene");
 			}
 
-			PlayerDataManager.PlayerData playerData;
-			if (isServer) {
-				playerData = ServerSceneManager.Instance.GetPlayerDataById (ServerId);
-			} else {
-				playerData = ClientSceneManager.Instance.GetPlayerDataById (ServerId);
-			}
-
-			ConfigCarFromPlayerData (playerData);
+			ApplyCarProperties ();
 
 			if (!isServer) {
 				if (GameObject.Find ("HealthBar") != null) {
@@ -137,9 +140,9 @@ public class CarController : NetworkBehaviour
 
 	}
 
-	private void ConfigCarFromPlayerData (PlayerDataManager.PlayerData playerData) {
+	private void ApplyCarProperties () {
 
-		CarProperties.OriginalHue = playerData.colour;
+		CarProperties.OriginalHue = LobbyPlayer().colour;
 
 		Material[] materials = transform.FindChild("Car_Model").GetComponent<MeshRenderer> ().materials;
 
@@ -147,8 +150,11 @@ public class CarController : NetworkBehaviour
 	}
 
 	void OnDestroy () {
-		GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent -= Reposition;
-		GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent -= SetFallDistance;
+		var manager = GameObject.FindObjectOfType<GameManager> ();
+		if (manager != null) {
+			manager.OnWorldMeshAvailableEvent -= Reposition;
+			manager.OnWorldMeshAvailableEvent -= SetFallDistance;
+		}
 	}
 		
 	public void setBombAllDevices(bool b){
