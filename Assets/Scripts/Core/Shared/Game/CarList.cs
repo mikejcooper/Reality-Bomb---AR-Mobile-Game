@@ -102,13 +102,20 @@ public class CarList
 	public void KillPlayer (CarController car) {
 		car.KillAllDevices ();
 		int carsLeft = GetNumberAliveCars();
-		ServerSceneManager.Instance.UpdatePlayerGameData (car.ServerId, carsLeft, GetSurvivalTime(car));
+		NetworkCompat.NetworkLobbyPlayer.GameResult result;
+		result.FinishPosition = carsLeft;
+		result.FinishTime = GetSurvivalTime (car);
+		car.LobbyPlayer().AddGameResult (result);
+
 	}
 
 	public void FinaliseGamePlayerData(){
 		foreach (CarController car in _cars) {
 			if (car.Alive) {
-				ServerSceneManager.Instance.UpdatePlayerGameData (car.ServerId, 0, GetSurvivalTime(car));
+				NetworkCompat.NetworkLobbyPlayer.GameResult result;
+				result.FinishPosition = 0;
+				result.FinishTime = GetSurvivalTime (car);
+				car.LobbyPlayer().AddGameResult (result);
 				return;
 			}
 		}

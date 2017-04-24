@@ -21,15 +21,15 @@ public class LiveLeaderboardDriver : MonoBehaviour {
 		List<CarController> orderedcars = cars.OrderBy (o => -o.Lifetime).ToList ();
 
 		foreach (var carController in cars) {
-			PlayerDataManager.PlayerData playerData = ServerSceneManager.Instance.GetPlayerDataById (carController.ServerId);
 
-			var entryTransform = transform.Find (playerData.Name);
+			var carName = carController.LobbyPlayer().name;
+			var entryTransform = transform.Find (carName);
 			GameObject entry;
 			if (entryTransform != null) {
 				entry = entryTransform.gameObject;
 			} else {
 				entry = GameObject.Instantiate (RowPrefab);
-				entry.name = playerData.Name;
+				entry.name = carName;
 				entry.transform.SetParent (transform, false);
 			}
 
@@ -41,10 +41,11 @@ public class LiveLeaderboardDriver : MonoBehaviour {
 				entry.transform.Find ("Icon").GetComponent<Image> ().color = Color.white;
 			} else {
 				entry.transform.Find ("Icon").GetComponent<Image> ().sprite = CarSilhouetteSprite;
-				entry.transform.Find ("Icon").GetComponent<Image> ().color = Color.HSVToRGB (playerData.colour / 360f, 1f, 0.8f);
+				var colour = carController.GetComponent<CarProperties> ().OriginalHue;
+				entry.transform.Find ("Icon").GetComponent<Image> ().color = Color.HSVToRGB (colour / 360f, 1f, 0.8f);
 			}
 
-			entry.transform.Find ("Tag").GetComponent<Text> ().text = playerData.Name;
+			entry.transform.Find ("Tag").GetComponent<Text> ().text = carName;
 
 			if (carController.Lifetime > 0f) {
 				entry.transform.Find ("TimeLeft").GetComponent<Text> ().text = string.Format ("{0}s", carController.Lifetime.ToString ("n2"));

@@ -79,6 +79,8 @@ namespace NetworkCompat {
 		[SerializeField] string m_PlayScene = "";
 		[SerializeField] List<string> m_LobbyScenes = new List<string>();
 
+		private ColourPool _colourPool;
+
 		// runtime data
 		List<PendingPlayer> m_PendingPlayers = new List<PendingPlayer>();
 		public NetworkLobbyPlayer[] lobbySlots;
@@ -158,7 +160,7 @@ namespace NetworkCompat {
 			return Byte.MaxValue;
 		}
 
-		void SceneLoadedForPlayer(NetworkConnection conn, GameObject lobbyPlayerGameObject)
+		void GameSceneLoadedForPlayer(NetworkConnection conn, GameObject lobbyPlayerGameObject)
 		{
 			var lobbyPlayer = lobbyPlayerGameObject.GetComponent<NetworkLobbyPlayer>();
 			if (lobbyPlayer == null)
@@ -431,8 +433,11 @@ namespace NetworkCompat {
 			}
 
 			var newLobbyPlayer = newLobbyGameObject.GetComponent<NetworkLobbyPlayer>();
+			newLobbyPlayer.serverId = conn.connectionId;
 			newLobbyPlayer.slot = slot;
 			lobbySlots[slot] = newLobbyPlayer;
+			newLobbyPlayer.colour = _colourPool.getColour ();
+			newLobbyPlayer.name = "unknown";
 
 			NetworkServer.AddPlayerForConnection(conn, newLobbyGameObject, playerControllerId);
 		}
@@ -440,7 +445,9 @@ namespace NetworkCompat {
 		public override void OnServerRemovePlayer(NetworkConnection conn, PlayerController player)
 		{
 			var playerControllerId = player.playerControllerId;
-			byte slot = player.gameObject.GetComponent<NetworkLobbyPlayer>().slot;
+			var oldLobbyPlayer = player.gameObject.GetComponent<NetworkLobbyPlayer> ();
+			byte slot = oldLobbyPlayer.slot;
+			_colourPool.releaseColour (oldLobbyPlayer.colour);
 			lobbySlots[slot] = null;
 			base.OnServerRemovePlayer(conn, player);
 
@@ -498,7 +505,7 @@ namespace NetworkCompat {
 				for (int i = 0; i < m_PendingPlayers.Count; i++)
 				{
 					var pending = m_PendingPlayers[i];
-					SceneLoadedForPlayer(pending.conn, pending.lobbyPlayer);
+					GameSceneLoadedForPlayer(pending.conn, pending.lobbyPlayer);
 				}
 				m_PendingPlayers.Clear();
 			}
@@ -547,7 +554,7 @@ namespace NetworkCompat {
 				return;
 			}
 
-			SceneLoadedForPlayer(netMsg.conn, lobbyController.gameObject);
+			GameSceneLoadedForPlayer(netMsg.conn, lobbyController.gameObject);
 		}
 
 		void OnServerReturnToLobbyMessage(NetworkMessage netMsg)
@@ -575,6 +582,8 @@ namespace NetworkCompat {
 			{
 				lobbySlots = new NetworkLobbyPlayer[maxPlayers];
 			}
+
+			_colourPool = new ColourPool();
 
 			NetworkServer.RegisterHandler(MsgType.LobbyReadyToBegin, OnServerReadyToBeginMessage);
 			NetworkServer.RegisterHandler(MsgType.LobbySceneLoaded, OnServerSceneLoadedMessage);

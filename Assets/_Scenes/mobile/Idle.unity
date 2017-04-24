@@ -2284,6 +2284,7 @@ MonoBehaviour:
     type: 2}
   GamePlayerPrefab: {fileID: 1888881374933336, guid: ad2b8fd4aacae4ea8867137b23409269,
     type: 2}
+  ClientNickName: 
   StartMuted: 0
 --- !u!1 &1938374591
 GameObject:

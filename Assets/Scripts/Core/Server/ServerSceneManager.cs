@@ -35,10 +35,9 @@ public class ServerSceneManager : MonoBehaviour
 	public int ReadyPlayerCount { get { return _networkLobbyManager.ReadyPlayerCount (); }}
 
 	private GameLobbyManager _networkLobbyManager;
-	private ColourPool _colourPool;
+
 	private MeshDiscoveryServer _meshDiscoveryServer;
 	private MeshTransferManager _meshTransferManager;
-	private PlayerDataManager _playerDataManager;
 	private Process _innerProcess;
 	private MeshServerLifecycle.Process _meshTransferProcess;
 	private string _currentScene = "Idle";
@@ -79,7 +78,6 @@ public class ServerSceneManager : MonoBehaviour
 
         _meshDiscoveryServer = new MeshDiscoveryServer ();
 		_meshTransferManager = new MeshTransferManager ();
-		_playerDataManager = new PlayerDataManager (_networkLobbyManager);
 
 		_networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Info;
 		_networkLobbyManager.showLobbyGUI = false;
@@ -88,8 +86,6 @@ public class ServerSceneManager : MonoBehaviour
 		// seemingly weird neccesary hack. todo: add this to our compat implementation
 		_networkLobbyManager.maxPlayers = 16;
 		_networkLobbyManager.lobbySlots = new NetworkLobbyPlayer[_networkLobbyManager.maxPlayers];
-
-		_colourPool = new ColourPool ();
 
 		List<string> lobbyScenes = new List<string> ();
 		lobbyScenes.Add ("Idle");
@@ -183,9 +179,9 @@ public class ServerSceneManager : MonoBehaviour
 		ConnectedPlayerCount++;
 
 
-		int hue = _colourPool.getColour ();
-		Debug.Log (string.Format ("added player with hue: {0}", hue));
-		_playerDataManager.AddPlayer (conn.connectionId, hue);
+//		int hue = _colourPool.getColour ();
+//		Debug.Log (string.Format ("added player with hue: {0}", hue));
+//		_playerDataManager.AddPlayer (conn.connectionId, hue);
 
 		if (ConnectedPlayerCount >= MIN_REQ_PLAYERS) {
 			_innerProcess.MoveNext (Command.EnoughPlayersJoined);
@@ -196,8 +192,8 @@ public class ServerSceneManager : MonoBehaviour
 			_networkLobbyManager.ClientGetMesh (_meshServerAddress, _meshServerPort, conn.connectionId);
 		}
 
-		_networkLobbyManager.SendPlayerID (conn.connectionId);
-		_networkLobbyManager.SendPlayerData (JsonUtility.ToJson (_playerDataManager.list), conn.connectionId);
+//		_networkLobbyManager.SendPlayerID (conn.connectionId);
+//		_networkLobbyManager.SendPlayerData (JsonUtility.ToJson (_playerDataManager.list), conn.connectionId);
 	}
 
 	private void OnGamePlayerReady () {
@@ -229,10 +225,6 @@ public class ServerSceneManager : MonoBehaviour
 	{
         if (DEBUG) Debug.Log ("OnPlayerDisconnected");
 		ConnectedPlayerCount--;
-
-		_colourPool.releaseColour (_playerDataManager.GetPlayerById (conn.connectionId).colour);
-
-		_playerDataManager.RemovePlayer (conn.connectionId);
 
 		if (OnPlayerDisconnectEvent != null) {
 			OnPlayerDisconnectEvent();
@@ -280,18 +272,6 @@ public class ServerSceneManager : MonoBehaviour
 		OnStateUpdate ();
 	}
 
-	public void UpdatePlayerGameData (int serverId, int carsLeft, float lifetime) {
-		_playerDataManager.UpdatePlayerGameData (serverId, carsLeft, lifetime);
-	}
-
-	public PlayerDataManager.PlayerData[] GetPlayerData () {
-		return _playerDataManager.list.players;
-	}
-
-	public PlayerDataManager.PlayerData GetPlayerDataById (int serverId) {
-		return _playerDataManager.GetPlayerById (serverId);
-	}
-
 	public void OnServerRequestGameEnd () {
         if (DEBUG) Debug.Log ("OnGameEnd");
 		_innerProcess.MoveNext (Command.GameEnd);
@@ -304,7 +284,6 @@ public class ServerSceneManager : MonoBehaviour
 		float fadeTime = GameObject.Find ("Fade").GetComponent<FadeScene> ().BeginFadeOut ();
 		yield return new WaitForSeconds (fadeTime);
 		_currentScene = "Game"; 
-		_playerDataManager.ResetAllGameData ();
 		_networkLobbyManager.ServerChangeScene ("Game");
 	}
 
@@ -328,6 +307,15 @@ public class ServerSceneManager : MonoBehaviour
 		}
 	}
 
+	private bool PlayerExistsWithGameData () {
+		foreach (var lobbyPlayer in GameObject.FindObjectsOfType<NetworkCompat.NetworkLobbyPlayer> ()) {
+			if (lobbyPlayer.gameResults.Count > 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void OnStateUpdate ()
 	{
 		switch (_innerProcess.CurrentState) {
@@ -336,7 +324,7 @@ public class ServerSceneManager : MonoBehaviour
 		case ProcessState.AwaitingPlayers:
 		case ProcessState.PreparingGame:
 		case ProcessState.CountingDown:
-			if (_playerDataManager.HasGameData()) {
+			if (PlayerExistsWithGameData()) {
 				//				networkLobbyManager.ServerChangeScene ("Leaderboard");
 				if (_currentScene != "Leaderboard") {
 					StartCoroutine(FadeOutToLeaderboardScene ());

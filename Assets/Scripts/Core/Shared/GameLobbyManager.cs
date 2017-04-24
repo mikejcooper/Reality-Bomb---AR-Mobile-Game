@@ -15,8 +15,6 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 	public delegate void OnLobbyClientGameLoaded ();
 	public delegate void OnLobbyClientNameSubmission (int connId, string name);
     public delegate void OnMeshClearToDownloadCallback(string address, int port);
-	public delegate void OnUpdatePlayerDataCallback (string data);
-	public delegate void OnPlayerIDCallback (int playerID);
 	public delegate void OnStartGameCountdownCallback (int delay);
 	public delegate void OnCancelGameCountdownCallback (string reason);
 
@@ -28,43 +26,28 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 	public event OnLobbyClientGameLoaded OnLobbyClientGameLoadedEvent;
 	public event OnLobbyClientNameSubmission OnLobbyClientNameSubmissionEvent;
     public event OnMeshClearToDownloadCallback OnMeshClearToDownloadEvent;
-	public event OnUpdatePlayerDataCallback OnUpdatePlayerDataEvent;
-	public event OnPlayerIDCallback OnPlayerIDEvent;
 	public event OnStartGameCountdownCallback OnStartGameCountdownEvent;
 	public event OnCancelGameCountdownCallback OnCancelGameCountdownEvent;
 
-    private int _totalNotLoaded = -10;
-
-	public override void OnLobbyStartServer() {
-		NetworkServer.RegisterHandler(NetworkConstants.MSG_PLAYER_DATA_SUBMIT, OnServerPlayerDataSubmission);
-	}
-
-	public void OnServerPlayerDataSubmission (NetworkMessage netMsg) {
-		string name = netMsg.ReadMessage<UnityEngine.Networking.NetworkSystem.StringMessage> ().value;
-		if (OnLobbyClientNameSubmissionEvent != null) {
-			OnLobbyClientNameSubmissionEvent (netMsg.conn.connectionId, name);
-		}
-	}
-
-//	public override void OnLobbyServerGameLoaded(NetworkConnection conn) {
-//        if (_totalNotLoaded == -10)
-//        {
-//            _totalNotLoaded = NetworkServer.connections.Count - 1; //Minus 1 because this includes the server
-//        }
-//        _totalNotLoaded--;
-//
-//        if (_totalNotLoaded == 0)
-//        {
-//            //Trigger an event to start the countdown on all players
-//            if (OnLobbyAllClientGamesLoadedEvent != null)
-//                OnLobbyAllClientGamesLoadedEvent(); //Calls OnStateUpdate
-//            _totalNotLoaded = -10; //Reset
-//        }
-//	}
 
 	public override GameObject OnLobbyServerCreateGamePlayer(NetworkConnection conn, short playerControllerId) {
+		NetworkCompat.NetworkLobbyPlayer thisLobbyPlayer = null;
+		foreach (var lobbyPlayer in GameObject.FindObjectsOfType<NetworkCompat.NetworkLobbyPlayer>()) {
+			if (lobbyPlayer.connectionToClient.connectionId.Equals (conn.connectionId)) {
+				thisLobbyPlayer = lobbyPlayer;
+				break;
+			}
+		}
+		if (thisLobbyPlayer == null) {
+			return null;
+		}
+			
 		var obj = (GameObject)Instantiate(gamePlayerPrefab, Vector3.zero, Quaternion.identity);
-		obj.GetComponent<CarController> ().ServerId = conn.connectionId;
+		var carController = obj.GetComponent<CarController> ();
+		carController.ServerId = conn.connectionId;
+		var carProperties = obj.GetComponent<CarProperties> ();
+		carProperties.OriginalHue = thisLobbyPlayer.colour;
+
 		if (OnLobbyClientGameLoadedEvent != null) {
 			OnLobbyClientGameLoadedEvent ();
 		}
@@ -100,19 +83,6 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 		}
 	}
 
-	// sent from a client to tell the server the game has loaded
-	public void SetGameLoaded () {
-//		// notify server that we're ready
-//		foreach (var p in lobbySlots) {
-//			if (p != null && p.playerControllerId >= 0) {
-//				var msg = new GameLoadedMessage ();
-//				msg.slotId = (byte)p.playerControllerId;
-//				msg.loadedState = true;
-//				client.Send (NetworkConstants.MSG_GAME_LOADED, msg);
-//			}
-//		}
-	}
-
 	// sent from server to all clients to tell them to download a mesh
 	public void AllClientsGetMesh (string address, int port) {
 		ServerNetworking.SocketMessage msg = new ServerNetworking.SocketMessage();
@@ -139,32 +109,6 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 		ServerNetworking.CancelGameCountdownMessage msg = new ServerNetworking.CancelGameCountdownMessage();
 		msg.reason = reason;
 		NetworkServer.SendToAll(NetworkConstants.MSG_CANCEL_GAME_COUNTDOWN, msg);
-	}
-
-	public void SendPlayerData (string data, int connectionId) {
-		var msg = new UnityEngine.Networking.NetworkSystem.StringMessage (data);
-
-		NetworkServer.SendToClient (connectionId, NetworkConstants.MSG_PLAYER_DATA_UPDATE, msg);
-	}
-
-	public void SendPlayerID (int connectionId) {
-		var msg = new UnityEngine.Networking.NetworkSystem.IntegerMessage (connectionId);
-		NetworkServer.SendToClient (connectionId, NetworkConstants.MSG_PLAYER_DATA_ID, msg);
-	}
-
-	public void UpdatePlayerData (string data) {
-		foreach (var p in lobbySlots) {
-			if (p != null && p.playerControllerId >= 0) {
-				var msg = new UnityEngine.Networking.NetworkSystem.StringMessage (data);
-				NetworkServer.SendToAll (NetworkConstants.MSG_PLAYER_DATA_UPDATE, msg);
-			}
-		}
-	}
-
-	public void SendOwnPlayerName (string name) {
-		var msg = new UnityEngine.Networking.NetworkSystem.StringMessage (name);
-
-		client.Send (NetworkConstants.MSG_PLAYER_DATA_SUBMIT, msg);
 	}
 
 	public override void OnLobbyServerConnect (NetworkConnection conn) {
@@ -200,9 +144,6 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
         {
             Debug.Log("OnClientConnect worked");
 			client.RegisterHandler(NetworkConstants.MSG_GET_MESH, OnClientClearToDownloadMesh);
-//			client.RegisterHandler(NetworkConstants.MSG_GAME_LOADED, OnClientGameReady);
-			client.RegisterHandler(NetworkConstants.MSG_PLAYER_DATA_UPDATE, OnClientPlayerDataUpdate);
-			client.RegisterHandler(NetworkConstants.MSG_PLAYER_DATA_ID, OnClientPlayerID);
 			client.RegisterHandler(NetworkConstants.MSG_START_GAME_COUNTDOWN, OnStartGameCountdown);
 			client.RegisterHandler(NetworkConstants.MSG_CANCEL_GAME_COUNTDOWN, OnCancelGameCountdown);
 		}
@@ -221,23 +162,7 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 			OnCancelGameCountdownEvent (msg.reason);
 		}
 	}
-
-	public void OnClientPlayerID (NetworkMessage netMsg) {
-		if (OnPlayerIDEvent != null) {
-			OnPlayerIDEvent(netMsg.ReadMessage<UnityEngine.Networking.NetworkSystem.IntegerMessage>().value);
-		}
-	}
-
-	public void OnClientPlayerDataUpdate (NetworkMessage netMsg) {
-		if (OnUpdatePlayerDataEvent != null) {
-			OnUpdatePlayerDataEvent(netMsg.reader.ReadString());
-		}
-	}
-
-	public void OnClientGameReady(NetworkMessage netMsg) {
-//		Debug.Log ("OnClientGameReady");
-	}
-
+		
     public void OnClientClearToDownloadMesh(NetworkMessage netMsg) {
         ServerNetworking.SocketMessage socketMsg = netMsg.ReadMessage<ServerNetworking.SocketMessage>();
         Debug.Log(socketMsg.address);
