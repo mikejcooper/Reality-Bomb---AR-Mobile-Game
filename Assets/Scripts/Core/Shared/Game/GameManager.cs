@@ -102,11 +102,11 @@ public class GameManager : NetworkBehaviour {
 		});
 	}
 
-	private void ShowDiedDialog () {
+	public void ShowDiedDialog () {
 		_clientGameDiedDialogObj = GameObject.Instantiate (GameDiedDialogObj);
 		_clientGameDiedDialogObj.transform.SetParent (Canvas.transform, false);
 		_clientGameDiedDialogObj.gameObject.GetComponentInChildren<Button> ().onClick.AddListener (() => {
-			Destroy(_clientExplanationDialog);
+			Destroy(_clientGameDiedDialogObj);
 		});
 	}
 
@@ -139,9 +139,6 @@ public class GameManager : NetworkBehaviour {
 	[Server]
 	private void KillPlayer (CarController car) {
 		_cars.KillPlayer (car);
-		if (car.hasAuthority) {
-			Invoke("ShowDiedDialog",5.0f);
-		}
 		CheckForGameOver ();
 		if(_cars.GetNumberOfBombsPresent() == 0) _cars.PassBombRandomPlayer();
 	}

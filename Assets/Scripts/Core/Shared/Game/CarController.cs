@@ -195,9 +195,16 @@ public class CarController : NetworkBehaviour
 
 	[ClientRpc]
 	private void RpcKill(){
-        if (hasAuthority)
-            _healthBar.Boom();
+		if (hasAuthority) {
+			_healthBar.Boom ();
+			Debug.Log ("showdieddialog should be called in 5 sec");
+			Invoke ("ShowDiedDialog", 4.3f);
+		}
 		Kill ();
+	}
+
+	private void ShowDiedDialog(){
+		GameObject.FindObjectOfType<GameManager> ().ShowDiedDialog ();
 	}
 
 	[Server]
