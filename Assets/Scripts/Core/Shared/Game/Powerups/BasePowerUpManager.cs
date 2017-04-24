@@ -37,7 +37,7 @@ namespace Powerups {
 		protected virtual void Start () {
 			_availableAbilities = GetAvailablePowerups ();
 			_numCurrentPowerups = 0;
-			_testingFlag = true; // Set to false once testing is complete.
+			_testingFlag = false; // Set to false once testing is complete.
 		}
 
 		protected abstract PowerupDefinition[] GetAvailablePowerups ();
@@ -97,15 +97,13 @@ namespace Powerups {
 			
 		private void GenProjectionArea () {
 			GameObject projectionAreaObj = GameObject.Instantiate(ProjectionAreaPrefab);
+			projectionAreaObj.transform.parent = GameObject.Find("Marker scene").transform;
 			Vector3 startPosition = _meshObj.convexhullVertices[0];
 			projectionAreaObj.transform.position = startPosition;
-			projectionAreaObj.GetComponent<ProjectObject> ().SetPositions (_meshObj.convexhullVertices);
+			//Scale convex hull points by 1.X%
+			List<Vector3> convexHull = GameUtils.MinimizeConvexHull(_meshObj.convexhullVertices, 1.03f);
+			projectionAreaObj.GetComponent<ProjectObject> ().SetPositions (convexHull);
 			OnProjectionAreaGenerated (projectionAreaObj);
-//			if (projectionAreaObj.GetComponent<ProjectObject> ().onFinishedStartMovement()) {
-//				StartCoroutine (TryToSpawn());
-//			} else {
-//				projectionAreaObj.GetComponent<ProjectObject> ().OnFinshedStartMovementEvent += () => StartCoroutine (TryToSpawn());
-//			}
 		}
 
 		protected void OnMeshReady (GameMapObjects mesh) {
