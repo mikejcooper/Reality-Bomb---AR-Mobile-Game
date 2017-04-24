@@ -37,7 +37,7 @@ namespace Powerups {
 		protected virtual void Start () {
 			_availableAbilities = GetAvailablePowerups ();
 			_numCurrentPowerups = 0;
-			_testingFlag = false; // Set to false once testing is complete.
+			_testingFlag = true; // Set to false once testing is complete.
 		}
 
 		protected abstract PowerupDefinition[] GetAvailablePowerups ();
