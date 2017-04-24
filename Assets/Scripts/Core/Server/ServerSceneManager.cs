@@ -11,7 +11,7 @@ public class ServerSceneManager : MonoBehaviour
 {
     static bool DEBUG = false;
 
-	private const int MIN_REQ_PLAYERS = 1;
+	private const int MIN_REQ_PLAYERS = 2;
 
 	public enum MeshRetrievalState
 	{
@@ -69,12 +69,10 @@ public class ServerSceneManager : MonoBehaviour
 		DontDestroyOnLoad (gameObject);
 		var ugly = UnityThreadHelper.Dispatcher;
 
-		var discoveryServer = transform.gameObject.AddComponent<DiscoveryServer> ();
-
 		// If clients will be looking at localhost anyway, don't
 		// pollute the network with broadcasts
 		if (!Flags.GAME_SERVER_IS_LOCALHOST) {
-			discoveryServer.BeginBroadcast ();
+			transform.gameObject.AddComponent<DiscoveryServer> ();
 		}
 
 		_networkLobbyManager = transform.gameObject.AddComponent<GameLobbyManager> ();
@@ -83,11 +81,12 @@ public class ServerSceneManager : MonoBehaviour
 		_meshTransferManager = new MeshTransferManager ();
 		_playerDataManager = new PlayerDataManager (_networkLobbyManager);
 
-		_networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Debug;
+		_networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Info;
 		_networkLobbyManager.showLobbyGUI = false;
 		_networkLobbyManager.minPlayers = MIN_REQ_PLAYERS;
 
 		// seemingly weird neccesary hack. todo: add this to our compat implementation
+		_networkLobbyManager.maxPlayers = 16;
 		_networkLobbyManager.lobbySlots = new NetworkLobbyPlayer[_networkLobbyManager.maxPlayers];
 
 		_colourPool = new ColourPool ();
@@ -104,13 +103,14 @@ public class ServerSceneManager : MonoBehaviour
 
 		_networkLobbyManager.networkPort = NetworkConstants.GAME_PORT;
 
+
 		_networkLobbyManager.StartServer ();
 
 		// register listeners for when players connect / disconnect
 		_networkLobbyManager.OnLobbyServerConnectedEvent += OnGamePlayerConnected;
 		_networkLobbyManager.OnLobbyServerDisconnectedEvent += OnGamePlayerDisconnected;
 		_networkLobbyManager.OnLobbyClientReadyToBeginEvent += OnGamePlayerReady;
-		_networkLobbyManager.OnLobbyAllClientGamesLoadedEvent += OnGamePlayerAllLoaded;
+		_networkLobbyManager.OnLobbyClientGameLoadedEvent += OnPlayerGameLoaded;
 
 		_meshDiscoveryServer.MeshServerDiscoveredEvent += OnMeshServerFound;
 
@@ -204,12 +204,25 @@ public class ServerSceneManager : MonoBehaviour
 		OnStateUpdate ();
 	}
 
+	int _totalGamePlayers;
+	int _loadedGamePlayers;
 
-	private void OnGamePlayerAllLoaded () {
-		if (OnAllPlayersLoadedEvent != null) {
-            OnAllPlayersLoadedEvent();
+	private void OnPlayerGameLoaded () {
+		_loadedGamePlayers++;
+		Debug.Log (string.Format ("OnPlayerGameLoaded: {0}/{1}", _loadedGamePlayers, _totalGamePlayers));
+		if (_totalGamePlayers == _loadedGamePlayers) {
+			if (OnAllPlayersLoadedEvent != null) {
+				OnAllPlayersLoadedEvent ();
+			}
+		} else if (_loadedGamePlayers > _totalGamePlayers) {
+			Debug.LogWarning ("we have too many players");
 		}
+			
 		OnStateUpdate ();
+	}
+
+	public bool AreAllGamePlayersLoaded () {
+		return _loadedGamePlayers >= _totalGamePlayers;
 	}
 
 	private void OnGamePlayerDisconnected (UnityEngine.Networking.NetworkConnection conn)
@@ -262,6 +275,8 @@ public class ServerSceneManager : MonoBehaviour
 
 	private void BeginGame () {
 		_innerProcess.MoveNext (Command.GameStart);
+		_totalGamePlayers = _networkLobbyManager.ReadyPlayerCount ();
+		_loadedGamePlayers = 0;
 		OnStateUpdate ();
 	}
 

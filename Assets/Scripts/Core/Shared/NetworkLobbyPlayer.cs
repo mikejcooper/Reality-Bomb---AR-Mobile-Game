@@ -16,7 +16,6 @@ namespace NetworkCompat {
 
 		byte m_Slot;
 		bool m_ReadyToBegin;
-		bool m_GameLoaded;
 
 		public byte slot { get { return m_Slot; } set { m_Slot = value; }}
 		public bool readyToBegin { get { return m_ReadyToBegin; } set { m_ReadyToBegin = value; } }
@@ -24,6 +23,16 @@ namespace NetworkCompat {
 		void Start()
 		{
 			DontDestroyOnLoad(gameObject);
+		}
+
+		void OnEnable()
+		{
+			SceneManager.sceneLoaded += OnSceneLoaded;
+		}
+
+		void OnDisable()
+		{
+			SceneManager.sceneLoaded -= OnSceneLoaded;
 		}
 
 		public override void OnStartClient()
@@ -81,13 +90,15 @@ namespace NetworkCompat {
 			}
 		}
 
-		void OnLevelWasLoaded()
+		void OnSceneLoaded(Scene scene, LoadSceneMode mode)
 		{
 			var lobby = NetworkManager.singleton as NetworkLobbyManager;
 			if (lobby)
 			{
 				// dont even try this in the startup scene
-				string loadedSceneName = SceneManager.GetSceneAt(0).name;
+				// Should we check if the LoadSceneMode is Single or Additive??
+				// Can the lobby scene be loaded Additively??
+				string loadedSceneName = scene.name;
 				if (lobby.lobbyScenes.Contains(loadedSceneName))
 				{
 					return;
@@ -133,7 +144,6 @@ namespace NetworkCompat {
 
 			writer.Write(m_Slot);
 			writer.Write(m_ReadyToBegin);
-			writer.Write (m_GameLoaded);
 			return true;
 		}
 
@@ -145,7 +155,6 @@ namespace NetworkCompat {
 
 			m_Slot = reader.ReadByte();
 			m_ReadyToBegin = reader.ReadBoolean();
-			m_GameLoaded = reader.ReadBoolean ();
 		}
 
 		// ------------------------ optional UI ------------------------

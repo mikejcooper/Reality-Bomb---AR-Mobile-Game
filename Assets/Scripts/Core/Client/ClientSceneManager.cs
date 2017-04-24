@@ -62,9 +62,10 @@ public class ClientSceneManager : MonoBehaviour
 		_playerDataManager = new PlayerDataManager (_networkLobbyManager);
 		_meshTransferManager = new MeshTransferManager();
 
-		_networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Debug;
+		_networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Info;
 		_networkLobbyManager.showLobbyGUI = false;
 
+		_networkLobbyManager.maxPlayers = 16;
 		_networkLobbyManager.lobbySlots = new NetworkLobbyPlayer[_networkLobbyManager.maxPlayers];
 
 		_defaultSleepTimeout = Screen.sleepTimeout;
@@ -162,7 +163,7 @@ public class ClientSceneManager : MonoBehaviour
 		StopCoroutine (_countdownCoroutine);
 		OnCountDownCanceledEvent (reason);
 	}
-
+		
 	private void OnServerDiscovered (string address) {
         if (DEBUG) Debug.Log ("OnServerDiscovered");
 		_innerProcess.MoveNext (Command.ConnectGame);
@@ -173,14 +174,22 @@ public class ClientSceneManager : MonoBehaviour
         	_discoveryClient.StopBroadcast();
         }
 
+		var ipv4 = address.Substring (address.LastIndexOf (":")+1, address.Length - (address.LastIndexOf (":") + 1));
+		Debug.Log (string.Format ("ipv6: {0}, ipv4: {1}", address, ipv4));
+
+
+
 		if (Flags.GAME_SERVER_IS_LOCALHOST) {
 			_networkLobbyManager.networkAddress = "localhost";
 		} else {
-			_networkLobbyManager.networkAddress = address;
+			_networkLobbyManager.networkAddress = ipv4;
 		}
 
+		Debug.Log(string.Format("found server at {0}", _networkLobbyManager.networkAddress));
+	
 		_networkLobbyManager.networkPort = NetworkConstants.GAME_PORT;
 		_networkLobbyManager.StartClient ();
+
 	}
 
 	private void OnUserConnectedToGame () {
