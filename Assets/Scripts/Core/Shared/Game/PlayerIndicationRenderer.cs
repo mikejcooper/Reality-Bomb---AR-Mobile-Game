@@ -31,6 +31,7 @@ public class PlayerIndicationRenderer : MonoBehaviour
 			_controller.OnSetBombEvent += setBombIndicator;
 		}
 
+
 		_initialisedBomb = InstantiateAndDeactivate (BombObject);
 		_initialisedBomb.transform.localScale = new Vector3 (80.0f,80.0f,80.0f);
 		_initialisedBomb.transform.localPosition = new Vector3 (0.0f,2.0f,0.0f);
@@ -44,8 +45,23 @@ public class PlayerIndicationRenderer : MonoBehaviour
 
 			_initialisedGlow = InstantiateAndDeactivate (EdgeGlow);
 			_glowImage = _initialisedGlow.GetComponent<Image> ();
+
+			if (GameObject.FindObjectOfType<GameManager> () != null) {
+				GameObject.FindObjectOfType<GameManager> ().GameCountDownFinishedEvent += ShrinkYouPointer;	
+			}
 		}
 	}
+
+	void ShrinkYouPointer ()
+	{
+		GameObject.FindObjectOfType<GameManager> ().GameCountDownFinishedEvent -= ShrinkYouPointer;	
+		Debug.Log ("ShrinkYouPointerCalled");
+//		_initialisedYouPointer.transform.localScale = 5.0f * new Vector3(14.0f,60.0f,20.0f);
+//		StartCoroutine ();
+
+	}
+
+
 
 	private bool IsOwnCarProperties(CarProperties properties) {
 		var identity = properties.GetComponentInParent<NetworkIdentity> ();
@@ -55,6 +71,7 @@ public class PlayerIndicationRenderer : MonoBehaviour
 
 	void OnDestroy() {
 //		this.GetComponentInParent<CarController>().OnSetBombEvent -= setBombIndicator;
+
 	}
 
 	void setMeIndicatorOff ()
@@ -73,14 +90,6 @@ public class PlayerIndicationRenderer : MonoBehaviour
 		if (_initialisedGlow != null) {
 			_initialisedGlow.SetActive (hasBomb);
 		}
-
-//		if (_initialisedYouPointer != null) {
-//			if (hasBomb) {
-//				_initialisedYouPointer.transform.localPosition = new Vector3 (0.0f, 2.0f, 0.0f);
-//			} else {
-//				_initialisedYouPointer.transform.localPosition = new Vector3 (0.0f, 0.0f, 0.0f);
-//			}
-//		}
 
 
 	}
@@ -113,6 +122,7 @@ public class PlayerIndicationRenderer : MonoBehaviour
 	private GameObject InstantiateAndDeactivate (GameObject prefab) {
 		GameObject obj = GameObject.Instantiate(prefab);
 		obj.transform.SetParent (transform, false);
+		obj.transform.SetSiblingIndex (0);
 		obj.SetActive (false);
 		return obj;
 	}

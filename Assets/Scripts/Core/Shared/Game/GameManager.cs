@@ -15,6 +15,9 @@ public class GameManager : NetworkBehaviour {
 	public delegate void StartGameCountDown();
 	public event StartGameCountDown StartGameCountDownEvent = delegate {};
 
+	public delegate void GameCountDownFinished();
+	public event StartGameCountDown GameCountDownFinishedEvent = delegate {};
+
 	public delegate void OnGameStarted();
 	public event OnGameStarted OnGameStartedEvent = delegate {};
 
@@ -176,7 +179,10 @@ public class GameManager : NetworkBehaviour {
 		if (_clientExplanationDialog != null) {
 			Destroy (_clientExplanationDialog);
 		}
-
+		if (GameCountDownFinishedEvent != null) {
+			Debug.Log ("GameCountDownFinishedEvent not null");
+			GameCountDownFinishedEvent ();
+		}
 		StartCoroutine(FadeOutMesh(5));
 		PreparingCanvas.StartGameCountDown (false);
 	}
