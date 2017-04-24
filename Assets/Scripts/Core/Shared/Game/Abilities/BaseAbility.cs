@@ -39,14 +39,6 @@ namespace Abilities {
 			_callbacks = callbacks;
 		}
 
-		private int GetThisPlayerServerId () {
-			if (ClientSceneManager.Instance != null) {
-				return ClientSceneManager.Instance.GetThisPlayerData ().ServerId;
-			} else {
-				return 0;
-			}
-		}
-
 		// start is called on the frame when a script is enabled just 
 		// before any of the update methods is called the first time.
 		void Start () {

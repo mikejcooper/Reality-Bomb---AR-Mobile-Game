@@ -12,18 +12,59 @@ namespace NetworkCompat {
 	[AddComponentMenu("Network/NetworkLobbyPlayer")]
 	public class NetworkLobbyPlayer : NetworkBehaviour
 	{
-		[SerializeField] public bool ShowLobbyGUI = true;
 
-		byte m_Slot;
-		bool m_ReadyToBegin;
-		bool m_GameLoaded;
+		public struct GameResult
+		{
+			public float FinishTime;
+			public int FinishPosition;
+		}
 
+		public class SyncListGameResult : SyncListStruct<GameResult>
+		{
+		}
+
+		[SyncVar]
+		public int m_ServerId;
+		[SyncVar]
+		public byte m_Slot;
+		[SyncVar]
+		public bool m_ReadyToBegin;
+		[SyncVar]
+		public string m_Name;
+		[SyncVar]
+		public int m_Colour;
+		[SyncVar]
+		public SyncListGameResult m_GameResults = new SyncListGameResult();
+
+		public int serverId { get { return m_ServerId; } set { m_ServerId = value; }}
 		public byte slot { get { return m_Slot; } set { m_Slot = value; }}
 		public bool readyToBegin { get { return m_ReadyToBegin; } set { m_ReadyToBegin = value; } }
+		public string name { get { return m_Name; } set { m_Name = value; } }
+		public int colour { get { return m_Colour; } set { m_Colour = value; } }
+		public SyncListGameResult gameResults { get { return m_GameResults; } }
+		public GameResult lastGameResult { get { return m_GameResults [m_GameResults.Count - 1]; } }
+
+		public void AddGameResult (GameResult result) {
+			m_GameResults.Add (result);
+		}
 
 		void Start()
 		{
 			DontDestroyOnLoad(gameObject);
+		}
+
+		void OnEnable()
+		{
+			SceneManager.sceneLoaded += OnSceneLoaded;
+		}
+
+		void OnDisable()
+		{
+			SceneManager.sceneLoaded -= OnSceneLoaded;
+		}
+
+		void OnActiveChange (string newVal) {
+			Debug.LogError("var change to " + newVal );
 		}
 
 		public override void OnStartClient()
@@ -39,6 +80,15 @@ namespace NetworkCompat {
 			{
 				Debug.LogError("LobbyPlayer could not find a NetworkLobbyManager. The LobbyPlayer requires a NetworkLobbyManager object to function. Make sure that there is one in the scene.");
 			}
+		}
+
+		public override void OnStartLocalPlayer() {
+			CmdSetName (ClientSceneManager.Instance.ClientNickName);
+		}
+
+		[Command]
+		public void CmdSetName (string name) {
+			m_Name = name;
 		}
 
 		public void SendReadyToBeginMessage()
@@ -81,13 +131,15 @@ namespace NetworkCompat {
 			}
 		}
 
-		void OnLevelWasLoaded()
+		void OnSceneLoaded(Scene scene, LoadSceneMode mode)
 		{
 			var lobby = NetworkManager.singleton as NetworkLobbyManager;
 			if (lobby)
 			{
 				// dont even try this in the startup scene
-				string loadedSceneName = SceneManager.GetSceneAt(0).name;
+				// Should we check if the LoadSceneMode is Single or Additive??
+				// Can the lobby scene be loaded Additively??
+				string loadedSceneName = scene.name;
 				if (lobby.lobbyScenes.Contains(loadedSceneName))
 				{
 					return;
@@ -124,92 +176,6 @@ namespace NetworkCompat {
 		{
 		}
 
-		// ------------------------ Custom Serialization ------------------------
 
-		public override bool OnSerialize(NetworkWriter writer, bool initialState)
-		{
-			// dirty flag
-			writer.WritePackedUInt32(1);
-
-			writer.Write(m_Slot);
-			writer.Write(m_ReadyToBegin);
-			writer.Write (m_GameLoaded);
-			return true;
-		}
-
-		public override void OnDeserialize(NetworkReader reader, bool initialState)
-		{
-			var dirty = reader.ReadPackedUInt32();
-			if (dirty == 0)
-				return;
-
-			m_Slot = reader.ReadByte();
-			m_ReadyToBegin = reader.ReadBoolean();
-			m_GameLoaded = reader.ReadBoolean ();
-		}
-
-		// ------------------------ optional UI ------------------------
-
-		void OnGUI()
-		{
-			if (!ShowLobbyGUI)
-				return;
-
-			var lobby = NetworkManager.singleton as NetworkLobbyManager;
-			if (lobby)
-			{
-				if (!lobby.showLobbyGUI)
-					return;
-
-				string loadedSceneName = SceneManager.GetSceneAt(0).name;
-				if (!lobby.lobbyScenes.Contains(loadedSceneName))
-					return;
-			}
-
-			Rect rec = new Rect(100 + m_Slot * 100, 200, 90, 20);
-
-			if (isLocalPlayer)
-			{
-				string youStr;
-				if (m_ReadyToBegin)
-				{
-					youStr = "(Ready)";
-				}
-				else
-				{
-					youStr = "(Not Ready)";
-				}
-				GUI.Label(rec, youStr);
-
-				if (m_ReadyToBegin)
-				{
-					rec.y += 25;
-					if (GUI.Button(rec, "STOP"))
-					{
-						SendNotReadyToBeginMessage();
-					}
-				}
-				else
-				{
-					rec.y += 25;
-					if (GUI.Button(rec, "START"))
-					{
-						SendReadyToBeginMessage();
-					}
-
-					rec.y += 25;
-					if (GUI.Button(rec, "Remove"))
-					{
-						ClientScene.RemovePlayer(GetComponent<NetworkIdentity>().playerControllerId);
-					}
-				}
-			}
-			else
-			{
-				GUI.Label(rec, "Player [" + netId + "]");
-				rec.y += 25;
-				GUI.Label(rec, "Ready [" + m_ReadyToBegin + "]");
-			}
-		}
 	}
 }

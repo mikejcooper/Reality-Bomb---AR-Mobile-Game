@@ -87,11 +87,6 @@ public class GameManager : NetworkBehaviour {
 		foreach (var existingCarController in GameObject.FindObjectsOfType<CarController>()) {
 			existingCarController.init ();
 		}
-
-		if (!isServer) {
-			ClientSceneManager.Instance.OnGameLoaded ();
-		}
-			
 	}
 
 	private void ShowExplanationDialog () {

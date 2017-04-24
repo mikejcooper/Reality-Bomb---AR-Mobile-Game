@@ -10,12 +10,26 @@ public class PositionDriver : MonoBehaviour {
 	public TextMeshProUGUI OrdinalText;
 
 	void Start () {
-		if (ClientSceneManager.Instance == null || ClientSceneManager.Instance.GetThisPlayerData () == null) {
-			Debug.LogWarning ("making up our own player data because this client's player data is null");
-			DisplayFinishPosition(new System.Random().Next(10));
-		} else {
-			DisplayFinishPosition (ClientSceneManager.Instance.GetThisPlayerData ().FinishPosition);
+//		if (ClientSceneManager.Instance == null || ClientSceneManager.Instance.GetThisPlayerData () == null) {
+//			Debug.LogWarning ("making up our own player data because this client's player data is null");
+//			DisplayFinishPosition(new System.Random().Next(10));
+//		} else {
+//		DisplayFinishPosition (ClientSceneManager.Instance.GetThisPlayerData ().FinishPosition);
+//		}
+
+		NetworkCompat.NetworkLobbyPlayer thisLobbyPlayer = null;
+		foreach (var lobbyPlayer in GameObject.FindObjectsOfType<NetworkCompat.NetworkLobbyPlayer> ()) {
+			if (lobbyPlayer.isLocalPlayer) {
+				thisLobbyPlayer = lobbyPlayer;
+				break;
+			}
 		}
+
+		if (thisLobbyPlayer == null) {
+			return;
+		}
+
+		DisplayFinishPosition (thisLobbyPlayer.lastGameResult.FinishPosition);
 	}
 	
 	private void DisplayFinishPosition (int position) {
