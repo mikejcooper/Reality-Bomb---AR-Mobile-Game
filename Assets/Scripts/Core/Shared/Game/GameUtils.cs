@@ -120,7 +120,7 @@ public class GameUtils
 		materials [0].color = Color.black; // Spoiler
 		materials [1].color = Color.HSVToRGB(hue/360f, 0.96f, 0.67f); // Side glow
 		materials [2].color = Color.HSVToRGB(hue/360f, 0.96f, 0.67f); // Blades
-		materials [3].color = Color.HSVToRGB (hue / 360f, 1f, 0.38f); // Body
+		materials [3].color = Color.HSVToRGB (hue / 360f, 1f, 1f); // Body
 		materials [4].color = Color.gray; // Blades Inner
 		materials [5].color = Color.black; // Winscreen
 	}
