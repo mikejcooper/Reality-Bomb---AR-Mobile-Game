@@ -25,7 +25,7 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 	public event OnLobbyClientConnected OnLobbyClientConnectedEvent;
 	public event OnLobbyClientDisconnected OnLobbyClientDisconnectedEvent;
 	public event OnLobbyClientReadyToBegin OnLobbyClientReadyToBeginEvent;
-	public event OnLobbyClientGameLoaded OnLobbyAllClientGamesLoadedEvent;
+	public event OnLobbyClientGameLoaded OnLobbyClientGameLoadedEvent;
 	public event OnLobbyClientNameSubmission OnLobbyClientNameSubmissionEvent;
     public event OnMeshClearToDownloadCallback OnMeshClearToDownloadEvent;
 	public event OnUpdatePlayerDataCallback OnUpdatePlayerDataEvent;
@@ -46,25 +46,28 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 		}
 	}
 
-	public override void OnLobbyServerGameLoaded(NetworkConnection conn) {
-        if (_totalNotLoaded == -10)
-        {
-            _totalNotLoaded = NetworkServer.connections.Count - 1; //Minus 1 because this includes the server
-        }
-        _totalNotLoaded--;
-
-        if (_totalNotLoaded == 0)
-        {
-            //Trigger an event to start the countdown on all players
-            if (OnLobbyAllClientGamesLoadedEvent != null)
-                OnLobbyAllClientGamesLoadedEvent(); //Calls OnStateUpdate
-            _totalNotLoaded = -10; //Reset
-        }
-	}
+//	public override void OnLobbyServerGameLoaded(NetworkConnection conn) {
+//        if (_totalNotLoaded == -10)
+//        {
+//            _totalNotLoaded = NetworkServer.connections.Count - 1; //Minus 1 because this includes the server
+//        }
+//        _totalNotLoaded--;
+//
+//        if (_totalNotLoaded == 0)
+//        {
+//            //Trigger an event to start the countdown on all players
+//            if (OnLobbyAllClientGamesLoadedEvent != null)
+//                OnLobbyAllClientGamesLoadedEvent(); //Calls OnStateUpdate
+//            _totalNotLoaded = -10; //Reset
+//        }
+//	}
 
 	public override GameObject OnLobbyServerCreateGamePlayer(NetworkConnection conn, short playerControllerId) {
 		var obj = (GameObject)Instantiate(gamePlayerPrefab, Vector3.zero, Quaternion.identity);
 		obj.GetComponent<CarController> ().ServerId = conn.connectionId;
+		if (OnLobbyClientGameLoadedEvent != null) {
+			OnLobbyClientGameLoadedEvent ();
+		}
 		return obj;
 	}
 
@@ -99,15 +102,15 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 
 	// sent from a client to tell the server the game has loaded
 	public void SetGameLoaded () {
-		// notify server that we're ready
-		foreach (var p in lobbySlots) {
-			if (p != null && p.playerControllerId >= 0) {
-				var msg = new GameLoadedMessage ();
-				msg.slotId = (byte)p.playerControllerId;
-				msg.loadedState = true;
-				client.Send (NetworkConstants.MSG_GAME_LOADED, msg);
-			}
-		}
+//		// notify server that we're ready
+//		foreach (var p in lobbySlots) {
+//			if (p != null && p.playerControllerId >= 0) {
+//				var msg = new GameLoadedMessage ();
+//				msg.slotId = (byte)p.playerControllerId;
+//				msg.loadedState = true;
+//				client.Send (NetworkConstants.MSG_GAME_LOADED, msg);
+//			}
+//		}
 	}
 
 	// sent from server to all clients to tell them to download a mesh
@@ -197,7 +200,7 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
         {
             Debug.Log("OnClientConnect worked");
 			client.RegisterHandler(NetworkConstants.MSG_GET_MESH, OnClientClearToDownloadMesh);
-			client.RegisterHandler(NetworkConstants.MSG_GAME_LOADED, OnClientGameReady);
+//			client.RegisterHandler(NetworkConstants.MSG_GAME_LOADED, OnClientGameReady);
 			client.RegisterHandler(NetworkConstants.MSG_PLAYER_DATA_UPDATE, OnClientPlayerDataUpdate);
 			client.RegisterHandler(NetworkConstants.MSG_PLAYER_DATA_ID, OnClientPlayerID);
 			client.RegisterHandler(NetworkConstants.MSG_START_GAME_COUNTDOWN, OnStartGameCountdown);
@@ -232,7 +235,7 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 	}
 
 	public void OnClientGameReady(NetworkMessage netMsg) {
-		Debug.Log ("OnClientGameReady");
+//		Debug.Log ("OnClientGameReady");
 	}
 
     public void OnClientClearToDownloadMesh(NetworkMessage netMsg) {

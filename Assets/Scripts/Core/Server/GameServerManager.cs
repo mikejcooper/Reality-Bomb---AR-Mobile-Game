@@ -31,7 +31,11 @@ public class GameServerManager : MonoBehaviour {
 
 		SetupUI ();
 		if (ServerSceneManager.Instance != null) {
-			ServerSceneManager.Instance.OnAllPlayersLoadedEvent += OnAllPlayersLoaded;
+			if (ServerSceneManager.Instance.AreAllGamePlayersLoaded ()) {
+				ButtonClickListener ();
+			} else {
+				ServerSceneManager.Instance.OnAllPlayersLoadedEvent += ButtonClickListener;
+			}
 		}
 
 		StartCoroutine (PollForWorldMesh()); 
@@ -39,14 +43,14 @@ public class GameServerManager : MonoBehaviour {
 
 	void OnDestroy () {
 		if (ServerSceneManager.Instance != null) {
-			ServerSceneManager.Instance.OnAllPlayersLoadedEvent -= OnAllPlayersLoaded;
+			ServerSceneManager.Instance.OnAllPlayersLoadedEvent -= ButtonClickListener;
 		}
 	}
 
 	void OnAllPlayersLoaded () {
-		if (_serverStartButton != null) {
-			_serverStartButton.enabled = true;	
-		}
+//		if (_serverStartButton != null) {
+//			_serverStartButton.enabled = true;	
+//		}
 	}
 
 	IEnumerator PollForWorldMesh()
@@ -132,7 +136,7 @@ public class GameServerManager : MonoBehaviour {
 
 		_button.GetComponentInChildren<UnityEngine.UI.Text> ().text = "Start";
 		_serverStartButton = _button.GetComponent<UnityEngine.UI.Button> ();
-		_serverStartButton.enabled = false;
+//		_serverStartButton.enabled = false;
 		_serverStartButton.onClick.AddListener (ButtonClickListener);
 		_button.GetComponent<RectTransform> ().anchoredPosition = Vector2.zero;
 
@@ -147,8 +151,13 @@ public class GameServerManager : MonoBehaviour {
 
 		Destroy(_button);
 		PowerupManager.enabled = true;
+		Invoke ("StartCountdown", 5);
+	}
+
+	private void StartCountdown () {
 		FindObjectOfType<GameManager>().StartCountdown();
 	}
+
 
 }
 	

@@ -38,7 +38,7 @@ public class BuildScripts
 	[MenuItem("Builds/Android")]
 	public static void BuildAndroid ()
 	{
-		BuildAndRun ("Android.app", CLIENT_LEVELS, BuildTarget.Android, GenerateBuildOptions ());
+		BuildAndRun ("Android.app", CLIENT_LEVELS, BuildTarget.Android, GenerateBuildOptions () | BuildOptions.SymlinkLibraries);
 	}
 
 	[MenuItem("Builds/iOS")]

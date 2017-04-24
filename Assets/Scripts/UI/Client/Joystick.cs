@@ -70,8 +70,6 @@ public class Joystick : MonoBehaviour, IDragHandler, IPointerDownHandler, IPoint
 
 		var offset = pos;//new Vector2 (transform.position.x, transform.position.y) - ped.position;
 
-		Debug.Log (pos);
-
 		var maxRadius = GetComponent<RectTransform> ().sizeDelta.x / 2.0f;
 
 		var offsetLength = offset.magnitude;
