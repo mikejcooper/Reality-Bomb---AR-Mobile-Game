@@ -143,7 +143,9 @@ public class ClientSceneManager : MonoBehaviour
 		yield return new WaitForSeconds(delayTime);
 		int newRemaining = (int) Mathf.Round(remainingTime - delayTime);
 		if (newRemaining > 0) {
-			_countdownCoroutine = StartCoroutine(Countdown(newRemaining, delayTime));
+			_countdownCoroutine = StartCoroutine (Countdown (newRemaining, delayTime));
+		} else {
+			OnCountDownTimeUpdateEvent (0);
 		}
 	}
 

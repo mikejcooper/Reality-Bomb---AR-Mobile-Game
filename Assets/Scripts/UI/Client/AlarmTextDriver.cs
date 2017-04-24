@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class AlarmTextDriver : MonoBehaviour {
 
-	public Text text;
+	public Text AlarmText;
+	public Text LoadingText;
 
 	void Start(){
 		if (ClientSceneManager.Instance != null) {
@@ -21,7 +22,8 @@ public class AlarmTextDriver : MonoBehaviour {
 
 	public void OnCountDownTimeUpdate (int remainingTime) {
 		Debug.Log (string.Format ("{0}s remaining until game start", remainingTime));
-		text.text = string.Format ("00:{0}", remainingTime.ToString ("00"));
+		AlarmText.text = string.Format ("00:{0}", remainingTime.ToString ("00"));
+		LoadingText.enabled = remainingTime == 0;
 	}
 		
 }
