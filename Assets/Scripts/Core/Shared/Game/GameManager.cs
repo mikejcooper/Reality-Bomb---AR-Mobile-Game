@@ -268,8 +268,12 @@ public class GameManager : NetworkBehaviour {
 			CarController thisCar = thisObj.GetComponent<CarController>();
 			//Handle powerups on the CarController clients
 			_cars.TriggerPowerup (PowerUpManager.GetPowerupType (otherObj, thisCar.HasBomb), thisCar.ServerId);
-			//Destroy the gameobject we collided with (because it's a powerup)
-			NetworkServer.Destroy (otherObj);
+            
+            //This returns the object to the pool           
+            otherObj.transform.position = new Vector3(100, 0, 0);
+            otherObj.GetComponent<Renderer>().enabled = false;
+            otherObj.GetComponent<Rigidbody>().isKinematic = true;
+            
 		}
 	}
 		

@@ -28,17 +28,58 @@ namespace Powerups {
 		public float _yOffSet = 0.0f; 		// Temp made public 
 
 		private GameMapObjects _meshObj;
-
-		private int _numCurrentPowerups;
+        
 		private bool _testingFlag; // False for Testing spawn frequency, True for actual spawn frequency.
 
 		PowerupDefinition[] _availableAbilities;
+        private GameObject[] _powerups;
+        private const int MaxPowerUps = 5;
 
 		protected virtual void Start () {
 			_availableAbilities = GetAvailablePowerups ();
-			_numCurrentPowerups = 0;
 			_testingFlag = false; // Set to false once testing is complete.
+
+            InitialisePowerupPool(10);
 		}
+
+        private void InitialisePowerupPool(int max)
+        {
+            _powerups = new GameObject[max];
+            for (int i = 0; i < max; i++)
+            {
+                _powerups[i] = Instantiate(PowerupPrefab);
+                _powerups[i].GetComponent<Renderer>().enabled = false;
+                _powerups[i].GetComponent<Rigidbody>().isKinematic = true;
+                _powerups[i].transform.position = new Vector3(100, 0, 0);
+            }
+        }
+
+        
+        private GameObject GetPowerUp()
+        {
+            foreach(GameObject go in _powerups)
+            {
+                if (!go.GetComponent<Renderer>().enabled)
+                {
+                    go.GetComponent<Renderer>().enabled = true;
+                    go.GetComponent<Rigidbody>().isKinematic = false;
+                    return go;
+                }
+            }
+            return null;
+        }
+
+        private int CurrentPowerUps()
+        {
+            int count = 0;
+            foreach (GameObject go in _powerups)
+            {
+                if (go.GetComponent<Renderer>().enabled)
+                    count++;
+            }
+            return count;
+        }
+        
 
 		protected abstract PowerupDefinition[] GetAvailablePowerups ();
 
@@ -77,14 +118,9 @@ namespace Powerups {
 				if (_testingFlag) {
 					rand = Random.Range (0, 1);
 				} else {
-					// Spawn frequency varies and gets lower as more powerups are spawned
-					if (_numCurrentPowerups < 5) { 
-						rand = Random.Range (0, (1 + _numCurrentPowerups));
-					} else { // Dont spawn any more powerups if 5 are already in the scene
-						rand = 1;
-					}
+                    // Spawn frequency varies and gets lower as more powerups are spawned
+					rand = Random.Range (0, (1 + CurrentPowerUps()));
 				}
-
 
 				// If generater produces the predetermined number from the range above, spawn a power up
 				if (rand == 0) { 
@@ -135,19 +171,20 @@ namespace Powerups {
 
 		// Generate a powerup once the decision to spawn one has been made
 		private void GenPowerUp () {
-			GameObject powerUpObj = GameObject.Instantiate(PowerupPrefab);
-			powerUpObj.transform.parent = GameObject.Find("Marker scene").transform;
-			powerUpObj.name = "powerup";//_availableAbilities [abilityTypeIndex].Tag;
+            GameObject powerUpObj = GetPowerUp(); //Will only provide us with a powerup if there is one available
+            if (powerUpObj != null) 
+            {
+                powerUpObj.transform.parent = GameObject.Find("Marker scene").transform;
+                powerUpObj.name = "powerup";
 
-			Vector3 position = GameUtils.FindSpawnLocationInsideConvexHull (_meshObj,0.9f);
-			position.y += (_yOffSet + 10.0f);
-			powerUpObj.transform.position = position;
+                Vector3 position = GameUtils.FindSpawnLocationInsideConvexHull(_meshObj, 0.9f);
+                position.y += (_yOffSet + 10.0f);
+                powerUpObj.transform.position = position;
 
-			powerUpObj.transform.localScale = Vector3.one;
+                powerUpObj.transform.localScale = Vector3.one;
 
-			OnPowerUpGenerated (powerUpObj);
-
-			_numCurrentPowerups += 1;
+                OnPowerUpGenerated(powerUpObj);                
+            }
 		}
 			
 		public string GetPowerupType (GameObject powerupObj, bool hasBomb) {
@@ -164,11 +201,7 @@ namespace Powerups {
 			}
 		}
 
-
-
-		public virtual void OnAbilityStart (string abilityTag) {
-			_numCurrentPowerups -= 1;
-		}
+		public virtual void OnAbilityStart (string abilityTag) {}
 		public virtual void OnAbilityStop (string abilityTag) {}
 
 		protected virtual bool IsAllowedToSpawn () { return false; }
