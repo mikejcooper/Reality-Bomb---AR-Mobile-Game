@@ -42,6 +42,7 @@ public class CarController : NetworkBehaviour
 
 	private Joystick _joystick;
     private UIHealthBar _healthBar;
+    private GameManager _gameManager;
     //    private Image _bombImage;
     // Reference used to move the tank.
     private Rigidbody _rigidbody;
@@ -75,6 +76,7 @@ public class CarController : NetworkBehaviour
 
 		if (!_initialised) {
 			_joystick = GameObject.FindObjectOfType<Joystick> ();
+            _gameManager = GameObject.FindObjectOfType<GameManager>();
 
 			var markerScene = GameObject.Find ("Marker scene");
 			if (markerScene != null) {
@@ -109,16 +111,16 @@ public class CarController : NetworkBehaviour
 				//_preparingGame = true;
 				// register
 				Debug.Log ("GameManager.Instance.AddCar (gameObject);");
-				GameObject.FindObjectOfType<GameManager> ().AddCar (gameObject);
+				_gameManager.AddCar (gameObject);
 			}
 
-			if (GameObject.FindObjectOfType<GameManager> ().WorldMesh != null) {
+			if (_gameManager.WorldMesh != null) {
 				Debug.Log ("available");
-				Reposition (GameObject.FindObjectOfType<GameManager> ().WorldMesh);
+				Reposition (_gameManager.WorldMesh);
 			} else {
 				Debug.Log ("unavailable");
-				GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += Reposition;
-				GameObject.FindObjectOfType<GameManager> ().OnWorldMeshAvailableEvent += SetFallDistance;
+				_gameManager.OnWorldMeshAvailableEvent += Reposition;
+				_gameManager.OnWorldMeshAvailableEvent += SetFallDistance;
 			}
 
 			if (isLocalPlayer) {
@@ -150,10 +152,9 @@ public class CarController : NetworkBehaviour
 	}
 
 	void OnDestroy () {
-		var manager = GameObject.FindObjectOfType<GameManager> ();
-		if (manager != null) {
-			manager.OnWorldMeshAvailableEvent -= Reposition;
-			manager.OnWorldMeshAvailableEvent -= SetFallDistance;
+		if (_gameManager != null) {
+			_gameManager.OnWorldMeshAvailableEvent -= Reposition;
+			_gameManager.OnWorldMeshAvailableEvent -= SetFallDistance;
 		}
 	}
 		
@@ -210,7 +211,7 @@ public class CarController : NetworkBehaviour
 	}
 
 	private void ShowDiedDialog(){
-		GameObject.FindObjectOfType<GameManager> ().ShowDiedDialog ();
+		_gameManager.ShowDiedDialog ();
 	}
 
 	[Server]
@@ -303,7 +304,7 @@ public class CarController : NetworkBehaviour
     }
 
 	public void LocalPowerUp (string tag, int triggeringServerId) {
-		GamePowerUpManager gpm = GameObject.FindObjectOfType<GameManager>().PowerUpManager;
+		GamePowerUpManager gpm = _gameManager.PowerUpManager;
 		AbilityRouter.RouteTag (tag, CarProperties, gameObject, gpm, triggeringServerId == ServerId, isLocalPlayer);
 		if (PowerUpSound != null && triggeringServerId == ServerId) {
 			PowerUpSound.PlayOneShot (PowerUpSound.clip);
@@ -313,7 +314,7 @@ public class CarController : NetworkBehaviour
     void OnCollisionEnter(Collision col)
 	{
 		if (isServer) {
-			GameObject.FindObjectOfType<GameManager> ().CollisionEvent (gameObject, col);
+			_gameManager.CollisionEvent (gameObject, col);
 		}
 		if (col.gameObject.CompareTag("Car")) {
 			// Uncomment the following line to add bouncing between the players in the main game
@@ -324,7 +325,7 @@ public class CarController : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-		GameObject.FindObjectOfType<GameManager>().TriggerEnterEvent(gameObject, other.transform.parent.gameObject);
+		_gameManager.TriggerEnterEvent(gameObject, other.transform.parent.gameObject);
     }
 
     void Bounce(Collision col){
@@ -370,7 +371,7 @@ public class CarController : NetworkBehaviour
 		if(_rigidbody.position.y <= _fallDistanceBeforeRespawn){
 			Debug.Log ("Car Is not on map");
 			Debug.Log ("car position: (" + _rigidbody.position.x + "," + _rigidbody.position.y + "," + _rigidbody.position.z + "), _fallDistanceBeforeRespawn: " + _fallDistanceBeforeRespawn );
-			Reposition (GameObject.FindObjectOfType<GameManager> ().WorldMesh);
+			Reposition (_gameManager.WorldMesh);
 			DisableControlsTime (DisabledControlDurationSeconds);
 		}
 	}
