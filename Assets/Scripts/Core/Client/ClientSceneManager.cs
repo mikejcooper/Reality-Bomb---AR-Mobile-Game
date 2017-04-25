@@ -137,7 +137,7 @@ public class ClientSceneManager : MonoBehaviour
 		ensureCorrectScene ();
 
 		if (Flags.GAME_SERVER_IS_LOCALHOST) {
-			OnServerDiscovered ("localhost");
+			OnServerDiscovered (":ffff::localhost");
 		} else {
 			// begin listening
 			_discoveryClient = transform.gameObject.AddComponent<DiscoveryClient> ();
@@ -188,7 +188,7 @@ public class ClientSceneManager : MonoBehaviour
 
 
 		if (Flags.GAME_SERVER_IS_LOCALHOST) {
-			_networkLobbyManager.networkAddress = "localhost";
+			_networkLobbyManager.networkAddress = Network.player.ipAddress;
 		} else {
 			_networkLobbyManager.networkAddress = ipv4;
 		}
