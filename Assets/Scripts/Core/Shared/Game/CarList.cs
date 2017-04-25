@@ -30,10 +30,15 @@ public class CarList
 	public void ClearAllDisconnectedPlayers(){
 		for(var i = _cars.Count - 1; i > -1; i--)
 		{
-            if (_cars[i].connectionToClient == null)
-            {
-                _cars.RemoveAt(i);
-            }
+			try{
+	            if (_cars[i].connectionToClient == null)
+	            {
+	                _cars.RemoveAt(i);
+	            }
+			} catch(Exception e) {
+				UnityEngine.Debug.Log ("Disconnected car being removed");
+				_cars.RemoveAt(i);
+			}
 		}
 	}
 
