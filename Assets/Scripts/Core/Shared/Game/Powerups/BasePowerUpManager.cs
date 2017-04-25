@@ -32,37 +32,54 @@ namespace Powerups {
 		private bool _testingFlag; // False for Testing spawn frequency, True for actual spawn frequency.
 
 		PowerupDefinition[] _availableAbilities;
-        private GameObject[] _powerups;
+        private GameObject[] _powerUpPool;
+        private NetworkHash128 _assetId;
         private const int MaxPowerUps = 5;
 
-		protected virtual void Start () {
+        public delegate GameObject SpawnDelegate(Vector3 position, NetworkHash128 assetId);
+        public delegate void UnSpawnDelegate(GameObject spawned);
+
+        protected virtual void Start () {
 			_availableAbilities = GetAvailablePowerups ();
 			_testingFlag = false; // Set to false once testing is complete.
 
-            InitialisePowerupPool(10);
+            InitialisePowerupPool(MaxPowerUps);
+            
 		}
+
+        /* ---------- Object Pool Code ---------- */
+
+        public GameObject SpawnPowerUp(Vector3 position, NetworkHash128 assetId)
+        {
+            return GetPowerUp(position);
+        }
+
+        public void UnSpawnPowerUp(GameObject spawned)
+        {
+            spawned.SetActive(false);
+        }
 
         private void InitialisePowerupPool(int max)
         {
-            _powerups = new GameObject[max];
+            _powerUpPool = new GameObject[max];
             for (int i = 0; i < max; i++)
             {
-                _powerups[i] = Instantiate(PowerupPrefab);
-                _powerups[i].GetComponent<Renderer>().enabled = false;
-                _powerups[i].GetComponent<Rigidbody>().isKinematic = true;
-                _powerups[i].transform.position = new Vector3(100, 0, 0);
+                _powerUpPool[i] = Instantiate(PowerupPrefab);
+                _powerUpPool[i].SetActive(false);
             }
-        }
 
-        
-        private GameObject GetPowerUp()
+            _assetId = PowerupPrefab.GetComponent<NetworkIdentity>().assetId;
+            ClientScene.RegisterSpawnHandler(_assetId, SpawnPowerUp, UnSpawnPowerUp);
+        }
+                
+        private GameObject GetPowerUp(Vector3 position)
         {
-            foreach(GameObject go in _powerups)
+            foreach(GameObject go in _powerUpPool)
             {
-                if (!go.GetComponent<Renderer>().enabled)
+                if (!go.activeInHierarchy)
                 {
-                    go.GetComponent<Renderer>().enabled = true;
-                    go.GetComponent<Rigidbody>().isKinematic = false;
+                    go.transform.position = position;
+                    go.SetActive(true);                            
                     return go;
                 }
             }
@@ -72,16 +89,17 @@ namespace Powerups {
         private int CurrentPowerUps()
         {
             int count = 0;
-            foreach (GameObject go in _powerups)
+            foreach (GameObject go in _powerUpPool)
             {
-                if (go.GetComponent<Renderer>().enabled)
+                if (go.activeInHierarchy)
                     count++;
             }
             return count;
         }
-        
 
-		protected abstract PowerupDefinition[] GetAvailablePowerups ();
+        /* ---------- End Of Object Pool Code ---------- */
+
+        protected abstract PowerupDefinition[] GetAvailablePowerups ();
 
 		public BaseAbilityProperties GetAbilityProperties(Type abilityType) {
 			foreach (PowerupDefinition def in GetAvailablePowerups()) {
@@ -171,20 +189,22 @@ namespace Powerups {
 
 		// Generate a powerup once the decision to spawn one has been made
 		private void GenPowerUp () {
-            GameObject powerUpObj = GetPowerUp(); //Will only provide us with a powerup if there is one available
-            if (powerUpObj != null) 
+            Vector3 position = GameUtils.FindSpawnLocationInsideConvexHull(_meshObj, 0.9f);
+            position.y += (_yOffSet + 10.0f);
+
+            GameObject powerUpObj = GetPowerUp(position); //Will only provide us with a powerup if there is one available
+            if (powerUpObj != null)
             {
                 powerUpObj.transform.parent = GameObject.Find("Marker scene").transform;
                 powerUpObj.name = "powerup";
-
-                Vector3 position = GameUtils.FindSpawnLocationInsideConvexHull(_meshObj, 0.9f);
-                position.y += (_yOffSet + 10.0f);
-                powerUpObj.transform.position = position;
-
                 powerUpObj.transform.localScale = Vector3.one;
 
-                OnPowerUpGenerated(powerUpObj);                
-            }
+                if (NetworkServer.active)
+                    NetworkServer.Spawn(powerUpObj, _assetId);
+                
+                OnPowerUpGenerated(powerUpObj);
+            }               
+            
 		}
 			
 		public string GetPowerupType (GameObject powerupObj, bool hasBomb) {

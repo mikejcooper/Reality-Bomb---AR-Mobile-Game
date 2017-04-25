@@ -89,11 +89,8 @@ public class OfflineCarController : MonoBehaviour
 	private void OnPowerupCollision (GameObject obj) {
 		string type = _spm.GetPowerupType (obj, false);
 		AbilityRouter.RouteTag (type, CarProperties, gameObject, _spm, true, true);
-        //obj.SetActive(false);
-        obj.transform.position = new Vector3(100,0,0);
-        obj.GetComponent<Renderer>().enabled = false;
-        obj.GetComponent<Rigidbody>().isKinematic = true;
 
+        _spm.UnSpawnPowerUp(obj);
     }
 
     private void OnTriggerEnter(Collider other)
