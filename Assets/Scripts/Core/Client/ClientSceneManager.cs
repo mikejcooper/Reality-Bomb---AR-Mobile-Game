@@ -51,22 +51,12 @@ public class ClientSceneManager : MonoBehaviour
 		}
 	}
 
-	void Start ()
-	{
-		DontDestroyOnLoad (gameObject);
-		var ugly = UnityThreadHelper.Dispatcher;
-
-		_discoveryClient = transform.gameObject.AddComponent<DiscoveryClient> ();
-		_networkLobbyManager = transform.gameObject.AddComponent<GameLobbyManager> ();
-		_meshTransferManager = new MeshTransferManager();
-
+	void ConfigNetLobby() {
 		_networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Info;
 		_networkLobbyManager.showLobbyGUI = false;
 
 		_networkLobbyManager.maxPlayers = 16;
 		_networkLobbyManager.lobbySlots = new NetworkLobbyPlayer[_networkLobbyManager.maxPlayers];
-
-		_defaultSleepTimeout = Screen.sleepTimeout;
 
 		List<string> lobbyScenes = new List<string> ();
 		lobbyScenes.Add ("Idle");
@@ -77,6 +67,30 @@ public class ClientSceneManager : MonoBehaviour
 
 		_networkLobbyManager.lobbyPlayerPrefab = LobbyPlayerPrefab;
 		_networkLobbyManager.gamePlayerPrefab = GamePlayerPrefab;
+
+		_networkLobbyManager.customConfig = true;
+		var config = _networkLobbyManager.connectionConfig;
+		config.NetworkDropThreshold = 80;
+		config.ConnectTimeout = 10000;
+		config.DisconnectTimeout = 20000;
+		_networkLobbyManager.channels.Clear ();
+		_networkLobbyManager.channels.Add(UnityEngine.Networking.QosType.ReliableFragmented);
+		_networkLobbyManager.channels.Add(UnityEngine.Networking.QosType.ReliableFragmented);
+	}
+
+	void Start ()
+	{
+		DontDestroyOnLoad (gameObject);
+		var ugly = UnityThreadHelper.Dispatcher;
+
+		_networkLobbyManager = transform.gameObject.AddComponent<GameLobbyManager> ();
+		_meshTransferManager = new MeshTransferManager();
+
+		ConfigNetLobby ();
+
+		_defaultSleepTimeout = Screen.sleepTimeout;
+
+
 
 		// register listeners for when players connect / disconnect
 		_networkLobbyManager.OnLobbyClientConnectedEvent += OnUserConnectedToGame;
@@ -89,7 +103,6 @@ public class ClientSceneManager : MonoBehaviour
         //Listener for when the we have finished downloading the mesh
 		_meshTransferManager.OnMeshDataReceivedEvent += OnMeshDataReceived;
 
-		_discoveryClient.serverDiscoveryEvent += OnServerDiscovered;
 
 		SceneManager.sceneLoaded += OnSceneLoaded;
 
@@ -127,6 +140,8 @@ public class ClientSceneManager : MonoBehaviour
 			OnServerDiscovered ("localhost");
 		} else {
 			// begin listening
+			_discoveryClient = transform.gameObject.AddComponent<DiscoveryClient> ();
+			_discoveryClient.serverDiscoveryEvent += OnServerDiscovered;
 			_discoveryClient.ListenForServers ();
 		}
 
@@ -161,8 +176,10 @@ public class ClientSceneManager : MonoBehaviour
 		ensureCorrectScene ();
 
 		// stop listening for broadcasts
-		if (_discoveryClient != null && !Flags.GAME_SERVER_IS_LOCALHOST) {
+		if (_discoveryClient != null && _discoveryClient.running && !Flags.GAME_SERVER_IS_LOCALHOST) {
+			_discoveryClient.serverDiscoveryEvent -= OnServerDiscovered;
         	_discoveryClient.StopBroadcast();
+			Destroy (_discoveryClient);
         }
 
 		var ipv4 = address.Substring (address.LastIndexOf (":")+1, address.Length - (address.LastIndexOf (":") + 1));
@@ -178,13 +195,7 @@ public class ClientSceneManager : MonoBehaviour
 
 		Debug.Log(string.Format("found server at {0}", _networkLobbyManager.networkAddress));
 	
-		_networkLobbyManager.customConfig = true;
-		var config = _networkLobbyManager.connectionConfig;
-		config.NetworkDropThreshold = 80;
-		config.ConnectTimeout = 5000;
-		config.DisconnectTimeout = 5000;
-		_networkLobbyManager.channels.Add(UnityEngine.Networking.QosType.AllCostDelivery);
-		_networkLobbyManager.channels.Add(UnityEngine.Networking.QosType.ReliableFragmented);
+		ConfigNetLobby ();
 
 		_networkLobbyManager.networkPort = NetworkConstants.GAME_PORT;
 		_networkLobbyManager.StartClient ();
@@ -227,7 +238,12 @@ public class ClientSceneManager : MonoBehaviour
 		_innerProcess.MoveNext (Command.LeaveGame);
 
 		_networkLobbyManager.StopClient ();
-		_discoveryClient.StopBroadcast ();
+
+		if (_discoveryClient != null) {
+			_discoveryClient.serverDiscoveryEvent -= OnServerDiscovered;
+			_discoveryClient.StopBroadcast();
+			Destroy (_discoveryClient);
+		}
 
 
 		ensureCorrectScene ();
