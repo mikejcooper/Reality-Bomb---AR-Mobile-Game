@@ -112,7 +112,9 @@ public class ServerSceneManager : MonoBehaviour
 		_networkLobbyManager.customConfig = true;
 		var config = _networkLobbyManager.connectionConfig;
 		config.NetworkDropThreshold = 80;
-		_networkLobbyManager.channels.Add(UnityEngine.Networking.QosType.ReliableFragmented);
+		config.ConnectTimeout = 5000;
+		config.DisconnectTimeout = 5000;
+		_networkLobbyManager.channels.Add(UnityEngine.Networking.QosType.AllCostDelivery);
 		_networkLobbyManager.channels.Add(UnityEngine.Networking.QosType.ReliableFragmented);
 
 		_networkLobbyManager.StartServer ();
