@@ -178,6 +178,12 @@ public class ClientSceneManager : MonoBehaviour
 
 		Debug.Log(string.Format("found server at {0}", _networkLobbyManager.networkAddress));
 	
+		_networkLobbyManager.customConfig = true;
+		var config = _networkLobbyManager.connectionConfig;
+		config.NetworkDropThreshold = 80;
+		_networkLobbyManager.channels.Add(UnityEngine.Networking.QosType.ReliableFragmented);
+		_networkLobbyManager.channels.Add(UnityEngine.Networking.QosType.ReliableFragmented);
+
 		_networkLobbyManager.networkPort = NetworkConstants.GAME_PORT;
 		_networkLobbyManager.StartClient ();
 

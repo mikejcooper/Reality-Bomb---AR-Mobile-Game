@@ -99,6 +99,21 @@ public class ServerSceneManager : MonoBehaviour
 
 		_networkLobbyManager.networkPort = NetworkConstants.GAME_PORT;
 
+		_networkLobbyManager.serverBindToIP = true;
+		_networkLobbyManager.serverBindAddress = Network.player.ipAddress;
+
+//		UnityEngine.Networking.NetworkServer.Configure()
+//		UnityEngine.Networking.GlobalConfig config = _networkLobbyManager.globalConfig;
+//		config.
+
+		Debug.Log (string.Format ("bound to {0}", _networkLobbyManager.serverBindAddress));
+
+
+		_networkLobbyManager.customConfig = true;
+		var config = _networkLobbyManager.connectionConfig;
+		config.NetworkDropThreshold = 80;
+		_networkLobbyManager.channels.Add(UnityEngine.Networking.QosType.ReliableFragmented);
+		_networkLobbyManager.channels.Add(UnityEngine.Networking.QosType.ReliableFragmented);
 
 		_networkLobbyManager.StartServer ();
 
