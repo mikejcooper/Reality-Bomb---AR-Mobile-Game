@@ -90,7 +90,7 @@ public class OfflineCarController : MonoBehaviour
 		string type = _spm.GetPowerupType (obj, false);
 		AbilityRouter.RouteTag (type, CarProperties, gameObject, _spm, true, true);
 
-        _spm.UnSpawnPowerUp(obj);
+        _spm.PowerUpPool.UnSpawnObject(obj);
     }
 
     private void OnTriggerEnter(Collider other)

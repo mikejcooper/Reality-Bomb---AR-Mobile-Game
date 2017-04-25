@@ -32,72 +32,15 @@ namespace Powerups {
 		private bool _testingFlag; // False for Testing spawn frequency, True for actual spawn frequency.
 
 		PowerupDefinition[] _availableAbilities;
-        private GameObject[] _powerUpPool;
-        private NetworkHash128 _assetId;
-        private const int MaxPowerUps = 5;
 
-        public delegate GameObject SpawnDelegate(Vector3 position, NetworkHash128 assetId);
-        public delegate void UnSpawnDelegate(GameObject spawned);
+        public SpawnPool PowerUpPool { get; private set; }
 
         protected virtual void Start () {
 			_availableAbilities = GetAvailablePowerups ();
 			_testingFlag = false; // Set to false once testing is complete.
 
-            InitialisePowerupPool(MaxPowerUps);
-            
+            PowerUpPool = new SpawnPool(PowerupPrefab, 5);            
 		}
-
-        /* ---------- Object Pool Code ---------- */
-
-        public GameObject SpawnPowerUp(Vector3 position, NetworkHash128 assetId)
-        {
-            return GetPowerUp(position);
-        }
-
-        public void UnSpawnPowerUp(GameObject spawned)
-        {
-            spawned.SetActive(false);
-        }
-
-        private void InitialisePowerupPool(int max)
-        {
-            _powerUpPool = new GameObject[max];
-            for (int i = 0; i < max; i++)
-            {
-                _powerUpPool[i] = Instantiate(PowerupPrefab);
-                _powerUpPool[i].SetActive(false);
-            }
-
-            _assetId = PowerupPrefab.GetComponent<NetworkIdentity>().assetId;
-            ClientScene.RegisterSpawnHandler(_assetId, SpawnPowerUp, UnSpawnPowerUp);
-        }
-                
-        private GameObject GetPowerUp(Vector3 position)
-        {
-            foreach(GameObject go in _powerUpPool)
-            {
-                if (!go.activeInHierarchy)
-                {
-                    go.transform.position = position;
-                    go.SetActive(true);                            
-                    return go;
-                }
-            }
-            return null;
-        }
-
-        private int CurrentPowerUps()
-        {
-            int count = 0;
-            foreach (GameObject go in _powerUpPool)
-            {
-                if (go.activeInHierarchy)
-                    count++;
-            }
-            return count;
-        }
-
-        /* ---------- End Of Object Pool Code ---------- */
 
         protected abstract PowerupDefinition[] GetAvailablePowerups ();
 
@@ -137,7 +80,7 @@ namespace Powerups {
 					rand = Random.Range (0, 1);
 				} else {
                     // Spawn frequency varies and gets lower as more powerups are spawned
-					rand = Random.Range (0, (1 + CurrentPowerUps()));
+					rand = Random.Range (0, (1 + PowerUpPool.CurrentNumber()));
 				}
 
 				// If generater produces the predetermined number from the range above, spawn a power up
@@ -192,7 +135,7 @@ namespace Powerups {
             Vector3 position = GameUtils.FindSpawnLocationInsideConvexHull(_meshObj, 0.9f);
             position.y += (_yOffSet + 10.0f);
 
-            GameObject powerUpObj = GetPowerUp(position); //Will only provide us with a powerup if there is one available
+            GameObject powerUpObj = PowerUpPool.GetObject(position); //Will only provide us with a powerup if there is one available
             if (powerUpObj != null)
             {
                 powerUpObj.transform.parent = GameObject.Find("Marker scene").transform;
@@ -200,7 +143,7 @@ namespace Powerups {
                 powerUpObj.transform.localScale = Vector3.one;
 
                 if (NetworkServer.active)
-                    NetworkServer.Spawn(powerUpObj, _assetId);
+                    NetworkServer.Spawn(powerUpObj, PowerUpPool.AssetId);
                 
                 OnPowerUpGenerated(powerUpObj);
             }               

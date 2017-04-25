@@ -270,7 +270,7 @@ public class GameManager : NetworkBehaviour {
 			_cars.TriggerPowerup (PowerUpManager.GetPowerupType (otherObj, thisCar.HasBomb), thisCar.ServerId);
 
             //This returns the object to the pool           
-            PowerUpManager.UnSpawnPowerUp(otherObj);
+            PowerUpManager.PowerUpPool.UnSpawnObject(otherObj);
             NetworkServer.UnSpawn(otherObj);       
 		}
 	}
