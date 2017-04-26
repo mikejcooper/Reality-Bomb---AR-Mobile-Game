@@ -11,12 +11,12 @@ namespace Powerups {
 	public class PowerupDefinition {
 		public Type Ability;
 		public String Tag;
-		public BaseAbilityProperties Properties;
+        public BaseAbilitySetup Setup;
 
-		public PowerupDefinition (Type ability, string tag, BaseAbilityProperties properties) {
+		public PowerupDefinition (Type ability, string tag, BaseAbilitySetup setup) {
 			Ability = ability;
 			Tag = tag;
-			Properties = properties;
+            Setup = setup;
 		}
 	}
 
@@ -45,21 +45,33 @@ namespace Powerups {
         protected abstract PowerupDefinition[] GetAvailablePowerups ();
 
 		public BaseAbilityProperties GetAbilityProperties(Type abilityType) {
-			foreach (PowerupDefinition def in GetAvailablePowerups()) {
+			foreach (PowerupDefinition def in _availableAbilities) {
 				if (def.Ability == abilityType) {
-					return def.Properties;
+					return def.Setup.AbilityProperties;
 				}
 			}
 			throw new KeyNotFoundException (string.Format("This powerup manager has no definition for an ability of type {0}", abilityType));
 		}
 
-		private void ValidateAbilities () {
+        public BaseAbilitySetup GetAbilitySetup(Type abilityType)
+        {
+            foreach (PowerupDefinition def in _availableAbilities)
+            {
+                if (def.Ability == abilityType)
+                {
+                    return def.Setup;
+                }
+            }
+            throw new KeyNotFoundException(string.Format("This powerup manager has no definition for an ability of type {0}", abilityType));
+        }
+
+        private void ValidateAbilities () {
 			foreach (PowerupDefinition def in _availableAbilities) {
-				if (def.Properties.CanvasSplash == null) {
+				if (def.Setup.AbilityProperties.CanvasSplash == null) {
 					Debug.LogError ("CanvasSplash is undefined for some powerups");
 				}
 
-				if (def.Properties.Duration <= 0) {
+				if (def.Setup.AbilityProperties.Duration <= 0) {
 					Debug.LogError ("Duration is invalid for some powerups");
 				}
 
@@ -152,7 +164,7 @@ namespace Powerups {
 			
 		public string GetPowerupType (GameObject powerupObj, bool hasBomb) {
 			while (true) {
-				var abilityTypeIndex = Random.Range (0, _availableAbilities.Length);
+                var abilityTypeIndex = 1 Random.Range (0, _availableAbilities.Length);
 				string tag = _availableAbilities [abilityTypeIndex].Tag;
 				if (hasBomb && tag.Equals (ShieldAbility.TAG)) {
 					// if the player has the bomb, we don't want them to get a shield

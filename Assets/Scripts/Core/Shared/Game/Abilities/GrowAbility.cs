@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,7 +9,16 @@ namespace Abilities {
 	[System.Serializable]
 	public class GrowAbilityProperties : BaseAbilityProperties {}
 
-	public class GrowAbility : BaseAbility<GrowAbilityProperties> {
+    public class GrowAbilitySetup : BaseAbilitySetup
+    {
+        public GrowAbilitySetup(Canvas canvas, GrowAbilityProperties properties) : base(properties)
+        {
+
+        }
+    }
+
+
+    public class GrowAbility : BaseAbility<GrowAbilitySetup> {
 
 		public const string TAG = "growability";
 

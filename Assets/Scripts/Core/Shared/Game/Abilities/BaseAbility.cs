@@ -13,12 +13,23 @@ namespace Abilities {
 		public int Duration;
 	}
 
+    //Used for any object initialisation (pooling)
+    public abstract class BaseAbilitySetup
+    {
+        public BaseAbilityProperties AbilityProperties;
+        //Creates all objects in advance
+        public BaseAbilitySetup(BaseAbilityProperties baseProps)
+        {
+            AbilityProperties = baseProps;
+        }
+    }
+
 	public interface AbilityCallbacks {
 		void OnAbilityStart(string abilityTag);
 		void OnAbilityStop(string abilityTag);
 	}
 
-	public abstract class BaseAbility<T> : MonoBehaviour where T:BaseAbilityProperties {
+	public abstract class BaseAbility<T> : MonoBehaviour where T:BaseAbilitySetup {
 
 		private CarProperties _ownCarProperties;
 		private Canvas _playerCanvas;
@@ -26,13 +37,13 @@ namespace Abilities {
 		private bool _didTriggerPowerup;
 		private bool _isLocalAuthority;
 		private AbilityCallbacks _callbacks;
+        
+        protected T _abilitySetup;
 
-		protected T _abilityProperties;
-
-		public void initialise(CarProperties carProp, T abilityProp, Canvas canvas, bool didTriggerPowerup, bool isLocalAuthority, AbilityCallbacks callbacks) {
+		public void initialise(CarProperties carProp, T abilitySetup, Canvas canvas, bool didTriggerPowerup, bool isLocalAuthority, AbilityCallbacks callbacks) {
 			Debug.Log ("initialising ability");
             _ownCarProperties = carProp;
-            _abilityProperties = abilityProp;
+            _abilitySetup = abilitySetup;
             _playerCanvas = canvas;
 			_didTriggerPowerup = didTriggerPowerup;
 			_isLocalAuthority = isLocalAuthority;
@@ -43,7 +54,7 @@ namespace Abilities {
 		// before any of the update methods is called the first time.
 		void Start () {
 			StartAbility ();
-			Invoke ("StopAbility", _abilityProperties.Duration);
+			Invoke ("StopAbility", _abilitySetup.AbilityProperties.Duration);
 		}
 
 		public void StartAbility () {
@@ -69,9 +80,9 @@ namespace Abilities {
 		}
 
 		private void DisplaySplash () {
-			if (_abilityProperties.CanvasSplash != null) {
+			if (_abilitySetup.AbilityProperties.CanvasSplash != null) {
 				
-				_splashObject = GameObject.Instantiate (_abilityProperties.CanvasSplash);
+				_splashObject = GameObject.Instantiate (_abilitySetup.AbilityProperties.CanvasSplash);
 				_splashObject.transform.SetParent(_playerCanvas.transform, false);
 				_splashObject.transform.localScale = Vector3.one;
 //				_splashObject.transform.localPosition = Vector3.zero;
@@ -113,7 +124,7 @@ namespace Abilities {
 			} while ( animation.isPlaying );
 		}
 
-		public abstract string GetTag ();
+        public abstract string GetTag ();
 
 		// these are called individually for every car in the scene
 		protected virtual void OnApplyCarEffect (CarProperties properties, bool triggeredPowerup) {}

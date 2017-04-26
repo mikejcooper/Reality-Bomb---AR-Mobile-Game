@@ -9,30 +9,59 @@ namespace Abilities {
 	public class InkAbilityProperties : BaseAbilityProperties {
 		public Texture SplatterTexture;
 	}
-    
-	public class InkAbility : BaseAbility<InkAbilityProperties> {
+
+    public class InkAbilitySetup : BaseAbilitySetup
+    {
+        public GameObject _splatterObject;
+
+        public InkAbilitySetup(Canvas canvas, InkAbilityProperties properties) : base(properties)
+        {
+            _splatterObject = new GameObject("Splatter");
+            _splatterObject.transform.SetParent(canvas.transform, false);
+
+            _splatterObject.transform.position = Vector3.zero;
+            _splatterObject.transform.SetSiblingIndex(0);
+            _splatterObject.transform.localPosition = Vector3.zero;
+
+            for (int i = 0; i < 5; i++)
+            {
+                GameObject splat = new GameObject("Ink");
+                RawImage splatterImage = splat.AddComponent<RawImage>();
+                splatterImage.texture = ((InkAbilityProperties)AbilityProperties).SplatterTexture;
+                splat.transform.SetParent(_splatterObject.transform, false);
+                splat.SetActive(false);
+            }
+        }
+    }
+
+    public class InkAbility : BaseAbility<InkAbilitySetup> {
 
 		public const string TAG = "inkability";
-
-		private GameObject _splatterObject;
+        
         
 		override protected void OnApplyCanvasEffect (Canvas canvas, bool triggeredPowerup) {
-			if (!triggeredPowerup) {
-                _splatterObject = new GameObject("Splatter");
-                _splatterObject.transform.SetParent(canvas.transform, false);
+            if (!triggeredPowerup)
+            {
+                Vector3[] positions = InkAbility.GenerateSplatters(canvas, 5);
+                int index = 0;
+                foreach (Transform child in _abilitySetup._splatterObject.transform)
+                {
+                    StartCoroutine(InkVisible(child.gameObject));
+                    child.localPosition = positions[index];
+                    child.Rotate(0, 0, Random.Range(0.0f, 360.0f));
 
-                _splatterObject.transform.position = Vector3.zero;
-                _splatterObject.transform.SetSiblingIndex(0);
-                _splatterObject.transform.localPosition = Vector3.zero;
 
-				foreach (Vector3 position in GenerateSplatters(canvas, 5)) {
-					StartCoroutine(CreateInk(position));
-				}
+                    float size = Random.Range(2.0f, 3.5f);
+                    RawImage splatterImage = child.GetComponent<RawImage>();
+                    splatterImage.GetComponent<RectTransform>().localScale = size * Vector3.one;
+                    splatterImage.CrossFadeAlpha(0.0f, 0.0f, true);
 
+                    index++;
+                }
 
                 Invoke("FadeOut", 2);
             }
-		}
+        }
 
 		public static Vector3[] GenerateSplatters(Canvas canvas, int n)
         {
@@ -54,24 +83,18 @@ namespace Abilities {
 			return randPositions;
         }
 
-        IEnumerator CreateInk(Vector3 pos)
+        
+        IEnumerator InkVisible(GameObject obj)
         {
             yield return new WaitForSeconds(Random.Range(0.0f, 1.0f));
-
-            GameObject splat = new GameObject("Ink");
-            splat.transform.SetParent(_splatterObject.transform, false);
-            splat.transform.localPosition = pos;
-            splat.transform.Rotate(0, 0, Random.Range(0.0f, 360.0f));
-
-            RawImage splatterImage = splat.AddComponent<RawImage>();
-            float size = Random.Range(2.0f, 3.5f);
-            splatterImage.GetComponent<RectTransform>().localScale = size * Vector3.one;
-            splatterImage.texture = _abilityProperties.SplatterTexture;
+            obj.GetComponent<RawImage>().CrossFadeAlpha(1.0f, 0.0f, true);
+            obj.SetActive(true);
         }
+        
 
         private void FadeOut()
         {
-            RawImage[] splatterImages = _splatterObject.GetComponentsInChildren<RawImage>();
+            RawImage[] splatterImages = _abilitySetup._splatterObject.GetComponentsInChildren<RawImage>();
             // The following lines fade out the splatter effect over time
             foreach (var splat in splatterImages)
             {
@@ -81,10 +104,15 @@ namespace Abilities {
         }
 
         override protected void OnRemoveCanvasEffect (Canvas canvas, bool triggeredPowerup) {
-			if (!triggeredPowerup) {
-				Destroy (_splatterObject);
-			}
-		}
+            if (!triggeredPowerup)
+            {
+                foreach (Transform child in _abilitySetup._splatterObject.transform)
+                {
+                    if (child.gameObject.GetComponent<CanvasRenderer>().GetAlpha() == 0.0f)
+                        child.gameObject.SetActive(false);
+                }
+            }
+        }
 
 		protected override void OnApplyCarEffect (CarProperties properties, bool triggeredPowerup) {
 			if (!triggeredPowerup) {

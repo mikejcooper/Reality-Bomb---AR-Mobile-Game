@@ -47,13 +47,20 @@ namespace Powerups {
 		}
 
 		protected override PowerupDefinition[] GetAvailablePowerups () {
-			return new PowerupDefinition[] {
-				new PowerupDefinition (typeof(SpeedAbility), SpeedAbility.TAG, SpeedProperties),
-				new PowerupDefinition (typeof(SandboxInkAbility), SandboxInkAbility.TAG, SandboxInkProperties),
-				new PowerupDefinition (typeof(ShieldAbility), ShieldAbility.TAG, ShieldProperties),
-				new PowerupDefinition (typeof(GrowAbility), GrowAbility.TAG, GrowProperties),
-				new PowerupDefinition (typeof(ShrinkAbility), ShrinkAbility.TAG, ShrinkProperties)
-			};
+
+            SandboxInkAbilitySetup sandboxInkSetup = new SandboxInkAbilitySetup(PlayerCanvas, SandboxInkProperties);
+            SpeedAbilitySetup speedSetup = new SpeedAbilitySetup(PlayerCanvas, SpeedProperties);
+            ShieldAbilitySetup shieldSetup = new ShieldAbilitySetup(PlayerCanvas, ShieldProperties);
+            GrowAbilitySetup growSetup = new GrowAbilitySetup(PlayerCanvas, GrowProperties);
+            ShrinkAbilitySetup shrinkSetup = new ShrinkAbilitySetup(PlayerCanvas, ShrinkProperties);
+
+            return new PowerupDefinition[] {
+                new PowerupDefinition (typeof(SpeedAbility), SpeedAbility.TAG, speedSetup),
+                new PowerupDefinition (typeof(SandboxInkAbility), SandboxInkAbility.TAG, sandboxInkSetup),
+                new PowerupDefinition (typeof(ShieldAbility), ShieldAbility.TAG, shieldSetup),
+                new PowerupDefinition (typeof(GrowAbility), GrowAbility.TAG, growSetup),
+                new PowerupDefinition (typeof(ShrinkAbility), ShrinkAbility.TAG, shrinkSetup)
+            };
 		}
 
 		public override void OnAbilityStart (string abilityTag) {
@@ -96,8 +103,5 @@ namespace Powerups {
 			_projectionAreaObj.GetComponent<ProjectObject> ().SetHeight (5.0f);
 			_projectionAreaObj.GetComponent<ProjectObject> ().SetSpeed (0.5f);
 		}
-
-
 	}
-
 }
