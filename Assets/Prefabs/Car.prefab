@@ -204,10 +204,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsPlayingSolo: 0
   CarProperties: {fileID: 114643793274007896}
-  TurnSpeed: 180
   MaxLifetime: 50
   HasBomb: 0
   Alive: 1
+  BombSpeedBoostFactor: 1.2
   DisabledControlDurationSeconds: 2
   ExplosionAnimation: {fileID: 1901629115959148, guid: 68ea650ef099f41a3a35693e4cfdd70a,
     type: 2}

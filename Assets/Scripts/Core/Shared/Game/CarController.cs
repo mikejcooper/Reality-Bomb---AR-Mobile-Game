@@ -16,10 +16,10 @@ public class CarController : NetworkBehaviour
 	public CarProperties CarProperties;
 
 	// How fast the tank turns in degrees per second.
-	public float TurnSpeed = 180f;
 	public float MaxLifetime = 60.0f;
 	public bool HasBomb = false;
 	public bool Alive = true;
+	public float BombSpeedBoostFactor = 1.1f;
 	public int DisabledControlDurationSeconds = 2;
 	// This is a server-only field that doesn't get updated on clients. I'll move this
 	// at some point to a better place.
@@ -38,7 +38,7 @@ public class CarController : NetworkBehaviour
 	[SyncVar]
 	public float Lifetime;
 
-	private const float BOMB_SPEED_BOOST_FACTOR = 1.1f;
+
 
 	private Joystick _joystick;
     private UIHealthBar _healthBar;
@@ -179,9 +179,9 @@ public class CarController : NetworkBehaviour
 			if (BombAlertSound != null) {
 				BombAlertSound.PlayOneShot (BombAlertSound.clip);
 			}
-			CarProperties.SpeedLimit *= BOMB_SPEED_BOOST_FACTOR;
+			CarProperties.SpeedLimit *= BombSpeedBoostFactor;
 		} else {
-			CarProperties.SpeedLimit /= BOMB_SPEED_BOOST_FACTOR;
+			CarProperties.SpeedLimit /= BombSpeedBoostFactor;
 		}
 		#if UNITY_ANDROID || UNITY_IPHONE
 		// vibrate on exchange
