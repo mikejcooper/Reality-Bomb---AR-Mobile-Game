@@ -23,7 +23,9 @@ namespace ClientNetworking
 
 		public override void OnReceivedBroadcast(string fromAddress, string data)
 		{
-			serverDiscoveryEvent (fromAddress);
+			if (serverDiscoveryEvent != null) {
+				serverDiscoveryEvent (fromAddress);
+			}
 		}
 	}
 

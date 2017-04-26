@@ -12,7 +12,7 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 	public delegate void OnLobbyClientConnected ();
 	public delegate void OnLobbyClientDisconnected ();
 	public delegate void OnLobbyClientReadyToBegin ();
-	public delegate void OnLobbyClientGameLoaded ();
+	public delegate void OnLobbyClientGameLoaded (NetworkConnection conn);
 	public delegate void OnLobbyClientNameSubmission (int connId, string name);
     public delegate void OnMeshClearToDownloadCallback(string address, int port);
 	public delegate void OnStartGameCountdownCallback (int delay);
@@ -49,7 +49,7 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 		carProperties.OriginalHue = thisLobbyPlayer.colour;
 
 		if (OnLobbyClientGameLoadedEvent != null) {
-			OnLobbyClientGameLoadedEvent ();
+			OnLobbyClientGameLoadedEvent (conn);
 		}
 		return obj;
 	}

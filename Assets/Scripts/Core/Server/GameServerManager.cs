@@ -124,6 +124,8 @@ public class GameServerManager : MonoBehaviour {
 	}
 
 	void AllPlayersLoadedListener () {
+		// this can be called multiple times, so remove listener
+		ServerSceneManager.Instance.OnAllPlayersLoadedEvent -= AllPlayersLoadedListener;
 		PowerupManager.enabled = true;
 		Invoke ("StartCountdown", 5);
 	}
