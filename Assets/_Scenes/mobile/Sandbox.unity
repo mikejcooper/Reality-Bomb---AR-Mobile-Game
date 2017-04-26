@@ -136,7 +136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e02d1ce5da0c446acaea956b6ae07690, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  secondsToRemainVisible: 5
+  secondsToRemainVisible: 1
   eventReceiver: {fileID: 832770416}
   _markerTag: root
 --- !u!1 &257426188
@@ -2203,7 +2203,7 @@ Prefab:
   m_IsPrefabParent: 0
 --- !u!4 &1998425710 stripped
 Transform:
-  m_PrefabParentObject: {fileID: 400002, guid: 7592da4f63cb5462ba456c0744495cce, type: 3}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 1998425709}
 --- !u!1 &2077795086
 GameObject:

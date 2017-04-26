@@ -369,7 +369,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e02d1ce5da0c446acaea956b6ae07690, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  secondsToRemainVisible: 5
+  secondsToRemainVisible: 1
   eventReceiver: {fileID: 1932886152}
   _markerTag: marker0
 --- !u!1 &194278527 stripped
@@ -628,8 +628,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4ed3580c8eef3e4c9129485467ee8f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ExplosionPrefab: {fileID: 1393482603391468, guid: 47cb602cd48b02b41b81a59cd7e6978b,
-    type: 2}
+  _expl_prefab: {fileID: 0}
 --- !u!1001 &558093896
 Prefab:
   m_ObjectHideFlags: 0
@@ -4089,11 +4088,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 1
   m_subTextObjects:
