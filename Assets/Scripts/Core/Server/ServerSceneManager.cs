@@ -244,6 +244,12 @@ public class ServerSceneManager : MonoBehaviour
 			OnPlayerDisconnectEvent();
 		}
 
+		foreach (var lobbyPlayer in GameObject.FindObjectsOfType<NetworkCompat.NetworkLobbyPlayer> ()) {
+			if (lobbyPlayer.serverId == conn.connectionId) {
+				lobbyPlayer.playingGame = false;
+			}
+		}
+
 		if (AreAllGamePlayersLoaded()) {
 			if (OnAllPlayersLoadedEvent != null) {
 				OnAllPlayersLoadedEvent ();
