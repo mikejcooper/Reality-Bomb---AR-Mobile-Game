@@ -12,19 +12,18 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 	public delegate void OnLobbyClientConnected ();
 	public delegate void OnLobbyClientDisconnected ();
 	public delegate void OnLobbyClientReadyToBegin ();
-	public delegate void OnLobbyClientGameLoaded ();
 	public delegate void OnLobbyClientGameLoaded (NetworkConnection conn);
-  public delegate void OnMeshClearToDownloadCallback(string address, int port);
+  	public delegate void OnMeshClearToDownloadCallback(string address, int port);
 	public delegate void OnStartGameCountdownCallback (int delay);
 	public delegate void OnCancelGameCountdownCallback (string reason);
 
-  public event OnLobbyServerConnected OnLobbyServerConnectedEvent;
+  	public event OnLobbyServerConnected OnLobbyServerConnectedEvent;
 	public event OnLobbyServerDisconnected OnLobbyServerDisconnectedEvent;
 	public event OnLobbyClientConnected OnLobbyClientConnectedEvent;
 	public event OnLobbyClientDisconnected OnLobbyClientDisconnectedEvent;
 	public event OnLobbyClientReadyToBegin OnLobbyClientReadyToBeginEvent;
 	public event OnLobbyClientGameLoaded OnLobbyClientGameLoadedEvent;
-  public event OnMeshClearToDownloadCallback OnMeshClearToDownloadEvent;
+  	public event OnMeshClearToDownloadCallback OnMeshClearToDownloadEvent;
 	public event OnStartGameCountdownCallback OnStartGameCountdownEvent;
 	public event OnCancelGameCountdownCallback OnCancelGameCountdownEvent;
 
