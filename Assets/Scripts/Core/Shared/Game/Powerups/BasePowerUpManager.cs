@@ -164,7 +164,7 @@ namespace Powerups {
 			
 		public string GetPowerupType (GameObject powerupObj, bool hasBomb) {
 			while (true) {
-                var abilityTypeIndex = 1 Random.Range (0, _availableAbilities.Length);
+                var abilityTypeIndex = Random.Range (0, _availableAbilities.Length);
 				string tag = _availableAbilities [abilityTypeIndex].Tag;
 				if (hasBomb && tag.Equals (ShieldAbility.TAG)) {
 					// if the player has the bomb, we don't want them to get a shield
