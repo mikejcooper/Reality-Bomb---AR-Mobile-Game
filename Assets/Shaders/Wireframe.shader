@@ -8,7 +8,10 @@
         _CenterZ ("CenterZ", Float) = 0
         _Speed ("Speed", Float) = 3
         _PhaseLength ("Phase Length", Float) = 10
-        _Alpha ("Alpha", Float) = 0.6
+        _Alpha ("Alpha", Range(0,1)) = 0.6
+        _PrimaryColour ("Primary Colour", Color) = (0.09, 0.78, 1, 1)
+        _SecondaryColour ("Primary Colour", Color) = (0.09, 0.18, 1, 1)
+        _BackgroundColour ("Background Colour", Color) = (1, 1, 1, 1)
 
     }
     SubShader
@@ -39,6 +42,9 @@
 			float _Speed;
 			float _PhaseLength;
 			float _Alpha;
+			float4 _PrimaryColour;
+			float4 _SecondaryColour;
+			float4 _BackgroundColour;
 
             v2f vert (float4 pos : POSITION, float2 uv : TEXCOORD0)
             {
@@ -65,15 +71,17 @@
 
 				float phase = sin (inTime);
 
-				float normalBlue = 0.78f;
-				float highlightBlue = 0.18f;
-				float thisBlue = normalBlue - phase * (normalBlue - highlightBlue);
+//				float normalBlue = 0.78f;
+//				float highlightBlue = 0.18f;
+//				float thisBlue = normalBlue - phase * (normalBlue - highlightBlue);
 				fixed4 c = 0;
-                c.rgb = float3(0.09f, thisBlue, 1.0f);
+                c.rgb = _PrimaryColour - phase * (_PrimaryColour - _SecondaryColour);// float3(0.09f, thisBlue, 1.0f);
                 c.a = tex2D(_MainTex, input.uv).a;
 
                 if (c.a > 0.1f) {
                 	c.a = _Alpha;
+                } else {
+                	c = _BackgroundColour;
                 }
 
                 return c;

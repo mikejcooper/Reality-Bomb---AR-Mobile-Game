@@ -4,10 +4,10 @@
 	{
 		 _Colour ("Color", Color) = (1,0,0,1)
 		 _HighlightColour ("Highlight Color", Color) = (1,0,0,1)
-		 _Density ("Density", Range(0,1)) = 0.4
-		 _FullHeight  ("Full Height", Range(0,10)) = 1
-         _TargetHeight ("Target Height", Range(0,10)) = 1
-         _TargetAlpha ("Target Alpha", Range(0,1)) = 0.5
+
+         _EndHeight ("End Height", Range(0,1)) = 1
+         _StartAlpha ("Start Alpha", Range(0,1)) = 1
+         _EndAlpha ("End Alpha", Range(0,1)) = 0.5
 	}
 	SubShader
 	{
@@ -26,48 +26,37 @@
 
 			#include "UnityCG.cginc"
 
-			float _Density;
+
 			fixed4 _Colour;
 			fixed4 _HighlightColour;
-			float _FullHeight;
-	        float _TargetHeight;
-	        float _TargetAlpha;
 
-			
+	        float _EndHeight;
+	        float _StartAlpha;
+	        float _EndAlpha;
 
 
 			struct v2f
             {
-                float4 pos : SV_POSITION;
-             	float3 coords : TEXCOORD0;
+             	float2 uv : TEXCOORD0;
+             	float4 pos : SV_POSITION;
             };
 				
 			v2f vert (float4 pos : POSITION, float4 uv : TEXCOORD0)
             {
                 v2f o;
                 o.pos = mul (UNITY_MATRIX_MVP, pos);
-             	o.coords = pos.xyz * _Density;
+             	o.uv = uv;
                 return o;
             }
 			
 			fixed4 frag (v2f input) : SV_Target
 			{
-
-				float _Middle = _TargetHeight;// + sin(input.coords.x + _Time[3]) * 0.1f;
-
-				float distBottom = input.coords.y+0.5f;
-
-				float4 localColour = lerp (_Colour, _HighlightColour, sin(input.coords.x + _Time[3])); 
-
-				float4 _ColorBot = localColour;
-
-				float4 _ColorMid = localColour;
-				_ColorMid.a = _TargetAlpha;
-				float4 _ColorTop = localColour;
-				_ColorTop.a = 0.0f;
-
-				fixed4 c = lerp(_ColorBot, _ColorMid, distBottom / _Middle) * step(distBottom, _Middle);
-	            c += lerp(_ColorMid, _ColorTop, (distBottom - _Middle) / (_FullHeight - _Middle)) * step(_Middle, distBottom);
+				float localStartAlpha = _StartAlpha;// +  0.2 * (1 + sin(_Time[3] + input.uv.x));
+				float localEndAlpha = _EndAlpha;// + sin(_Time[3]);
+				float localEndHeight = _EndHeight +  0.1 * (1 + sin(_Time[3] + input.uv.x*5));
+				fixed4 alpha = lerp(localStartAlpha, localEndAlpha, min(1, input.uv.y / localEndHeight));
+				float4 c = lerp(_Colour, _HighlightColour, 0.5 + 0.5*sin(_Time[3] + input.uv.x));
+				c.a = alpha;
 	            return c;
 			}
 			ENDCG
