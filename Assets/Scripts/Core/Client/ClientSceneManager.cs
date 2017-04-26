@@ -10,6 +10,7 @@ using NetworkCompat;
 public class ClientSceneManager : MonoBehaviour
 {
     static bool DEBUG = false;
+	private const int MAX_DEVICES = 16;
 
 	public delegate void OnCountDownTimeUpdateCallback (int remainingTime);
 	public delegate void OnCountDownCanceledCallback (string reason);
@@ -56,7 +57,8 @@ public class ClientSceneManager : MonoBehaviour
 			_networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Info;
 			_networkLobbyManager.showLobbyGUI = false;
 
-			_networkLobbyManager.maxPlayers = 16;
+			_networkLobbyManager.maxPlayers = MAX_DEVICES;
+			_networkLobbyManager.maxConnections = MAX_DEVICES;
 			_networkLobbyManager.lobbySlots = new NetworkLobbyPlayer[_networkLobbyManager.maxPlayers];
 
 			List<string> lobbyScenes = new List<string> ();

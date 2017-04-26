@@ -12,6 +12,7 @@ public class ServerSceneManager : MonoBehaviour
     static bool DEBUG = false;
 
 	private const int MIN_REQ_PLAYERS = 2;
+	private const int MAX_DEVICES = 16;
 
 	public enum MeshRetrievalState
 	{
@@ -84,7 +85,8 @@ public class ServerSceneManager : MonoBehaviour
 		_networkLobbyManager.minPlayers = MIN_REQ_PLAYERS;
 
 		// seemingly weird neccesary hack. todo: add this to our compat implementation
-		_networkLobbyManager.maxPlayers = 16;
+		_networkLobbyManager.maxPlayers = MAX_DEVICES;
+		_networkLobbyManager.maxConnections = MAX_DEVICES;
 		_networkLobbyManager.lobbySlots = new NetworkLobbyPlayer[_networkLobbyManager.maxPlayers];
 
 		List<string> lobbyScenes = new List<string> ();
