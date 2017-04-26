@@ -49,19 +49,23 @@ namespace ServerLifecycle {
 				{ new StateTransition(ProcessState.AwaitingPlayers, Command.EnoughPlayersJoined), ProcessState.PreparingGame },
 				{ new StateTransition(ProcessState.AwaitingPlayers, Command.MeshReceived), ProcessState.AwaitingPlayers },
 
-				{ new StateTransition(ProcessState.PreparingGame, Command.EnoughPlayersJoined), ProcessState.PreparingGame },
+
 				{ new StateTransition(ProcessState.PreparingGame, Command.MeshReceived), ProcessState.PreparingGame },
 				{ new StateTransition(ProcessState.PreparingGame, Command.CountdownStart), ProcessState.CountingDown },
+				{ new StateTransition(ProcessState.PreparingGame, Command.EnoughPlayersJoined), ProcessState.PreparingGame },
+
 
 				{ new StateTransition(ProcessState.CountingDown, Command.GameStart), ProcessState.PlayingGame },
 				{ new StateTransition(ProcessState.CountingDown, Command.TooFewPlayersRemaining), ProcessState.AwaitingPlayers },
 				{ new StateTransition(ProcessState.CountingDown, Command.CountdownCancel), ProcessState.PreparingGame },
+				{ new StateTransition(ProcessState.CountingDown, Command.EnoughPlayersJoined), ProcessState.CountingDown },
 
 				{ new StateTransition(ProcessState.PlayingGame, Command.TooFewPlayersRemaining), ProcessState.AwaitingPlayers },
 				{ new StateTransition(ProcessState.PreparingGame, Command.TooFewPlayersRemaining), ProcessState.AwaitingPlayers },
 				{ new StateTransition(ProcessState.AwaitingMesh, Command.TooFewPlayersRemaining), ProcessState.AwaitingData },
 
-				{ new StateTransition(ProcessState.PlayingGame, Command.GameEnd), ProcessState.PreparingGame }
+				{ new StateTransition(ProcessState.PlayingGame, Command.GameEnd), ProcessState.PreparingGame },
+				{ new StateTransition(ProcessState.PlayingGame, Command.EnoughPlayersJoined), ProcessState.PlayingGame },
 			};
 		}
 

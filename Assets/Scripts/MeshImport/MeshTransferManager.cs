@@ -178,12 +178,16 @@ public class MeshTransferManager {
 
 	Mesh getBoundaryMesh(List<Vector3> positions){
 		Mesh mesh = new Mesh ();
+		Vector2[] uvs = new Vector2[positions.Count * 2];
 		Vector3[] vertices = new Vector3[positions.Count * 2];
 		int[] triangles = new int[positions.Count * 4 * 3];
 		mesh.name = "ScriptedMesh";
 		for (int i = 0; i < positions.Count; i++) {
 			vertices [i]                   = new Vector3 (positions[i].x , positions[i].y, positions[i].z);
 			vertices [i + positions.Count] = new Vector3 (positions[i].x , positions[i].y+5.0f , positions[i].z);
+
+			uvs [i] = new Vector2(i / (float) positions.Count, 0);
+			uvs [i + positions.Count] = new Vector2(i / (float) positions.Count, 1);
 
 			triangles [0 * 3 * positions.Count + 3 * i + 0] = i;
 			triangles [0 * 3 * positions.Count + 3 * i + 1] = (i + 1) % positions.Count;
@@ -204,6 +208,7 @@ public class MeshTransferManager {
 
 		mesh.vertices = vertices;
 		mesh.triangles = triangles;
+		mesh.uv = uvs;
 
 		mesh.RecalculateBounds ();
 		mesh.RecalculateNormals ();

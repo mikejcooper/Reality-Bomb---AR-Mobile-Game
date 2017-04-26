@@ -12,23 +12,20 @@ namespace ClientNetworking
 
 		public event ServerDiscovered serverDiscoveryEvent;
 
-		void Start()
-		{
+		public void ListenForServers () {
 			showGUI = false;
 			broadcastKey = NetworkConstants.BROADCAST_KEY;
-
-		}
-
-		public void ListenForServers () {
-			// Initialize needs to be called before StartAsClient every time
+			isClient = true;
+			useNetworkManager = false;
 			Initialize();
-			StartAsClient ();
 		}
 
 
 		public override void OnReceivedBroadcast(string fromAddress, string data)
 		{
-			serverDiscoveryEvent (fromAddress);
+			if (serverDiscoveryEvent != null) {
+				serverDiscoveryEvent (fromAddress);
+			}
 		}
 	}
 

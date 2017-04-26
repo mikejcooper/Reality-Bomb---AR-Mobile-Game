@@ -39,8 +39,9 @@ namespace ServerNetworking
 			showGUI = false;
 			Application.runInBackground = true;
 			broadcastKey = NetworkConstants.BROADCAST_KEY;
+			isServer = true;
+			useNetworkManager = false;
 			Initialize();
-			StartAsServer();
 		}
 			
 	}

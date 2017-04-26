@@ -357,14 +357,14 @@ namespace NetworkCompat {
 				return;
 			}
 
-			// cannot join game in progress
-			string loadedSceneName = SceneManager.GetSceneAt(0).name;
-			if (!lobbyScenes.Contains(loadedSceneName))
-			{
-				if (LogFilter.logWarn) { Debug.LogWarning("NetworkLobbyManager can't accept new connection [" + conn + "], not in lobby and game already in progress."); }
-				conn.Disconnect();
-				return;
-			}
+//			// cannot join game in progress
+//			string loadedSceneName = SceneManager.GetSceneAt(0).name;
+//			if (!lobbyScenes.Contains(loadedSceneName))
+//			{
+//				if (LogFilter.logWarn) { Debug.LogWarning("NetworkLobbyManager can't accept new connection [" + conn + "], not in lobby and game already in progress."); }
+//				conn.Disconnect();
+//				return;
+//			}
 
 			base.OnServerConnect(conn);
 			OnLobbyServerConnect(conn);
@@ -554,6 +554,7 @@ namespace NetworkCompat {
 				return;
 			}
 
+
 			GameSceneLoadedForPlayer(netMsg.conn, lobbyController.gameObject);
 		}
 
@@ -564,6 +565,7 @@ namespace NetworkCompat {
 			ServerReturnToLobby();
 		}
 
+		NetworkMessageDelegate _originalServerConnectHandler;
 		public override void OnStartServer()
 		{
 			if (lobbyScenes.Count == 0)
@@ -585,11 +587,32 @@ namespace NetworkCompat {
 
 			_colourPool = new ColourPool();
 
+			Invoke ("SlyBastard", 1);
+
 			NetworkServer.RegisterHandler(MsgType.LobbyReadyToBegin, OnServerReadyToBeginMessage);
 			NetworkServer.RegisterHandler(MsgType.LobbySceneLoaded, OnServerSceneLoadedMessage);
 			NetworkServer.RegisterHandler(MsgType.LobbyReturnToLobby, OnServerReturnToLobbyMessage);
 
 			OnLobbyStartServer();
+		}
+
+		void SlyBastard () {
+			Debug.Log ("Running Sly Bastard");
+			foreach (var handler in NetworkServer.handlers) {
+				if (handler.Key == MsgType.Connect) {
+					_originalServerConnectHandler = handler.Value;
+				}
+			}
+
+			NetworkServer.RegisterHandler (MsgType.Connect, OnServerConnectInternal);
+		}
+
+		void OnServerConnectInternal (NetworkMessage netMsg) {
+			Debug.Log ("Sly Bastard Called");
+			var tmp = networkSceneName;
+			networkSceneName = lobbyScenes.First ();
+			_originalServerConnectHandler (netMsg);
+			networkSceneName = tmp;
 		}
 
 		public override void OnStartHost()
@@ -603,6 +626,7 @@ namespace NetworkCompat {
 		}
 
 		// ------------------------ client handlers ------------------------
+
 
 		public override void OnStartClient(NetworkClient lobbyClient)
 		{

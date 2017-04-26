@@ -51,45 +51,69 @@ public class ClientSceneManager : MonoBehaviour
 		}
 	}
 
+	void ConfigNetLobby() {
+		if (_networkLobbyManager != null) {
+			_networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Info;
+			_networkLobbyManager.showLobbyGUI = false;
+
+			_networkLobbyManager.maxPlayers = 16;
+			_networkLobbyManager.lobbySlots = new NetworkLobbyPlayer[_networkLobbyManager.maxPlayers];
+
+			List<string> lobbyScenes = new List<string> ();
+			lobbyScenes.Add ("Idle");
+			lobbyScenes.Add ("Leaderboard");
+			_networkLobbyManager.lobbyScenes = lobbyScenes;
+
+			_networkLobbyManager.playScene = "Game";
+
+			_networkLobbyManager.lobbyPlayerPrefab = LobbyPlayerPrefab;
+			_networkLobbyManager.gamePlayerPrefab = GamePlayerPrefab;
+
+			_networkLobbyManager.customConfig = true;
+			var config = _networkLobbyManager.connectionConfig;
+			config.NetworkDropThreshold = 80;
+			config.ConnectTimeout = 10000;
+			config.DisconnectTimeout = 10000;
+			config.PingTimeout = 2000;
+			_networkLobbyManager.channels.Clear ();
+			_networkLobbyManager.channels.Add (UnityEngine.Networking.QosType.ReliableFragmented);
+			_networkLobbyManager.channels.Add (UnityEngine.Networking.QosType.ReliableFragmented);
+		}
+	}
+
+	GameLobbyManager CreateNetLobby () {
+		if (transform.gameObject.GetComponent<GameLobbyManager> () != null) {
+			Debug.LogError ("trying to create a game lobby manager when one already exists!");
+			return transform.gameObject.GetComponent<GameLobbyManager> ();
+		}
+		var networkLobbyManager = transform.gameObject.AddComponent<GameLobbyManager> ();
+		// register listeners for when players connect / disconnect
+		networkLobbyManager.OnLobbyClientConnectedEvent += OnUserConnectedToGame;
+		networkLobbyManager.OnLobbyClientDisconnectedEvent += OnUserDisconnectedToGame;
+		networkLobbyManager.OnLobbyClientDisconnectedEvent += OnUserRequestLeaveGame;
+		networkLobbyManager.OnMeshClearToDownloadEvent += _meshTransferManager.FetchData;
+		networkLobbyManager.OnStartGameCountdownEvent += OnStartGameCountdown;
+		networkLobbyManager.OnCancelGameCountdownEvent += OnCancelGameCountdown;
+
+		return networkLobbyManager;
+	}
+
 	void Start ()
 	{
 		DontDestroyOnLoad (gameObject);
 		var ugly = UnityThreadHelper.Dispatcher;
 
-		_discoveryClient = transform.gameObject.AddComponent<DiscoveryClient> ();
-		_networkLobbyManager = transform.gameObject.AddComponent<GameLobbyManager> ();
+
 		_meshTransferManager = new MeshTransferManager();
-
-		_networkLobbyManager.logLevel = UnityEngine.Networking.LogFilter.FilterLevel.Info;
-		_networkLobbyManager.showLobbyGUI = false;
-
-		_networkLobbyManager.maxPlayers = 16;
-		_networkLobbyManager.lobbySlots = new NetworkLobbyPlayer[_networkLobbyManager.maxPlayers];
 
 		_defaultSleepTimeout = Screen.sleepTimeout;
 
-		List<string> lobbyScenes = new List<string> ();
-		lobbyScenes.Add ("Idle");
-		lobbyScenes.Add ("Leaderboard");
-		_networkLobbyManager.lobbyScenes = lobbyScenes;
 
-		_networkLobbyManager.playScene = "Game";
 
-		_networkLobbyManager.lobbyPlayerPrefab = LobbyPlayerPrefab;
-		_networkLobbyManager.gamePlayerPrefab = GamePlayerPrefab;
-
-		// register listeners for when players connect / disconnect
-		_networkLobbyManager.OnLobbyClientConnectedEvent += OnUserConnectedToGame;
-		_networkLobbyManager.OnLobbyClientDisconnectedEvent += OnUserDisconnectedToGame;
-		_networkLobbyManager.OnLobbyClientDisconnectedEvent += OnUserRequestLeaveGame;
-		_networkLobbyManager.OnMeshClearToDownloadEvent += _meshTransferManager.FetchData;
-		_networkLobbyManager.OnStartGameCountdownEvent += OnStartGameCountdown;
-		_networkLobbyManager.OnCancelGameCountdownEvent += OnCancelGameCountdown;
 
         //Listener for when the we have finished downloading the mesh
 		_meshTransferManager.OnMeshDataReceivedEvent += OnMeshDataReceived;
 
-		_discoveryClient.serverDiscoveryEvent += OnServerDiscovered;
 
 		SceneManager.sceneLoaded += OnSceneLoaded;
 
@@ -102,7 +126,9 @@ public class ClientSceneManager : MonoBehaviour
     {
 		if (DEBUG) Debug.Log("OnMeshDataReceived");
 
-		_networkLobbyManager.SetReady ();
+		if (_networkLobbyManager != null) {
+			_networkLobbyManager.SetReady ();
+		}
 
     }
 
@@ -124,9 +150,11 @@ public class ClientSceneManager : MonoBehaviour
 		ensureCorrectScene ();
 
 		if (Flags.GAME_SERVER_IS_LOCALHOST) {
-			OnServerDiscovered ("localhost");
+			OnServerDiscovered (":ffff::localhost");
 		} else {
 			// begin listening
+			_discoveryClient = transform.gameObject.AddComponent<DiscoveryClient> ();
+			_discoveryClient.serverDiscoveryEvent += OnServerDiscovered;
 			_discoveryClient.ListenForServers ();
 		}
 
@@ -143,7 +171,9 @@ public class ClientSceneManager : MonoBehaviour
 		yield return new WaitForSeconds(delayTime);
 		int newRemaining = (int) Mathf.Round(remainingTime - delayTime);
 		if (newRemaining > 0) {
-			_countdownCoroutine = StartCoroutine(Countdown(newRemaining, delayTime));
+			_countdownCoroutine = StartCoroutine (Countdown (newRemaining, delayTime));
+		} else {
+			OnCountDownTimeUpdateEvent (0);
 		}
 	}
 
@@ -159,26 +189,39 @@ public class ClientSceneManager : MonoBehaviour
 		ensureCorrectScene ();
 
 		// stop listening for broadcasts
-		if (_discoveryClient != null && !Flags.GAME_SERVER_IS_LOCALHOST) {
+		if (_discoveryClient != null && _discoveryClient.running && !Flags.GAME_SERVER_IS_LOCALHOST) {
+			_discoveryClient.serverDiscoveryEvent -= OnServerDiscovered;
         	_discoveryClient.StopBroadcast();
+			Destroy (_discoveryClient);
         }
 
 		var ipv4 = address.Substring (address.LastIndexOf (":")+1, address.Length - (address.LastIndexOf (":") + 1));
 		Debug.Log (string.Format ("ipv6: {0}, ipv4: {1}", address, ipv4));
 
 
+		if (_networkLobbyManager == null) {
+			_networkLobbyManager = CreateNetLobby ();
+		}
 
 		if (Flags.GAME_SERVER_IS_LOCALHOST) {
-			_networkLobbyManager.networkAddress = "localhost";
+			_networkLobbyManager.networkAddress = Network.player.ipAddress;
 		} else {
 			_networkLobbyManager.networkAddress = ipv4;
 		}
 
-		Debug.Log(string.Format("found server at {0}", _networkLobbyManager.networkAddress));
-	
+		Debug.Log (string.Format ("found server at {0}", _networkLobbyManager.networkAddress));
+
+		ConfigNetLobby ();
+
+
+		// we have to delay, because apparently the teardown of discovery
+		// impacts the next part. 2 seconds seems long enough...
+		Invoke ("DelayedConnect", 2);
+	}
+
+	private void DelayedConnect () {
 		_networkLobbyManager.networkPort = NetworkConstants.GAME_PORT;
 		_networkLobbyManager.StartClient ();
-
 	}
 
 	private void OnUserConnectedToGame () {
@@ -216,9 +259,18 @@ public class ClientSceneManager : MonoBehaviour
 		Debug.Log ("OnUserRequestLeaveGame");
 		_innerProcess.MoveNext (Command.LeaveGame);
 
-		_networkLobbyManager.StopClient ();
-		_discoveryClient.StopBroadcast ();
+		CancelInvoke ("DelayedConnect");
 
+		if (_networkLobbyManager != null) {
+			_networkLobbyManager.StopClient ();
+			Destroy (_networkLobbyManager);
+		}
+
+		if (_discoveryClient != null) {
+			_discoveryClient.serverDiscoveryEvent -= OnServerDiscovered;
+			_discoveryClient.StopBroadcast();
+			Destroy (_discoveryClient);
+		}
 
 		ensureCorrectScene ();
 	}

@@ -30,6 +30,10 @@ namespace NetworkCompat {
 		[SyncVar]
 		public bool m_ReadyToBegin;
 		[SyncVar]
+		public bool m_PlayingGame;
+		[SyncVar]
+		public bool m_GameLoaded;
+		[SyncVar]
 		public string m_Name;
 		[SyncVar]
 		public int m_Colour;
@@ -38,7 +42,9 @@ namespace NetworkCompat {
 
 		public int serverId { get { return m_ServerId; } set { m_ServerId = value; }}
 		public byte slot { get { return m_Slot; } set { m_Slot = value; }}
-		public bool readyToBegin { get { return m_ReadyToBegin; } set { m_ReadyToBegin = value; } }
+		public bool readyToBegin { get { return m_ReadyToBegin; } set { m_ReadyToBegin = value; if (!m_ReadyToBegin) { m_PlayingGame = m_GameLoaded = false; } } }
+		public bool playingGame { get { return m_PlayingGame; } set { m_PlayingGame = value; } }
+		public bool gameLoaded { get { return m_GameLoaded; } set { m_GameLoaded = value; } }
 		public string nickname { get { return m_Name; } set { m_Name = value; } }
 		public int colour { get { return m_Colour; } set { m_Colour = value; } }
 		public SyncListGameResult gameResults { get { return m_GameResults; } }

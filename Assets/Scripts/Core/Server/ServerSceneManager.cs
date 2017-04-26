@@ -99,6 +99,20 @@ public class ServerSceneManager : MonoBehaviour
 
 		_networkLobbyManager.networkPort = NetworkConstants.GAME_PORT;
 
+		_networkLobbyManager.serverBindToIP = true;
+		_networkLobbyManager.serverBindAddress = Network.player.ipAddress;
+
+		Debug.Log (string.Format ("bound to {0}", _networkLobbyManager.serverBindAddress));
+
+
+		_networkLobbyManager.customConfig = true;
+		var config = _networkLobbyManager.connectionConfig;
+		config.NetworkDropThreshold = 80;
+		config.ConnectTimeout = 10000;
+		config.DisconnectTimeout = 10000;
+		config.PingTimeout = 2000;
+		_networkLobbyManager.channels.Add(UnityEngine.Networking.QosType.ReliableFragmented);
+		_networkLobbyManager.channels.Add(UnityEngine.Networking.QosType.ReliableFragmented);
 
 		_networkLobbyManager.StartServer ();
 
@@ -178,11 +192,6 @@ public class ServerSceneManager : MonoBehaviour
         if (DEBUG) Debug.Log ("OnPlayerConnected");
 		ConnectedPlayerCount++;
 
-
-//		int hue = _colourPool.getColour ();
-//		Debug.Log (string.Format ("added player with hue: {0}", hue));
-//		_playerDataManager.AddPlayer (conn.connectionId, hue);
-
 		if (ConnectedPlayerCount >= MIN_REQ_PLAYERS) {
 			_innerProcess.MoveNext (Command.EnoughPlayersJoined);
 		}
@@ -192,34 +201,39 @@ public class ServerSceneManager : MonoBehaviour
 			_networkLobbyManager.ClientGetMesh (_meshServerAddress, _meshServerPort, conn.connectionId);
 		}
 
-//		_networkLobbyManager.SendPlayerID (conn.connectionId);
-//		_networkLobbyManager.SendPlayerData (JsonUtility.ToJson (_playerDataManager.list), conn.connectionId);
 	}
 
 	private void OnGamePlayerReady () {
 		OnStateUpdate ();
 	}
 
-	int _totalGamePlayers;
-	int _loadedGamePlayers;
+	private void OnPlayerGameLoaded (UnityEngine.Networking.NetworkConnection conn) {
 
-	private void OnPlayerGameLoaded () {
-		_loadedGamePlayers++;
-		Debug.Log (string.Format ("OnPlayerGameLoaded: {0}/{1}", _loadedGamePlayers, _totalGamePlayers));
-		if (_totalGamePlayers == _loadedGamePlayers) {
+		foreach (var lobbyPlayer in GameObject.FindObjectsOfType<NetworkCompat.NetworkLobbyPlayer> ()) {
+			if (lobbyPlayer.serverId == conn.connectionId) {
+				lobbyPlayer.gameLoaded = true;
+			}
+		}
+
+		if (AreAllGamePlayersLoaded()) {
 			if (OnAllPlayersLoadedEvent != null) {
 				OnAllPlayersLoadedEvent ();
 			}
-		} else if (_loadedGamePlayers > _totalGamePlayers) {
-			Debug.LogWarning ("we have too many players");
 		}
 			
 		OnStateUpdate ();
 	}
 
 	public bool AreAllGamePlayersLoaded () {
-		return _loadedGamePlayers >= _totalGamePlayers;
+		
+		foreach (var lobbyPlayer in GameObject.FindObjectsOfType<NetworkCompat.NetworkLobbyPlayer> ()) {
+			if (lobbyPlayer.playingGame && !lobbyPlayer.gameLoaded) {
+				return false;
+			}
+		}
+		return true;
 	}
+
 
 	private void OnGamePlayerDisconnected (UnityEngine.Networking.NetworkConnection conn)
 	{
@@ -228,6 +242,18 @@ public class ServerSceneManager : MonoBehaviour
 
 		if (OnPlayerDisconnectEvent != null) {
 			OnPlayerDisconnectEvent();
+		}
+
+		foreach (var lobbyPlayer in GameObject.FindObjectsOfType<NetworkCompat.NetworkLobbyPlayer> ()) {
+			if (lobbyPlayer.serverId == conn.connectionId) {
+				lobbyPlayer.playingGame = false;
+			}
+		}
+
+		if (AreAllGamePlayersLoaded()) {
+			if (OnAllPlayersLoadedEvent != null) {
+				OnAllPlayersLoadedEvent ();
+			}
 		}
 
 		if (CurrentState().Equals(ServerLifecycle.ProcessState.CountingDown)) {
@@ -267,8 +293,11 @@ public class ServerSceneManager : MonoBehaviour
 
 	private void BeginGame () {
 		_innerProcess.MoveNext (Command.GameStart);
-		_totalGamePlayers = _networkLobbyManager.ReadyPlayerCount ();
-		_loadedGamePlayers = 0;
+		foreach (var lobbyPlayer in GameObject.FindObjectsOfType<NetworkCompat.NetworkLobbyPlayer> ()) {
+			if (lobbyPlayer.readyToBegin) {
+				lobbyPlayer.playingGame = true;
+			}
+		}
 		OnStateUpdate ();
 	}
 

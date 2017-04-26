@@ -16,8 +16,6 @@ public class GameServerManager : MonoBehaviour {
 	public GameObject ARToolkitObj;
 	public Material MeshMaterial;
 
-	private Button _serverStartButton;
-	private GameObject _button;
 	private GameObject _serverUI;
 
 	void Start () {
@@ -32,9 +30,9 @@ public class GameServerManager : MonoBehaviour {
 		SetupUI ();
 		if (ServerSceneManager.Instance != null) {
 			if (ServerSceneManager.Instance.AreAllGamePlayersLoaded ()) {
-				ButtonClickListener ();
+				AllPlayersLoadedListener ();
 			} else {
-				ServerSceneManager.Instance.OnAllPlayersLoadedEvent += ButtonClickListener;
+				ServerSceneManager.Instance.OnAllPlayersLoadedEvent += AllPlayersLoadedListener;
 			}
 		}
 
@@ -43,14 +41,8 @@ public class GameServerManager : MonoBehaviour {
 
 	void OnDestroy () {
 		if (ServerSceneManager.Instance != null) {
-			ServerSceneManager.Instance.OnAllPlayersLoadedEvent -= ButtonClickListener;
+			ServerSceneManager.Instance.OnAllPlayersLoadedEvent -= AllPlayersLoadedListener;
 		}
-	}
-
-	void OnAllPlayersLoaded () {
-//		if (_serverStartButton != null) {
-//			_serverStartButton.enabled = true;	
-//		}
 	}
 
 	IEnumerator PollForWorldMesh()
@@ -129,27 +121,11 @@ public class GameServerManager : MonoBehaviour {
 
 		_serverUI = GameObject.Instantiate (ServerUIPrefab);
 
-		// this is pretty hacky dev stuff
-		_button = GameObject.Instantiate (ButtonPrefab);
-
-		_button.transform.parent = Canvas.transform;
-
-		_button.GetComponentInChildren<UnityEngine.UI.Text> ().text = "Start";
-		_serverStartButton = _button.GetComponent<UnityEngine.UI.Button> ();
-//		_serverStartButton.enabled = false;
-		_serverStartButton.onClick.AddListener (ButtonClickListener);
-		_button.GetComponent<RectTransform> ().anchoredPosition = Vector2.zero;
-
-
-
 	}
 
-	void ButtonClickListener () {
-		if (_serverStartButton != null) {
-			_serverStartButton.onClick.RemoveListener (ButtonClickListener);
-		}
-
-		Destroy(_button);
+	void AllPlayersLoadedListener () {
+		// this can be called multiple times, so remove listener
+		ServerSceneManager.Instance.OnAllPlayersLoadedEvent -= AllPlayersLoadedListener;
 		PowerupManager.enabled = true;
 		Invoke ("StartCountdown", 5);
 	}
