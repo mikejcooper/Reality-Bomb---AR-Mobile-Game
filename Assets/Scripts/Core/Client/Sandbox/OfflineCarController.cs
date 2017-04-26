@@ -14,6 +14,7 @@ public class OfflineCarController : MonoBehaviour
 	// Reference used to move the tank.
 	private Rigidbody _rigidbody;
 	private Quaternion _lookAngle = Quaternion.Euler (Vector3.forward);
+    private SandBoxPowerUpManager _spm;
 
 	void Start () {
 		CarProperties.OriginalHue = 0;
@@ -21,7 +22,8 @@ public class OfflineCarController : MonoBehaviour
 		Material[] materials = transform.FindChild("Car_Model").GetComponent<MeshRenderer> ().materials;
 
 		GameUtils.SetCarMaterialColoursFromHue (materials, CarProperties.OriginalHue);
-	}
+        _spm = GameObject.FindObjectOfType<SandBoxPowerUpManager>();
+    }
 
 	private void OnEnable ()
 	{
@@ -85,11 +87,11 @@ public class OfflineCarController : MonoBehaviour
     }
 
 	private void OnPowerupCollision (GameObject obj) {
-		SandBoxPowerUpManager spm = GameObject.FindObjectOfType<SandBoxPowerUpManager> ();
-		string type = spm.GetPowerupType (obj, false);
-		AbilityRouter.RouteTag (type, CarProperties, gameObject, spm, true, true);
-		Destroy(obj);
-	}
+		string type = _spm.GetPowerupType (obj, false);
+		AbilityRouter.RouteTag (type, CarProperties, gameObject, _spm, true, true);
+
+        _spm.PowerUpPool.UnSpawnObject(obj);
+    }
 
     private void OnTriggerEnter(Collider other)
     {

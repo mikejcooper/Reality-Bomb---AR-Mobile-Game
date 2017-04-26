@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 0f21684b31baa4b6dbab020034ef462d
-timeCreated: 1493044318
+timeCreated: 1493069801
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -9,19 +9,29 @@ ModelImporter:
     100002: //RootNode
     100004: CannonHead
     100006: Stabilizer
+    100008: CannonBase
+    100010: CannonStabilizer
     400000: Base
     400002: //RootNode
     400004: CannonHead
     400006: Stabilizer
+    400008: CannonBase
+    400010: CannonStabilizer
     2300000: Base
     2300002: CannonHead
     2300004: Stabilizer
+    2300006: CannonBase
+    2300008: CannonStabilizer
     3300000: Base
     3300002: CannonHead
     3300004: Stabilizer
+    3300006: CannonBase
+    3300008: CannonStabilizer
     4300000: CannonHead
     4300002: Base
     4300004: Stabilizer
+    4300006: CannonStabilizer
+    4300008: CannonBase
     9500000: //RootNode
   materials:
     importMaterials: 1

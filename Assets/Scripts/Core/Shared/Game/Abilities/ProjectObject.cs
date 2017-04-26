@@ -15,9 +15,30 @@ public class ProjectObject : MonoBehaviour {
 	private float _yOffset = 10.0f;
 	private float _speed = 10.0f;
 
+	private Vector3 _cannonTarget;
+	private Vector3 _direction;
+	private Quaternion _lookRotation;
+	private float _rotationSpeed = 2.0f;
+
+	public GameObject CannonObj;
+
 	void Start()
-	{  
+	{ 	
+		_cannonTarget = new Vector3 (0, 0, 0);
+		_cannonTarget.y = gameObject.transform.position.y;
 		StartCoroutine(StartObjectMovement());
+	}
+
+	void Update()
+	{	
+		//find the vector pointing from our position to the target
+		_direction = (_cannonTarget - CannonObj.transform.position).normalized;
+
+		//create the rotation we need to be in to look at the target
+		_lookRotation = Quaternion.LookRotation(_direction);
+
+		//rotate us over time according to speed until we are in the required rotation
+		CannonObj.transform.rotation = Quaternion.Slerp(CannonObj.transform.rotation, _lookRotation, Time.deltaTime * _rotationSpeed);
 	}
 		
 	public void Launch (Transform Source, Vector3 Target, float firingAngle = 45.0f) {
@@ -28,12 +49,8 @@ public class ProjectObject : MonoBehaviour {
 		//Decouple with Projection Obj
 		Source.SetParent (transform);
 
-		Vector3 cannonTarget = Target;
-
-		// This stops the cannon from rotating about the y axis
-		cannonTarget.y = transform.position.y;
-
-		gameObject.transform.LookAt (cannonTarget);
+		_cannonTarget = Target;
+		_cannonTarget.y = transform.position.y;
 
 
 		yield return new WaitForSeconds (1);
@@ -87,20 +104,20 @@ public class ProjectObject : MonoBehaviour {
 		yield return new WaitForSeconds (2.0f);
 
 		if (OnPositionsSetEvent != null) {
-			StartCoroutine (BeginObjectPath ());
+			StartCoroutine (BeginObjectPath (_positions));
 		} else {
-			OnPositionsSetEvent += () => StartCoroutine ( BeginObjectPath () );
+			OnPositionsSetEvent += () => StartCoroutine ( BeginObjectPath (_positions) );
 		}
 	}
 		
-	IEnumerator BeginObjectPath() {
-		int i = 0;
+	IEnumerator BeginObjectPath(List<Vector3> positions) {
 		while (true) {
-			i = (i == _positions.Count - 1) ? 0 : i + 1;	
-			Vector3 target = new Vector3 (_positions[i].x, _positions[i].y + _yOffset, _positions[i].z);
-			if (ArePositionsClose (target, transform.position, 3.0f))
-				continue;
-			yield return StartCoroutine(MoveObject(transform.position, target, _speed));
+			foreach(Vector3 p in positions) {
+				Vector3 target = new Vector3 (p.x, p.y + _yOffset, p.z);
+				if (ArePositionsClose (target, transform.position, 3.0f))
+					continue;
+				yield return StartCoroutine(MoveObject(transform.position, target, _speed));
+			}
 		}
 	}
 

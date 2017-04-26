@@ -8,7 +8,15 @@ namespace Abilities {
 	[System.Serializable]
 	public class ShrinkAbilityProperties : BaseAbilityProperties {}
 
-	public class ShrinkAbility : BaseAbility<ShrinkAbilityProperties> {
+    public class ShrinkAbilitySetup : BaseAbilitySetup
+    {
+        public ShrinkAbilitySetup(Canvas canvas, ShrinkAbilityProperties properties) : base(properties)
+        {
+
+        }
+    }
+
+    public class ShrinkAbility : BaseAbility<ShrinkAbilitySetup> {
 
 		public const string TAG = "shrinkability";
 		private const float TURN_FACTOR = 1.5f;

@@ -9,7 +9,15 @@ namespace Abilities {
 		public GameObject SparklesPrefab;
 	}
 
-	public class SpeedAbility : BaseAbility<SpeedAbilityProperties> {
+    public class SpeedAbilitySetup : BaseAbilitySetup
+    {
+        public SpeedAbilitySetup(Canvas canvas, SpeedAbilityProperties properties) : base(properties)
+        {
+
+        }
+    }
+
+    public class SpeedAbility : BaseAbility<SpeedAbilitySetup> {
 
 		public const string TAG = "speed";
 		public const int SPARKLES_LIFETIME_SECONDS = 5;
@@ -19,7 +27,7 @@ namespace Abilities {
 
 		protected override void OnApplyCarEffect (CarProperties properties, bool triggeredPowerup) {
 			if (triggeredPowerup) {
-				_sparklesObj = GameObject.Instantiate (_abilityProperties.SparklesPrefab);
+				_sparklesObj = GameObject.Instantiate (((SpeedAbilityProperties)_abilitySetup.AbilityProperties).SparklesPrefab);
 				_sparklesObj.transform.SetParent (properties.transform, false);
 			
 				properties.SpeedLimit *= SPEED_FACTOR;
