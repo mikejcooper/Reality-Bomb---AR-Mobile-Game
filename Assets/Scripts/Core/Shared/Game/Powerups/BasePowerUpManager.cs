@@ -33,13 +33,11 @@ namespace Powerups {
 
 		PowerupDefinition[] _availableAbilities;
 
-        public SpawnPool PowerUpPool { get; private set; }
+        public SpawnPool PowerUpPool { get; protected set; }
 
         protected virtual void Start () {
 			_availableAbilities = GetAvailablePowerups ();
-			_testingFlag = false; // Set to false once testing is complete.
-
-            PowerUpPool = new SpawnPool(PowerupPrefab, 5);            
+			_testingFlag = false; // Set to false once testing is complete.                 
 		}
 
         protected abstract PowerupDefinition[] GetAvailablePowerups ();
