@@ -41,6 +41,7 @@ namespace ServerLifecycle {
 			{
 				{ new StateTransition(ProcessState.AwaitingData, Command.EnoughPlayersJoined), ProcessState.AwaitingMesh },
 				{ new StateTransition(ProcessState.AwaitingData, Command.MeshReceived), ProcessState.AwaitingPlayers },
+				{ new StateTransition(ProcessState.AwaitingData, Command.TooFewPlayersRemaining), ProcessState.AwaitingData },
 
 				{ new StateTransition(ProcessState.AwaitingMesh, Command.MeshReceived), ProcessState.PreparingGame },
 				{ new StateTransition(ProcessState.AwaitingMesh, Command.EnoughPlayersJoined), ProcessState.PreparingGame },
