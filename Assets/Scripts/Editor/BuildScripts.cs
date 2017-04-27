@@ -6,7 +6,7 @@ using UnityEditor.SceneManagement;
 public class BuildScripts 
 {
 	static string[] TV_LEVELS = new string[] {"Assets/_Scenes/tv/Idle.unity", "Assets/_Scenes/shared/Game.unity", "Assets/_Scenes/tv/Leaderboard.unity"};
-	static string[] CLIENT_LEVELS = new string[] {"Assets/_Scenes/mobile/Idle.unity", "Assets/_Scenes/mobile/Sandbox.unity", "Assets/_Scenes/shared/Game.unity", "Assets/_Scenes/mobile/Leaderboard.unity"};
+	static string[] CLIENT_LEVELS = new string[] {"Assets/_Scenes/mobile/Idle.unity", "Assets/_Scenes/mobile/Login.unity", "Assets/_Scenes/mobile/Sandbox.unity", "Assets/_Scenes/shared/Game.unity", "Assets/_Scenes/mobile/Leaderboard.unity"};
 
 	private static BuildOptions GenerateBuildOptions () {
 		return BuildOptions.Development | BuildOptions.AutoRunPlayer | BuildOptions.AcceptExternalModificationsToPlayer;

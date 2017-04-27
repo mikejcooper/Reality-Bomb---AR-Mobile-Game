@@ -17,3 +17,5 @@ EditorBuildSettings:
     path: Assets/_Scenes/mobile/Sandbox.unity
   - enabled: 1
     path: Assets/_Scenes/mobile/Leaderboard.unity
+  - enabled: 1
+    path: Assets/_Scenes/mobile/Login.unity
