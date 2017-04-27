@@ -26,7 +26,7 @@ public class ProjectObject : MonoBehaviour {
 	{ 	
 		_cannonTarget = new Vector3 (0, 0, 0);
 		_cannonTarget.y = gameObject.transform.position.y;
-		StartCoroutine(StartObjectMovement());
+		
 	}
 
 	void Update()
@@ -103,11 +103,11 @@ public class ProjectObject : MonoBehaviour {
 
 		yield return new WaitForSeconds (2.0f);
 
-		if (OnPositionsSetEvent != null) {
-			StartCoroutine (BeginObjectPath (_positions));
-		} else {
-			OnPositionsSetEvent += () => StartCoroutine ( BeginObjectPath (_positions) );
-		}
+		//if (OnPositionsSetEvent != null) {
+		StartCoroutine (BeginObjectPath (_positions));
+		//} else {
+		//	OnPositionsSetEvent += () => StartCoroutine ( BeginObjectPath (_positions) );
+		//}
 	}
 		
 	IEnumerator BeginObjectPath(List<Vector3> positions) {
@@ -146,8 +146,9 @@ public class ProjectObject : MonoBehaviour {
 		
 	public void SetPositions(List<Vector3> positions){
 		_positions = positions;
-		OnPositionsSetEvent ();
-	}
+        //OnPositionsSetEvent ();
+        StartCoroutine(StartObjectMovement());
+    }
 
 	public void SetHeight(float yOffset){
 		_yOffset = yOffset;

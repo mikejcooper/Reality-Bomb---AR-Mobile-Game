@@ -20,7 +20,13 @@ namespace Powerups {
 		protected override void Start () {
 			base.Start ();
 			if (IsAllowedToSpawn ()) {
-				if (GameObject.FindObjectOfType<GameManager> () != null) {
+                if (isServer)
+                {
+                    int numPlayers = NetworkServer.connections.Count;
+                    PowerUpPool = new SpawnPool(PowerupPrefab, numPlayers);
+                    RpcInitPool(numPlayers);
+                }
+                if (GameObject.FindObjectOfType<GameManager> () != null) {
 					if (GameObject.FindObjectOfType<GameManager> ().WorldMesh != null) {
 						LoadMesh (GameObject.FindObjectOfType<GameManager> ().WorldMesh);
 					} else {
@@ -35,7 +41,13 @@ namespace Powerups {
 			ClientScene.RegisterPrefab(ProjectionAreaPrefab);
 		}
 
-		protected override PowerupDefinition[] GetAvailablePowerups () {
+        [ClientRpc]
+        void RpcInitPool(int len)
+        {
+            PowerUpPool = new SpawnPool(PowerupPrefab, len);
+        }
+
+        protected override PowerupDefinition[] GetAvailablePowerups () {
             InkAbilitySetup inkSetup = new InkAbilitySetup(PlayerCanvas, InkProperties);
             SpeedAbilitySetup speedSetup = new SpeedAbilitySetup(PlayerCanvas, SpeedProperties);
             ShieldAbilitySetup shieldSetup = new ShieldAbilitySetup(PlayerCanvas, ShieldProperties);
