@@ -372,6 +372,11 @@ namespace NetworkCompat {
 
 		public override void OnServerDisconnect(NetworkConnection conn)
 		{
+			// do this before base class does any destroys
+			foreach (var player in conn.playerControllers) {
+				OnServerRemovePlayer (conn, player);
+			}
+
 			base.OnServerDisconnect(conn);
 
 			// if lobbyplayer for this connection has not been destroyed by now, then destroy it here
