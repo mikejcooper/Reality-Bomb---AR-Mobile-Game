@@ -238,7 +238,7 @@ public class GameManager : NetworkBehaviour {
 				//this is two cars colliding
 				CarController otherCar = otherObj.GetComponent<CarController>();
 
-				if (otherCar.IsTransferTimeExpired () && otherCar.HasBomb) {
+				if (!CarHasShield(thisCar) && !CarHasShield(otherCar) && otherCar.IsTransferTimeExpired () && otherCar.HasBomb) {
 					otherCar.setBombAllDevices (!otherCar.HasBomb);
 					thisCar.setBombAllDevices (!thisCar.HasBomb);
 					thisCar.UpdateTransferTime (1.0f);
@@ -249,6 +249,10 @@ public class GameManager : NetworkBehaviour {
 
         
     }
+
+	private bool CarHasShield (CarController car) {
+		return car.GetComponent<Abilities.ShieldAbility> () != null;
+	}
 
 	[Server]
 	public void TriggerEnterEvent (GameObject thisObj, GameObject otherObj) {
