@@ -163,10 +163,6 @@ public class GameManager : NetworkBehaviour {
 		if (_clientExplanationDialog != null) {
 			Destroy (_clientExplanationDialog);
 		}
-		if (GameCountDownFinishedCallback != null) {
-			Debug.Log ("GameCountDownFinishedEvent not null");
-			GameCountDownFinishedCallback ();
-		}
 		StartCoroutine(FadeOutMesh(5));
 		PreparingCanvas.StartGameCountDown (false);
 	}
@@ -211,6 +207,10 @@ public class GameManager : NetworkBehaviour {
 		Debug.Log ("COUNTDOWNFINISHED");
 		if (OnGameStartedEvent != null) {
 			OnGameStartedEvent();
+		}
+		if (GameCountDownFinishedCallback != null) {
+			Debug.Log ("GameCountDownFinishedEvent not null");
+			GameCountDownFinishedCallback ();
 		}
 		_cars.enableAllControls();
         if(_cars.GetNumberOfBombsPresent() < 1) _cars.PassBombRandomPlayer ();
