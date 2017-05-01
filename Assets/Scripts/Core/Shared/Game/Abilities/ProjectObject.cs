@@ -12,7 +12,7 @@ public class ProjectObject : MonoBehaviour {
 
 	private List<Vector3> _positions; 
 	private bool _finshedStartMovement = false;
-	private float _yOffset = 10.0f;
+	private float _yOffset = 4.0f;
 	private float _speed = 10.0f;
 
 	private Vector3 _cannonTarget;
@@ -46,6 +46,9 @@ public class ProjectObject : MonoBehaviour {
 	}
 
 	IEnumerator Launch_Enum(Transform Source, Vector3 Target, float firingAngle = 45.0f) {
+		Source.GetComponent<Rigidbody> ().useGravity = false;
+		Source.GetComponent<BoxCollider> ().enabled = false;
+
 		//Decouple with Projection Obj
 		Source.SetParent (transform);
 
@@ -53,7 +56,7 @@ public class ProjectObject : MonoBehaviour {
 		_cannonTarget.y = transform.position.y;
 
 
-		yield return new WaitForSeconds (1);
+		yield return new WaitForSeconds (0.1f);
 
 		Vector3 t = Target;
 		Vector3 s = Source.position;
@@ -85,6 +88,9 @@ public class ProjectObject : MonoBehaviour {
 
 		//Decouple from Projection Obj
 		Source.parent = GameObject.Find("Marker scene").transform;
+		// Reenable components
+		Source.GetComponent<Rigidbody> ().useGravity = true;
+		Source.GetComponent<BoxCollider> ().enabled = true;
 		// Fire!
 		Source.GetComponent<Rigidbody>().velocity = finalVelocity;
 
@@ -92,7 +98,7 @@ public class ProjectObject : MonoBehaviour {
 
 	IEnumerator StartObjectMovement(){
 		// Hack to avoid outer boundary of mini game when projecting first few powerupd
-		transform.position = transform.position * 1.2f;
+		transform.position = transform.position;
 
 		// Move Object up by _yOffset
 		Vector3 moveUp = new Vector3 (transform.position.x, transform.position.y + _yOffset, transform.position.z);

@@ -80,11 +80,13 @@ namespace Powerups {
 			
 		}
 
-		protected override void OnProjectionAreaGenerated(GameObject projectionAreaObj) {
+		protected override void OnProjectionAreaGenerated(GameObject projectionAreaObj, GameMapObjects meshObj) {
 			if (isServer) {
+				List<Vector3> convexHull = GameUtils.MinimizeConvexHull(meshObj.convexhullVertices, 1.0f);
 				NetworkServer.Spawn (projectionAreaObj);
 				_projectionAreaObj = projectionAreaObj;
-				_projectionAreaObj.GetComponent<ProjectObject> ().SetHeight (8.0f);
+				_projectionAreaObj.GetComponent<ProjectObject> ().SetPositions (convexHull);
+				_projectionAreaObj.GetComponent<ProjectObject> ().SetHeight (2.0f);
 				_projectionAreaObj.GetComponent<ProjectObject> ().SetSpeed (0.5f);
 			}
 		}
