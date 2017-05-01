@@ -224,6 +224,7 @@ GameObject:
   - component: {fileID: 114370986870419550}
   - component: {fileID: 54708205379946480}
   - component: {fileID: 65097915797957226}
+  - component: {fileID: 114101269026177228}
   m_Layer: 13
   m_Name: PowerUp_Box
   m_TagString: PowerUp
@@ -352,8 +353,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1993525125451176}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.0025801659, y: 0.46825004, z: -3.7927027}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -8.8647, y: 5.7795, z: 14.128}
+  m_LocalScale: {x: 1.2971815, y: 1.2971817, z: 1.2971817}
   m_Children:
   - {fileID: 4293428118326284}
   - {fileID: 4656281738355460}
@@ -762,11 +763,23 @@ Animation:
   m_Enabled: 1
   serializedVersion: 3
   m_Animation: {fileID: 7400000, guid: 63f002dd7cd4146b7bc9bfb2699f9b0c, type: 2}
-  m_Animations: []
+  m_Animations:
+  - {fileID: 7400000, guid: 63f002dd7cd4146b7bc9bfb2699f9b0c, type: 2}
   m_WrapMode: 0
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 0
+--- !u!114 &114101269026177228
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1993525125451176}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed1cbfdf9c91540428b0ea2c43f18174, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114370986870419550
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -850,7 +863,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1171567696995436}
   serializedVersion: 5
   lengthInSec: 5
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
@@ -897,7 +910,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 546029315
+  randomSeed: 1008857093
   InitialModule:
     serializedVersion: 3
     enabled: 1

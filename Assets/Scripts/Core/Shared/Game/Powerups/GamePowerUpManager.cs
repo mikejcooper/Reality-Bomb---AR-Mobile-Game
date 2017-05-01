@@ -25,6 +25,7 @@ namespace Powerups {
                     int numPlayers = NetworkServer.connections.Count;
                     PowerUpPool = new SpawnPool(PowerupPrefab, numPlayers);
                     RpcInitPool(numPlayers);
+                    PowerUpUnspawner.OnTimeOutEvent += UnSpawnPowerUp;
                 }
                 if (GameObject.FindObjectOfType<GameManager> () != null) {
 					if (GameObject.FindObjectOfType<GameManager> ().WorldMesh != null) {
@@ -40,6 +41,19 @@ namespace Powerups {
 			ClientScene.RegisterPrefab(PowerupPrefab);
 			ClientScene.RegisterPrefab(ProjectionAreaPrefab);
 		}
+
+        private void OnDestroy()
+        {
+            PowerUpUnspawner.OnTimeOutEvent -= UnSpawnPowerUp;
+        }
+
+        private void UnSpawnPowerUp(GameObject go)
+        {
+            if (!isServer)
+                return;
+            PowerUpPool.UnSpawnObject(go);
+            NetworkServer.UnSpawn(go);
+        }
 
         [ClientRpc]
         void RpcInitPool(int len)
@@ -80,11 +94,13 @@ namespace Powerups {
 			
 		}
 
-		protected override void OnProjectionAreaGenerated(GameObject projectionAreaObj) {
+		protected override void OnProjectionAreaGenerated(GameObject projectionAreaObj, GameMapObjects meshObj) {
 			if (isServer) {
+				List<Vector3> convexHull = GameUtils.MinimizeConvexHull(meshObj.convexhullVertices, 1.0f);
 				NetworkServer.Spawn (projectionAreaObj);
 				_projectionAreaObj = projectionAreaObj;
-				_projectionAreaObj.GetComponent<ProjectObject> ().SetHeight (8.0f);
+				_projectionAreaObj.GetComponent<ProjectObject> ().SetPositions (convexHull);
+				_projectionAreaObj.GetComponent<ProjectObject> ().SetHeight (2.0f);
 				_projectionAreaObj.GetComponent<ProjectObject> ().SetSpeed (0.5f);
 			}
 		}
