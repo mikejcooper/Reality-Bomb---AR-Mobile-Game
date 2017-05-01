@@ -33,9 +33,15 @@ namespace Powerups {
 			GameMapObjects gameMapObjects = new GameMapObjects (PlaneObject, PlaneObject, GetBoundingBox (PlaneObject.GetComponent<MeshFilter> ().mesh, PlaneObject));
 			OnMeshReady (gameMapObjects);
             PowerUpPool = new SpawnPool(PowerupPrefab, 4);
+            PowerUpUnspawner.OnTimeOutEvent += ((GameObject go) => PowerUpPool.UnSpawnObject(go));
         }
 
-		private List<Vector3> GetBoundingBox(Mesh mesh, GameObject _planeObject){
+        private void OnDestroy()
+        {
+            PowerUpUnspawner.OnTimeOutEvent -= ((GameObject go) => PowerUpPool.UnSpawnObject(go));
+        }
+
+        private List<Vector3> GetBoundingBox(Mesh mesh, GameObject _planeObject){
 			List<Vector3> result = new List<Vector3> ();
 			Vector3 scale = _planeObject.transform.localScale;
 			Vector3 min = mesh.bounds.min;
@@ -99,10 +105,12 @@ namespace Powerups {
 			}
 		}
 
-		protected override void OnProjectionAreaGenerated(GameObject projectionAreaObj) {
+		protected override void OnProjectionAreaGenerated(GameObject projectionAreaObj, GameMapObjects meshObj) {
+			List<Vector3> convexHull = GameUtils.MinimizeConvexHull(meshObj.convexhullVertices, 1.2f);
 			_projectionAreaObj = projectionAreaObj;
-			_projectionAreaObj.GetComponent<ProjectObject> ().SetHeight (5.0f);
-			_projectionAreaObj.GetComponent<ProjectObject> ().SetSpeed (0.5f);
+			projectionAreaObj.GetComponent<ProjectObject> ().SetPositions (convexHull);
+			projectionAreaObj.GetComponent<ProjectObject> ().SetHeight (4.0f);
+			projectionAreaObj.GetComponent<ProjectObject> ().SetSpeed (0.5f);
 		}
 	}
 }
