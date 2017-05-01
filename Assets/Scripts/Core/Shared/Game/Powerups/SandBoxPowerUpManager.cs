@@ -33,9 +33,15 @@ namespace Powerups {
 			GameMapObjects gameMapObjects = new GameMapObjects (PlaneObject, PlaneObject, GetBoundingBox (PlaneObject.GetComponent<MeshFilter> ().mesh, PlaneObject));
 			OnMeshReady (gameMapObjects);
             PowerUpPool = new SpawnPool(PowerupPrefab, 4);
+            PowerUpUnspawner.OnTimeOutEvent += ((GameObject go) => PowerUpPool.UnSpawnObject(go));
         }
 
-		private List<Vector3> GetBoundingBox(Mesh mesh, GameObject _planeObject){
+        private void OnDestroy()
+        {
+            PowerUpUnspawner.OnTimeOutEvent -= ((GameObject go) => PowerUpPool.UnSpawnObject(go));
+        }
+
+        private List<Vector3> GetBoundingBox(Mesh mesh, GameObject _planeObject){
 			List<Vector3> result = new List<Vector3> ();
 			Vector3 scale = _planeObject.transform.localScale;
 			Vector3 min = mesh.bounds.min;

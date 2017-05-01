@@ -106,7 +106,7 @@ public class OffscreenArrowRenderer : MonoBehaviour {
 
 		RectTransform canvasRect = GetComponent<RectTransform>();
 
-		rectTransform.parent = canvasRect.transform;
+        rectTransform.SetParent(canvasRect.transform);
 
 		rectTransform.localPosition = Vector3.zero;
 		rectTransform.localScale = Vector3.one;

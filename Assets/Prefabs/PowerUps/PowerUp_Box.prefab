@@ -224,6 +224,7 @@ GameObject:
   - component: {fileID: 114370986870419550}
   - component: {fileID: 54708205379946480}
   - component: {fileID: 65097915797957226}
+  - component: {fileID: 114101269026177228}
   m_Layer: 13
   m_Name: PowerUp_Box
   m_TagString: PowerUp
@@ -762,11 +763,23 @@ Animation:
   m_Enabled: 1
   serializedVersion: 3
   m_Animation: {fileID: 7400000, guid: 63f002dd7cd4146b7bc9bfb2699f9b0c, type: 2}
-  m_Animations: []
+  m_Animations:
+  - {fileID: 7400000, guid: 63f002dd7cd4146b7bc9bfb2699f9b0c, type: 2}
   m_WrapMode: 0
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 0
+--- !u!114 &114101269026177228
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1993525125451176}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed1cbfdf9c91540428b0ea2c43f18174, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114370986870419550
 MonoBehaviour:
   m_ObjectHideFlags: 1
