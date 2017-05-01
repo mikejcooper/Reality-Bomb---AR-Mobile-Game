@@ -40,6 +40,7 @@ GameObject:
   - component: {fileID: 114237377765134768}
   - component: {fileID: 114778775360967990}
   - component: {fileID: 135130982085559020}
+  - component: {fileID: 114603318228229804}
   m_Layer: 9
   m_Name: OfflineCar
   m_TagString: Car
@@ -265,6 +266,24 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+--- !u!114 &114603318228229804
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1557596828192802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d5afc8c4f61f4b379663782a78662ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  YouPointer: {fileID: 1988901391611034, guid: 769f8f7605e4548bc8b88e4645d0f87a, type: 2}
+  BombObject: {fileID: 1151405325917586, guid: b3cb5b3b2fcc043239cb5668294e5f51, type: 2}
+  EdgeGlow: {fileID: 1276438633448274, guid: 7071568c80e1746af9afbb1579941f30, type: 2}
+  isMeIndicaterOn: 1
+  isBombIndicaterOn: 0
+  material1: {fileID: 2100000, guid: e94911b637f5c4afa93136ad9040a48f, type: 2}
+  material2: {fileID: 2100000, guid: 858b5bb4de83347d5b1489fc05d27d2f, type: 2}
 --- !u!114 &114778775360967990
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -298,7 +317,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1088427551059550}
   serializedVersion: 5
   lengthInSec: 5
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
