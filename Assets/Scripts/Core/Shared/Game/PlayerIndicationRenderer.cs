@@ -40,9 +40,7 @@ public class PlayerIndicationRenderer : MonoBehaviour
 		_initialisedBomb.transform.localScale = new Vector3 (80.0f,80.0f,80.0f);
 		_initialisedBomb.transform.localPosition = new Vector3 (0.0f,2.0f,0.0f);
 
-//		authority = IsOwnCarProperties (GetComponent<CarProperties> ());
-
-		authority = true;
+		authority = IsOwnCarProperties (GetComponent<CarProperties> ());
 
 		if (authority) {
 			_youPointerUnitScale = new Vector3 (14.0f,60.0f,20.0f).normalized;
@@ -68,9 +66,9 @@ public class PlayerIndicationRenderer : MonoBehaviour
 
 	void ShrinkYouPointer ()
 	{
-		GameObject.FindObjectOfType<GameManager> ().GameCountDownFinishedCallback -= ShrinkYouPointer;	
 		Debug.Log ("ShrinkYouPointerCalled");
 		_youPointerInitialScale /= 2.0f;
+		GameObject.FindObjectOfType<GameManager> ().GameCountDownFinishedCallback -= ShrinkYouPointer;	
 	}
 
 
@@ -115,7 +113,6 @@ public class PlayerIndicationRenderer : MonoBehaviour
 			if (_initialisedYouPointer != null) {
 				_initialisedYouPointer.transform.localPosition = new Vector3 (0.0f, 5.0f, 0.0f) + animationHeight;
 				_initialisedYouPointer.transform.localScale = _youPointerUnitScale * (_transformInitialScale * _youPointerInitialScale) / GetComponent<CarProperties> ().SafeScale;
-				Debug.Log ("localScale: (" + _initialisedYouPointer.transform.localScale.x + "," + _initialisedYouPointer.transform.localScale.y + "," + _initialisedYouPointer.transform.localScale + ")");
 			}
 				
 
