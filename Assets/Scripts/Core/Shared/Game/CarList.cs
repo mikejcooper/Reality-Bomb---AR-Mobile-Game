@@ -110,6 +110,7 @@ public class CarList
 		NetworkCompat.NetworkLobbyPlayer.GameResult result;
 		result.FinishPosition = carsLeft;
 		result.FinishTime = GetSurvivalTime (car);
+		result.TotalPlayers = _cars.Count;
 		car.LobbyPlayer().AddGameResult (result);
 
 	}
@@ -120,6 +121,7 @@ public class CarList
 				NetworkCompat.NetworkLobbyPlayer.GameResult result;
 				result.FinishPosition = 0;
 				result.FinishTime = GetSurvivalTime (car);
+				result.TotalPlayers = _cars.Count;
 				car.LobbyPlayer().AddGameResult (result);
 				return;
 			}

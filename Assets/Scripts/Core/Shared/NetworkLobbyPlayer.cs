@@ -17,6 +17,7 @@ namespace NetworkCompat {
 		{
 			public float FinishTime;
 			public int FinishPosition;
+			public int TotalPlayers;
 		}
 
 		public class SyncListGameResult : SyncListStruct<GameResult>
@@ -49,6 +50,15 @@ namespace NetworkCompat {
 		public int colour { get { return m_Colour; } set { m_Colour = value; } }
 		public SyncListGameResult gameResults { get { return m_GameResults; } }
 		public GameResult lastGameResult { get { return m_GameResults [m_GameResults.Count - 1]; } }
+
+		public int totalCumulativeGamesScore () {
+			int totalCumulativeScore = 0;
+			foreach (var gameResult in m_GameResults) {
+				var gameScore = gameResult.TotalPlayers - gameResult.FinishPosition - 1;
+				totalCumulativeScore += gameScore;
+			}
+			return totalCumulativeScore;
+		}
 
 		public void AddGameResult (GameResult result) {
 			m_GameResults.Add (result);
