@@ -105,10 +105,12 @@ namespace Powerups {
 			}
 		}
 
-		protected override void OnProjectionAreaGenerated(GameObject projectionAreaObj) {
+		protected override void OnProjectionAreaGenerated(GameObject projectionAreaObj, GameMapObjects meshObj) {
+			List<Vector3> convexHull = GameUtils.MinimizeConvexHull(meshObj.convexhullVertices, 1.2f);
 			_projectionAreaObj = projectionAreaObj;
-			_projectionAreaObj.GetComponent<ProjectObject> ().SetHeight (5.0f);
-			_projectionAreaObj.GetComponent<ProjectObject> ().SetSpeed (0.5f);
+			projectionAreaObj.GetComponent<ProjectObject> ().SetPositions (convexHull);
+			projectionAreaObj.GetComponent<ProjectObject> ().SetHeight (4.0f);
+			projectionAreaObj.GetComponent<ProjectObject> ().SetSpeed (0.5f);
 		}
 	}
 }

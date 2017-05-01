@@ -121,8 +121,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1857718352688404}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: -0.0014132576, z: 0.0014554453}
-  m_LocalScale: {x: 2.338, y: 0.239, z: 2.338}
+  m_LocalPosition: {x: -0, y: -0.0045736, z: 0.0012304}
+  m_LocalScale: {x: 1.664656, y: 0.17016801, z: 1.6646562}
   m_Children: []
   m_Father: {fileID: 4568477609328206}
   m_RootOrder: 0
@@ -147,8 +147,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1308985031951066}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -8.8971, y: 4.9833, z: 14.091}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -8.8971, y: 4.8896, z: 14.088}
+  m_LocalScale: {x: 0.8539129, y: 0.85391283, z: 0.85391283}
   m_Children:
   - {fileID: 4723043391701504}
   - {fileID: 4568477609328206}
@@ -162,8 +162,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1869207457310202}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0.0007529642, z: 0.00085319515}
-  m_LocalScale: {x: 1.9344169, y: 0.45212245, z: 1.9344169}
+  m_LocalPosition: {x: -0, y: -0.002127, z: 0.00060774}
+  m_LocalScale: {x: 1.3267351, y: 0.31009176, z: 1.3267351}
   m_Children: []
   m_Father: {fileID: 4568477609328206}
   m_RootOrder: 2
@@ -191,8 +191,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1516842457175260}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_LocalPosition: {x: 0, y: 0.11, z: 0}
+  m_LocalScale: {x: 74.00761, y: 74.007614, z: 74.007614}
   m_Children: []
   m_Father: {fileID: 4359026748656430}
   m_RootOrder: 0
