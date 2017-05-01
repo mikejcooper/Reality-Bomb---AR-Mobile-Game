@@ -48,7 +48,7 @@ public class CarController : NetworkBehaviour
     private Rigidbody _rigidbody;
     private Quaternion _lookAngle = Quaternion.Euler(Vector3.forward);
 	private float _transferTime;
-	private float _fallDistanceBeforeRespawn;
+	private float _fallDistanceBeforeRespawn = -3.0f; //default value in case it does not get updated
 
 
 	private bool _initialised;
@@ -412,6 +412,7 @@ public class CarController : NetworkBehaviour
 		float meshHeight = gameMapObjects.ground.transform.GetComponent<MeshRenderer> ().bounds.size.y;
 		float meshMinY = gameMapObjects.ground.transform.GetComponent<MeshRenderer> ().bounds.min.y;
 		_fallDistanceBeforeRespawn = meshMinY - (meshHeight*0.65f + 4.0f);
+		Debug.Log ("falldistance before spawn is set: " + _fallDistanceBeforeRespawn);
 	}
 
 }
