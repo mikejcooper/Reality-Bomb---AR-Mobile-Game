@@ -21,7 +21,7 @@ public class LoginManager : MonoBehaviour {
 	private Stage _currentStage = Stage.Nickname;
 	private ProfanityFilter _profanityFilter;
 	private string _chosenNickname;
-	private string _chosenVehicleName;
+	private Garage.Vehicle _chosenVehicle;
 
 	private string[] _profanityResponses = new string[] {
 		"does your mother know you speak like that?",
@@ -109,12 +109,12 @@ public class LoginManager : MonoBehaviour {
 	private void MoveToConnecting () {
 		_currentStage = Stage.Connecting;
 		NextStageButton.gameObject.SetActive (false);
-		_chosenVehicleName = CarPickerObj.CurrentVehicle ().Name;
+		_chosenVehicle = CarPickerObj.CurrentVehicle ();
 		VehicleSelectionStageObj.SetActive (false);
 		ConnectingStageObj.SetActive (true);
 		ConnectingTextObject.StartBlinking ();
 
-		ClientSceneManager.Instance.OnUserRequestFindGame(_chosenNickname);
+		ClientSceneManager.Instance.OnUserRequestFindGame(_chosenNickname, _chosenVehicle);
 	}
 
 }

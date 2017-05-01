@@ -7,15 +7,10 @@ public class VehiclePicker : MonoBehaviour {
 
 	public Carousel CarouselObj;
 	public VehicleNameFlipper TextFlipperObj;
-	public List<VehicleDefinition> AvailableVehicles;
+	public Garage Garage;
 
 	private int _currentVehicleIndex = 0;
 
-	[System.Serializable]
-	public class VehicleDefinition {
-		public GameObject ModelPrefab;
-		public string Name;
-	}
 		
 	void Start () {
 
@@ -24,9 +19,10 @@ public class VehiclePicker : MonoBehaviour {
 			Destroy (child.gameObject);
 		}
 
-		for (int i=0; i<AvailableVehicles.Count; i++) {
-			var vehicle = AvailableVehicles [i];
-			GameObject.Instantiate (vehicle.ModelPrefab, CarouselObj.transform);
+		for (int i=0; i<Garage.AvailableVehicles.Count; i++) {
+			var vehicle = Garage.AvailableVehicles [i];
+			var obj = Garage.InstantiateVehicle(Garage.CarType.MODEL, vehicle, 320);
+			obj.transform.SetParent (CarouselObj.transform, false);
 			TextFlipperObj.AddName (vehicle.Name);
 		}
 	}
@@ -43,8 +39,8 @@ public class VehiclePicker : MonoBehaviour {
 		TextFlipperObj.FocusIndex = _currentVehicleIndex;
 	}
 
-	public VehicleDefinition CurrentVehicle () {
-		return AvailableVehicles [(_currentVehicleIndex + AvailableVehicles.Count*100) % AvailableVehicles.Count];
+	public Garage.Vehicle CurrentVehicle () {
+		return Garage.AvailableVehicles [(_currentVehicleIndex + Garage.AvailableVehicles.Count*100) % Garage.AvailableVehicles.Count];
 	}
 
 }

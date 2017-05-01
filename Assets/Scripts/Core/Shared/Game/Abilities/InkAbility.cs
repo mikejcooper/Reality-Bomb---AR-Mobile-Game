@@ -130,9 +130,13 @@ namespace Abilities {
 		public static void SetCarColor (CarProperties properties) {
 			Material[] materials = properties.transform.FindChild("Car_Model").GetComponent<MeshRenderer> ().materials;
 
-			materials [1].color = Color.HSVToRGB(0f, 0f, 0f); // Side glow
-			materials [2].color = Color.HSVToRGB(0f, 0f, 0f); // Blades
-			materials [3].color = Color.HSVToRGB(0f, 0f, 0f); // Body
+			foreach (var mat in materials) {
+				Debug.Log (mat.name);
+				if (mat.name.StartsWith ("Body")) {
+					mat.color = Color.HSVToRGB(0f, 0f, 0f);
+				}
+			}
+
 		}
 
 		public static void ResetCarColor (CarProperties properties) {

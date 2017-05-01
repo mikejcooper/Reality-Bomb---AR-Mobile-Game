@@ -31,6 +31,7 @@ public class ClientSceneManager : MonoBehaviour
 	private Coroutine _countdownCoroutine;
 
 	public string ClientNickName;
+	public int ClientVehicleId;
 
 	public static ClientSceneManager Instance { get { return _instance; } }
 
@@ -145,9 +146,12 @@ public class ClientSceneManager : MonoBehaviour
 		}
 	}
 
-	public void OnUserRequestFindGame (string nickname) {
+	public void OnUserRequestFindGame (string nickname, Garage.Vehicle vehicle) {
 		if (DEBUG) Debug.Log ("OnUserRequestFindGame");
+
+		Debug.Log (string.Format ("user requested nickname: {0} and vehicle id: {1}", nickname, vehicle.Id));
 		ClientNickName = nickname;
+		ClientVehicleId = vehicle.Id;
 		_innerProcess.MoveNext (Command.JoinGame);
 		ensureCorrectScene ();
 
@@ -275,6 +279,15 @@ public class ClientSceneManager : MonoBehaviour
 		}
 
 		ensureCorrectScene ();
+	}
+
+	public NetworkCompat.NetworkLobbyPlayer GetOwnLobbyPlayer () {
+		foreach (var lobbyPlayer in GameObject.FindObjectsOfType<NetworkCompat.NetworkLobbyPlayer> ()) {
+			if (lobbyPlayer.isLocalPlayer) {
+				return lobbyPlayer;
+			}
+		}
+		return null;
 	}
 
 
