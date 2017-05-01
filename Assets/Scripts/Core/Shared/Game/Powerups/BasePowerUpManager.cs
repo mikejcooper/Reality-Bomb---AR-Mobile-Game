@@ -108,9 +108,9 @@ namespace Powerups {
 			Vector3 startPosition = _meshObj.convexhullVertices[0];
 			projectionAreaObj.transform.position = startPosition;
 			//Scale convex hull points by 1.X%
-			List<Vector3> convexHull = GameUtils.MinimizeConvexHull(_meshObj.convexhullVertices, 1.2f);
-			projectionAreaObj.GetComponent<ProjectObject> ().SetPositions (convexHull);
-			OnProjectionAreaGenerated (projectionAreaObj);
+//			List<Vector3> convexHull = GameUtils.MinimizeConvexHull(_meshObj.convexhullVertices, 1.2f);
+//			projectionAreaObj.GetComponent<ProjectObject> ().SetPositions (convexHull);
+			OnProjectionAreaGenerated (projectionAreaObj, _meshObj);
 			if (projectionAreaObj.GetComponent<ProjectObject> ().onFinishedStartMovement()) {
 				StartCoroutine (TryToSpawn());
 			} else {
@@ -150,7 +150,9 @@ namespace Powerups {
             {
                 powerUpObj.transform.parent = GameObject.Find("Marker scene").transform;
                 powerUpObj.name = "powerup";
-                powerUpObj.transform.localScale = Vector3.one;
+//                powerUpObj.transform.localScale = Vector3.one;
+				powerUpObj.GetComponent<Rigidbody> ().useGravity = false;
+				powerUpObj.GetComponent<BoxCollider> ().enabled = false;
 
                 if (NetworkServer.active)
                     NetworkServer.Spawn(powerUpObj, PowerUpPool.AssetId);
@@ -179,7 +181,7 @@ namespace Powerups {
 
 		protected virtual bool IsAllowedToSpawn () { return false; }
 		protected virtual void OnPowerUpGenerated(GameObject powerUpObj) {}
-		protected virtual void OnProjectionAreaGenerated(GameObject projectionAreaObj) {}
+		protected virtual void OnProjectionAreaGenerated(GameObject projectionAreaObj, GameMapObjects meshObj) {}
 
 	}
 
