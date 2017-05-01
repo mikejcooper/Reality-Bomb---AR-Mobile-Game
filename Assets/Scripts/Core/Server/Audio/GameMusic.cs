@@ -13,6 +13,9 @@ public class GameMusic : MusicFade {
 		//Starting of the game music is called in the gamemanager
 		SceneManager.sceneUnloaded += StopMusic; //Subscribe to event
 	}
-		
+
+	/*void RaisePitch() {
+		_music.pitch *= 1.1f;
+	}*/
 }
 
