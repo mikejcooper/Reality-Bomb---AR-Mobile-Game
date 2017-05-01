@@ -204,6 +204,7 @@ MonoBehaviour:
     type: 2}
   Canvas: {fileID: 1343903775}
   _startingBombPlayerConnectionId: 0
+  Music: {fileID: 1032852764}
 --- !u!114 &30509394
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4089,11 +4090,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 1
   m_subTextObjects:
@@ -4309,7 +4310,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: b17ffafd188290b4196fd74e48c0a44c, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 9c5ade55500c87744b289bc06f207330, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0
   m_Pitch: 1

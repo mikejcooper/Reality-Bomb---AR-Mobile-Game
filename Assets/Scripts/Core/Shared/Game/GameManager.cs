@@ -42,7 +42,8 @@ public class GameManager : NetworkBehaviour {
 	private GameObject _clientGameDiedDialogObj;
 
 	public GameMapObjects WorldMesh { get; private set; }
-
+	 
+	public GameMusic Music;
 
 	void Start ()
 	{
@@ -215,7 +216,7 @@ public class GameManager : NetworkBehaviour {
         if(_cars.GetNumberOfBombsPresent() < 1) _cars.PassBombRandomPlayer ();
 
 		//Play the game music on the server only
-		GameObject.FindObjectOfType<GameMusic>().StartMusic ();
+		Music.StartMusic ();
 	}
 
 	public void AddCar(GameObject gamePlayer)
