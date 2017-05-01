@@ -334,6 +334,54 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 0
+--- !u!1001 &338504956
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4767103974448376, guid: e40a882a865ee42cba65a8692e322e6b, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: -1.3412476
+      objectReference: {fileID: 0}
+    - target: {fileID: 4767103974448376, guid: e40a882a865ee42cba65a8692e322e6b, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 2.0062408
+      objectReference: {fileID: 0}
+    - target: {fileID: 4767103974448376, guid: e40a882a865ee42cba65a8692e322e6b, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -3.3913276
+      objectReference: {fileID: 0}
+    - target: {fileID: 4767103974448376, guid: e40a882a865ee42cba65a8692e322e6b, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4767103974448376, guid: e40a882a865ee42cba65a8692e322e6b, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4767103974448376, guid: e40a882a865ee42cba65a8692e322e6b, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4767103974448376, guid: e40a882a865ee42cba65a8692e322e6b, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4767103974448376, guid: e40a882a865ee42cba65a8692e322e6b, type: 2}
+      propertyPath: m_RootOrder
+      value: 10
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: e40a882a865ee42cba65a8692e322e6b, type: 2}
+  m_IsPrefabParent: 0
+--- !u!114 &338504957 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114503069860495276, guid: e40a882a865ee42cba65a8692e322e6b,
+    type: 2}
+  m_PrefabInternal: {fileID: 338504956}
+  m_Script: {fileID: 11500000, guid: e167df897b5f14d38ad34b259882f88e, type: 3}
 --- !u!1 &485203493
 GameObject:
   m_ObjectHideFlags: 0
@@ -834,8 +882,7 @@ MonoBehaviour:
   FirstPlaceSpawn: {fileID: 854880832}
   SecondPlaceSpawn: {fileID: 774975938}
   ThirdPlaceSpawn: {fileID: 1393531216}
-  VehiclePrefab: {fileID: 1655894756390358, guid: 6214424fc1f9e41e19b02001f1bb376c,
-    type: 2}
+  Garage: {fileID: 338504957}
 --- !u!1 &854880832
 GameObject:
   m_ObjectHideFlags: 0

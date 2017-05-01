@@ -39,8 +39,13 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 		if (thisLobbyPlayer == null) {
 			return null;
 		}
+
+
 			
 		var obj = (GameObject)Instantiate(gamePlayerPrefab, Vector3.zero, Quaternion.identity);
+
+
+
 		var carController = obj.GetComponent<CarController> ();
 		carController.ServerId = conn.connectionId;
 		var carProperties = obj.GetComponent<CarProperties> ();

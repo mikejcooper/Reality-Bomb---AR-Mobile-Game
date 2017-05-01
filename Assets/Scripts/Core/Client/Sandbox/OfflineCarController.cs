@@ -19,9 +19,6 @@ public class OfflineCarController : MonoBehaviour
 	void Start () {
 		CarProperties.OriginalHue = 0;
 
-		Material[] materials = transform.FindChild("Car_Model").GetComponent<MeshRenderer> ().materials;
-
-		GameUtils.SetCarMaterialColoursFromHue (materials, CarProperties.OriginalHue);
         _spm = GameObject.FindObjectOfType<SandBoxPowerUpManager>();
     }
 

@@ -144,11 +144,15 @@ public class CarController : NetworkBehaviour
 
 	private void ApplyCarProperties () {
 
-		CarProperties.OriginalHue = LobbyPlayer().colour;
+		var player = LobbyPlayer ();
+		CarProperties.OriginalHue = player.colour;
 
-		Material[] materials = transform.FindChild("Car_Model").GetComponent<MeshRenderer> ().materials;
-
-		GameUtils.SetCarMaterialColoursFromHue (materials, CarProperties.OriginalHue);
+		Garage garage = GameObject.FindObjectOfType<Garage> ();
+		if (garage != null) {
+			garage.ApplyVehicleToShell (player.vehicleId, gameObject, player.colour);
+		} else {
+			Debug.LogWarning ("couldn't find garage");
+		}
 	}
 
 	void OnDestroy () {

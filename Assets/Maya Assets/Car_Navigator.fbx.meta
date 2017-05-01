@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 19bc0e2a6917b4669b55c91d24582b89
-timeCreated: 1492016878
+guid: 19e33ac2552d8445385b7410f50ff42c
+timeCreated: 1493660338
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -9,7 +9,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Car_Model
+    4300000: Car2
     9500000: //RootNode
   materials:
     importMaterials: 1

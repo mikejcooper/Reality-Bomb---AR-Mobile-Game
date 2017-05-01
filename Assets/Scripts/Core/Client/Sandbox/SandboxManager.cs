@@ -17,6 +17,7 @@ public class SandboxManager : MonoBehaviour
 	public SandBoxPowerUpManager PowerUpManager;
 	public List<GameObject> TutorialDialogPrefabs;
 	public GameObject GameCountdownDialogPrefab;
+	public Garage Garage;
 
 	private int _currentTutorialStage = 0;
 	private GameObject _currentTutorialDialog;
@@ -34,6 +35,12 @@ public class SandboxManager : MonoBehaviour
 			SetCurrentDialog (0);
 			PowerUpManager.enabled = false;
 		}
+
+		if (ClientSceneManager.Instance != null) {
+			StartCoroutine (ApplyLobbyPlayerCarProperties ());
+		} else {
+			Garage.ApplyVehicleToShell (Garage.AvailableVehicles [1], CarObject, 320);
+		}
 			
 		PowerUpManager.SpeedBoostActivatedEvent += SetSpeedTxt;
 		PowerUpManager.InkSplatterActivatedEvent += SetSplatTxt;
@@ -46,6 +53,31 @@ public class SandboxManager : MonoBehaviour
 			ClientSceneManager.Instance.OnCountDownCanceledEvent += OnCountDownCanceled;
 		}
 
+	}
+
+	// I can't think of a better way of piping the evtn through right now...
+	IEnumerator ApplyLobbyPlayerCarProperties()
+	{
+		NetworkCompat.NetworkLobbyPlayer player = ClientSceneManager.Instance.GetOwnLobbyPlayer ();
+		while(player == null) 
+		{ 
+			player = ClientSceneManager.Instance.GetOwnLobbyPlayer ();
+			yield return new WaitForSeconds(0.5f);
+		}
+		player.OnCarDetailsUpdateEvent += () => {
+			NetworkCompat.NetworkLobbyPlayer newPlayer = ClientSceneManager.Instance.GetOwnLobbyPlayer ();
+			Debug.Log(string.Format("adding car shell for vehicle id: {0}", newPlayer.vehicleId));
+			Garage.ApplyVehicleToShell (newPlayer.vehicleId, CarObject, newPlayer.colour);
+		};
+
+		Debug.Log(string.Format("adding initial car shell for vehicle id: {0}", player.vehicleId));
+		Garage.ApplyVehicleToShell (player.vehicleId, CarObject, player.colour);	
+
+		while(true) 
+		{ 
+			Debug.Log(string.Format("checking name: {0} vehicle id: {1}", ClientSceneManager.Instance.GetOwnLobbyPlayer ().nickname, ClientSceneManager.Instance.GetOwnLobbyPlayer ().vehicleId));
+			yield return new WaitForSeconds(5);
+		}
 	}
 
 	void OnDestroy(){

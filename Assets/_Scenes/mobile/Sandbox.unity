@@ -612,6 +612,7 @@ MonoBehaviour:
   - {fileID: 1856141214214102, guid: 51708ac06fbd7405393c6fed4a1949e3, type: 2}
   GameCountdownDialogPrefab: {fileID: 1008171167274622, guid: c83a596ff5ed74353924fcc2c7e833fe,
     type: 2}
+  Garage: {fileID: 1591504065}
 --- !u!4 &757163055
 Transform:
   m_ObjectHideFlags: 0
@@ -1696,6 +1697,54 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1591504064
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4767103974448376, guid: e40a882a865ee42cba65a8692e322e6b, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: -1.3412476
+      objectReference: {fileID: 0}
+    - target: {fileID: 4767103974448376, guid: e40a882a865ee42cba65a8692e322e6b, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 2.0062408
+      objectReference: {fileID: 0}
+    - target: {fileID: 4767103974448376, guid: e40a882a865ee42cba65a8692e322e6b, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -3.3913276
+      objectReference: {fileID: 0}
+    - target: {fileID: 4767103974448376, guid: e40a882a865ee42cba65a8692e322e6b, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4767103974448376, guid: e40a882a865ee42cba65a8692e322e6b, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4767103974448376, guid: e40a882a865ee42cba65a8692e322e6b, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4767103974448376, guid: e40a882a865ee42cba65a8692e322e6b, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4767103974448376, guid: e40a882a865ee42cba65a8692e322e6b, type: 2}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: e40a882a865ee42cba65a8692e322e6b, type: 2}
+  m_IsPrefabParent: 0
+--- !u!114 &1591504065 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114503069860495276, guid: e40a882a865ee42cba65a8692e322e6b,
+    type: 2}
+  m_PrefabInternal: {fileID: 1591504064}
+  m_Script: {fileID: 11500000, guid: e167df897b5f14d38ad34b259882f88e, type: 3}
 --- !u!1001 &1760094982
 Prefab:
   m_ObjectHideFlags: 0

@@ -15,7 +15,7 @@ public class CameraDollyEventListener : MonoBehaviour {
 	public GameObject SecondPlaceSpawn;
 	public GameObject ThirdPlaceSpawn;
 
-	public GameObject VehiclePrefab;
+	public Garage Garage;
 
 	private bool _hidingRows = true;
 
@@ -60,8 +60,13 @@ public class CameraDollyEventListener : MonoBehaviour {
 			return;
 		}
 
-		// todo: vehicle type
-		var obj = GameObject.Instantiate(VehiclePrefab);
+		GameObject obj;
+		if (player != null) {
+			obj = Garage.InstantiateVehicle (Garage.CarType.MODEL, player.vehicleId, player.colour);
+		} else {
+			obj = Garage.InstantiateVehicle (Garage.CarType.MODEL, Garage.AvailableVehicles[0].Id, 320);
+		}
+		obj.transform.localRotation *= Quaternion.AngleAxis (90, Vector3.up);
 		obj.transform.SetParent (spawnPosition.transform, false);
 	} 
 

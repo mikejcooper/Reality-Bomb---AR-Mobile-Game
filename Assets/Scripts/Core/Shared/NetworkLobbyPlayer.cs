@@ -13,6 +13,9 @@ namespace NetworkCompat {
 	public class NetworkLobbyPlayer : NetworkBehaviour
 	{
 
+		public delegate void OnCarDetailsUpdate();
+		public event OnCarDetailsUpdate OnCarDetailsUpdateEvent = delegate {};
+
 		public struct GameResult
 		{
 			public float FinishTime;
@@ -35,9 +38,11 @@ namespace NetworkCompat {
 		[SyncVar]
 		public bool m_GameLoaded;
 		[SyncVar]
-		public string m_Name;
+		public string m_Nickname;
 		[SyncVar]
 		public int m_Colour;
+		[SyncVar]
+		public int m_VehicleId;
 		[SyncVar]
 		public SyncListGameResult m_GameResults = new SyncListGameResult();
 
@@ -46,8 +51,9 @@ namespace NetworkCompat {
 		public bool readyToBegin { get { return m_ReadyToBegin; } set { m_ReadyToBegin = value; if (!m_ReadyToBegin) { m_PlayingGame = m_GameLoaded = false; } } }
 		public bool playingGame { get { return m_PlayingGame; } set { m_PlayingGame = value; } }
 		public bool gameLoaded { get { return m_GameLoaded; } set { m_GameLoaded = value; } }
-		public string nickname { get { return m_Name; } set { m_Name = value; } }
+		public string nickname { get { return m_Nickname; } set { m_Nickname = value; } }
 		public int colour { get { return m_Colour; } set { m_Colour = value; } }
+		public int vehicleId { get { return m_VehicleId; } set { m_VehicleId = value; } }
 		public SyncListGameResult gameResults { get { return m_GameResults; } }
 		public GameResult lastGameResult { get { return m_GameResults [m_GameResults.Count - 1]; } }
 
@@ -58,6 +64,14 @@ namespace NetworkCompat {
 				totalCumulativeScore += gameScore;
 			}
 			return totalCumulativeScore;
+		}
+
+		private void OnCarColourUpdate ( int ignore) {
+			OnCarDetailsUpdateEvent ();
+		}
+
+		private void OnCarVehicleIdUpdate ( int ignore) {
+			OnCarDetailsUpdateEvent ();
 		}
 
 		public void AddGameResult (GameResult result) {
@@ -99,12 +113,15 @@ namespace NetworkCompat {
 		}
 
 		public override void OnStartLocalPlayer() {
-			CmdSetName (ClientSceneManager.Instance.ClientNickName);
+			CmdSetDetails (ClientSceneManager.Instance.ClientNickName, ClientSceneManager.Instance.ClientVehicleId);
 		}
 
 		[Command]
-		public void CmdSetName (string name) {
-			m_Name = name;
+		public void CmdSetDetails (string nickname, int vehicleId) {
+			Debug.Log (string.Format ("received request to set name to {0} and vehicle id to {1}", nickname, vehicleId));
+			m_Nickname = nickname;
+			m_VehicleId = vehicleId;
+			SetDirtyBit (2);
 		}
 
 		public void SendReadyToBeginMessage()
