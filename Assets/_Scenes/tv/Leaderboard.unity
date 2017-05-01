@@ -882,6 +882,12 @@ MonoBehaviour:
   FirstPlaceSpawn: {fileID: 854880832}
   SecondPlaceSpawn: {fileID: 774975938}
   ThirdPlaceSpawn: {fileID: 1393531216}
+  AnimationController1stPlace: {fileID: 9100000, guid: 8d954bc6ff7d5492bbf0b43f7939583a,
+    type: 2}
+  AnimationController2ndPlace: {fileID: 9100000, guid: 4fb99e389150747a3b180f82f882a89c,
+    type: 2}
+  AnimationController3rdPlace: {fileID: 9100000, guid: 4bd749c3fc13e497ca38de82d6864d00,
+    type: 2}
   Garage: {fileID: 338504957}
 --- !u!1 &854880832
 GameObject:

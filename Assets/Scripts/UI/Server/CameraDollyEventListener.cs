@@ -15,6 +15,10 @@ public class CameraDollyEventListener : MonoBehaviour {
 	public GameObject SecondPlaceSpawn;
 	public GameObject ThirdPlaceSpawn;
 
+	public RuntimeAnimatorController AnimationController1stPlace;
+	public RuntimeAnimatorController AnimationController2ndPlace;
+	public RuntimeAnimatorController AnimationController3rdPlace;
+
 	public Garage Garage;
 
 	private bool _hidingRows = true;
@@ -46,19 +50,25 @@ public class CameraDollyEventListener : MonoBehaviour {
 
 	private void AddPlayerForPosition(NetworkCompat.NetworkLobbyPlayer player, int pos) {
 		GameObject spawnPosition;
+		RuntimeAnimatorController celebrationAnimation;
 		switch (pos) {
 		case 0:
 			spawnPosition = FirstPlaceSpawn;
+			celebrationAnimation = AnimationController1stPlace;
 			break;
 		case 1:
 			spawnPosition = SecondPlaceSpawn;
+			celebrationAnimation = AnimationController2ndPlace;
 			break;
 		case 2:
 			spawnPosition = ThirdPlaceSpawn;
+			celebrationAnimation = AnimationController3rdPlace;
 			break;
 		default:
 			return;
 		}
+
+
 
 		GameObject obj;
 		if (player != null) {
@@ -66,6 +76,10 @@ public class CameraDollyEventListener : MonoBehaviour {
 		} else {
 			obj = Garage.InstantiateVehicle (Garage.CarType.MODEL, Garage.AvailableVehicles[0].Id, 320);
 		}
+
+		var animator = obj.transform.FindChild("Car_Model").gameObject.GetComponent<Animator> ();
+		animator.runtimeAnimatorController = celebrationAnimation;
+
 		obj.transform.localRotation *= Quaternion.AngleAxis (90, Vector3.up);
 		obj.transform.SetParent (spawnPosition.transform, false);
 	} 
