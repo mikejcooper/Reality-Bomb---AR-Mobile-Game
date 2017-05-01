@@ -25,6 +25,7 @@ namespace Powerups {
                     int numPlayers = NetworkServer.connections.Count;
                     PowerUpPool = new SpawnPool(PowerupPrefab, numPlayers);
                     RpcInitPool(numPlayers);
+                    PowerUpUnspawner.OnTimeOutEvent += UnSpawnPowerUp;
                 }
                 if (GameObject.FindObjectOfType<GameManager> () != null) {
 					if (GameObject.FindObjectOfType<GameManager> ().WorldMesh != null) {
@@ -40,6 +41,19 @@ namespace Powerups {
 			ClientScene.RegisterPrefab(PowerupPrefab);
 			ClientScene.RegisterPrefab(ProjectionAreaPrefab);
 		}
+
+        private void OnDestroy()
+        {
+            PowerUpUnspawner.OnTimeOutEvent -= UnSpawnPowerUp;
+        }
+
+        private void UnSpawnPowerUp(GameObject go)
+        {
+            if (!isServer)
+                return;
+            PowerUpPool.UnSpawnObject(go);
+            NetworkServer.UnSpawn(go);
+        }
 
         [ClientRpc]
         void RpcInitPool(int len)
