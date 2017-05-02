@@ -17,7 +17,13 @@ namespace Powerups {
 
 		private GameObject _projectionAreaObj;
 
-		protected override void Start () {
+        private void Awake()
+        {
+            ClientScene.RegisterPrefab(PowerupPrefab);
+            ClientScene.RegisterPrefab(ProjectionAreaPrefab);
+        }
+
+        protected override void Start () {
 			base.Start ();
 			if (IsAllowedToSpawn ()) {
                 if (isServer)
@@ -25,7 +31,6 @@ namespace Powerups {
                     int numPlayers = NetworkServer.connections.Count;
                     PowerUpPool = new SpawnPool(PowerupPrefab, numPlayers);
                     RpcInitPool(numPlayers);
-                    PowerUpUnspawner.OnTimeOutEvent += UnSpawnPowerUp;
                 }
                 if (GameObject.FindObjectOfType<GameManager> () != null) {
 					if (GameObject.FindObjectOfType<GameManager> ().WorldMesh != null) {
@@ -37,23 +42,7 @@ namespace Powerups {
 					Debug.LogError ("Game Manager in GamePowerUpManager is Null");
 				}
 			}
-
-			ClientScene.RegisterPrefab(PowerupPrefab);
-			ClientScene.RegisterPrefab(ProjectionAreaPrefab);
 		}
-
-        private void OnDestroy()
-        {
-            PowerUpUnspawner.OnTimeOutEvent -= UnSpawnPowerUp;
-        }
-
-        private void UnSpawnPowerUp(GameObject go)
-        {
-            if (!isServer)
-                return;
-            PowerUpPool.UnSpawnObject(go);
-            NetworkServer.UnSpawn(go);
-        }
 
         [ClientRpc]
         void RpcInitPool(int len)
@@ -88,7 +77,7 @@ namespace Powerups {
 				Vector3 target = new Vector3(p.x, p.y - (_yOffSet + 10.0f) , p.z);
 				// Move source to start position + some offset. 
 				powerUpObj.transform.position = _projectionAreaObj.GetComponent<ProjectObject>().transform.position + new Vector3(0, 1.0f, 0);
-				NetworkServer.Spawn (powerUpObj);
+				NetworkServer.Spawn (powerUpObj, PowerUpPool.AssetId);
 				_projectionAreaObj.GetComponent<ProjectObject> ().Launch (powerUpObj.transform, target);
 			}
 			
