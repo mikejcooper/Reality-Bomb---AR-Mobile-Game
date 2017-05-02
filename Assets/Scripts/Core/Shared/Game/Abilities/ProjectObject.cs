@@ -20,25 +20,27 @@ public class ProjectObject : MonoBehaviour {
 	private Quaternion _lookRotation;
 	private float _rotationSpeed = 2.0f;
 
+	private bool _rotateCannon;
 	public GameObject CannonObj;
 
 	void Start()
 	{ 	
-		_cannonTarget = new Vector3 (0, 0, 0);
-		_cannonTarget.y = gameObject.transform.position.y;
+		_rotateCannon = false;
 		
 	}
 
 	void Update()
-	{	
-		//find the vector pointing from our position to the target
-		_direction = (_cannonTarget - CannonObj.transform.position).normalized;
+	{
+		if (_rotateCannon) {
+			//find the vector pointing from our position to the target
+			_direction = (_cannonTarget - CannonObj.transform.position).normalized;
+			_direction.y = 0;
+			//create the rotation we need to be in to look at the target
+			_lookRotation = Quaternion.LookRotation (_direction);
 
-		//create the rotation we need to be in to look at the target
-		_lookRotation = Quaternion.LookRotation(_direction);
-
-		//rotate us over time according to speed until we are in the required rotation
-		CannonObj.transform.rotation = Quaternion.Slerp(CannonObj.transform.rotation, _lookRotation, Time.deltaTime * _rotationSpeed);
+			//rotate us over time according to speed until we are in the required rotation
+			CannonObj.transform.rotation = Quaternion.Slerp (CannonObj.transform.rotation, _lookRotation, Time.deltaTime * _rotationSpeed);
+		}
 	}
 		
 	public void Launch (Transform Source, Vector3 Target, float firingAngle = 45.0f) {
@@ -53,8 +55,9 @@ public class ProjectObject : MonoBehaviour {
 		Source.SetParent (transform);
 
 		_cannonTarget = Target;
-		_cannonTarget.y = transform.position.y;
+		_cannonTarget.y = 4;
 
+		_rotateCannon = true;
 
 		yield return new WaitForSeconds (0.1f);
 
