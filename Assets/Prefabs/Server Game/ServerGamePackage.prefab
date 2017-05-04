@@ -216,7 +216,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1239915692607504}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.3435001, y: 3.1155, z: 0.17149734}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224488648354103172}
@@ -436,6 +436,7 @@ MonoBehaviour:
     type: 3}
   BombSilhouetteSprite: {fileID: 21300000, guid: 434e3675b2fc34226b0bbd1a62af5845,
     type: 3}
+  DeadSprite: {fileID: 21300000, guid: 91e04a44c34ca90499a4e7cede508dc9, type: 3}
 --- !u!114 &114470807040652958
 MonoBehaviour:
   m_ObjectHideFlags: 1

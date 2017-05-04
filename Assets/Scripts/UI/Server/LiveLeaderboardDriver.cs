@@ -21,7 +21,18 @@ public class LiveLeaderboardDriver : MonoBehaviour {
 
 		List<CarController> orderedcars = _cars.OrderBy (o => -o.Lifetime).ToList ();
 
+		// Rather than remove a child for a disconnected player
+		// we just remove all children and re-add those who
+		// are still connected.
+		if (transform.childCount > _cars.Count) {
+			foreach (Transform child in transform) {
+				Destroy (child.gameObject);
+			}
+		}
+
 		foreach (var carController in _cars) {
+
+
 
 			var carName = carController.LobbyPlayer().nickname;
 			var entryTransform = transform.Find (carName);
