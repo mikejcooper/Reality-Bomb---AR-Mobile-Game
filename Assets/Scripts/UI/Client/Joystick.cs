@@ -6,12 +6,18 @@ using UnityEngine.EventSystems;
 
 public class Joystick : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUpHandler{
 
+	public Canvas Canvas;
+	public RectTransform JoystickRectTransform;
+	public float JoysitckPositionFromBR;
+	public float JoysitckSize;
+
 	public GameObject Front;
 	public List<GameObject> DecoObjects;
 	public int MinRotationSpeed;
 	public int MaxRotationSpeed;
 	public bool Active = false;
 	public Vector2 NormalisedVector;
+
 
 	private List<int> _decoSpeeds;
 	private System.Random _random;
@@ -20,6 +26,9 @@ public class Joystick : MonoBehaviour, IDragHandler, IPointerDownHandler, IPoint
 
 
 	void Start () {
+		if(Canvas != null && JoystickRectTransform != null)
+			PositionJoystickForScreen ();
+
 		_random = new System.Random ();
 		_decoSpeeds = new List<int> ();
 		foreach (var deco in DecoObjects) {
@@ -79,6 +88,58 @@ public class Joystick : MonoBehaviour, IDragHandler, IPointerDownHandler, IPoint
 		NormalisedVector = new Vector2 (offset.x, offset.y).normalized * (length / maxRadius);
 
 		SetPosition (NormalisedVector * length);
+	}
+
+	private void PositionJoystickForScreen(){
+
+		//----------------------------Positioning -----------------------------------------------
+
+		Vector2 lXY = Canvas.GetComponent<RectTransform> ().sizeDelta;
+
+		// Pixels per inch for current device
+		float DPI = Screen.dpi;
+
+		// Screen x and y pixel size 
+		int pY = Screen.height;
+		int pX = Screen.width;
+
+		// Local x and y screen size
+		float lX = lXY [0];
+		float lY = lXY [1];
+
+		// local size per pixel 
+		float dpXlX = lX/pX;
+		float dpYlY = lY/pY;
+
+		// Position from bottom right in inches 
+		float xInchShift = JoysitckPositionFromBR;
+		float yInchShift = JoysitckPositionFromBR;
+
+		// Set joystick position to bottom right + Shift from bottom right 
+		Vector3 newPosition = new Vector3(lX/2,-lY/2,0) + new Vector3(-xInchShift * DPI * dpXlX, yInchShift * DPI * dpYlY, 0);
+
+		//----------------------------SCALING -----------------------------------------------
+
+		// Size in inches 
+		float wInchSize = JoysitckSize;
+		float hInchSize = JoysitckSize;
+
+		// local obj size width and hieght 
+		float lW = JoystickRectTransform.rect.width;
+		float lH = JoystickRectTransform.rect.height;
+
+		// New local scale
+		float scaleW = DPI * wInchSize * dpXlX / lW;
+		float scaleH = DPI * hInchSize * dpYlY / lH;
+		Vector3 newScale = new Vector3(scaleW, scaleH, 1);
+
+		//----------------------------Set Position and Scale -----------------------------------------------
+
+		// Set new position and scale
+		JoystickRectTransform.localScale = newScale;
+
+		JoystickRectTransform.localPosition = newPosition;
+
 	}
 
 	public virtual void OnDrag(PointerEventData ped) {

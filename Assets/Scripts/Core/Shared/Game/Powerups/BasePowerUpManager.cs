@@ -154,8 +154,8 @@ namespace Powerups {
 				powerUpObj.GetComponent<Rigidbody> ().useGravity = false;
 				powerUpObj.GetComponent<BoxCollider> ().enabled = false;
 
-                if (NetworkServer.active)
-                    NetworkServer.Spawn(powerUpObj, PowerUpPool.AssetId);
+                //if (NetworkServer.active)
+                //    NetworkServer.Spawn(powerUpObj, PowerUpPool.AssetId);
                 
                 OnPowerUpGenerated(powerUpObj);
             }               
