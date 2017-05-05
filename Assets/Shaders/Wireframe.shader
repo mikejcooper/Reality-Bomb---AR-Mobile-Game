@@ -16,12 +16,18 @@
     }
     SubShader
     {
+    	Tags { "Queue"="Geometry-1" "RenderType"="Transparent" }
+
         Pass
         {
-
-        	Tags { "Queue"="Transparent" "RenderType"="Transparent" }
-
         	Blend SrcAlpha OneMinusSrcAlpha
+
+        	Stencil
+			{
+			    Ref 1
+			    Comp Always
+			    Pass Replace
+			}
 
             CGPROGRAM
             #pragma vertex vert

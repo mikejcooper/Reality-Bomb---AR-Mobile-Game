@@ -11,14 +11,16 @@
 	}
 	SubShader
 	{
-		Tags { "RenderType"="Opaque" }
+		Tags { "Queue"="Transparent+2" "RenderType"="Transparent" }
 		LOD 100
+
+
 
 		Pass
 		{
-			Tags { "Queue"="Transparent" "RenderType"="Transparent" }
-
         	Blend SrcAlpha OneMinusSrcAlpha
+
+        	ZWrite Off
 
 			CGPROGRAM
 			#pragma vertex vert
