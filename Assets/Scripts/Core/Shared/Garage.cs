@@ -65,7 +65,20 @@ public class Garage : MonoBehaviour {
 	public GameObject InstantiateVehicle(CarType type, int vehicleId, int hue) {
 		var shell = GameObject.Instantiate (GetShell (type));
 		ApplyVehicleToShell (vehicleId, shell, hue);
+		if (type == CarType.MODEL) {
+			DisableStencil (shell);
+		}
 		return shell;
+	}
+
+	void DisableStencil (GameObject car) {
+		foreach (var renderer in car.GetComponentsInChildren<MeshRenderer>()) {
+			foreach (var material in renderer.materials) {
+				if (material.shader.name.Contains ("Stencil")) {
+					material.SetInt ("_Stenciled", 0);
+				}
+			}
+		}
 	}
 
 	public GameObject InstantiateVehicle(CarType type, Vehicle vehicle, int hue) {

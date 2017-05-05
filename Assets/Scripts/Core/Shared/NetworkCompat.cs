@@ -148,6 +148,19 @@ namespace NetworkCompat {
 			}
 		}
 
+		NetworkLobbyPlayer GetLobbyPlayer (NetworkConnection conn) {
+			NetworkLobbyPlayer oldLobbyPlayer = null;
+			foreach (var lobbyPlayer in lobbySlots) {
+				if (lobbyPlayer == null)
+					continue;
+				
+				if (lobbyPlayer.serverId == conn.connectionId) {
+					oldLobbyPlayer = lobbyPlayer;
+				}
+			}
+			return oldLobbyPlayer;
+		}
+
 		Byte FindSlot()
 		{
 			for (byte i = 0; i < maxPlayers; i++)
@@ -207,7 +220,7 @@ namespace NetworkCompat {
 			NetworkServer.ReplacePlayerForConnection(conn, gamePlayer, controllerId);
 		}
 
-		static int CheckConnectionIsReadyToBegin(NetworkConnection conn)
+		int CheckConnectionIsReadyToBegin(NetworkConnection conn)
 		{
 			int countPlayers = 0;
 			for (int i = 0; i < conn.playerControllers.Count; i++)
@@ -215,7 +228,7 @@ namespace NetworkCompat {
 				var player = conn.playerControllers[i];
 				if (player.IsValid)
 				{
-					var lobbyPlayer = player.gameObject.GetComponent<NetworkLobbyPlayer>();
+					var lobbyPlayer = GetLobbyPlayer (conn);
 					if (lobbyPlayer.readyToBegin)
 					{
 						countPlayers += 1;
@@ -450,9 +463,13 @@ namespace NetworkCompat {
 		public override void OnServerRemovePlayer(NetworkConnection conn, PlayerController player)
 		{
 			var playerControllerId = player.playerControllerId;
-			var oldLobbyPlayer = player.gameObject.GetComponent<NetworkLobbyPlayer> ();
+
+			NetworkLobbyPlayer oldLobbyPlayer = GetLobbyPlayer(conn);
+
+
 			byte slot = oldLobbyPlayer.slot;
 			_colourPool.releaseColour (oldLobbyPlayer.colour);
+			Destroy (oldLobbyPlayer.gameObject);
 			lobbySlots[slot] = null;
 			base.OnServerRemovePlayer(conn, player);
 

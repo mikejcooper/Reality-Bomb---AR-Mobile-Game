@@ -86,11 +86,11 @@ namespace Powerups {
 				int rand;
 
 
-				if (_testingFlag) {
+				if (_testingFlag || PowerUpPool.CurrentNumber() < 2) {
 					rand = Random.Range (0, 1);
-				} else {
+				} else{
                     // Spawn frequency varies and gets lower as more powerups are spawned
-					rand = Random.Range (0, (1 + PowerUpPool.CurrentNumber()));
+					rand = Random.Range (0, PowerUpPool.CurrentNumber());
 				}
 
 				// If generater produces the predetermined number from the range above, spawn a power up
@@ -154,8 +154,8 @@ namespace Powerups {
 				powerUpObj.GetComponent<Rigidbody> ().useGravity = false;
 				powerUpObj.GetComponent<BoxCollider> ().enabled = false;
 
-                if (NetworkServer.active)
-                    NetworkServer.Spawn(powerUpObj, PowerUpPool.AssetId);
+                //if (NetworkServer.active)
+                //    NetworkServer.Spawn(powerUpObj, PowerUpPool.AssetId);
                 
                 OnPowerUpGenerated(powerUpObj);
             }               

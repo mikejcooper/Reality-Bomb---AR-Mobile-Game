@@ -34,6 +34,7 @@ public class GameManager : NetworkBehaviour {
 	private const int EXPLANATION_DIALOG_DELAY = 2;
 
 	private CarList _cars = new CarList();
+    public List<CarController> Cars { get { return _cars._cars; } }
 
 	private bool _preparingGame = true;
 

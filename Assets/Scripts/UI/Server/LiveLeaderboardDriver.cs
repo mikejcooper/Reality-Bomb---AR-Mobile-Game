@@ -10,17 +10,29 @@ public class LiveLeaderboardDriver : MonoBehaviour {
 	public GameObject RowPrefab;
 	public Sprite CarSilhouetteSprite;
 	public Sprite BombSilhouetteSprite;
+    public Sprite DeadSprite;
+    private List<CarController> _cars;
 	
 	void Start () {
-		
+        _cars = FindObjectOfType<GameManager>().Cars;
 	}
 
 	void Update () {
-		CarController[] cars = FindObjectsOfType<CarController> ();
 
-		List<CarController> orderedcars = cars.OrderBy (o => -o.Lifetime).ToList ();
+		List<CarController> orderedcars = _cars.OrderBy (o => -o.Lifetime).ToList ();
 
-		foreach (var carController in cars) {
+		// Rather than remove a child for a disconnected player
+		// we just remove all children and re-add those who
+		// are still connected.
+		if (transform.childCount > _cars.Count) {
+			foreach (Transform child in transform) {
+				Destroy (child.gameObject);
+			}
+		}
+
+		foreach (var carController in _cars) {
+
+
 
 			var carName = carController.LobbyPlayer().nickname;
 			var entryTransform = transform.Find (carName);
@@ -39,7 +51,13 @@ public class LiveLeaderboardDriver : MonoBehaviour {
 			if (carController.Alive && carController.HasBomb) {
 				entry.transform.Find ("Icon").GetComponent<Image> ().sprite = BombSilhouetteSprite;
 				entry.transform.Find ("Icon").GetComponent<Image> ().color = Color.white;
-			} else {
+			} else if (!carController.Alive)
+            {
+                entry.transform.Find("Icon").GetComponent<Image>().sprite = DeadSprite;
+                //entry.transform.Find("Icon").GetComponent<Image>().color = Color.white;
+            }
+            else
+            {
 				entry.transform.Find ("Icon").GetComponent<Image> ().sprite = CarSilhouetteSprite;
 				var colour = carController.GetComponent<CarProperties> ().OriginalHue;
 				entry.transform.Find ("Icon").GetComponent<Image> ().color = Color.HSVToRGB (colour / 360f, 1f, 0.8f);

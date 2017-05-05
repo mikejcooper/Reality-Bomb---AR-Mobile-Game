@@ -3,14 +3,11 @@ using UnityEngine.Networking;
 
 namespace Powerups
 {
-    class PowerUpUnspawner : MonoBehaviour
+    class PowerUpUnspawner : NetworkBehaviour
     {
         //private SpawnPool _powerUpPool;
         private float _startTime;
         private float maxTime = 20;
-
-        public delegate void OnTimeOut(GameObject go);
-        public static event OnTimeOut OnTimeOutEvent;
 
         private void OnEnable()
         {
@@ -21,9 +18,11 @@ namespace Powerups
         {
             float elapsed = Time.time - _startTime;
             
-            if (elapsed > maxTime)
+            if (elapsed > maxTime && (isServer || !NetworkServer.active))
             {
-                OnTimeOutEvent(gameObject);
+                FindObjectOfType<BasePowerUpManager>().PowerUpPool.UnSpawnObject(gameObject);
+                if (NetworkServer.active)
+                    NetworkServer.UnSpawn(gameObject);
             }                      
         }
     }
