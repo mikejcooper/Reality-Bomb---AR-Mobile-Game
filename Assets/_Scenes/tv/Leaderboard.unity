@@ -121,9 +121,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14f51c3737efe4be7b862ac4ece43d4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startGameButton: {fileID: 0}
-  instantStartGameButton: {fileID: 0}
-  loadMeshButton: {fileID: 0}
 --- !u!114 &90019950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -854,7 +851,7 @@ Animator:
   m_GameObject: {fileID: 806715859}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: a843f833e9bb74270afdbf9f714a7953, type: 2}
+  m_Controller: {fileID: 9100000, guid: 319bd557530f84705ad5f98b80fdb28e, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
