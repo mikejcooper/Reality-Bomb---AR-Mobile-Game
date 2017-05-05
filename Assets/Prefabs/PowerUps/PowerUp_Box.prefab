@@ -426,7 +426,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 2539ac79c17c24515ac85cecdbb6e3e6, type: 2}
+  - {fileID: 2100000, guid: cfed46db6afc44bc6ab586b3b802b72f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -457,7 +457,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 2539ac79c17c24515ac85cecdbb6e3e6, type: 2}
+  - {fileID: 2100000, guid: cfed46db6afc44bc6ab586b3b802b72f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -519,7 +519,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 941817b63ad5845fa9605c2b9b020be5, type: 2}
+  - {fileID: 2100000, guid: ee1deedd851c34d67883d70779372450, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -550,7 +550,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 2539ac79c17c24515ac85cecdbb6e3e6, type: 2}
+  - {fileID: 2100000, guid: cfed46db6afc44bc6ab586b3b802b72f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -581,7 +581,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 2539ac79c17c24515ac85cecdbb6e3e6, type: 2}
+  - {fileID: 2100000, guid: cfed46db6afc44bc6ab586b3b802b72f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -612,7 +612,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 2539ac79c17c24515ac85cecdbb6e3e6, type: 2}
+  - {fileID: 2100000, guid: cfed46db6afc44bc6ab586b3b802b72f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -643,7 +643,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 2539ac79c17c24515ac85cecdbb6e3e6, type: 2}
+  - {fileID: 2100000, guid: cfed46db6afc44bc6ab586b3b802b72f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -910,7 +910,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1554701309
+  randomSeed: 2086602509
   InitialModule:
     serializedVersion: 3
     enabled: 1
