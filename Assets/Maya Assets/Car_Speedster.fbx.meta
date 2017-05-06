@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 0aebe67202c7a4d49a097ba0fc6ab2dd
-timeCreated: 1493660336
+guid: ed5e2647e516046849ad06d899520d57
+timeCreated: 1494081622
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -9,7 +9,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Car
+    4300000: Speedster
     9500000: //RootNode
   materials:
     importMaterials: 1
