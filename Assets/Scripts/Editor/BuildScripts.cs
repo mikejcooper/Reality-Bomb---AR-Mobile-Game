@@ -9,7 +9,7 @@ public class BuildScripts
 	static string[] CLIENT_LEVELS = new string[] {"Assets/_Scenes/mobile/Idle.unity", "Assets/_Scenes/mobile/Login.unity", "Assets/_Scenes/mobile/Sandbox.unity", "Assets/_Scenes/shared/Game.unity", "Assets/_Scenes/mobile/Leaderboard.unity"};
 
 	private static BuildOptions GenerateBuildOptions () {
-		return BuildOptions.Development | BuildOptions.AutoRunPlayer | BuildOptions.AcceptExternalModificationsToPlayer;
+		return BuildOptions.AutoRunPlayer | BuildOptions.AcceptExternalModificationsToPlayer;
 	}
 
 	private static void BuildAndRun (string fileName, string[] levelsArray, BuildTarget buildTarget, BuildOptions buildOptions) {
