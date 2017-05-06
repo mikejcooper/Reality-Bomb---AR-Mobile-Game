@@ -56,11 +56,13 @@ namespace ServerNetworking
 		private UnityThreading.ActionThread _searchThread;
 
 		public void StartSearching () {
+			Debug.Log("request to start search for mesh server");
 			_searching = true;
 			_searchThread = UnityThreadHelper.CreateThread(() => ListenForBroadcasts());
 		}
 
 		public void StopSearching () {
+			Debug.Log("request to stop search for mesh server");
 			_searching = false;
 			if (_searchThread != null) {
 				_searchThread.Exit ();
@@ -71,9 +73,10 @@ namespace ServerNetworking
 		{
 
 			try {
-				var client = new UdpClient (NetworkConstants.MESH_BROADCAST_PORT);
-
 				while (_searching) {
+					var client = new UdpClient (NetworkConstants.MESH_BROADCAST_PORT);
+					client.Client.ReceiveTimeout = 2000;
+
 					try {
 						IPEndPoint anyIP = new IPEndPoint (IPAddress.Any, 0);
 						byte[] data = client.Receive (ref anyIP);
@@ -88,9 +91,15 @@ namespace ServerNetworking
 							});
 						}
 
+						break;
+
 					} catch (Exception err) {
 						Debug.LogError (err.ToString ());
 					}
+
+					client.Close();
+
+					System.Threading.Thread.Sleep(10000);
 
 				}
 

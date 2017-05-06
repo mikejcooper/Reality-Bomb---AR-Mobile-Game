@@ -146,18 +146,11 @@ public class ServerSceneManager : MonoBehaviour
 		if (DEBUG) Debug.Log ("OnRequestLoadNewMesh");
 		_meshTransferProcess.MoveNext (MeshServerLifecycle.Command.FindServer);
 
-		if (Flags.MESH_SERVER_IS_LOCALHOST) {
-			_meshDiscoveryServer.StartSearching();
-		}
-
+		_meshDiscoveryServer.StartSearching();
 
 		// set all clients to not-ready
 		_networkLobbyManager.SetAllClientsNotReady ();
 		OnStateUpdate ();
-
-		if (!Flags.MESH_SERVER_IS_LOCALHOST) {
-			OnMeshServerFound ("localhost", 3111);
-		}
 	}
 
 
@@ -165,9 +158,9 @@ public class ServerSceneManager : MonoBehaviour
         if (DEBUG) Debug.Log (string.Format("OnMeshServerFound, address: {0}", address));
 		_meshTransferProcess.MoveNext (MeshServerLifecycle.Command.Download);
 
-		if (Flags.MESH_SERVER_IS_LOCALHOST) {
-			_meshDiscoveryServer.StopSearching ();
-		}
+
+		_meshDiscoveryServer.StopSearching ();
+
 
 		_meshServerAddress = address;
 		_meshServerPort = port;
