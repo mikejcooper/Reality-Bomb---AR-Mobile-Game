@@ -32,7 +32,7 @@ namespace Powerups {
 			base.Start ();
 			GameMapObjects gameMapObjects = new GameMapObjects (PlaneObject, PlaneObject, GetBoundingBox (PlaneObject.GetComponent<MeshFilter> ().mesh, PlaneObject));
 			OnMeshReady (gameMapObjects);
-            PowerUpPool = new SpawnPool(PowerupPrefab, 4);
+            PowerUpPool = new SpawnPool(PowerupPrefab, 4, false);
         }
         
         private List<Vector3> GetBoundingBox(Mesh mesh, GameObject _planeObject){

@@ -9,15 +9,19 @@ public class SpawnPool
     public delegate GameObject SpawnDelegate(Vector3 position, NetworkHash128 assetId);
     public delegate void UnSpawnDelegate(GameObject spawned);
 
-    private GameObject[] _pool;   
+    private GameObject[] _pool;
 
-    public SpawnPool(GameObject prefab, int num)
+    private bool _inMainGame;
+
+    public SpawnPool(GameObject prefab, int num, bool inMainGame)
     {
+        _inMainGame = inMainGame;
         _pool = new GameObject[num];
         for (int i = 0; i < num; i++)
         {
             _pool[i] = GameObject.Instantiate(prefab);
             _pool[i].SetActive(false);
+            _pool[i].GetComponent<Powerups.PowerUpUnspawner>().MainGame = _inMainGame;
         }
 
         AssetId = prefab.GetComponent<NetworkIdentity>().assetId;

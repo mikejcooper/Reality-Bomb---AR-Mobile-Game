@@ -12,16 +12,21 @@ namespace Powerups
 
         private ParticleSystem _ps;
 
+        public bool MainGame = true;
+
         private void Start()
         {
             GetComponentInChildren<EndSpinOut>().OnEndSpinOutEvent += Recycle;
-            _ps = GetComponentInChildren<ParticleSystem>();
+            if (_ps == null)
+                _ps = GetComponentInChildren<ParticleSystem>();
         }
 
         private void OnEnable()
         {
             _startTime = Time.time;
             timeUp = false;
+            if (_ps == null)
+                _ps = GetComponentInChildren<ParticleSystem>();
             _ps.Play();
         }
 
@@ -49,14 +54,13 @@ namespace Powerups
         public void Recycle()
         {
             
-            if (!isServer && NetworkServer.active)
+            if (!isServer && MainGame)
                 return;
 
             FindObjectOfType<BasePowerUpManager>().PowerUpPool.UnSpawnObject(gameObject);
-            if (NetworkServer.active)
+            if (MainGame)
                 NetworkServer.UnSpawn(gameObject);
                 
-        }
-    
+        }    
     }
 }

@@ -9,7 +9,6 @@ public class EndSpinOut : MonoBehaviour {
     private void OnEnable()
     {
         transform.localScale = Vector3.one;
-        //transform.position = new Vector3(transform.position.x, 0, transform.position.z);
     }
 
     public void OnEndSpinOutCaller()

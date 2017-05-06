@@ -29,7 +29,7 @@ namespace Powerups {
                 if (isServer)
                 {
                     int numPlayers = NetworkServer.connections.Count;
-                    PowerUpPool = new SpawnPool(PowerupPrefab, numPlayers);
+                    PowerUpPool = new SpawnPool(PowerupPrefab, numPlayers, true);
                     RpcInitPool(numPlayers);
                 }
                 if (GameObject.FindObjectOfType<GameManager> () != null) {
@@ -47,7 +47,7 @@ namespace Powerups {
         [ClientRpc]
         void RpcInitPool(int len)
         {
-            PowerUpPool = new SpawnPool(PowerupPrefab, len);
+            PowerUpPool = new SpawnPool(PowerupPrefab, len, true);
         }
 
         protected override PowerupDefinition[] GetAvailablePowerups () {
