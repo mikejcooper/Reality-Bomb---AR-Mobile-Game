@@ -283,7 +283,7 @@ public class GameManager : NetworkBehaviour {
 		_cars.ClearAllDisconnectedPlayers ();
 		Debug.Log ("Players Left: " + _cars.GetCarsOutOfTime() + _cars.GetNumberAliveCars());
 		CheckForGameOver ();
-		if (_cars.GetNumberOfBombsPresent() < 1) _cars.PassBombRandomPlayer ();
+		if (_cars.GetNumberOfBombsPresent() < 1 && _preparingGame == false) _cars.PassBombRandomPlayer ();
 	}
 
 
