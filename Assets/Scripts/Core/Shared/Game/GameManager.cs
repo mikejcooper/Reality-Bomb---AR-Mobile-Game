@@ -60,6 +60,7 @@ public class GameManager : NetworkBehaviour {
 
 			WorldMesh = ServerSceneManager.Instance.WorldMesh;
 
+			Debug.Log ("Countdown fished event is listening");
 			PreparingCanvas.CountDownFinishedEvent += new PreparingGame.CountDownFinished (CountDownFinishedStartPlaying);
 
             //Triggered when last player loads game scene
@@ -164,10 +165,6 @@ public class GameManager : NetworkBehaviour {
 		if (_clientExplanationDialog != null) {
 			Destroy (_clientExplanationDialog);
 		}
-		if (GameCountDownFinishedCallback != null) {
-			Debug.Log ("GameCountDownFinishedEvent not null");
-			GameCountDownFinishedCallback ();
-		}
 		StartCoroutine(FadeOutMesh(5));
 		PreparingCanvas.StartGameCountDown (false);
 	}
@@ -213,11 +210,27 @@ public class GameManager : NetworkBehaviour {
 		if (OnGameStartedEvent != null) {
 			OnGameStartedEvent();
 		}
+		if (GameCountDownFinishedCallback != null) {
+			Debug.Log ("GameCountDownFinishedEvent not null");
+			GameCountDownFinishedCallback ();
+		}
+
+		RpcCountDownFinsihedStartPlaying ();
+
 		_cars.enableAllControls();
         if(_cars.GetNumberOfBombsPresent() < 1) _cars.PassBombRandomPlayer ();
 
 		//Play the game music on the server only
 		Music.StartMusic ();
+	}
+
+	[ClientRpc]
+	public void RpcCountDownFinsihedStartPlaying(){
+		Debug.Log ("RPC Countdownfinsihed");
+		if (GameCountDownFinishedCallback != null) {
+			Debug.Log ("GameCountDownFinishedEvent not null");
+			GameCountDownFinishedCallback ();
+		}
 	}
 
 	public void AddCar(GameObject gamePlayer)
@@ -230,26 +243,20 @@ public class GameManager : NetworkBehaviour {
 		// we have to use contact points because otherwise child colliders
 		// such as a shield just count as normal collisions
 		var contactPoint = collision.contacts [0];
-
 		// only process collision "caused" by the car
 		if (contactPoint.thisCollider.gameObject.Equals (thisObj)) {
 			CarController thisCar = thisObj.GetComponent<CarController>();
 			GameObject otherObj = contactPoint.otherCollider.gameObject;
-
 			if (otherObj.CompareTag ("Car")) {
 				//this is two cars colliding
 				CarController otherCar = otherObj.GetComponent<CarController>();
-
-				if (!CarHasShield(thisCar) && !CarHasShield(otherCar) && otherCar.IsTransferTimeExpired () && otherCar.HasBomb) {
+				if (!CarHasShield (thisCar) && !CarHasShield (otherCar) && otherCar.IsTransferTimeExpired () && otherCar.HasBomb) {
 					otherCar.setBombAllDevices (!otherCar.HasBomb);
 					thisCar.setBombAllDevices (!thisCar.HasBomb);
 					thisCar.UpdateTransferTime (1.0f);
 				}
-
 			}
 		}
-
-        
     }
 
 	private bool CarHasShield (CarController car) {
@@ -276,7 +283,7 @@ public class GameManager : NetworkBehaviour {
 		_cars.ClearAllDisconnectedPlayers ();
 		Debug.Log ("Players Left: " + _cars.GetCarsOutOfTime() + _cars.GetNumberAliveCars());
 		CheckForGameOver ();
-		if (_cars.GetNumberOfBombsPresent() < 1) _cars.PassBombRandomPlayer ();
+		if (_cars.GetNumberOfBombsPresent() < 1 && _preparingGame == false) _cars.PassBombRandomPlayer ();
 	}
 
 
