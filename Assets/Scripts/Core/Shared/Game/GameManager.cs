@@ -135,6 +135,7 @@ public class GameManager : NetworkBehaviour {
 	private void KillPlayer (CarController car) {
 		_cars.KillPlayer (car);
 		CheckForGameOver ();
+		Music.SetPitch(_cars.GetNumberAliveCars());
 	}
 
 	[Server]
@@ -221,6 +222,7 @@ public class GameManager : NetworkBehaviour {
         if(_cars.GetNumberOfBombsPresent() < 1) _cars.PassBombRandomPlayer ();
 
 		//Play the game music on the server only
+		Music.SetPitch(_cars.GetNumberAliveCars());
 		Music.StartMusic ();
 	}
 
