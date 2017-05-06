@@ -66,3 +66,5 @@ MonoBehaviour:
     Name: Layman
   - Model: {fileID: 100000, guid: 6824bba49f9f045bbbd1eac4d39b78a2, type: 3}
     Name: Ghost
+  - Model: {fileID: 100000, guid: a47b010fb0f1a4ad2b121de444bc37a1, type: 3}
+    Name: Interceptor
