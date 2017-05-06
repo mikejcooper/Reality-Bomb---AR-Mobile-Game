@@ -236,7 +236,8 @@ public class CarController : NetworkBehaviour
 	private void Kill(){
 		Lifetime = 0.0f;
 		Alive = false;
-		this.gameObject.SetActive (false);
+		gameObject.SetActive (false);
+		gameObject.transform.SetParent(GameObject.Find("InactiveObjects").transform);
 		Boom ();
 	}
 
