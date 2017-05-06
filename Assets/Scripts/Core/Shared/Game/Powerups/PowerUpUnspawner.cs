@@ -44,7 +44,7 @@ namespace Powerups
                 _ps.Stop();
             if (elapsed > maxTime && !timeUp)
             {
-                Animation anim = GetComponentInChildren<Animation>();
+                Animation anim = GetComponentsInChildren<Animation>()[1];
                 
                 anim.Play("SpinOut");
                 timeUp = true;                
