@@ -75,6 +75,7 @@ MonoBehaviour:
   YouPointer: {fileID: 1988901391611034, guid: 769f8f7605e4548bc8b88e4645d0f87a, type: 2}
   BombObject: {fileID: 1151405325917586, guid: b3cb5b3b2fcc043239cb5668294e5f51, type: 2}
   EdgeGlow: {fileID: 1276438633448274, guid: 7071568c80e1746af9afbb1579941f30, type: 2}
+  carProperties: {fileID: 114643793274007896}
   isMeIndicaterOn: 1
   isBombIndicaterOn: 0
   material1: {fileID: 2100000, guid: cfed46db6afc44bc6ab586b3b802b72f, type: 2}

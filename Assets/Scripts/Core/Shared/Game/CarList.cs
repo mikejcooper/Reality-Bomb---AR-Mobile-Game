@@ -63,12 +63,25 @@ public class CarList
             UnityEngine.Debug.LogError("There is already at least one car with a bomb.");
             return;
         }
+		List<CarController> tempList = new List <CarController>();
 		foreach (CarController car in _cars) {
 			if (car.Alive && !car.HasBomb) {
-				car.setBombAllDevices (true);
-				return;
+				tempList.Add (car);
 			}
 		}
+
+		int index = UnityEngine.Random.Range (0, tempList.Count);
+		tempList [index].setBombAllDevices (true);
+	}
+
+	public void PassBombToTopPlayer(){
+		CarController topPlayer = _cars[0];
+		foreach (CarController car in _cars) {
+			if (car.Alive && !car.HasBomb && car.Lifetime > topPlayer.Lifetime) {
+				topPlayer = car;
+			}
+		}
+		topPlayer.setBombAllDevices (true);
 	}
 
 	public List<CarController> GetCarsOutOfTime(){

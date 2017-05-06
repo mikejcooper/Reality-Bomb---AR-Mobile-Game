@@ -1266,9 +1266,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14f51c3737efe4be7b862ac4ece43d4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startGameButton: {fileID: 80}
-  instantStartGameButton: {fileID: 1863950199}
-  loadMeshButton: {fileID: 76}
 --- !u!114 &74
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1376,7 +1373,7 @@ MonoBehaviour:
     type: 2}
   GamePlayerPrefab: {fileID: 1888881374933336, guid: ad2b8fd4aacae4ea8867137b23409269,
     type: 2}
-  StartMuted: 1
+  StartMuted: 0
 --- !u!114 &79
 MonoBehaviour:
   m_ObjectHideFlags: 0
