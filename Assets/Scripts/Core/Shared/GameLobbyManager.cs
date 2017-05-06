@@ -48,6 +48,7 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 
 		var carController = obj.GetComponent<CarController> ();
 		carController.ServerId = conn.connectionId;
+		carController.Lifetime = carController.MaxLifetime = CalculatePlayerGameDuration ();
 		var carProperties = obj.GetComponent<CarProperties> ();
 		carProperties.OriginalHue = thisLobbyPlayer.colour;
 
@@ -55,6 +56,21 @@ public class GameLobbyManager : NetworkCompat.NetworkLobbyManager {
 			OnLobbyClientGameLoadedEvent (conn);
 		}
 		return obj;
+	}
+
+	float CalculatePlayerGameDuration () {
+		int playerCount = 0;
+		foreach (var lobbyPlayer in GameObject.FindObjectsOfType<NetworkCompat.NetworkLobbyPlayer> ()) {
+			if (lobbyPlayer.playingGame) {
+				playerCount++;
+			}
+		}
+
+		return PlayerGameDurationFunction (playerCount);
+	}
+
+	float PlayerGameDurationFunction(int playerCount) {
+		return Mathf.Round(35 - Mathf.Pow (playerCount - 5, 2) + (Mathf.Pow (playerCount, 3) / 40.0f));
 	}
 
 	// sent from server to set all its clients to not ready and tell all clients they are not ready

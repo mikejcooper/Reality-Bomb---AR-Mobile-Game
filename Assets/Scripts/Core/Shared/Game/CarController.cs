@@ -16,6 +16,7 @@ public class CarController : NetworkBehaviour
 	public CarProperties CarProperties;
 
 	// How fast the tank turns in degrees per second.
+	[SyncVar(hook="OnMaxLifetimeUpdate")]
 	public float MaxLifetime = 60.0f;
 	public bool HasBomb = false;
 	public bool Alive = true;
@@ -72,6 +73,14 @@ public class CarController : NetworkBehaviour
 
 		return null;
 	}
+
+	void OnMaxLifetimeUpdate (float maxLifetime) {
+		if (GameObject.Find ("HealthBar") != null) {
+			_healthBar = GameObject.Find ("HealthBar").gameObject.GetComponent<UIHealthBar> ();
+			_healthBar.MaxValue = MaxLifetime;
+		}
+	}
+
 	public void init () {
 
 		if (!_initialised) {
