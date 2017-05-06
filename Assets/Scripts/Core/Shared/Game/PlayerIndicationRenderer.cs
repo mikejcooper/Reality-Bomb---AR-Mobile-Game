@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using System.Collections;
 
 public class PlayerIndicationRenderer : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class PlayerIndicationRenderer : MonoBehaviour
 	public GameObject YouPointer;
 	public GameObject BombObject;
 	public GameObject EdgeGlow;
+	public CarProperties carProperties;
 
 	public bool isMeIndicaterOn = true;
 	public bool isBombIndicaterOn = false;
@@ -40,12 +42,15 @@ public class PlayerIndicationRenderer : MonoBehaviour
 		_initialisedBomb.transform.localScale = new Vector3 (80.0f,80.0f,80.0f);
 		_initialisedBomb.transform.localPosition = new Vector3 (0.0f,2.0f,0.0f);
 
-		authority = IsOwnCarProperties (GetComponent<CarProperties> ());
+
+		authority = IsOwnCarProperties ();
+
+		GetComponent<CarProperties> ();
 
 		if (authority) {
 			_youPointerUnitScale = new Vector3 (14.0f,60.0f,20.0f).normalized;
 			_youPointerInitialScale = new Vector3(14.0f,60.0f,20.0f).magnitude * 2.0f;
-			_transformInitialScale =  GetComponent<CarProperties> ().SafeScale;
+			_transformInitialScale =  this.GetComponentInParent<CarProperties> ().SafeScale;
 
 			_initialisedYouPointer = InstantiateAndDeactivate (YouPointer);
 			_initialisedYouPointer.transform.localScale = _youPointerInitialScale * _youPointerUnitScale;
@@ -60,8 +65,19 @@ public class PlayerIndicationRenderer : MonoBehaviour
 				GameObject.FindObjectOfType<GameManager> ().GameCountDownFinishedCallback += ShrinkYouPointer;	
 			} else {
 				Debug.Log ("gamemanager is null, shrinkyoupointer not listening");
+				StartCoroutine (PollForGameManager ());
 			}
 		}
+	}
+
+	IEnumerator PollForGameManager()
+	{
+		while(FindObjectOfType<GameManager>() == null) 
+		{ 
+			yield return new WaitForSeconds(0.5f);
+		}
+		Debug.Log ("shrinkyoupointer is listening from polling");
+		GameObject.FindObjectOfType<GameManager> ().GameCountDownFinishedCallback += ShrinkYouPointer;
 	}
 
 	void ShrinkYouPointer ()
@@ -73,10 +89,10 @@ public class PlayerIndicationRenderer : MonoBehaviour
 
 
 
-	private bool IsOwnCarProperties(CarProperties properties) {
-		var identity = properties.GetComponentInParent<NetworkIdentity> ();
-//		return identity == null || identity.clientAuthorityOwner == null || identity.hasAuthority;
-		return identity.hasAuthority;
+	private bool IsOwnCarProperties() {
+		NetworkIdentity netWorkIdentitiy = this.GetComponentInParent<NetworkIdentity> ();
+		return netWorkIdentitiy != null && netWorkIdentitiy.hasAuthority;// ( netWorkIdentitiy.clientAuthorityOwner == null || netWorkIdentitiy.hasAuthority);
+//		return netWorkIdentitiy.hasAuthority;
 	}
 
 	void OnDestroy() {
@@ -112,7 +128,7 @@ public class PlayerIndicationRenderer : MonoBehaviour
 
 			if (_initialisedYouPointer != null) {
 				_initialisedYouPointer.transform.localPosition = new Vector3 (0.0f, 5.0f, 0.0f) + animationHeight;
-				_initialisedYouPointer.transform.localScale = _youPointerUnitScale * (_transformInitialScale * _youPointerInitialScale) / GetComponent<CarProperties> ().SafeScale;
+				_initialisedYouPointer.transform.localScale = _youPointerUnitScale * (_transformInitialScale * _youPointerInitialScale) / this.GetComponentInParent<CarProperties> ().SafeScale;
 			}
 				
 
@@ -128,8 +144,8 @@ public class PlayerIndicationRenderer : MonoBehaviour
 			}
 		} else {
 			if (_initialisedYouPointer != null) {
-				_initialisedYouPointer.transform.localScale = _youPointerUnitScale * (_transformInitialScale * _youPointerInitialScale) / GetComponent<CarProperties> ().SafeScale;
-				_initialisedYouPointer.transform.localPosition = new Vector3 (0.0f, 2.2f, 0.0f) + animationHeight;
+				_initialisedYouPointer.transform.localScale = _youPointerUnitScale * (_transformInitialScale * _youPointerInitialScale) / this.GetComponentInParent<CarProperties> ().SafeScale;
+				_initialisedYouPointer.transform.localPosition = new Vector3 (0.0f, 3.6f, 0.0f) + animationHeight;
 			}
 		}
 	}
