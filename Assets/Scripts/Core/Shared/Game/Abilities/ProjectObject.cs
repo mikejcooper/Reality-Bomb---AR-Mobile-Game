@@ -38,8 +38,11 @@ public class ProjectObject : MonoBehaviour {
 			//create the rotation we need to be in to look at the target
 			_lookRotation = Quaternion.LookRotation (_direction);
 
-			//rotate us over time according to speed until we are in the required rotation
-			CannonObj.transform.rotation = Quaternion.Slerp (CannonObj.transform.rotation, _lookRotation, Time.deltaTime * _rotationSpeed);
+           
+                //rotate us over time according to speed until we are in the required rotation
+            CannonObj.transform.rotation = Quaternion.Slerp(CannonObj.transform.rotation, _lookRotation, Time.deltaTime * _rotationSpeed);
+            //_rotateCannon = false;
+            		
 		}
 	}
 		
@@ -58,8 +61,8 @@ public class ProjectObject : MonoBehaviour {
 		_cannonTarget.y = 4;
 
 		_rotateCannon = true;
-
-		yield return new WaitForSeconds (0.1f);
+        
+		yield return new WaitForSeconds (1f);
 
 		Vector3 t = Target;
 		Vector3 s = Source.position;
