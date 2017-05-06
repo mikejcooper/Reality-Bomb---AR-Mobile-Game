@@ -58,7 +58,11 @@ MonoBehaviour:
   OnlineCarShell: {fileID: 1888881374933336, guid: ad2b8fd4aacae4ea8867137b23409269,
     type: 2}
   _editorVehicles:
-  - Model: {fileID: 100000, guid: 0aebe67202c7a4d49a097ba0fc6ab2dd, type: 3}
+  - Model: {fileID: 100000, guid: ed5e2647e516046849ad06d899520d57, type: 3}
     Name: Speedster
-  - Model: {fileID: 100000, guid: 19e33ac2552d8445385b7410f50ff42c, type: 3}
+  - Model: {fileID: 100000, guid: c13a3130e78944c91ab479017e7e7dca, type: 3}
     Name: Navigator
+  - Model: {fileID: 100000, guid: 230762e2b64344304af0167e4639c143, type: 3}
+    Name: Layman
+  - Model: {fileID: 100000, guid: 6824bba49f9f045bbbd1eac4d39b78a2, type: 3}
+    Name: Ghost
