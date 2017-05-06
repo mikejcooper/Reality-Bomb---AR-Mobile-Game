@@ -19,7 +19,13 @@ public class LiveLeaderboardDriver : MonoBehaviour {
 
 	void Update () {
 
-		List<CarController> orderedcars = _cars.OrderBy (o => -o.Lifetime).ToList ();
+		List<CarController> orderedcars = _cars.OrderBy (carController => {
+			if (carController.Alive) {
+				return carController.Lifetime;
+			} else {
+				return -1;
+			}
+		}).Reverse().ToList ();
 
 		// Rather than remove a child for a disconnected player
 		// we just remove all children and re-add those who
