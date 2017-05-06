@@ -26,10 +26,11 @@ public class CarController : NetworkBehaviour
 	// at some point to a better place.
 	public GameObject ExplosionAnimation;
 
-	public AudioSource ExplosionSound;
-	public AudioSource PowerUpSound;
-	public AudioSource BombAlertSound;
-	public AudioSource BumpSound;
+	private AudioSource ExplosionSound;
+	private AudioSource PowerUpSound;
+	private AudioSource BombAlertSound;
+	private AudioSource BumpSound;
+	private AudioSource PositiveSound;
 
 
 
@@ -146,6 +147,9 @@ public class CarController : NetworkBehaviour
 				if (GameObject.Find ("BumpSound") != null) {
 					BumpSound = GameObject.Find ("BumpSound").GetComponent<AudioSource> ();
 				}
+				if (GameObject.Find ("PositiveSound") != null) {
+					PositiveSound = GameObject.Find ("PositiveSound").GetComponent<AudioSource> ();	
+				}
 			}
 				
 		}
@@ -196,6 +200,9 @@ public class CarController : NetworkBehaviour
 			CarProperties.SpeedLimit *= BombSpeedBoostFactor;
 		} else {
 			CarProperties.SpeedLimit /= BombSpeedBoostFactor;
+			if (PositiveSound != null) {
+				PositiveSound.PlayOneShot (PositiveSound.clip);
+			}
 		}
 		#if UNITY_ANDROID || UNITY_IPHONE
 		// vibrate on exchange
