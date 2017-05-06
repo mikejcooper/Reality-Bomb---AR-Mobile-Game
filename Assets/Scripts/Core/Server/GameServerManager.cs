@@ -55,6 +55,19 @@ public class GameServerManager : MonoBehaviour {
 		SetupMeshDependentUI ();
 	}
 
+	void OnGUI() {
+
+		if (Event.current.Equals (Event.KeyboardEvent ("m"))) {
+			if(AudioListener.volume == 0.0f) {
+				AudioListener.volume = 1.0f;
+			}
+			else {
+				AudioListener.volume = 0.0f;
+			}
+		}
+
+	}
+
 	private void SetupMeshDependentUI () {
 		OrthoCameraMeshFitter camFitter = _serverUI.GetComponentInChildren<OrthoCameraMeshFitter> ();
 

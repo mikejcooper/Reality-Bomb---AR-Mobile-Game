@@ -28,11 +28,11 @@ public class ServerIdleGUI : MonoBehaviour {
 			OnInstantStart ();
 
 		if (Event.current.Equals (Event.KeyboardEvent ("m"))) {
-			var muteButton = GetComponentInChildren<MuteButton> ();
-			if (muteButton != null) {
-				muteButton.ToggleMuteSound ();
-			} else {
-				Debug.LogWarning ("could not find mute button");
+			if(AudioListener.volume == 0.0f) {
+				AudioListener.volume = 1.0f;
+			}
+			else {
+				AudioListener.volume = 0.0f;
 			}
 		}
 
