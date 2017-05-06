@@ -11,20 +11,33 @@ public class LeaderboardDriver : MonoBehaviour {
 
 	void Start () {
 		List<NetworkCompat.NetworkLobbyPlayer> SortedList = GameObject.FindObjectsOfType<NetworkCompat.NetworkLobbyPlayer> ().OrderBy (player => {
-			return player.lastGameResult.FinishPosition;
+			if (player.gameResults.Count > 0) {
+				return player.lastGameResult.FinishPosition;
+			} else {
+				return 1;
+			}
 		}).ToList ();
 
 		foreach (var player in SortedList) {
 			var entry = GameObject.Instantiate (LeaderboardEntryPrefab);
-			var finishPositionStr = (player.lastGameResult.FinishPosition + 1).ToString ();
-			var lastRoundScore = player.lastGameResult.TotalPlayers - player.lastGameResult.FinishPosition - 1;
-			string lastRoundScoreStr;
-			if (lastRoundScore > 0) {
-				lastRoundScoreStr = "+"+lastRoundScore.ToString ();
+
+			string finishPositionStr, lastRoundScoreStr, cumulativeScoreStr;
+			if (player.gameResults.Count > 0) {
+				finishPositionStr = (player.lastGameResult.FinishPosition + 1).ToString ();
+				var lastRoundScore = player.lastGameResult.TotalPlayers - player.lastGameResult.FinishPosition - 1;
+
+				if (lastRoundScore > 0) {
+					lastRoundScoreStr = "+" + lastRoundScore.ToString ();
+				} else {
+					lastRoundScoreStr = "";
+				}
 			} else {
+				finishPositionStr = "1";
 				lastRoundScoreStr = "";
 			}
-			var cumulativeScoreStr = player.totalCumulativeGamesScore ().ToString ();
+
+			cumulativeScoreStr = player.totalCumulativeGamesScore ().ToString ();
+
 			entry.transform.Find ("Pos").GetComponent<Text> ().text = finishPositionStr;
 			entry.transform.Find ("Nickname").GetComponent<Text> ().text = player.nickname;
 			entry.transform.Find ("RoundScore").GetComponent<Text> ().text = lastRoundScoreStr;
@@ -47,6 +60,7 @@ public class LeaderboardDriver : MonoBehaviour {
 				entry.transform.SetParent (transform, false);
 			}
 		}
+
 	}
 
 }

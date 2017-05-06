@@ -21,7 +21,7 @@ public class VehiclePicker : MonoBehaviour {
 
 		for (int i=0; i<Garage.AvailableVehicles.Count; i++) {
 			var vehicle = Garage.AvailableVehicles [i];
-			var obj = Garage.InstantiateVehicle(Garage.CarType.MODEL, vehicle, 320);
+			var obj = Garage.InstantiateVehicle(Garage.CarType.MODEL, vehicle, 40);
 			obj.transform.SetParent (CarouselObj.transform, false);
 			TextFlipperObj.AddName (vehicle.Name);
 		}

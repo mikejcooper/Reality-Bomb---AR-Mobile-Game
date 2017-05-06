@@ -355,7 +355,7 @@ public class ServerSceneManager : MonoBehaviour
 		case ProcessState.AwaitingPlayers:
 		case ProcessState.PreparingGame:
 		case ProcessState.CountingDown:
-			if (PlayerExistsWithGameData()) {
+			if (PlayerExistsWithGameData() || _currentScene == "Game") {
 				//				networkLobbyManager.ServerChangeScene ("Leaderboard");
 				if (_currentScene != "Leaderboard") {
 					StartCoroutine(FadeOutToLeaderboardScene ());

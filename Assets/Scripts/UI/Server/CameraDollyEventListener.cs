@@ -32,15 +32,19 @@ public class CameraDollyEventListener : MonoBehaviour {
 		int lobbyPlayersCount = SortedList.Count;
 		if (lobbyPlayersCount > 2) {
 			AnimatorObj.runtimeAnimatorController = AnimationController3Places;
-		} else {
+		} else if (lobbyPlayersCount == 2) {
 			AnimatorObj.runtimeAnimatorController = AnimationController2Places;
+		} else if (ServerSceneManager.Instance != null) {
+			AnimatorObj.runtimeAnimatorController = null;
+			GetComponent<CameraJitter> ().enabled = false;
+			OnDollyAnimationEnd ();
 		}
 
 		for (int i=0; i<3 && i<SortedList.Count; i++) {
 			AddPlayerForPosition (SortedList [i], i);
 		}
 
-		if (lobbyPlayersCount == 0) {
+		if (ServerSceneManager.Instance == null && lobbyPlayersCount == 0) {
 			AnimatorObj.runtimeAnimatorController = AnimationController3Places;
 			for (int i=0; i<3; i++) {
 				AddPlayerForPosition (null, i);
