@@ -45,8 +45,6 @@ public class PlayerIndicationRenderer : MonoBehaviour
 
 		authority = IsOwnCarProperties ();
 
-		GetComponent<CarProperties> ();
-
 		if (authority) {
 			_youPointerUnitScale = new Vector3 (14.0f,60.0f,20.0f).normalized;
 			_youPointerInitialScale = new Vector3(14.0f,60.0f,20.0f).magnitude * 2.0f;
@@ -72,7 +70,7 @@ public class PlayerIndicationRenderer : MonoBehaviour
 
 	IEnumerator PollForGameManager()
 	{
-		while(FindObjectOfType<GameManager>() == null) 
+		while(GameObject.FindObjectOfType<GameManager>() == null) 
 		{ 
 			yield return new WaitForSeconds(0.5f);
 		}
