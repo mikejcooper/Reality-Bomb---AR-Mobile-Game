@@ -1175,7 +1175,7 @@ MonoBehaviour:
     type: 2}
   ClientNickName: 
   ClientVehicleId: 0
-  StartMuted: 1
+  StartMuted: 0
 --- !u!1 &1938374591
 GameObject:
   m_ObjectHideFlags: 0
