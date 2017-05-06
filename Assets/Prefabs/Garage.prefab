@@ -62,7 +62,7 @@ MonoBehaviour:
     Name: Speedster
   - Model: {fileID: 100000, guid: c13a3130e78944c91ab479017e7e7dca, type: 3}
     Name: Navigator
-  - Model: {fileID: 100000, guid: c36e9ab0c14e44dd585a9397ea186351, type: 3}
+  - Model: {fileID: 100000, guid: f7576b2ff6a134cdea3cf1f23f3656ae, type: 3}
     Name: Layman
   - Model: {fileID: 100000, guid: 6824bba49f9f045bbbd1eac4d39b78a2, type: 3}
     Name: Ghost
