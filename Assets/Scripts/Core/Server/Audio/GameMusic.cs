@@ -14,8 +14,23 @@ public class GameMusic : MusicFade {
 		SceneManager.sceneUnloaded += StopMusic; //Subscribe to event
 	}
 
-	/*void RaisePitch() {
-		_music.pitch *= 1.1f;
-	}*/
+	public void SetPitch(int noAlivePlayers) {
+		if (noAlivePlayers <= 5) {
+			switch (noAlivePlayers) {
+			case 5:
+				_music.pitch = 1.05f;
+				break;
+			case 4:
+				_music.pitch = 1.1f;
+				break;
+			case 3:
+				_music.pitch = 1.15f;
+				break;
+			case 2:
+				_music.pitch = 1.2f;
+				break;
+			}
+		}
+	}
 }
 
