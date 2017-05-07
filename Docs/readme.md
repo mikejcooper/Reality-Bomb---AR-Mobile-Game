@@ -1,1 +1,1 @@
-Open file '__RealityBombDocumentation.html' to browse documentation. 
+Open file 'Documentation.html' to browse documentation. 
