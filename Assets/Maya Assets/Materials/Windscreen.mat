@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Windscreen
-  m_Shader: {fileID: 4800000, guid: 4d3898a28d3a54a0b8729c9892ee076e, type: 3}
+  m_Shader: {fileID: 4800000, guid: 7e6f941562cc14c0388ebbab047419ab, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
@@ -111,6 +111,9 @@ Material:
       second: 1
     - first:
         name: _SrcBlend
+      second: 1
+    - first:
+        name: _Stenciled
       second: 1
     - first:
         name: _UVSec
