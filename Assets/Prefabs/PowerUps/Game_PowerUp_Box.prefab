@@ -226,7 +226,7 @@ GameObject:
   - component: {fileID: 114942315811042104}
   - component: {fileID: 111225103425570752}
   m_Layer: 13
-  m_Name: PowerUp_Box
+  m_Name: Game_PowerUp_Box
   m_TagString: PowerUp
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -426,7 +426,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: cfed46db6afc44bc6ab586b3b802b72f, type: 2}
+  - {fileID: 2100000, guid: a1e920e305cbb46659f7f2d8fc6e789d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -457,7 +457,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: cfed46db6afc44bc6ab586b3b802b72f, type: 2}
+  - {fileID: 2100000, guid: a1e920e305cbb46659f7f2d8fc6e789d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -550,7 +550,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: cfed46db6afc44bc6ab586b3b802b72f, type: 2}
+  - {fileID: 2100000, guid: a1e920e305cbb46659f7f2d8fc6e789d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -581,7 +581,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: cfed46db6afc44bc6ab586b3b802b72f, type: 2}
+  - {fileID: 2100000, guid: a1e920e305cbb46659f7f2d8fc6e789d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -612,7 +612,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: cfed46db6afc44bc6ab586b3b802b72f, type: 2}
+  - {fileID: 2100000, guid: a1e920e305cbb46659f7f2d8fc6e789d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -643,7 +643,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: cfed46db6afc44bc6ab586b3b802b72f, type: 2}
+  - {fileID: 2100000, guid: a1e920e305cbb46659f7f2d8fc6e789d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -909,7 +909,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1110746946
+  randomSeed: 439562245
   InitialModule:
     serializedVersion: 3
     enabled: 1
