@@ -76,6 +76,7 @@ public class CarController : NetworkBehaviour
 	}
 
 	void OnMaxLifetimeUpdate (float maxLifetime) {
+		MaxLifetime = maxLifetime;
 		if (GameObject.Find ("HealthBar") != null) {
 			_healthBar = GameObject.Find ("HealthBar").gameObject.GetComponent<UIHealthBar> ();
 			_healthBar.MaxValue = MaxLifetime;
